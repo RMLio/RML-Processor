@@ -1,0 +1,64 @@
+@prefix rr: <http://www.w3.org/ns/r2rml#>.
+@prefix  rml: <http://mmlab.be/rml#> .
+@prefix ql: <http://mmlab.be/ql#> .
+@prefix mail: <http://example.com/mail#>.
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
+@prefix ex: <http://www.example.com/> .
+@base <http://example.com/base> .
+
+<#FromToMaps>
+rml:logicalSource [ 
+	rml:sourceName "example.xml";
+	rml:queryLanguage ql:XPath;
+];
+rr:subjectMap [
+        rr:template "http://www.example.com/note/{/notes/note/@id}"; 
+        rr:class mail:note;
+            ];
+	rr:predicateObjectMap [
+                     rr:predicate mail:when;
+                     rr:objectMap [ 
+			rr:template "{/notes/note/@year}-{/notes/note/@month}-{/notes/note/@day}";
+			rr:datatype xsd:date;
+			rr:termType rr:Literal;
+		];
+    ];
+        
+    rr:predicateObjectMap [
+        rr:predicate mail:from;
+        rr:objectMap [ rml:selector "/notes/note/from" ];
+    ];
+        
+        rr:predicateObjectMap [
+        rr:predicate mail:to;
+        rr:objectMap [ rml:selector "/notes/note/to" ];
+    ];
+        
+        rr:predicateObjectMap [
+        rr:predicate mail:heading;
+        rr:objectMap [ rml:selector "/notes/note/heading" ];
+    ];
+        
+        rr:predicateObjectMap [
+        rr:predicate mail:body;
+        rr:objectMap [ rml:selector "/notes/note/body" ];
+    ].
+        
+<#DateTime>
+    rml:logicalSource [ rml:sourceName "example.xml";
+	rml:queryLanguage ql:XPath;
+];
+    rr:subjectMap [
+        rr:template "http://www.example.com/DateTime/{/notes/note/@year}{/notes/note/@month}{/notes/note/@day}";
+        rr:class ex:DateTime;
+    ];
+        rr:predicateObjectMap [
+        rr:predicate ex:Day;
+                        rr:objectMap [ rml:selector "/notes/note/@day"; rr:datatype xsd:gDay];
+                ];        
+                rr:predicate ex:Month;
+                        rr:objectMap [ rml:selector "/notes/note/@month"; rr:datatype xsd:gMonth];
+                rr:predicate ex:Year;        
+                        rr:objectMap [ rml:selector "/notes/note/@year"; rr:datatype xsd:gYear].
+
+
