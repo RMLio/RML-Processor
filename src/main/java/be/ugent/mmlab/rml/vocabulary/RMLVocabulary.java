@@ -25,7 +25,7 @@
  *
  ***************************************************************************
  */
-package be.ugent.mmlab.rmlmapper;
+package be.ugent.mmlab.rml.vocabulary;
 
 import java.util.ArrayList;
 import java.util.List;

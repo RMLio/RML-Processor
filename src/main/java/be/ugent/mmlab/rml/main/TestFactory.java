@@ -2,8 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.mmlab.rmlmapper;
+package be.ugent.mmlab.rml.main;
 
+import be.ugent.mmlab.rml.core.RMLMappingFactory;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;

@@ -2,12 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.mmlab.rmlmapper;
+package be.ugent.mmlab.rml.model;
 
-import net.antidot.semantic.rdf.rdb2rdf.r2rml.core.R2RMLProcessor;
-import net.antidot.sql.model.core.DriverType;
 import net.antidot.sql.model.db.ColumnIdentifier;
-import net.antidot.sql.model.db.ColumnIdentifierImpl;
 import net.antidot.sql.model.type.SQLType;
 
 /**

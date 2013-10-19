@@ -1,6 +1,7 @@
-package be.ugent.mmlab.rmlmapper;
+package be.ugent.mmlab.rml.main;
 
-import be.ugent.mmlab.rmlmapper.RMLVocabulary.RMLTerm;
+import be.ugent.mmlab.rml.vocabulary.RMLVocabulary;
+import be.ugent.mmlab.rml.vocabulary.RMLVocabulary.RMLTerm;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
