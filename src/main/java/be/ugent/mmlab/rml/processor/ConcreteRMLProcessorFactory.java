@@ -4,15 +4,14 @@
  */
 package be.ugent.mmlab.rml.processor;
 
-import be.ugent.mmlab.rml.vocabulary.RMLVocabulary.QLTerm;
+import be.ugent.mmlab.rml.vocabulary.Vocab.QLTerm;
 
 /**
  *
  * @author mielvandersande
  */
-public class ConcreteRMLProcessorFactory extends RMLProcessorFactory{
+public class ConcreteRMLProcessorFactory implements RMLProcessorFactory{
 
-    @Override
     public RMLProcessor create(QLTerm term) {
         switch (term){
             case XPATH_CLASS:

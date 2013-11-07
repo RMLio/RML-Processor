@@ -1,10 +1,9 @@
 package be.ugent.mmlab.rml.main;
 
-import be.ugent.mmlab.rml.vocabulary.RMLVocabulary;
-import be.ugent.mmlab.rml.vocabulary.RMLVocabulary.RMLTerm;
+import be.ugent.mmlab.rml.vocabulary.Vocab;
+import be.ugent.mmlab.rml.vocabulary.Vocab.RMLTerm;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -20,9 +19,6 @@ import jlibs.xml.sax.dog.expr.InstantEvaluationListener;
 import jlibs.xml.sax.dog.sniff.DOMBuilder;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
 import net.antidot.semantic.rdf.rdb2rdf.r2rml.core.R2RMLMappingFactory;
-import net.antidot.semantic.rdf.rdb2rdf.r2rml.core.R2RMLVocabulary;
-import net.antidot.semantic.rdf.rdb2rdf.r2rml.core.R2RMLVocabulary.R2RMLTerm;
-import net.antidot.semantic.rdf.rdb2rdf.r2rml.tools.R2RMLToolkit;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jaxen.saxpath.SAXPathException;
@@ -61,12 +57,12 @@ public class App {
             /*
              * Extract all expressions
              */
-            HashMap<Statement, Set<String>> xpathMap = new HashMap<Statement, Set<String>>();
-            for (Enum e : RMLVocabulary.expressionProperties) {
+            /*HashMap<Statement, Set<String>> xpathMap = new HashMap<Statement, Set<String>>();
+            for (Enum e : Vocab.expressionProperties) {
                 
-                String namespace = RMLVocabulary.RML_NAMESPACE;
+                String namespace = Vocab.RML_NAMESPACE;
                 if (e instanceof R2RMLTerm) {
-                    namespace = R2RMLVocabulary.R2RML_NAMESPACE;
+                    namespace = R2Vocab.R2RML_NAMESPACE;
                 }
                 URI p = r2rmlMappingGraph.URIref(namespace
                         + e);
@@ -77,7 +73,7 @@ public class App {
                 for (Statement stmnt : selectors) {
                     
                     Set<String> expressions = new HashSet<String>();
-                    if (p.toString().equals(R2RMLVocabulary.R2RML_NAMESPACE + R2RMLTerm.TEMPLATE)) {
+                    if (p.toString().equals(R2Vocab.R2RML_NAMESPACE + R2RMLTerm.TEMPLATE)) {
                         expressions = R2RMLToolkit.extractColumnNamesFromStringTemplate(stmnt.getObject().stringValue());
                     } else {
                         String exp = stmnt.getObject().stringValue();
@@ -92,7 +88,7 @@ public class App {
             
             
             parseExpressions(sources.get("example.xml"), xpathMap);
-
+*/
 
 
 
@@ -102,7 +98,7 @@ public class App {
 
              //Find all triple maps
              ArrayList<Resource> tripleMapResources = new ArrayList<Resource>();
-             URI p = r2rmlMappingGraph.URIref(R2RMLVocabulary.R2RML_NAMESPACE
+             URI p = r2rmlMappingGraph.URIref(R2Vocab.R2RML_NAMESPACE
              + R2RMLTerm.SUBJECT_MAP);
              List<Statement> statements = r2rmlMappingGraph.tuplePattern(null, p,
              null);
@@ -134,7 +130,7 @@ public class App {
 
              for (Resource r : tripleMapResources) {
 
-             URI pLogicalSource = r2rmlMappingGraph.URIref(RMLVocabulary.RML_NAMESPACE
+             URI pLogicalSource = r2rmlMappingGraph.URIref(Vocab.RML_NAMESPACE
              + RMLTerm.LOGICAL_SOURCE);
 
              List<Statement> logicalSources = r2rmlMappingGraph.tuplePattern(r, pLogicalSource,
@@ -142,10 +138,10 @@ public class App {
 
              Resource logicalSource = (Resource) logicalSources.get(0).getObject();
 
-             URI pSourceName = r2rmlMappingGraph.URIref(RMLVocabulary.RML_NAMESPACE
+             URI pSourceName = r2rmlMappingGraph.URIref(Vocab.RML_NAMESPACE
              + RMLTerm.SOURCE_NAME);
 
-             URI pQueryLanguage = r2rmlMappingGraph.URIref(RMLVocabulary.RML_NAMESPACE
+             URI pQueryLanguage = r2rmlMappingGraph.URIref(Vocab.RML_NAMESPACE
              + RMLTerm.QUERY_LANGUAGE);
 
              List<Statement> sourceNames = r2rmlMappingGraph.tuplePattern(logicalSource, pSourceName,
@@ -158,7 +154,7 @@ public class App {
 
              Resource queryLanguage = (Resource) queryLanguages.get(0).getObject();
 
-             switch (RMLVocabulary.getQLTerms(queryLanguage.stringValue())) {
+             switch (Vocab.getQLTerms(queryLanguage.stringValue())) {
              case XPATH_CLASS:
              processXPath(r2rmlMappingGraph, r);
              }
@@ -191,7 +187,7 @@ public class App {
         HashMap<Resource, String> xpathMap = new HashMap<Resource, String>();
         
         
-        URI pSelector = r2rmlMappingGraph.URIref(RMLVocabulary.RML_NAMESPACE
+        URI pSelector = r2rmlMappingGraph.URIref(Vocab.RML_NAMESPACE
                 + RMLTerm.SELECTOR);
         
         List<Statement> selectors = r2rmlMappingGraph.tuplePattern(r, pSelector,

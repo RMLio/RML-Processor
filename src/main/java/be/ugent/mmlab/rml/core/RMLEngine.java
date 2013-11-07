@@ -4,17 +4,17 @@
  */
 package be.ugent.mmlab.rml.core;
 
-import be.ugent.mmlab.rml.processor.RMLProcessorFactory;
-import be.ugent.mmlab.rml.processor.RMLProcessor;
+import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.ConcreteRMLProcessorFactory;
-import be.ugent.mmlab.rml.vocabulary.RMLVocabulary;
+import be.ugent.mmlab.rml.processor.RMLProcessor;
+import be.ugent.mmlab.rml.processor.RMLProcessorFactory;
+import be.ugent.mmlab.rml.vocabulary.Vocab.QLTerm;
 import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
 import net.antidot.semantic.rdf.rdb2rdf.r2rml.core.R2RMLEngine;
 import net.antidot.semantic.rdf.rdb2rdf.r2rml.exception.R2RMLDataError;
 import net.antidot.semantic.rdf.rdb2rdf.r2rml.model.R2RMLMapping;
-import net.antidot.semantic.rdf.rdb2rdf.r2rml.model.TriplesMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -55,7 +55,7 @@ public class RMLEngine {
         }
 
         // Explore R2RML Mapping TriplesMap objects
-        generateRDFTriples(sesameDataSet, r2rmlMapping);
+        //generateRDFTriples(sesameDataSet, r2rmlMapping);
 
 
         log.debug("[R2RMLEngine:runR2RMLMapping] R2RML mapping done. ");
@@ -74,26 +74,26 @@ public class RMLEngine {
      * @throws R2RMLDataError
      * @throws UnsupportedEncodingException
      */
-    private void generateRDFTriples(SesameDataSet sesameDataSet,
-            R2RMLMapping r2rmlMapping) throws SQLException, R2RMLDataError,
-            UnsupportedEncodingException {
-        
-        log.debug("[R2RMLEngine:generateRDFTriples] Generate RDF triples... ");
-        int delta = 0;
-        
-        RMLProcessorFactory factory = new ConcreteRMLProcessorFactory();
-        
-        for (TriplesMap triplesMap : r2rmlMapping.getTriplesMaps()) {
-                    RMLProcessor processor = factory.create(RMLVocabulary.QLTerm.valueOf(""));
-            
-            processor.execute(sesameDataSet, triplesMap);
-
-            log.info("[R2RMLEngine:generateRDFTriples] "
-                    + (sesameDataSet.getSize() - delta)
-                    + " triples generated for " + triplesMap.getName());
-            delta = sesameDataSet.getSize();
-        }
-    }
+//    private void generateRDFTriples(SesameDataSet sesameDataSet,
+//            R2RMLMapping r2rmlMapping) throws SQLException, R2RMLDataError,
+//            UnsupportedEncodingException {
+//        
+//        log.debug("[R2RMLEngine:generateRDFTriples] Generate RDF triples... ");
+//        int delta = 0;
+//        
+//        RMLProcessorFactory factory = new ConcreteRMLProcessorFactory();
+//        
+//        for (TriplesMap triplesMap : r2rmlMapping.getTriplesMaps()) {
+//                    RMLProcessor processor = factory.create(QLTerm.valueOf(""));
+//            
+//            processor.execute(sesameDataSet, triplesMap);
+//
+//            log.info("[R2RMLEngine:generateRDFTriples] "
+//                    + (sesameDataSet.getSize() - delta)
+//                    + " triples generated for " + triplesMap.getName());
+//            delta = sesameDataSet.getSize();
+//        }
+//    }
     
     
 }

@@ -4,21 +4,21 @@
  */
 package be.ugent.mmlab.rml.processor;
 
+import be.ugent.mmlab.rml.model.LogicalSource;
+import be.ugent.mmlab.rml.model.TriplesMap;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
-import net.antidot.semantic.rdf.rdb2rdf.r2rml.model.LogicalTable;
-import net.antidot.semantic.rdf.rdb2rdf.r2rml.model.TriplesMap;
+
 
 /**
  *
  * @author mielvandersande
  */
-public class XPathProcessor extends RMLProcessor{
+public class XPathProcessor implements RMLProcessor{
 
-    @Override
     public void execute(SesameDataSet dataset, TriplesMap map) {
-        LogicalTable lt = map.getLogicalTable();
+        LogicalSource ls = map.getLogicalSource();
         
-        lt.getEffectiveSQLQuery();
+        String selector = ls.getSelector();
         
     }
     

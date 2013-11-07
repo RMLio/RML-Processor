@@ -4,15 +4,17 @@
  */
 package be.ugent.mmlab.rml.processor;
 
+import be.ugent.mmlab.rml.model.TriplesMap;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
-import net.antidot.semantic.rdf.rdb2rdf.r2rml.model.TriplesMap;
+
+
 
 /**
  *
  * @author mielvandersande
  */
-public abstract class RMLProcessor {
+public interface RMLProcessor {
     
-    public abstract void execute(SesameDataSet dataset, TriplesMap map);
+    public void execute(SesameDataSet dataset, TriplesMap map);
 
 }

@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.mmlab.rml.model;
+package be.ugent.mmlab.model.selector;
 
 import net.antidot.sql.model.db.ColumnIdentifier;
 import net.antidot.sql.model.type.SQLType;
@@ -11,7 +11,7 @@ import net.antidot.sql.model.type.SQLType;
  *
  * @author mielvandersande
  */
-public class SelectorIdentifierImpl implements ColumnIdentifier{
+public class SelectorIdentifierImpl implements SelectorIdentifier {
     
     private String selector = null;
     
@@ -19,24 +19,22 @@ public class SelectorIdentifierImpl implements ColumnIdentifier{
 	this.selector = selector;
     }
     
+    
+    
     /**
-     * Build a Column Identifier from a R2RML config file.
+     * Build a Selector Identifier from a RML config file.
      * 
-     * @param columnName
-     *            The column name.
+     * @param selectorName
+     *            The selector.
      * @return
      */
-    public static ColumnIdentifier buildFromR2RMLConfigFile(String selector) {
+    public static SelectorIdentifierImpl buildFromR2RMLConfigFile(String selector) {
 	if (selector == null) {
             return null;
         }
         
 	// Be optimist...
 	return new SelectorIdentifierImpl(selector);
-    }
-
-    public SQLType getSqlType() {
-        return null;
     }
 
     public String replaceAll(String input, String replaceValue) {

@@ -4,16 +4,14 @@
  */
 package be.ugent.mmlab.rml.processor;
 
-import be.ugent.mmlab.rml.processor.RMLProcessor;
-import be.ugent.mmlab.rml.vocabulary.RMLVocabulary;
-import be.ugent.mmlab.rml.vocabulary.RMLVocabulary.QLTerm;
+import be.ugent.mmlab.rml.vocabulary.Vocab.QLTerm;
 
 /**
  *
  * @author mielvandersande
  */
-public abstract class RMLProcessorFactory {
+public interface RMLProcessorFactory {
     
-    public abstract RMLProcessor create(QLTerm term);
+    public RMLProcessor create(QLTerm term);
     
 }

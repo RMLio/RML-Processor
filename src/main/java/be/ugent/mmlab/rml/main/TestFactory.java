@@ -5,13 +5,13 @@
 package be.ugent.mmlab.rml.main;
 
 import be.ugent.mmlab.rml.core.RMLMappingFactory;
+import be.ugent.mmlab.rml.model.RMLMapping;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.antidot.semantic.rdf.rdb2rdf.r2rml.exception.InvalidR2RMLStructureException;
 import net.antidot.semantic.rdf.rdb2rdf.r2rml.exception.InvalidR2RMLSyntaxException;
 import net.antidot.semantic.rdf.rdb2rdf.r2rml.exception.R2RMLDataError;
-import net.antidot.semantic.rdf.rdb2rdf.r2rml.model.R2RMLMapping;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.rio.RDFParseException;
 
@@ -28,7 +28,7 @@ public class TestFactory {
         try {
             String fileToR2RMLFile = "/Users/mielvandersande/Desktop/Projects/USC-ISI/Karma/R2RML/Example/documents-export-2013-10-14/example.rml.ttl";
 
-            R2RMLMapping mapping = RMLMappingFactory.extractR2RMLMapping(fileToR2RMLFile);
+            RMLMapping mapping = RMLMappingFactory.extractRMLMapping(fileToR2RMLFile);
             
             
             
