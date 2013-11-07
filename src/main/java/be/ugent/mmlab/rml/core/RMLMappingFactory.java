@@ -858,38 +858,47 @@ public abstract class RMLMappingFactory {
 
         // Extract logical table blank node
         // favor logical table over source
-        URI p = rmlMappingGraph.URIref(Vocab.RML_NAMESPACE
+        URI pTable = rmlMappingGraph.URIref(Vocab.R2RML_NAMESPACE
                 + Vocab.R2RMLTerm.LOGICAL_TABLE);
-
-
-        if (p == null) {
-            p = rmlMappingGraph.URIref(Vocab.RML_NAMESPACE
+        
+        URI pSource = rmlMappingGraph.URIref(Vocab.RML_NAMESPACE
                     + Vocab.RMLTerm.LOGICAL_SOURCE);
-        } else {
-            queryLanguage = Vocab.QLTerm.SQL_CLASS;
+        
+        List<Statement> sTable = rmlMappingGraph.tuplePattern(
+                triplesMapSubject, pTable, null);
+        
+        List<Statement> sSource = rmlMappingGraph.tuplePattern(
+                triplesMapSubject, pSource, null);
+
+        if (!sTable.isEmpty() && !sSource.isEmpty()) {
+            throw new InvalidR2RMLStructureException(
+                    "[RMLMappingFactory:extractLogicalSource] "
+                    + triplesMapSubject
+                    + " has a source and table defined.");
         }
 
-        List<Statement> statements = rmlMappingGraph.tuplePattern(
-                triplesMapSubject, p, null);
+        //TODO: decide between source and table
+        List<Statement> statements = sSource;
+        
         if (statements.isEmpty()) {
             throw new InvalidR2RMLStructureException(
                     "[RMLMappingFactory:extractLogicalTable] "
                     + triplesMapSubject
-                    + " has no logical table defined.");
+                    + " has no logical source defined.");
         }
         if (statements.size() > 1) {
             throw new InvalidR2RMLStructureException(
                     "[RMLMappingFactory:extractLogicalTable] "
                     + triplesMapSubject
-                    + " has too many logical table defined.");
+                    + " has too many logical source defined.");
         }
 
 
-        Resource blankLogicalTable = (Resource) statements.get(0).getObject();
+        Resource blankLogicalSource = (Resource) statements.get(0).getObject();
 
 
         if (queryLanguage == null) {
-            queryLanguage = getQueryLanguage(rmlMappingGraph, blankLogicalTable);
+            queryLanguage = getQueryLanguage(rmlMappingGraph, blankLogicalSource);
         }
 
         if (queryLanguage == null) {
@@ -902,12 +911,14 @@ public abstract class RMLMappingFactory {
         // Check SQL base table or view
         URI pName = rmlMappingGraph.URIref(Vocab.RML_NAMESPACE
                 + Vocab.RMLTerm.SOURCE_NAME);
+        
         List<Statement> statementsName = rmlMappingGraph.tuplePattern(
-                blankLogicalTable, pName, null);
+                blankLogicalSource, pName, null);
+        
         URI pView = rmlMappingGraph.URIref(Vocab.RML_NAMESPACE
                 + Vocab.RMLTerm.QUERY);
         List<Statement> statementsView = rmlMappingGraph.tuplePattern(
-                blankLogicalTable, pView, null);
+                blankLogicalSource, pView, null);
         
         LogicalSource logicalSource = null;
         
