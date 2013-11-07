@@ -1,4 +1,4 @@
 RMLProcessor
 ============
 
-Streaming processor for RML (R2RML extension)
+Streaming processor for RML (R2RML extension) in Java
