@@ -876,6 +876,10 @@ public abstract class RMLMappingFactory {
                     + triplesMapSubject
                     + " has a source and table defined.");
         }
+        
+        if (!sTable.isEmpty()){
+            extractLogicalTable();
+        }
 
         //TODO: decide between source and table
         List<Statement> statements = sSource;
@@ -929,20 +933,26 @@ public abstract class RMLMappingFactory {
                         + triplesMapSubject
                         + " has too many logical table name defined.");
             }
+            /*
+             * MVS: This check is only valid in case of logicalTable/R2RMLView
+             */
+            /*
             if (!statementsView.isEmpty()) {
                 throw new InvalidR2RMLStructureException(
                         "[RMLMappingFactory:extractLogicalTable] "
                         + triplesMapSubject
                         + " can't have a logical table and sql query defined"
-                        + " at the ame time.");
+                        + " at the same time.");
             }
+            */
             // Table name defined
 
             //MVS: DESIGN NEW STRUCTURE FOR THIS
             String file = statementsName.get(0).getObject().stringValue();
+            String query = statementsView.get(0).getObject().stringValue();
             
             //MVS: find a good way to distinct SQL and others
-            logicalSource = new StdLogicalSource("", file);
+            logicalSource = new StdLogicalSource(query, file, queryLanguage);
 
 
         } else {
@@ -1025,5 +1035,9 @@ public abstract class RMLMappingFactory {
         Resource object = (Resource) statements.get(0).getObject();
 
         return Vocab.getQLTerms(object.stringValue());
+    }
+
+    private static void extractLogicalTable() {
+        // Original R2RML Logic move here
     }
 }

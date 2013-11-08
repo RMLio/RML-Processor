@@ -4,9 +4,6 @@
  */
 package be.ugent.mmlab.model.selector;
 
-import net.antidot.sql.model.db.ColumnIdentifier;
-import net.antidot.sql.model.type.SQLType;
-
 /**
  *
  * @author mielvandersande
@@ -46,5 +43,12 @@ public class SelectorIdentifierImpl implements SelectorIdentifier {
 		+ selector + " in " + input);
 	return localResult;
     }
+
+    @Override
+    public String toString() {
+        return selector;
+    }
+    
+    
     
 }

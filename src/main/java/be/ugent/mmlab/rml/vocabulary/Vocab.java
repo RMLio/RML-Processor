@@ -25,7 +25,7 @@ public class Vocab {
 
     public static QLTerm getQLTerms(String stringValue) {
         for (QLTerm term : QLTerm.values()){
-            if (stringValue.equals(RML_NAMESPACE + term)){
+            if (stringValue.equals(QL_NAMESPACE + term)){
                 return term;
             }
         }
