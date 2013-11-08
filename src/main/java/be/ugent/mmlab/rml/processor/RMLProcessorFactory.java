@@ -12,6 +12,6 @@ import be.ugent.mmlab.rml.vocabulary.Vocab.QLTerm;
  */
 public interface RMLProcessorFactory {
     
-    public RMLProcessor create(QLTerm term);
+    public  RMLProcessor create(QLTerm term);
     
 }
