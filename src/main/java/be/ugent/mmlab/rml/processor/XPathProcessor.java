@@ -4,12 +4,8 @@
  */
 package be.ugent.mmlab.rml.processor;
 
-import be.ugent.mmlab.model.selector.SelectorIdentifier;
-import be.ugent.mmlab.model.selector.SelectorIdentifierImpl;
 import be.ugent.mmlab.rml.core.RMLEngine;
 import be.ugent.mmlab.rml.model.LogicalSource;
-import be.ugent.mmlab.rml.model.PredicateObjectMap;
-import be.ugent.mmlab.rml.model.SubjectMap;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import com.sun.org.apache.xpath.internal.domapi.XPathEvaluatorImpl;
 import java.util.logging.Level;
@@ -26,20 +22,20 @@ import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
 import org.jaxen.saxpath.SAXPathException;
 import org.w3c.dom.Node;
 import org.w3c.dom.xpath.XPathEvaluator;
+import org.w3c.dom.xpath.XPathResult;
 import org.xml.sax.InputSource;
 
 /**
  *
  * @author mielvandersande
  */
-public class XPathProcessor implements RMLProcessor {
+public class XPathProcessor extends AbstractRMLProcessor {
 
-    public void execute(SesameDataSet dataset, TriplesMap map) {
+    public void execute(final SesameDataSet dataset, final TriplesMap map) {
         try {
-            LogicalSource ls = map.getLogicalSource();
-            String selector = ls.getSelector();
-            
-            String fileName = RMLEngine.fileMap.get(ls.getIdentifier());
+
+            String selector = getSelector(map.getLogicalSource());
+            String fileName = getIdentifier(map.getLogicalSource());
 
             //Inititalize the XMLDog for processing XPath
             DefaultNamespaceContext nsContext = new DefaultNamespaceContext(); // an implementation of javax.xml.namespace.NamespaceContext
@@ -50,26 +46,31 @@ public class XPathProcessor implements RMLProcessor {
             //adding expression to the xpathprocessor
             dog.addXPath(selector);
 
+
             jlibs.xml.sax.dog.sniff.Event event = dog.createEvent();
+
             event.setXMLBuilder(new DOMBuilder());
+
             event.setListener(new InstantEvaluationListener() {
                 @Override
                 public void onNodeHit(Expression expression, NodeItem nodeItem) {
                     Node node = (Node) nodeItem.xml;
-                    
-                    System.out.println("XPath: " + expression.getXPath() + " has hit: " + node.getTextContent());
+                    processNode(dataset, map, node);
+
+
+                    //System.out.println("XPath: " + expression.getXPath() + " has hit: " + node.getTextContent());
                 }
 
                 @Override
                 public void finishedNodeSet(Expression expression) {
-                    System.out.println("Finished Nodeset: " + expression.getXPath());
+                    //System.out.println("Finished Nodeset: " + expression.getXPath());
                 }
 
                 @Override
                 public void onResult(Expression expression, Object result) {
                     // this method is called only for xpaths which returns primitive result
                     // i.e result will be one of String, Boolean, Double
-                    System.out.println("XPath: " + expression.getXPath() + " result: " + result);
+                    //System.out.println("XPath: " + expression.getXPath() + " result: " + result);
                 }
             });
 
@@ -82,24 +83,24 @@ public class XPathProcessor implements RMLProcessor {
         }
 
     }
-    
-    private void processNode(SesameDataSet dataset, TriplesMap tm, Node node){
-        
-        
-        processSubjectMap(dataset, tm.getSubjectMap(), node);
-        
-        for (PredicateObjectMap pom : tm.getPredicateObjectMaps()){
-            processPredicateObjectMap(dataset, pom, node);
-        }
 
-    }
-
-    private void processSubjectMap(SesameDataSet dataset, SubjectMap subjectMap, Node node) {
+    /**
+     *
+     * @param node
+     * @param expression
+     * @return value that matches expression
+     */
+    private String extractValueFromNode(Node node, String expression) {
         XPathEvaluator eval = new XPathEvaluatorImpl();
-        String value = eval.evaluate(subjectMap., node, null, type, eval);
+
+        XPathResult result = (XPathResult) eval.evaluate(expression, node, null, XPathResult.STRING_TYPE, null);
+
+        return result.getStringValue();
     }
 
-    private void processPredicateObjectMap(SesameDataSet dataset, PredicateObjectMap pom, Node node) {
-        throw new UnsupportedOperationException("Not yet implemented");
+    @Override
+    protected String extractValueFromNode(Object node, String expression) {
+        return extractValueFromNode((Node) node, expression);
     }
+
 }

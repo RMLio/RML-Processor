@@ -41,12 +41,12 @@ public class StdTriplesMap implements TriplesMap {
 			Set<StdPredicateObjectMap> predicateObjectMaps,
 			StdSubjectMap subjectMap, String name) throws InvalidR2RMLStructureException {
 		setSubjectMap(subjectMap);
-		setLogicalTable(logicalSource);
+		setLogicalSource(logicalSource);
 		setPredicateObjectMap(predicateObjectMaps);
 		setName(name);
 	}
 
-	public void setLogicalTable(LogicalSource logicalTable) {
+	public void setLogicalSource(LogicalSource logicalTable) {
 		/*if (logicalTable == null)
 			throw new InvalidR2RMLStructureException(
 					"[StdTriplesMap:setLogicalTable] A logical table is required.");*/

@@ -38,7 +38,7 @@ public interface TriplesMap {
 	 * collection of values to be mapped to triples.
 	 */
 	public LogicalSource getLogicalSource();
-	public void setLogicalTable(LogicalSource logicalTable);
+	public void setLogicalSource(LogicalSource logicalTable);
         
 
 	

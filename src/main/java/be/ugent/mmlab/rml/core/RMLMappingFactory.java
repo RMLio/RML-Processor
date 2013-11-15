@@ -286,7 +286,7 @@ public abstract class RMLMappingFactory {
         for (PredicateObjectMap predicateObjectMap : predicateObjectMaps) {
             result.addPredicateObjectMap(predicateObjectMap);
         }
-        result.setLogicalTable(logicalSource);
+        result.setLogicalSource(logicalSource);
         result.setSubjectMap(subjectMap);
         log.debug("[RMLMappingFactory:extractTriplesMap] Extract of TriplesMap subject : "
                 + triplesMapSubject.stringValue() + " done.");
