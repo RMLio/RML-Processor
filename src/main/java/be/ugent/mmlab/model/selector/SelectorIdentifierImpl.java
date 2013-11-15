@@ -9,46 +9,40 @@ package be.ugent.mmlab.model.selector;
  * @author mielvandersande
  */
 public class SelectorIdentifierImpl implements SelectorIdentifier {
-    
-    private String selector = null;
-    
-    private SelectorIdentifierImpl(String selector) {
-	this.selector = selector;
-    }
-    
-    
-    
-    /**
-     * Build a Selector Identifier from a RML config file.
-     * 
-     * @param selectorName
-     *            The selector.
-     * @return
-     */
-    public static SelectorIdentifierImpl buildFromR2RMLConfigFile(String selector) {
-	if (selector == null) {
-            return null;
+
+        private String selector = null;
+
+        private SelectorIdentifierImpl(String selector) {
+                this.selector = selector;
         }
-        
-	// Be optimist...
-	return new SelectorIdentifierImpl(selector);
-    }
 
-    public String replaceAll(String input, String replaceValue) {
-        // Try simple replace...
-	String localResult = input.replaceAll("\\{" + selector + "\\}",
-		replaceValue);
-        // Must have replaced something
-	assert !localResult.equals(input) : ("Impossible to replace "
-		+ selector + " in " + input);
-	return localResult;
-    }
+        /**
+         * Build a Selector Identifier from a RML config file.
+         *
+         * @param selectorName The selector.
+         * @return
+         */
+        public static SelectorIdentifierImpl buildFromR2RMLConfigFile(String selector) {
+                if (selector == null) {
+                        return null;
+                }
 
-    @Override
-    public String toString() {
-        return selector;
-    }
-    
-    
-    
+                // Be optimist...
+                return new SelectorIdentifierImpl(selector);
+        }
+
+        public String replaceAll(String input, String replaceValue) {
+                // Try simple replace...
+                String localResult = input.replaceAll("\\{" + selector + "\\}",
+                        replaceValue);
+                // Must have replaced something
+                assert !localResult.equals(input) : ("Impossible to replace "
+                        + selector + " in " + input);
+                return localResult;
+        }
+
+        @Override
+        public String toString() {
+                return selector;
+        }
 }
