@@ -10,6 +10,7 @@ import be.ugent.mmlab.rml.model.LogicalSource;
 import be.ugent.mmlab.rml.model.ObjectMap;
 import be.ugent.mmlab.rml.model.PredicateMap;
 import be.ugent.mmlab.rml.model.PredicateObjectMap;
+import be.ugent.mmlab.rml.model.ReferencingObjectMap;
 import be.ugent.mmlab.rml.model.SubjectMap;
 import be.ugent.mmlab.rml.model.TermMap;
 import be.ugent.mmlab.rml.model.TriplesMap;
@@ -30,15 +31,15 @@ import org.openrdf.model.vocabulary.RDF;
  */
 public abstract class AbstractRMLProcessor implements RMLProcessor {
 
-    protected String getIdentifier(LogicalSource ls){
+    protected String getIdentifier(LogicalSource ls) {
         //TODO Change this to a more general, configurable resource management
         return RMLEngine.fileMap.get(ls.getIdentifier());
     }
-    
-    protected String getSelector(LogicalSource ls){
+
+    protected String getSelector(LogicalSource ls) {
         return ls.getSelector();
     }
-    
+
     protected void processNode(SesameDataSet dataset, TriplesMap tm, Object node) {
         Resource subject = processSubjectMap(dataset, tm.getSubjectMap(), node);
 
@@ -97,43 +98,52 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
 
         Set<PredicateMap> predicateMaps = pom.getPredicateMaps();
         for (PredicateMap predicateMap : predicateMaps) {
-            URI predicate = processPredicateMap(predicateMap ,node);
+            URI predicate = processPredicateMap(predicateMap, node);
             
+            Set<ReferencingObjectMap> referencingObjectMaps = pom.getReferencingObjectMaps();
+            for (ReferencingObjectMap referencingObjectMap : referencingObjectMaps) {
+                TriplesMap parent = referencingObjectMap.getParentTriplesMap();
+
+                
+                System.out.println(referencingObjectMap);
+            }
+
+
             Set<ObjectMap> objectMaps = pom.getObjectMaps();
             for (ObjectMap objectMap : objectMaps) {
                 Value object = processObjectMap(objectMap, node);
-                
+
                 dataset.add(subject, predicate, object, (Resource) null);
             }
+
         }
     }
 
-
     private URI processPredicateMap(PredicateMap predicateMap, Object node) {
         String value = processTermMap(predicateMap, node);
-        
+
         return new URIImpl(value);
     }
 
     private Value processObjectMap(ObjectMap objectMap, Object node) {
         String value = processTermMap(objectMap, node);
-        switch(objectMap.getTermType()){
+        switch (objectMap.getTermType()) {
             case BLANK_NODE:
                 return new BNodeImpl(value);
-                
+
             case LITERAL:
-                if (objectMap.getLanguageTag() != null){
+                if (objectMap.getLanguageTag() != null) {
                     return new LiteralImpl(value, objectMap.getLanguageTag());
-                } else if (objectMap.getDataType() != null){
+                } else if (objectMap.getDataType() != null) {
                     URI datatype = new URIImpl(objectMap.getDataType().getAbsoluteStringURI());
                     return new LiteralImpl(value, datatype);
                 } else {
                     return new LiteralImpl(value);
                 }
         }
-        
+
         return new URIImpl(value);
     }
-    
+
     protected abstract String extractValueFromNode(Object node, String expression);
 }
