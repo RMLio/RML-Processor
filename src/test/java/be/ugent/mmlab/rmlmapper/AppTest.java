@@ -5,6 +5,7 @@ import be.ugent.mmlab.rml.core.RMLMappingFactory;
 import be.ugent.mmlab.rml.model.RMLMapping;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -33,6 +34,12 @@ public class AppTest
      */
     public AppTest(String testName) {
         super(testName);
+        
+        RMLEngine.fileMap = new HashMap<String, String>();
+        RMLEngine.fileMap.put("example.xml", getClass().getResource("/example1/example.xml").getFile());
+        RMLEngine.fileMap.put("Airport.csv", getClass().getResource("/example3/Airport.csv").getFile());
+        RMLEngine.fileMap.put("Venue.json", getClass().getResource("/example3/Venue.json").getFile());
+        RMLEngine.fileMap.put("Transport.xml", getClass().getResource("/example3/Transport.xml").getFile());
     }
 
     /**
@@ -45,15 +52,28 @@ public class AppTest
     /**
      * Rigourous Test :-)
      */
-    public void testApp() {
+    public void testExample1() {
+            URL fileToRMLFile = getClass().getResource("/example1/example.rml.ttl");
+            URL fileToOutputFile = getClass().getResource("/example1/example.output.ttl");
+            assertTrue(assertMap(fileToRMLFile, fileToOutputFile));
+    }
+    
+    public void testExample2() {
+        URL fileToRMLFile = getClass().getResource("/example2/example.rml.ttl");
+            URL fileToOutputFile = getClass().getResource("/example2/example.output.ttl");
+            assertTrue(assertMap(fileToRMLFile, fileToOutputFile));
+        
+    }
+    
+//    public void testExample3() {
+//            URL fileToRMLFile = getClass().getResource("/example2/example2.rml.ttl");
+//            URL fileToOutputFile = getClass().getResource("/example2/example2.output.ttl");
+//            assertTrue(assertMap(fileToRMLFile, fileToOutputFile));
+//    }
+    
+    private boolean assertMap(URL mappingURL, URL outputURL) {
         try {
-            String fileToR2RMLFile = "/Users/mielvandersande/Desktop/Projects/USC-ISI/Karma/R2RML/Example/documents-export-2013-10-14/example.rml.ttl";
-            String fileToOutputFile = "/Users/mielvandersande/Desktop/Projects/USC-ISI/Karma/R2RML/Example/documents-export-2013-10-14/example.output.ttl";
-
-            RMLEngine.fileMap = new HashMap<String, String>();
-            RMLEngine.fileMap.put("example.xml", "/Users/mielvandersande/Desktop/Projects/USC-ISI/Karma/R2RML/Example/documents-export-2013-10-14/example.xml");
-
-            RMLMapping mapping = RMLMappingFactory.extractRMLMapping(fileToR2RMLFile);
+            RMLMapping mapping = RMLMappingFactory.extractRMLMapping(mappingURL.getFile());
 
             RMLEngine engine = new RMLEngine();
             SesameDataSet output = engine.runRMLMapping(mapping, "http://example.com");
@@ -61,10 +81,10 @@ public class AppTest
             output.dumpRDF(System.out, RDFFormat.TURTLE);
             
             SesameDataSet desiredOutput = new SesameDataSet();
-            desiredOutput.addFile(fileToOutputFile, RDFFormat.TURTLE);
+            desiredOutput.addFile(outputURL.getFile(), RDFFormat.TURTLE);
             
             
-            assertTrue(desiredOutput.isEqualTo(output));
+            return desiredOutput.isEqualTo(output);
         } catch (SQLException ex) {
             Logger.getLogger(AppTest.class.getName()).log(Level.SEVERE, null, ex);
         } catch (UnsupportedEncodingException ex) {
@@ -82,5 +102,7 @@ public class AppTest
         } catch (IOException ex) {
             Logger.getLogger(AppTest.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        return false;
     }
 }
