@@ -15,6 +15,8 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
+import org.openrdf.model.Resource;
+import org.openrdf.model.URI;
 
 /**
  *
@@ -22,7 +24,7 @@ import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
  */
 public class CSVProcessor extends AbstractRMLProcessor {
 
-    public void execute(SesameDataSet dataset, TriplesMap map) {
+    public void execute(SesameDataSet dataset, TriplesMap map, HashMap<String, String> conditions, Resource subject, URI predicate) {
         InputStream fis = null;
         try {
             String identifier = getIdentifier(map.getLogicalSource());
@@ -32,6 +34,8 @@ public class CSVProcessor extends AbstractRMLProcessor {
             //TODO: add character guessing
             CsvReader reader = new CsvReader(fis, Charset.defaultCharset());
 
+            final boolean isJoin = !(conditions == null || subject == null || predicate == null);
+
             reader.readHeaders();
 
             while (reader.readRecord()) {
@@ -40,8 +44,12 @@ public class CSVProcessor extends AbstractRMLProcessor {
                 for (String header : reader.getHeaders()) {
                     row.put(header, reader.get(header));
                 }
+                if (isJoin) {
+                    processJoin(dataset, map, row, conditions, subject, predicate);
+                } else {
+                    processNode(dataset, map, row);
+                }
 
-                processNode(dataset, map, row);
             }
 
         } catch (FileNotFoundException ex) {
@@ -56,7 +64,8 @@ public class CSVProcessor extends AbstractRMLProcessor {
         HashMap<String, String> row = (HashMap<String, String>) node;
         return row.get(expression);
     }
-    
 
-
+    public void execute(SesameDataSet dataset, TriplesMap map) {
+        execute(dataset, map, null, null, null);
+    }
 }

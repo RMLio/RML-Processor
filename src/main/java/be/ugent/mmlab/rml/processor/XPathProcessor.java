@@ -4,10 +4,9 @@
  */
 package be.ugent.mmlab.rml.processor;
 
-import be.ugent.mmlab.rml.core.RMLEngine;
-import be.ugent.mmlab.rml.model.LogicalSource;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import com.sun.org.apache.xpath.internal.domapi.XPathEvaluatorImpl;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.xpath.XPathException;
@@ -20,6 +19,8 @@ import jlibs.xml.sax.dog.expr.InstantEvaluationListener;
 import jlibs.xml.sax.dog.sniff.DOMBuilder;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
 import org.jaxen.saxpath.SAXPathException;
+import org.openrdf.model.Resource;
+import org.openrdf.model.URI;
 import org.w3c.dom.Node;
 import org.w3c.dom.xpath.XPathEvaluator;
 import org.w3c.dom.xpath.XPathResult;
@@ -32,6 +33,10 @@ import org.xml.sax.InputSource;
 public class XPathProcessor extends AbstractRMLProcessor {
 
     public void execute(final SesameDataSet dataset, final TriplesMap map) {
+        execute(dataset, map, null, null, null);
+    }
+
+    public void execute(final SesameDataSet dataset, final TriplesMap map, final HashMap<String, String> conditions, final Resource subject, final URI predicate) {
         try {
 
             String selector = getSelector(map.getLogicalSource());
@@ -47,17 +52,23 @@ public class XPathProcessor extends AbstractRMLProcessor {
             dog.addXPath(selector);
 
 
+
             jlibs.xml.sax.dog.sniff.Event event = dog.createEvent();
 
             event.setXMLBuilder(new DOMBuilder());
+
+            final boolean isJoin = !(conditions == null || subject == null || predicate == null);
 
             event.setListener(new InstantEvaluationListener() {
                 @Override
                 public void onNodeHit(Expression expression, NodeItem nodeItem) {
                     Node node = (Node) nodeItem.xml;
-                    processNode(dataset, map, node);
 
-
+                    if (isJoin) {
+                        processJoin(dataset, map, node, conditions, subject, predicate);
+                    } else {
+                        processNode(dataset, map, node);
+                    }
                     //System.out.println("XPath: " + expression.getXPath() + " has hit: " + node.getTextContent());
                 }
 
@@ -73,7 +84,6 @@ public class XPathProcessor extends AbstractRMLProcessor {
                     //System.out.println("XPath: " + expression.getXPath() + " result: " + result);
                 }
             });
-
 
             dog.sniff(event, new InputSource(fileName));
         } catch (SAXPathException ex) {

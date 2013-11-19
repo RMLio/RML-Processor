@@ -24,7 +24,7 @@ import org.openrdf.rio.RDFParseException;
 /**
  * Unit test for simple App.
  */
-public class AppTest
+public class MapperTest
         extends TestCase {
 
     /**
@@ -32,7 +32,7 @@ public class AppTest
      *
      * @param testName name of the test case
      */
-    public AppTest(String testName) {
+    public MapperTest(String testName) {
         super(testName);
         
         RMLEngine.fileMap = new HashMap<String, String>();
@@ -46,7 +46,7 @@ public class AppTest
      * @return the suite of tests being tested
      */
     public static Test suite() {
-        return new TestSuite(AppTest.class);
+        return new TestSuite(MapperTest.class);
     }
 
     /**
@@ -86,21 +86,21 @@ public class AppTest
             
             return desiredOutput.isEqualTo(output);
         } catch (SQLException ex) {
-            Logger.getLogger(AppTest.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MapperTest.class.getName()).log(Level.SEVERE, null, ex);
         } catch (UnsupportedEncodingException ex) {
-            Logger.getLogger(AppTest.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MapperTest.class.getName()).log(Level.SEVERE, null, ex);
         } catch (InvalidR2RMLStructureException ex) {
-            Logger.getLogger(AppTest.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MapperTest.class.getName()).log(Level.SEVERE, null, ex);
         } catch (InvalidR2RMLSyntaxException ex) {
-            Logger.getLogger(AppTest.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MapperTest.class.getName()).log(Level.SEVERE, null, ex);
         } catch (R2RMLDataError ex) {
-            Logger.getLogger(AppTest.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MapperTest.class.getName()).log(Level.SEVERE, null, ex);
         } catch (RepositoryException ex) {
-            Logger.getLogger(AppTest.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MapperTest.class.getName()).log(Level.SEVERE, null, ex);
         } catch (RDFParseException ex) {
-            Logger.getLogger(AppTest.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MapperTest.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-            Logger.getLogger(AppTest.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MapperTest.class.getName()).log(Level.SEVERE, null, ex);
         }
         
         return false;

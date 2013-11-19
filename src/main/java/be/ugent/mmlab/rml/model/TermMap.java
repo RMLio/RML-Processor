@@ -26,7 +26,7 @@
  ****************************************************************************/
 package be.ugent.mmlab.rml.model;
 
-import be.ugent.mmlab.model.selector.SelectorIdentifier;
+import be.ugent.mmlab.rml.model.selector.SelectorIdentifier;
 import java.io.UnsupportedEncodingException;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
