@@ -31,7 +31,7 @@
  ****************************************************************************/
 package be.ugent.mmlab.rml.model;
 
-import be.ugent.mmlab.model.selector.SelectorIdentifier;
+import be.ugent.mmlab.rml.model.selector.SelectorIdentifier;
 import net.antidot.semantic.rdf.model.tools.RDFDataValidator;
 import net.antidot.semantic.rdf.rdb2rdf.r2rml.exception.InvalidR2RMLStructureException;
 import net.antidot.semantic.rdf.rdb2rdf.r2rml.exception.InvalidR2RMLSyntaxException;

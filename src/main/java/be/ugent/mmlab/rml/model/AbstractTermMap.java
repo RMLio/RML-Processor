@@ -28,8 +28,8 @@
  */
 package be.ugent.mmlab.rml.model;
 
-import be.ugent.mmlab.model.selector.SelectorIdentifier;
-import be.ugent.mmlab.model.selector.SelectorIdentifierImpl;
+import be.ugent.mmlab.rml.model.selector.SelectorIdentifier;
+import be.ugent.mmlab.rml.model.selector.SelectorIdentifierImpl;
 import be.ugent.mmlab.rml.processor.RMLProcessor;
 import java.util.HashSet;
 import java.util.Map;

@@ -4,8 +4,8 @@
  */
 package be.ugent.mmlab.rml.processor;
 
-import be.ugent.mmlab.model.selector.SelectorIdentifierImpl;
 import be.ugent.mmlab.rml.core.RMLEngine;
+import be.ugent.mmlab.rml.model.JoinCondition;
 import be.ugent.mmlab.rml.model.LogicalSource;
 import be.ugent.mmlab.rml.model.ObjectMap;
 import be.ugent.mmlab.rml.model.PredicateMap;
@@ -14,6 +14,9 @@ import be.ugent.mmlab.rml.model.ReferencingObjectMap;
 import be.ugent.mmlab.rml.model.SubjectMap;
 import be.ugent.mmlab.rml.model.TermMap;
 import be.ugent.mmlab.rml.model.TriplesMap;
+import be.ugent.mmlab.rml.model.selector.SelectorIdentifierImpl;
+import be.ugent.mmlab.rml.vocabulary.Vocab.QLTerm;
+import java.util.HashMap;
 import java.util.Set;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
 import net.antidot.semantic.rdf.rdb2rdf.r2rml.tools.R2RMLToolkit;
@@ -49,16 +52,27 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
 
     }
 
+    protected void processJoin(SesameDataSet dataset, TriplesMap tm, Object node, HashMap<String, String> joinMap, Resource subject, URI predicate) {
+        Value object = processSubjectMap(dataset, tm.getSubjectMap(), node);
+
+        for (String expr : joinMap.keySet()) {
+            if (!joinMap.get(expr).equals(extractValueFromNode(node, expr))) {
+                return;
+            }
+        }
+        dataset.add(subject, predicate, object);
+
+    }
+
     protected Resource processSubjectMap(SesameDataSet dataset, SubjectMap subjectMap, Object node) {
 
         String value = processTermMap(subjectMap, node);
 
         Resource subject = new URIImpl(value);
 
-        Resource[] contexts = null;
         Set<org.openrdf.model.URI> classIRIs = subjectMap.getClassIRIs();
         for (org.openrdf.model.URI classIRI : classIRIs) {
-            dataset.add(subject, RDF.TYPE, classIRI, (Resource) null);
+            dataset.add(subject, RDF.TYPE, classIRI);
         }
 
         return subject;
@@ -99,13 +113,27 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
         Set<PredicateMap> predicateMaps = pom.getPredicateMaps();
         for (PredicateMap predicateMap : predicateMaps) {
             URI predicate = processPredicateMap(predicateMap, node);
-            
+
             Set<ReferencingObjectMap> referencingObjectMaps = pom.getReferencingObjectMaps();
             for (ReferencingObjectMap referencingObjectMap : referencingObjectMaps) {
-                TriplesMap parent = referencingObjectMap.getParentTriplesMap();
+                Set<JoinCondition> joinConditions = referencingObjectMap.getJoinConditions();
 
-                
-                System.out.println(referencingObjectMap);
+                HashMap<String, String> joinMap = new HashMap<String, String>();
+
+                for (JoinCondition joinCondition : joinConditions) {
+                    String childValue = extractValueFromNode(node, joinCondition.getChild());
+
+                    joinMap.put(joinCondition.getParent(), childValue);
+                }
+                TriplesMap parentTriplesMap = referencingObjectMap.getParentTriplesMap();
+
+                //Create the processor to perform the join
+                RMLProcessorFactory factory = new ConcreteRMLProcessorFactory();
+                QLTerm queryLanguage = parentTriplesMap.getLogicalSource().getQueryLanguage();
+                RMLProcessor processor = factory.create(queryLanguage);
+
+                //Execute the join with candidate s, p
+                processor.execute(dataset, parentTriplesMap, joinMap, subject, predicate);
             }
 
 
@@ -113,7 +141,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
             for (ObjectMap objectMap : objectMaps) {
                 Value object = processObjectMap(objectMap, node);
 
-                dataset.add(subject, predicate, object, (Resource) null);
+                dataset.add(subject, predicate, object);
             }
 
         }

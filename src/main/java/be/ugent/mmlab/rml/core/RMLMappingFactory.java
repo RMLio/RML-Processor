@@ -11,12 +11,12 @@
  */
 package be.ugent.mmlab.rml.core;
 
-import be.ugent.mmlab.model.selector.SelectorIdentifier;
+import be.ugent.mmlab.rml.model.selector.SelectorIdentifier;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.vocabulary.Vocab;
 import be.ugent.mmlab.rml.vocabulary.Vocab.R2RMLTerm;
 import be.ugent.mmlab.rml.vocabulary.Vocab.RMLTerm;
-import be.ugent.mmlab.model.selector.SelectorIdentifierImpl;
+import be.ugent.mmlab.rml.model.selector.SelectorIdentifierImpl;
 import be.ugent.mmlab.rml.model.GraphMap;
 import be.ugent.mmlab.rml.model.JoinCondition;
 import be.ugent.mmlab.rml.model.LogicalSource;
