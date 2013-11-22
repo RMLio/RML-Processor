@@ -4,12 +4,12 @@
  */
 package be.ugent.mmlab.rml.processor;
 
+import be.ugent.mmlab.rml.core.RMLPerformer;
+import be.ugent.mmlab.rml.model.PredicateObjectMap;
+import be.ugent.mmlab.rml.model.SubjectMap;
 import be.ugent.mmlab.rml.model.TriplesMap;
-import java.util.HashMap;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
 import org.openrdf.model.Resource;
-import org.openrdf.model.Statement;
-import org.openrdf.model.URI;
 
 
 
@@ -19,7 +19,8 @@ import org.openrdf.model.URI;
  */
 public interface RMLProcessor {
     
-    public void execute(SesameDataSet dataset, TriplesMap map);
-    public void execute(SesameDataSet dataset, TriplesMap map, HashMap<String, String> conditions, Resource subject, URI predicate);
-
+    public void execute(SesameDataSet dataset, TriplesMap map, RMLPerformer performer);
+    public String extractValueFromNode(Object node, String expression);
+    public Resource processSubjectMap(SesameDataSet dataset, SubjectMap subjectMap, Object node);
+    public void processPredicateObjectMap(SesameDataSet dataset, Resource subject, PredicateObjectMap pom, Object node);
 }

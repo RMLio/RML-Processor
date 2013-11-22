@@ -4,20 +4,17 @@
  */
 package be.ugent.mmlab.rml.processor;
 
+import be.ugent.mmlab.rml.core.RMLPerformer;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import com.jayway.jsonpath.JsonPath;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
-import org.openrdf.model.Resource;
-import org.openrdf.model.Statement;
-import org.openrdf.model.URI;
 
 /**
  *
@@ -25,7 +22,7 @@ import org.openrdf.model.URI;
  */
 public class JSONPathProcessor extends AbstractRMLProcessor {
 
-    public void execute(SesameDataSet dataset, TriplesMap map, HashMap<String, String> conditions, Resource subject, URI predicate) {
+    public void execute(SesameDataSet dataset, TriplesMap map, RMLPerformer performer) {
         InputStream fis = null;
         try {
             String identifier = getIdentifier(map.getLogicalSource());
@@ -33,17 +30,10 @@ public class JSONPathProcessor extends AbstractRMLProcessor {
             //This is a none streaming solution. A streaming parser requires own implementation, possibly based on https://code.google.com/p/json-simple/wiki/DecodingExamples
             JsonPath path = JsonPath.compile(selector);
 
-            final boolean isJoin = !(conditions == null || subject == null || predicate == null);
-
             fis = new FileInputStream(identifier);
             List<Object> nodes = path.read(fis);
             for (Object object : nodes) {
-                if (isJoin) {
-                    processJoin(dataset, map, object, conditions, subject, predicate);
-                } else {
-                    processNode(dataset, map, object);
-                }
-
+                performer.perform(object, dataset, map);
             }
         } catch (FileNotFoundException ex) {
             Logger.getLogger(JSONPathProcessor.class.getName()).log(Level.SEVERE, null, ex);
@@ -58,12 +48,14 @@ public class JSONPathProcessor extends AbstractRMLProcessor {
         }
     }
 
-    @Override
-    protected String extractValueFromNode(Object node, String expression) {
-        return JsonPath.read(node, expression);
-    }
-
-    public void execute(SesameDataSet dataset, TriplesMap map) {
-        execute(dataset, map, null, null, null);
+    public String extractValueFromNode(Object node, String expression) {
+        try {
+            return JsonPath.read(node, expression);
+        } catch (com.jayway.jsonpath.InvalidPathException ex){
+            return null;
+        } catch (Exception ex){
+            System.out.println("");
+            return null;
+        }
     }
 }

@@ -4,6 +4,7 @@
  */
 package be.ugent.mmlab.rml.processor;
 
+import be.ugent.mmlab.rml.core.JoinRMLPerformer;
 import be.ugent.mmlab.rml.core.RMLEngine;
 import be.ugent.mmlab.rml.model.JoinCondition;
 import be.ugent.mmlab.rml.model.LogicalSource;
@@ -43,31 +44,14 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
         return ls.getSelector();
     }
 
-    protected void processNode(SesameDataSet dataset, TriplesMap tm, Object node) {
-        Resource subject = processSubjectMap(dataset, tm.getSubjectMap(), node);
-
-        for (PredicateObjectMap pom : tm.getPredicateObjectMaps()) {
-            processPredicateObjectMap(dataset, subject, pom, node);
-        }
-
-    }
-
-    protected void processJoin(SesameDataSet dataset, TriplesMap tm, Object node, HashMap<String, String> joinMap, Resource subject, URI predicate) {
-        Value object = processSubjectMap(dataset, tm.getSubjectMap(), node);
-
-        for (String expr : joinMap.keySet()) {
-            if (!joinMap.get(expr).equals(extractValueFromNode(node, expr))) {
-                return;
-            }
-        }
-        dataset.add(subject, predicate, object);
-
-    }
-
-    protected Resource processSubjectMap(SesameDataSet dataset, SubjectMap subjectMap, Object node) {
+    public Resource processSubjectMap(SesameDataSet dataset, SubjectMap subjectMap, Object node) {
 
         String value = processTermMap(subjectMap, node);
 
+        if (value == null){
+            return null;
+        }
+        
         Resource subject = new URIImpl(value);
 
         Set<org.openrdf.model.URI> classIRIs = subjectMap.getClassIRIs();
@@ -96,19 +80,23 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                 Set<String> tokens = R2RMLToolkit.extractColumnNamesFromStringTemplate(value);
                 for (String expression : tokens) {
                     String replacement = extractValueFromNode(node, expression);
+                    if (replacement == null){
+                        //if the replacement value is null, the resulting uri would be the template. Return null instead.
+                        return null;
+                    }
                     value = value.replaceAll("\\{" + expression + "\\}", replacement);
                 }
 
                 break;
         }
         if (value == null) {
-            //do something to catch error
+            //Catch error? or are null values propagated to result in a triple not created
         }
 
         return value;
     }
 
-    protected void processPredicateObjectMap(SesameDataSet dataset, Resource subject, PredicateObjectMap pom, Object node) {
+    public void processPredicateObjectMap(SesameDataSet dataset, Resource subject, PredicateObjectMap pom, Object node) {
 
         Set<PredicateMap> predicateMaps = pom.getPredicateMaps();
         for (PredicateMap predicateMap : predicateMaps) {
@@ -133,7 +121,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                 RMLProcessor processor = factory.create(queryLanguage);
 
                 //Execute the join with candidate s, p
-                processor.execute(dataset, parentTriplesMap, joinMap, subject, predicate);
+                processor.execute(dataset, parentTriplesMap, new JoinRMLPerformer(processor, joinMap, subject, predicate));
             }
 
 
@@ -172,6 +160,4 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
 
         return new URIImpl(value);
     }
-
-    protected abstract String extractValueFromNode(Object node, String expression);
 }
