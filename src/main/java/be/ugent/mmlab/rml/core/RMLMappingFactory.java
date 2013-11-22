@@ -6,7 +6,7 @@
  * Factory responsible of R2RML Mapping generation.
  *
  * based on R2RMLMappingFactory in db2triples
- * 
+ *
  ***************************************************************************
  */
 package be.ugent.mmlab.rml.core;
@@ -66,8 +66,7 @@ public abstract class RMLMappingFactory {
     private static ValueFactory vf = new ValueFactoryImpl();
 
     /**
-     * Extract RML Mapping object from a RML file written with Turtle
-     * syntax.
+     * Extract RML Mapping object from a RML file written with Turtle syntax.
      *
      * Important : The R2RML vocabulary also includes the following R2RML
      * classes, which represent various R2RML mapping constructs. Using these
@@ -305,8 +304,10 @@ public abstract class RMLMappingFactory {
         // Extract predicate-object maps
         URI p = r2rmlMappingGraph.URIref(Vocab.R2RML_NAMESPACE
                 + R2RMLTerm.PREDICATE_OBJECT_MAP);
+        
         List<Statement> statements = r2rmlMappingGraph.tuplePattern(
                 triplesMapSubject, p, null);
+        
         Set<PredicateObjectMap> predicateObjectMaps = new HashSet<PredicateObjectMap>();
         try {
             for (Statement statement : statements) {
@@ -342,8 +343,10 @@ public abstract class RMLMappingFactory {
         // Extract predicate maps
         URI p = r2rmlMappingGraph.URIref(Vocab.R2RML_NAMESPACE
                 + R2RMLTerm.PREDICATE_MAP);
+        
         List<Statement> statements = r2rmlMappingGraph.tuplePattern(
                 predicateObject, p, null);
+        
         if (statements.size() < 1) {
             throw new InvalidR2RMLStructureException(
                     "[RMLMappingFactory:extractSubjectMap] "
@@ -542,7 +545,7 @@ public abstract class RMLMappingFactory {
                 R2RMLTerm.DATATYPE);
         String inverseExpression = extractLiteralFromTermMap(r2rmlMappingGraph,
                 object, R2RMLTerm.INVERSE_EXPRESSION);
-        
+
         //MVS: Decide on SelectorIdentifier
         SelectorIdentifier selectorValue = extractSelectorIdentifier(r2rmlMappingGraph, object);
 
@@ -552,19 +555,19 @@ public abstract class RMLMappingFactory {
         log.debug("[RMLMappingFactory:extractObjectMap] Extract object map done.");
         return result;
     }
-    
-    private static SelectorIdentifier extractSelectorIdentifier(SesameDataSet r2rmlMappingGraph, Resource resource) throws InvalidR2RMLStructureException{
+
+    private static SelectorIdentifier extractSelectorIdentifier(SesameDataSet r2rmlMappingGraph, Resource resource) throws InvalidR2RMLStructureException {
         //MVS: look for a selector or column, prefer rr:column
         String columnValueStr = extractLiteralFromTermMap(r2rmlMappingGraph, resource, R2RMLTerm.COLUMN);
         String selectorValueStr = extractLiteralFromTermMap(r2rmlMappingGraph, resource, RMLTerm.SELECTOR);
-        
+
         if (columnValueStr != null && selectorValueStr != null) {
             throw new InvalidR2RMLStructureException(
                     "[RMLMappingFactory:extractSelectorIdentifier] "
                     + resource
                     + " has a selector and column defined.");
         }
-        
+
         //MVS: use the generic SelectorIdentifier to represent rr:column or rml:selector
         if (columnValueStr != null) {
             return SelectorIdentifierImpl.buildFromR2RMLConfigFile(columnValueStr);
@@ -591,7 +594,7 @@ public abstract class RMLMappingFactory {
 
         //MVS: Decide on SelectorIdentifier
         SelectorIdentifier selectorValue = extractSelectorIdentifier(r2rmlMappingGraph, object);
-        
+
         PredicateMap result = new StdPredicateMap(null, constantValue,
                 stringTemplate, inverseExpression, selectorValue, termType);
         log.debug("[RMLMappingFactory:extractPredicateMap] Extract predicate map done.");
@@ -645,7 +648,7 @@ public abstract class RMLMappingFactory {
                 subjectMap, R2RMLTerm.TERM_TYPE);
         String inverseExpression = extractLiteralFromTermMap(r2rmlMappingGraph,
                 subjectMap, R2RMLTerm.INVERSE_EXPRESSION);
-        
+
         //MVS: Decide on SelectorIdentifier
         SelectorIdentifier selectorValue = extractSelectorIdentifier(r2rmlMappingGraph, subjectMap);
 
@@ -698,7 +701,7 @@ public abstract class RMLMappingFactory {
 
         //MVS: Decide on SelectorIdentifier
         SelectorIdentifier selectorValue = extractSelectorIdentifier(r2rmlMappingGraph, graphMap);
-        
+
         URI termType = (URI) extractValueFromTermMap(r2rmlMappingGraph,
                 graphMap, R2RMLTerm.TERM_TYPE);
 
@@ -860,13 +863,13 @@ public abstract class RMLMappingFactory {
         // favor logical table over source
         URI pTable = rmlMappingGraph.URIref(Vocab.R2RML_NAMESPACE
                 + Vocab.R2RMLTerm.LOGICAL_TABLE);
-        
+
         URI pSource = rmlMappingGraph.URIref(Vocab.RML_NAMESPACE
-                    + Vocab.RMLTerm.LOGICAL_SOURCE);
-        
+                + Vocab.RMLTerm.LOGICAL_SOURCE);
+
         List<Statement> sTable = rmlMappingGraph.tuplePattern(
                 triplesMapSubject, pTable, null);
-        
+
         List<Statement> sSource = rmlMappingGraph.tuplePattern(
                 triplesMapSubject, pSource, null);
 
@@ -876,14 +879,14 @@ public abstract class RMLMappingFactory {
                     + triplesMapSubject
                     + " has a source and table defined.");
         }
-        
-        if (!sTable.isEmpty()){
+
+        if (!sTable.isEmpty()) {
             extractLogicalTable();
         }
 
         //TODO: decide between source and table
         List<Statement> statements = sSource;
-        
+
         if (statements.isEmpty()) {
             throw new InvalidR2RMLStructureException(
                     "[RMLMappingFactory:extractLogicalTable] "
@@ -915,17 +918,17 @@ public abstract class RMLMappingFactory {
         // Check SQL base table or view
         URI pName = rmlMappingGraph.URIref(Vocab.RML_NAMESPACE
                 + Vocab.RMLTerm.SOURCE_NAME);
-        
+
         List<Statement> statementsName = rmlMappingGraph.tuplePattern(
                 blankLogicalSource, pName, null);
-        
+
         URI pView = rmlMappingGraph.URIref(Vocab.RML_NAMESPACE
                 + Vocab.RMLTerm.QUERY);
         List<Statement> statementsView = rmlMappingGraph.tuplePattern(
                 blankLogicalSource, pView, null);
-        
+
         LogicalSource logicalSource = null;
-        
+
         if (!statementsName.isEmpty()) {
             if (statementsName.size() > 1) {
                 throw new InvalidR2RMLStructureException(
@@ -937,81 +940,80 @@ public abstract class RMLMappingFactory {
              * MVS: This check is only valid in case of logicalTable/R2RMLView
              */
             /*
-            if (!statementsView.isEmpty()) {
-                throw new InvalidR2RMLStructureException(
-                        "[RMLMappingFactory:extractLogicalTable] "
-                        + triplesMapSubject
-                        + " can't have a logical table and sql query defined"
-                        + " at the same time.");
-            }
-            */
+             if (!statementsView.isEmpty()) {
+             throw new InvalidR2RMLStructureException(
+             "[RMLMappingFactory:extractLogicalTable] "
+             + triplesMapSubject
+             + " can't have a logical table and sql query defined"
+             + " at the same time.");
+             }
+             */
             // Table name defined
 
-            //MVS: DESIGN NEW STRUCTURE FOR THIS
+            //Extract the file identifier
             String file = statementsName.get(0).getObject().stringValue();
-            String query = statementsView.get(0).getObject().stringValue();
-            
+
+            //Extract the query to create the iterator. Some formats have null, like CSV or SQL
+            String query = null;
+            if (!statementsView.isEmpty()) {
+                query = statementsView.get(0).getObject().stringValue();
+            }
+
             //MVS: find a good way to distinct SQL and others
             logicalSource = new StdLogicalSource(query, file, queryLanguage);
 
 
         } else {
             // Logical table defined by R2RML View
-            
             //TODO: adapt support for this
             /*if (statementsView.size() > 1) {
-                throw new InvalidR2RMLStructureException(
-                        "[RMLMappingFactory:extractLogicalTable] "
-                        + triplesMapSubject
-                        + " has too many logical table defined.");
-            }
-            if (statementsView.isEmpty()) {
-                throw new InvalidR2RMLStructureException(
-                        "[RMLMappingFactory:extractLogicalTable] "
-                        + triplesMapSubject
-                        + " has no logical table defined.");
-            }*/
-            
+             throw new InvalidR2RMLStructureException(
+             "[RMLMappingFactory:extractLogicalTable] "
+             + triplesMapSubject
+             + " has too many logical table defined.");
+             }
+             if (statementsView.isEmpty()) {
+             throw new InvalidR2RMLStructureException(
+             "[RMLMappingFactory:extractLogicalTable] "
+             + triplesMapSubject
+             + " has no logical table defined.");
+             }*/
             //TODO: add support for querylanguage version
-            
             /*URI pVersion = rmlMappingGraph
-                    .URIref(Vocab.RML_NAMESPACE
-                    + Vocab.RMLTerm.VERSION);*/
-            
+             .URIref(Vocab.RML_NAMESPACE
+             + Vocab.RMLTerm.VERSION);*/
             //HOW DO R2RMLViews and their versions fit in to the more generic logicalSource???
             // Check SQL versions
-            
             /*URI pVersion = rmlMappingGraph
-                    .URIref(Vocab.R2RML_NAMESPACE
-                    + Vocab.R2RMLTerm.SQL_VERSION);
+             .URIref(Vocab.R2RML_NAMESPACE
+             + Vocab.R2RMLTerm.SQL_VERSION);
             
-            List<Statement> statementsVersion = rmlMappingGraph.tuplePattern(
-                    statementsView.get(0).getSubject(), pVersion, null);
-            String sqlQuery = statementsView.get(0).getObject().stringValue();
-            if (statementsVersion.isEmpty()) {
+             List<Statement> statementsVersion = rmlMappingGraph.tuplePattern(
+             statementsView.get(0).getSubject(), pVersion, null);
+             String sqlQuery = statementsView.get(0).getObject().stringValue();
+             if (statementsVersion.isEmpty()) {
                 
-                //MVS: change this to more generic structure
-                //logicalSource = new StdR2RMLView(sqlQuery);
-                logicalSource = new StdLogicalSource(sqlQuery);
-            }*/
-            
+             //MVS: change this to more generic structure
+             //logicalSource = new StdR2RMLView(sqlQuery);
+             logicalSource = new StdLogicalSource(sqlQuery);
+             }*/
             /*Set<R2RMLView.SQLVersion> versions = new HashSet<R2RMLView.SQLVersion>();
-            for (Statement statementVersion : statementsVersion) {
+             for (Statement statementVersion : statementsVersion) {
 
-                R2RMLView.SQLVersion sqlVersion = R2RMLView.SQLVersion
-                        .getSQLVersion(statementVersion.getObject()
-                        .stringValue());
-                versions.add(sqlVersion);
-            }
-            if (versions.isEmpty()) {
-                // SQL 2008 by default
-                if (log.isDebugEnabled()) {
-                    log.debug("[RMLMappingFactory:extractLogicalTable] "
-                            + triplesMapSubject
-                            + " has no SQL version defined : SQL 2008 by default");
-                }
-            }
-            logicalSource = new StdR2RMLView(sqlQuery, versions);*/
+             R2RMLView.SQLVersion sqlVersion = R2RMLView.SQLVersion
+             .getSQLVersion(statementVersion.getObject()
+             .stringValue());
+             versions.add(sqlVersion);
+             }
+             if (versions.isEmpty()) {
+             // SQL 2008 by default
+             if (log.isDebugEnabled()) {
+             log.debug("[RMLMappingFactory:extractLogicalTable] "
+             + triplesMapSubject
+             + " has no SQL version defined : SQL 2008 by default");
+             }
+             }
+             logicalSource = new StdR2RMLView(sqlQuery, versions);*/
         }
         log.debug("[RMLMappingFactory:extractLogicalTable] Logical table extracted : "
                 + logicalSource);

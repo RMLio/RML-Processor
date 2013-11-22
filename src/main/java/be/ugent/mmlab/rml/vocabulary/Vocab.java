@@ -60,7 +60,10 @@ public class Vocab {
     public enum QLTerm {
 
         XPATH_CLASS("XPath"),
-        SQL_CLASS("SQL");
+        SQL_CLASS("SQL"),
+        JSONPATH_CLASS("JSONPath"),
+        CSV_CLASS("CSV");
+        
         private String displayName;
 
         private QLTerm(String displayName) {

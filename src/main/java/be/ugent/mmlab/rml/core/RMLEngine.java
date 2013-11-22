@@ -95,7 +95,7 @@ public class RMLEngine {
             
             RMLProcessor processor = factory.create(triplesMap.getLogicalSource().getQueryLanguage());
             
-            processor.execute(sesameDataSet, triplesMap);
+            processor.execute(sesameDataSet, triplesMap, new NodeRMLPerformer(processor));
 
             log.info("[R2RMLEngine:generateRDFTriples] "
                     + (sesameDataSet.getSize() - delta)

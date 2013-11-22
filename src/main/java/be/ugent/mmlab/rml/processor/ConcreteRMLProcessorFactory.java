@@ -16,6 +16,10 @@ public class ConcreteRMLProcessorFactory implements RMLProcessorFactory{
         switch (term){
             case XPATH_CLASS:
                 return new XPathProcessor();
+            case CSV_CLASS:
+                return new CSVProcessor();
+            case JSONPATH_CLASS:
+                return new JSONPathProcessor();
         }
         return null;
     }
