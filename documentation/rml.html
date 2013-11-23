@@ -18,8 +18,32 @@
 	    <title>RML: A generic Mapping Language Schema for RDF</title>
 	    <link type="text/css" rel="stylesheet" href="http://www.w3.org/StyleSheets/TR/base.css"/>
 	    <style type="text/css">
-	        .issue { background-color: #fdd; border: 1px solid #800; margin: 1em 0em; padding: 1em; page-break-inside: avoid ; font-style: italic; }
-	        .issue a.tracker { font-style: normal; font-weight: bold; }
+	    	body {
+	          padding: 2em 1em 2em 70px;
+	          margin: 0;
+	          font-family: sans-serif;
+	          color: black;
+	          background: white;
+	          background-position: top left;
+	          background-attachment: fixed;
+	          background-repeat: no-repeat;
+	        }
+
+	        h1, h2, h3, h4, h5, h6 { text-align: left }
+	        /* background should be transparent, but WebTV has a bug */
+	        h1, h2, h3 { color: #005A9C; background: white }
+	        h1 { font: 170% sans-serif }
+	        h2 { font: 140% sans-serif }
+	        h3 { font: 120% sans-serif }
+	        h4 { font: bold 100% sans-serif }
+	        h5 { font: italic 100% sans-serif }
+	        h6 { font: small-caps 100% sans-serif }
+
+	        dfn { color: navy; font-weight: bold; }
+	        pre { margin-left: 0; padding: 0 2em; }
+		        .issue { background-color: #fdd; border: 1px solid #800; margin: 1em 0em; padding: 1em; page-break-inside: avoid ; font-style: italic; }
+		        .issue a.tracker { font-style: normal; font-weight: bold; 
+		        }
 	        th { text-align: left; }
 	        table.term-index th code { font-weight: normal; }
 	        table.term-index th, table.term-index td { padding: 0.1em 0.5em; }
@@ -27,12 +51,12 @@
   	</head>
   	<body about="[rml:]">
 	    <div class="head">
-	    	<h1 property="dcterms:title">RML: A generic Mapping Language Schema for RDF</h1>
+	    	<h1 property="dcterms:title">RML: A generic Mapping Language for RDF</h1>
 	    </div>
 
 		<h2>Purpose</h2>
 		<p>
-			This document defines an RDF Schema, which can be used to specify mappings of data in structured formats to RDF. RML is defined as an extension of R2RML.
+			This document defines a mapping language, which can be used to specify mappings of data in structured formats to RDF. RML is defined as an extension of <a href="http://www.w3.org/TR/r2rml">R2RML</a>.
 		</p>
 
 		<h2>Usage</h2>
@@ -45,7 +69,7 @@
 	
 		<h2>Comments</h2>
 		<p>
-			This wok is a first prototype of RML.
+			This wok is a first definition of RML.
 		</p>
 
     	<h2 id="index">Index of RML Vocabulary Terms</h2>
@@ -139,7 +163,7 @@
 	        	Represents a query Language. 
 	        	<br/>
 	        	In this phase, there is a limited list of supported languages (
-	        	<span rel="owl:oneOf" href="http://www.w3.org/ns/r2rml#SQL2008">SQL 2008</span>, 
+	        	<span rel="owl:oneOf" href="http://www.w3.org/ns/r2rml#SQL2008">SQL2008</span>, 
 	        	<span rel="owl:oneOf"href="http://mmlab.be/ql#XQuery">XQuery</span> and 
 	        	<span rel="owl:oneOf" href="http://mmlab.be/ql#JSONPath">JSONPath</span>). RML cab be extended to support other languages, too.
 	        </p>
@@ -206,9 +230,10 @@
 		<h2>Properties</h2>
 			<ul>
   				<li><a href="#logicalSource">logical Source</a></li>
+  				<li><a href="#iterator">iterator</a></li>
   				<li><a href="#query">query</a></li>
 	  			<li><a href="#queryLanguage">query Language</a></li>
-	  			<li><a href="#selector">selector</a></li>
+	  			<li><a href="#reference">reference</a></li>
 	  			<li><a href="#sourceName">source Name</a></li>
 
 	  		</ul>
@@ -286,29 +311,66 @@
 
 	<h2>Data Properties</h2>
 
-	<!-- selector -->
+	<!-- iterator -->
 
     <div class="details properties">
-		<div class="term" id="" about="http://mmlab/ns/rml#selector">
+		<div class="term" about="http://mmlab/ns/rml#iterator">
 			<h3> 
-				<a id="selector"></a>
-				<span>selector</span> (Property)
-				<span rel="rdf:type" href="http://www.w3.org/2002/07/owl#ObjectProperty"></span>
-				<span class="menu"></span>   
+				<a id="iterator"></a>
+				<span>iterator</span> (Property)
+				<span rel="rdf:type" href="http://www.w3.org/2002/07/owl#ObjectProperty"></span>   
 			</h3>
-			<p class="description">A valid expression that selects values from the source file. The selector should confront to the syntax rules of the logicalSource’s type.</p>
+			<p class="description">It refers to the logical iteration over the data. This can be a pointer to any set of repeatable references of the mapped source.</p>
 
 			<div> 
 	  			<h4>Definition</h4> 
-				<p>The <strong>URI</strong> of this property is <span><code>http://mmlab.be/ns/rml#selector</code></span></p>
-				<p>This property is an <strong>object</strong> property. </p>
+				<p>The <strong>URI</strong> of this property is <span><code>http://mmlab.be/ns/rml#iterator</code></span></p>
+				<p>This property is a <strong>data</strong> property. </p>
+
+	        	<table>
+	          		<tr>
+	      				<td>The domain of this property is</td>
+	      				<td>
+	      					<span rel="rdfs:domain" href="http://www.w3.org/ns/r2rml#TriplesMap">          
+	      						<a href="#TermMap">Term Map</a>   
+	      					</span>
+	      				</td>
+	      			</tr>
+	      			<tr>
+	      				<td>The range of this property is </td>
+	      				<td>
+	      					<span rel="rdfs:range" href="xsd:string"> string.</a>   
+	      					</span>
+	      				</td>
+	      			</tr>
+				</table>
+       		</div>
+		</div>   
+	</div>
+
+	<!-- reference -->
+
+    <div class="details properties">
+		<div class="term" id="" about="http://mmlab/ns/rml#reference">
+			<h3> 
+				<a id="reference"></a>
+				<span>reference</span> (Property)
+				<span rel="rdf:type" href="http://www.w3.org/2002/07/owl#ObjectProperty"></span>
+				<span class="menu"></span>   
+			</h3>
+			<p class="description">A valid expression that refers to the values from the source file. The reference should confront to the syntax rules of the logicalSource’s type.</p>
+
+			<div> 
+	  			<h4>Definition</h4> 
+				<p>The <strong>URI</strong> of this property is <span><code>http://mmlab.be/ns/rml#reference</code></span></p>
+				<p>This property is a <strong>data</strong> property. </p>
 
 	        	<table>
 	          		<tr>
 	      				<td>The domain of this property is </td>
 	      				<td>
-	      					<span rel="rdfs:domain" href="http://www.w3.org/ns/r2rml#LogicalSource">          
-	      						<a href="#LogicalSource">Logical Source</a>   
+	      					<span rel="rdfs:domain" href="http://www.w3.org/ns/r2rml#TermMap">          
+	      						<a href="#TermMap">Term Map</a>   
 	      					</span>
 	      				</td>
 	      			</tr>
@@ -568,7 +630,7 @@
 			<div>
 				<div> 
 			  		<h4>Extension</h4> 
-					<p class="description">The <a href="http://www.w3.org/ns/r2rml#column">column</a> property became sub-property of <a href="#selector">selector</a>.</p>
+					<p class="description">The <a href="http://www.w3.org/ns/r2rml#column">column</a> property became sub-property of <a href="#reference">reference</a>.</p>
 				   </div>
 			</div>
 		</div>   
@@ -602,7 +664,7 @@
 		
 			<div> 
 	  			<h4>Extension</h4> 
-				<p>The domain of the <a href="#object">object</a> property is extended to any <a href=#selector>selector</a>.</p>
+				<p>The domain of the <a href="#object">object</a> property is extended to any <a href=#reference>reference</a>.</p>
 		    </div>	
 		</div>   
 	</div>
@@ -619,7 +681,7 @@
 		
 			<div class="ti"> 
 	  			<h4>Extension</h4> 
-				<p>The domain of the <a href="#predicate">predicate</a> property is extended to any <a href=#selector>selector</a>.</p>
+				<p>The domain of the <a href="#predicate">predicate</a> property is extended to any <a href=#reference>reference</a>.</p>
 		    </div>	
 		</div>   
 	</div>
@@ -673,7 +735,7 @@
 
 			<div> 
   				<h4>Extension</h4> 
-				<p>The domain of the <a href="#subject">subject</a> property is extended to any <a href=#selector>selector</a>. </p>
+				<p>The domain of the <a href="#subject">subject</a> property is extended to any <a href=#reference>reference</a>. </p>
 			</div>
 		</div>
 	</div>   
