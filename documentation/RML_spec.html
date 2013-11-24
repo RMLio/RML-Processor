@@ -111,24 +111,20 @@
     <h2><a name="contents" id="contents"></a>Table of Contents</h2>
 
 <ul class="toc">
-  <li><a href="#introduction">1 Introduction</a>
+  <li><a href="#introduction">Introduction</a>
   <ul>
-    <li><a href="#conventions">1.1 Document Conventions</a></li>
+    <li><a href="#conventions">Document Conventions</a></li>
   </ul></li>
-  <li><a href="#overview">2 R2RML Overview and Example (Informative)</a>
-  <li><a href="#terminology">A. RDF Terminology (Informative)</a></li>
-  <li><a href="#index">B. Index of R2RML Vocabulary Terms (Informative)</a>
+  <li><a href="#overview">RML Overview and Example (Informative)</a>
+  <li><a href="#terminology">RDF Terminology (Informative)</a></li>
+  <li><a href="#index">Index of RML Vocabulary Terms (Informative)</a>
   <ul>
-    <li><a href="#class-index">B.1 Classes</a></li>
-    <li><a href="#property-index">B.2 Properties</a></li>
-    <li><a href="#other-index">B.3 Other Terms</a></li>
+    <li><a href="#class-index">Classes</a></li>
+    <li><a href="#property-index">Properties</a></li>
+    <li><a href="#other-index">Other Terms</a></li>
   </ul></li>
-  <li><a href="#references">C. References</a>
-  <ul>
-    <li><a href="#normative-refs">C.1 Normative References</a></li>
-    <li><a href="#non-normative-refs">C.2 Other References</a></li>
-  </ul></li>
-  <li><a href="#acknowledgements">D. Acknowledgements (Informative)</a></li>
+  <li><a href="#references">References</a></li>
+  <li><a href="#acknowledgements"Acknowledgements (Informative)</a></li>
 </ul>
 
 </div>
@@ -136,9 +132,9 @@
   <hr />
 
   <div class="body">
-    <h2><a name="introduction" id="introduction"></a>1 Introduction</h2>
+    <h2><a name="introduction" id="introduction"></a>Introduction</h2>
 
-    <p>This specification describes RML, a language for expressing customized mappings
+    <p>This document describes RML, a language for expressing customized mappings
     from data in structured formats (databases and CSV, TSV, XML and JSON files) to RDF datasets. 
     Such mappings describe how existing data can be represented using the RDF data model.</p>
 
@@ -146,14 +142,14 @@
       <a class="norm" href="http://www.w3.org/TR/r2rml/">R2RML</a></cite> [<cite><a href="#R2RML">R2RML</a></cite>].
     R2RML is defined to express customized mappings only from relational databases to RDF datasets. </p>
 
-    <p>An RML mapping is not tailored to a specific database schema, as an R2RML mapping, but can be defined for data in any other data format. 
+    <p>An RML mapping is not tailored to a specific database schema as an R2RML mapping, but can be defined for data in any other structure format (CSV, TSV, XML, JSON). 
       The input to an RML mapping can be any source file - currently in a structured format or a database. 
       The output is an RDF dataset that uses predicates and types from the target vocabulary. </p>
 
-    <p>RML follow the same syntax as R2RML; therefore they are expressed as RDF graphs and written down in
+    <p>RML follows the same syntax as R2RML; therefore they are expressed as RDF graphs and written down in
     <cite><a class="norm" href="http://www.w3.org/TR/turtle/">Turtle syntax</a></cite> [<cite><a href="#TURTLE">TURTLE</a></cite>].</p>
 
-    <h3 id="vocabulary">4.1 Mapping Graphs and the R2RML Vocabulary</h3>
+    <h3 id="vocabulary">Mapping Graphs and the RML Vocabulary</h3>
     <p>The RML vocabulary namespace is <code>http://mmlab.be/ns/rml#</code> 
       <pre><strong><a href="http://www.w3.org/ns/r2rml#">http://mmlab.be/ns/rml#</a></strong></pre>
     </p>
@@ -162,7 +158,7 @@
     <p>An RML mapping defines a mapping from any data in a structured source format to RDF. 
       It consists of one or more triples maps</a>.</p>
 
-    <p>The input to an R2RML mapping is called source file.</p>
+    <p>The input to an RML mapping is called source file.</p>
 
     <p>The RML vocabulary consists of the RML specific defined classes but also includes all the R2RML classes</p>
 
@@ -277,7 +273,7 @@
     <ol>
       <li>A base source (A/N any input file or base table),</li>
       <li>a view (A/N in case of databases), or</li>
-      <li>a valid query (called an RML view).</li>
+      <li>a view resulted from a valid query (called an RML view).</li>
     </ol>
 
     <h3 id="example-input-database">Example Input</h3>
@@ -485,7 +481,9 @@
     <h3 id="example-simple">Example: Mapping a CSV file</h3>
 
     <p>The following RML mapping document produces the desired triples from the corresponding CSV file. 
+      <br/>
       RML mappings for CSV files follow exactly the same syntax as in R2RML to refer to the CSV's records.
+      <br/>
       It is considered a correspondence of CSV records, delimited by a line break (CRLF), to databases' rows.</p>
 
       <table class="ex-data" summary="EMP table: sample data" id="ex_EMP">
@@ -509,7 +507,8 @@
         &lt;#AirportMapping&gt;
           rml:logicalSource 
             [
-              rml:sourceName "http://www.example.com/Airport.csv"
+              rml:sourceName "http://www.example.com/Airport.csv" ;
+              rml:iterator "row"
             ];
           rr:subjectMap 
             [
@@ -555,10 +554,10 @@
 
     <h3 id="example-r2rml-view">Example: Mapping an XML file</h3>
 
-    <p>The following RML mapping document produces the desired triples from the corresponding XML file. 
-      RML mappings for XML files follow the same syntax as in R2RML.
-      The references to the XML elements follow the syntax of the query language specified at the logical source.
-      A/N XPath is the preferred/supported query language for XML files. 
+    <p>The following RML mapping document produces the desired triples from the corresponding XML file. <br/>
+      RML mappings for XML files follow the same syntax as in R2RML. <br/>
+      The references to the XML elements follow the syntax of the query language specified at the logical source. <br/>
+      A/N XPath is the supported/preferred/default query language for XML files. 
     </p>
 
     <table class="ex-data">
@@ -596,7 +595,7 @@
           rml:logicalSource 
             [
               rml:sourceName "http://www.example.com/Transport.xml" ;
-              rml:query "transport/bus";
+              rml:iterator "/transport/bus";
               rml:language ql:XPath;
             ];
           rr:subjectMap 
@@ -638,9 +637,9 @@
 
     <h3 id="example-r2rml-view">Example: Mapping a JSON file</h3>
 
-    <p>The following RML mapping document produces the desired triples from the corresponding JSON file. 
-      RML mappings for JSON files follow the same syntax as in R2RML.
-      The references to the JSON objects follow the syntax of the query language specified at the logical source.
+    <p>The following RML mapping document produces the desired triples from the corresponding JSON file. <br/>
+      RML mappings for JSON files follow the same syntax as in R2RML. <br/>
+      The references to the JSON objects follow the syntax of the query language specified at the logical source. <br/>
       A/N JSONPath is the preferred/supported query language for JSON files. 
     </p>
 
@@ -681,7 +680,7 @@
           rml:logicalSource [
             rml:sourceName "http://www.example.com/files/Venue.json";
             rml:queryLanguage ql:JSONPath;
-            rml:query "$"
+            rml:iterator "$"
           ];
           rr:subjectMap [
             rr:template "http://loc.example.com/city/{$.location.city}";
@@ -959,49 +958,79 @@
       <li>an RML View, <code>rml:RMLView</code></li>
     </ul>
 
-    <p>A logical source defines which source file is mapped. 
-      At least the source Name, <code>rml:sourceName</code>, of the source file should be defined (A/N we should agree on this). 
+    <h3>Base Sources (<code>rml:sourceName</code>, <code>rml:iterator</code>, <code>rml:queryLanguage</code>)</h3>
+
+    <p>A base source is a logical source pointing to a file or a database that contains the data to be mapped. <br/>
+      At least the source Name, <code>rml:sourceName</code>, of the source file and its iterator, <code>rml:iterator</code>, should be defined. 
       <br/>
-      A complete logical source definition consist of:
+      A base source is represented by a resource that has:
       <ul>
-        <li>the source Name, <code>rml:sourceName</code>,</li> 
-        <li>the query language, <code>rml:queryLanguage</code>,</li> 
-        <li>and the query <code>rml:query</code>.</li>
+        <li>exactly one source Name, <code>rml:sourceName</code> property,</li> 
+        <li>exactly one iterator over the file <code>rml:iterator</code>.</li>
+        <li>and zero or one query language property, <code>rml:queryLanguage</code>.</li> 
       </ul>
+    </p>
+    <p>
       The source name, <code>rml:sourceName</code>, locates the source file. <br/>
-      The query language,<code>rml:queryLanguage</code>, defines the query language used to refer to the elements of the source file (by default SQL2008 for databases, XPath for XML and JSONPath for JSON files).<br/>
-      The query, <code>rml:query</code>, defines the <i>"iterator"</i> in the case of XML and JSON source files. 
-      While XML and JSON files need both the query and the query language, <code>rml:queryLanguage</code>, to be defined, CSV and TSV files and databases do not (A/N this should still be decided).
+      The iterator, <code>rml:iterator</code>, defines the iteration loop used to map the data of the file or the database. <br/>
+      The query language, <code>rml:queryLanguage</code>, defines the language that the iterator and the rest references to the source's data should be defined at.
     </p>
-    <p>A selector <code>rml:selector</code> is used to refer to
+
+     <p>
+      The logical source definition requires:
       <ul>
-        <li>a column in case of databases,</li>
-        <li>a record in case of CSV files,</li> 
-        <li>an element in case of XML documents,</li>
-        <li>an object in case of a JSON file. </li>
-      </ul>
-      A selector must be a valid identifier, considering the query language (<code>rnk:queryLanguage</code>) specified. 
-    </p>
-
-    <h3>Base Sources and Views (<code>rml:sourceName</code>, <code>rml:query</code>, <code>rml:queryLanguage</code>)</h3>
-
-    <p>A base source is a logical source pointing to a file or a database that contains the data to be mapped. 
-      <!-- As an SQL source or view is a logical table containing SQL data from a base table or view in the input database. -->
-      A base source or view is represented by a resource that has 
-        <ul>
-          <li>exactly one source Name<code>rml:sourceName</code> property and</li> 
-          <li>zero or one <code>rml:query</code> and <code>rml:queryLanguage</code> properties.</li>
-        </ul>
-      <ul> (A/N make decision over the followings)
-        <li>In the case of databases, the logical source definition requires the <code>rml:sourceName</code> and the <code>rml:queryLanguage</code> to be defined.</li>
-        <li>In the case of CSV files, the logical source definition requires only the <code>rml:sourceName</code> to be defined.</li>
-        <li>In the case of XML and JSON files, the logical source definition requires all three: the <code>rml:sourceName</code>, <code>rml:query</code> and the <code>rml:queryLanguage</code> to be defined.</li>
+        <li>the <code>rml:sourceName</code> and the <code>rml:queryLanguage</code> to be defined and optionally the <code>rml:iterator</code>, in the case of databases.</li>
+        <li>the logical source definition requires only the <code>rml:sourceName</code> and, optionally, the <code>rml:iterator</code> to be defined, in the case of CSV files.</li>
+        <li>the logical source definition requires all three: the <code>rml:sourceName</code>, the <code>rml:iterator</code> and the <code>rml:queryLanguage</code> properties to be defined, in the case of XML and JSON files.</li>
       </ul>
     </p>
 
     <p>
-      The value of <code>rr:sourceName</code> specifies the file (A/N or the view name of the base table or view).
+      The value of the source Name, <code>rr:sourceName</code>, specifies the file or the database to be mapped.<br/>
       Its value can be either a string (A/N implicit reference to the file) or a valid URI of an existing file.
+    </p>
+
+    <p>
+      As default iterator is considered the row. 
+      <ul>
+        <li>In the case of databases, CSV ot TSV source files, the value of the <code>rml:iterator</code>, if specified, is "row". </li>
+        <li>In the case of XML and JSON source files, it is a valid reference to an element or an object respectively considering the query language specified. </li>
+      </ul>
+    </p>
+    <p>
+      The query language,<code>rml:queryLanguage</code>, defines the query language used to refer to the elements of the source file (by default SQL2008 for databases, XPath for XML and JSONPath for JSON files). The query language must be specified in the case of databases and XML and JSON files.
+    </p>
+
+    <h4>Examples</h4>
+
+    <p>The following example shows a logical source specified for a CSV file.</p>
+      <pre class="ex-mapping">
+        [] rml:logicalSource 
+            [
+              rml:sourceName "http://www.example.com/Airport.csv"
+              rml:iterator "row"
+            ].
+        </pre>
+    </p>
+    <p>The following example shows a logical source specified for an XML file.</p>
+      <pre class="ex-mapping">
+        [] rml:logicalSource 
+          [
+            rml:sourceName "http://www.example.com/Transport.xml" ;
+            rml:queryLanguage ql:XPath;
+            rml:iterator "/transport/bus";
+          ].
+      </pre>
+    </p>
+    <p>The following example shows a logical source specified for a JSON file.</p>
+      <pre class="ex-mapping">
+        [] rml:logicalSource 
+          [
+            rml:sourceName "http://www.example.com/files/Venue.json";
+            rml:queryLanguage ql:JSONPath;
+            rml:iterator "$.city"
+          ].
+      </pre>
     </p>
 
     <!-- <p>A <dfn id="">schema-qualified name</dfn>
@@ -1022,37 +1051,7 @@
     replaced with the
     <a href="#dfn-table-or-view-name">table or view name</a>.</p> -->
 
-    <p>The following example shows a logical source specified for a CSV file.</p>
-      <pre class="ex-mapping">
-        [] rml:logicalSource 
-            [
-              rml:sourceName "http://www.example.com/Airport.csv"
-            ].
-        </pre>
-    </p>
-    <p>The following example shows a logical source specified for an XML file.</p>
-      <pre class="ex-mapping">
-        [] rml:logicalSource 
-          [
-            rml:sourceName "http://www.example.com/Transport.xml" ;
-            rml:query "transport/bus";
-            rml:language ql:XPath;
-          ].
-      </pre>
-    </p>
-    <p>The following example shows a logical source specified for a JSON file.</p>
-      <pre class="ex-mapping">
-        [] rml:logicalSource 
-          [
-            rml:sourceName "http://www.example.com/files/Venue.json";
-            rml:queryLanguage ql:JSONPath;
-            rml:query "$.city"
-          ].
-      </pre>
-    </p>
-
-
-    <h3>RML Views</h3>
+    <h3>RML Views (<code>rml:sourceName</code>, <code>rml:query</code>, <code>rml:queryLanguage</code>)</h3>
 
     <p>An RML view is a <a href="#logical-source">logical source</a> 
       whose contents are the result of executing a query against the logical source specified. 
@@ -1092,6 +1091,18 @@
         <li>a valid <i>query-like</i> definition that facilitates the iteration over the specified file and it is used with an <code>rml:logicalSource</code> definition</li>
       </ul>
     </p>
+
+    <h3 id="reference">Reference</h3>
+    <p>A reference <code>rml:reference</code> is used to refer to
+      <ul>
+        <li>a column in case of databases,</li>
+        <li>a record in case of CSV files,</li> 
+        <li>an element in case of XML documents,</li>
+        <li>an object in case of a JSON file. </li>
+      </ul>
+      A reference must be a valid identifier, considering the query language (<code>rml:queryLanguage</code>) specified. 
+    </p>
+
 
     <h2 id="triples-map">Mapping Logical Sources to RDF with Triples Maps</h2>
 
