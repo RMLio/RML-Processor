@@ -1058,7 +1058,7 @@
       It is represented by a resource that has 
       <ul>
         <li>exactly one <code>rml:queryLanguage</code> property, 
-          whose value is the URI (A/N or a string) of the query language specified.
+          whose value is the URI of the query language specified.
         <li>one <code>rml:query</code> property, 
           whose value is a literal with a lexical form that is a valid query considering the query language specified.
         </li>
@@ -1078,12 +1078,16 @@
     achieve the same effect without requiring changes to the
     input database.</p> -->
 
-    <p class="note">
-      An RML view is used when combinations or extracts of logical sources need to be mapped.. (A/N argue more on this)
+    <p>
+      An RML view is used when 
+      <ul>(A/N argue more on this)
+        <li>combinations or extracts of logical sources need to be mapped.</li>
+        <li>the values of the referred data needs to be modified.</li> 
+      </ul>
     </p>
 
     <p>A query <code>rml:query</code> is a string with a lexical form that is a valid query considering the query language specified.
-    (A/N) Argue more regarding possible limitations..</p>
+    (A/N Argue more regarding possible limitations..)</p>
 
     <p>A query <code>rml:query</code>, can serve one of the following scopes: 
       <ul>(A/N needs better way to express it..)
@@ -1092,11 +1096,14 @@
       </ul>
     </p>
 
+    <h4>Examples</h4>
+    <p>(A/N Provide examples)</p>
+
     <h3 id="reference">Reference</h3>
     <p>A reference <code>rml:reference</code> is used to refer to
       <ul>
         <li>a column in case of databases,</li>
-        <li>a record in case of CSV files,</li> 
+        <li>a record in case of CSV or TSV files,</li> 
         <li>an element in case of XML documents,</li>
         <li>an object in case of a JSON file. </li>
       </ul>
@@ -1109,7 +1116,7 @@
     <p>A triples map specifies a rule for translating 
       <ul>
         <li>each row of a database, </li> 
-        <li>each record of a CSV file, </li>
+        <li>each record of a CSV or a TSV file, </li>
         <li>each element of an XML file, </li>
         <li>each object of a JSON file, </li>
       </ul>
@@ -1118,7 +1125,7 @@
 
     <!-- <p>The RDF triples generated from one row in the logical table all share the same subject.</p> -->
 
-    <p>A triples map in RML is defined as a triples map in RML.<br/>
+    <p>A triples map in RML is defined as a triples map in R2RML.<br/>
        A triples map is represented by a resource that references the following other resources:</p>
 
     <ul>
