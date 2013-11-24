@@ -733,17 +733,22 @@
       to the <code>&lt;#AirportMapping&gt;</code>. This one uses the other triples map,
       <code>&lt;#VenueMapping&gt;</code>, as a parent triples map:</p>
 
-      <pre class="ex-mapping">&lt;#AirportMapping&gt;
-          rr:predicateObjectMap [
-              rr:predicate ex:located;
-              rr:objectMap [
-                  rr:parentTriplesMap &lt;#VenueMapping&gt;;
-                  rr:joinCondition [
-                      rr:child "DEPTNO";
-                      rr:parent "DEPTNO";
-                  ];
-              ];
-          ].</pre>
+      <pre class="ex-mapping">
+&lt;#AirportMapping&gt;
+  rr:predicateObjectMap 
+  [
+    rr:predicate ex:located;
+    rr:objectMap 
+    [
+      rr:parentTriplesMap &lt;#VenueMapping&gt;;
+        rr:joinCondition 
+        [
+          rr:child "DEPTNO";
+          rr:parent "DEPTNO";
+        ];
+    ];
+  ].
+      </pre>
 
       <p>This performs a union between the CSV file and the JSON file. The objects will be generated from
       the subject map of the parent triples map, yielding the desired triple:</p>
@@ -787,8 +792,8 @@
         The logical source definition requires:
         <ul>
           <li>the <code>rml:sourceName</code> and the <code>rml:queryLanguage</code> to be defined and optionally the <code>rml:iterator</code>, in the case of databases.</li>
-          <li>the logical source definition requires only the <code>rml:sourceName</code> and, optionally, the <code>rml:iterator</code> to be defined, in the case of CSV files.</li>
-          <li>the logical source definition requires all three: the <code>rml:sourceName</code>, the <code>rml:iterator</code> and the <code>rml:queryLanguage</code> properties to be defined, in the case of XML and JSON files.</li>
+          <li>only the <code>rml:sourceName</code> and, optionally, the <code>rml:iterator</code> to be defined, in the case of CSV files.</li>
+          <li>all three: the <code>rml:sourceName</code>, the <code>rml:iterator</code> and the <code>rml:queryLanguage</code> properties to be defined, in the case of XML and JSON files.</li>
         </ul>
       </p>
 
@@ -800,7 +805,7 @@
       <p>
         As default iterator is considered the row. 
         <ul>
-          <li>In the case of databases, CSV ot TSV source files, the value of the <code>rml:iterator</code>, if specified, is "row". </li>
+          <li>In the case of databases, CSV or TSV source files, the value of the <code>rml:iterator</code>, if specified, is "row". </li>
           <li>In the case of XML and JSON source files, it is a valid reference to an element or an object respectively considering the query language specified. </li>
         </ul>
       </p>
@@ -808,116 +813,7 @@
         The query language,<code>rml:queryLanguage</code>, defines the query language used to refer to the elements of the source file (by default SQL2008 for databases, XPath for XML and JSONPath for JSON files). The query language must be specified in the case of databases and XML and JSON files.
       </p>
 
-      <h4>Examples</h4>
-
-      <p>The following example shows a logical source specified for a CSV file.</p>
-        <pre class="ex-mapping">
-          [] rml:logicalSource 
-              [
-                rml:sourceName "http://www.example.com/Airport.csv" ;
-                rml:iterator "row"
-              ].
-          </pre>
-      </p>
-      <p>The following example shows a logical source specified for an XML file.</p>
-        <pre class="ex-mapping">
-          [] rml:logicalSource 
-            [
-              rml:sourceName "http://www.example.com/Transport.xml" ;
-              rml:queryLanguage ql:XPath;
-              rml:iterator "/transport/bus";
-            ].
-        </pre>
-      </p>
-      <p>The following example shows a logical source specified for a JSON file.</p>
-        <pre class="ex-mapping">
-          [] rml:logicalSource 
-            [
-              rml:sourceName "http://www.example.com/files/Venue.json";
-              rml:queryLanguage ql:JSONPath;
-              rml:iterator "$.city"
-            ].
-        </pre>
-      </p>
-
-      <!-- <p>A <dfn id="">schema-qualified name</dfn>
-      is a sequence of one, two or three valid
-      <a href="#dfn-sql-identifier">SQL identifiers</a>, separated
-      by the dot character (“<code>.</code>”). The three identifiers
-      name, respectively, a catalog, a schema, and a table or view.
-      If no catalog or schema is specified, then the
-      <a href="#dfn-default-catalog">default catalog</a> and
-      <a href="#dfn-default-schema">default schema</a> of the
-      <a href="#dfn-sql-connection">SQL connection</a> are assumed.</p>
-
-      <p>The <a href="#dfn-effective-sql-query">effective SQL query</a>
-      of a <a href="#dfn-sql-base-table-or-view">SQL base table or view</a> is:</p> 
-
-      <pre>SELECT * FROM <em>{table}</em></pre>
-      <p>with <code><em>{table}</em></code>
-      replaced with the
-      <a href="#dfn-table-or-view-name">table or view name</a>.</p> -->
-
-      <h3>1.2 RML Views (<code>rml:sourceName</code>, <code>rml:query</code>, <code>rml:queryLanguage</code>)</h3>
-
-      <p>An RML view is a <a href="#logical-source">logical source</a> 
-        whose contents are the result of executing a query against the logical source specified. 
-        It is represented by a resource that has 
-        <ul>
-          <li>exactly one <code>rml:queryLanguage</code> property, 
-            whose value is the URI of the query language specified.
-          <li>one <code>rml:query</code> property, 
-            whose value is a literal with a lexical form that is a valid query considering the query language specified.
-          </li>
-        </ul>
-      </p>
-
-      <!-- <p class="note">
-      R2RML mappings sometimes require data transformation, computation,
-      or filtering before
-      generating triples from the database. This can be achieved by defining
-      a SQL view in the <a href="#dfn-input-database">input database</a>
-      and referring to it with
-      <a href="#dfn-sql-base-table-or-view"><code>rr:tableName</code></a>.
-      However, this approach
-      may sometimes not be practical for lack of database privileges or other
-      reasons. <a href="#dfn-r2rml-view">R2RML views</a>
-      achieve the same effect without requiring changes to the
-      input database.</p> -->
-
-      <p>
-        An RML view is used when 
-        <ul>(A/N argue more on this)
-          <li>combinations or extracts of logical sources need to be mapped.</li>
-          <li>the values of the referred data needs to be modified.</li> 
-        </ul>
-      </p>
-
-      <p>A query <code>rml:query</code> is a string with a lexical form that is a valid query considering the query language specified.
-      (A/N Argue more regarding possible limitations..)</p>
-
-      <p>A query <code>rml:query</code>, can serve one of the following scopes: 
-        <ul>(A/N needs better way to express it..)
-          <li>a valid query in the specified language (<code>rml:queryLanguage</code>) that tries to retrieve an extract of the data available in the corresponding file and ends up to an RML View</li>
-          <li>a valid <i>query-like</i> definition that facilitates the iteration over the specified file and it is used with an <code>rml:logicalSource</code> definition</li>
-        </ul>
-      </p>
-
-      <h4>Examples</h4>
-      <p>(A/N Provide examples)</p>
-
-      <h3 id="reference">Reference</h3>
-      <p>A reference <code>rml:reference</code> is used to refer to
-        <ul>
-          <li>a column in case of databases,</li>
-          <li>a record in case of CSV or TSV files,</li> 
-          <li>an element in case of XML documents,</li>
-          <li>an object in case of a JSON file. </li>
-        </ul>
-        A reference must be a valid identifier, considering the query language (<code>rml:queryLanguage</code>) specified. 
-      </p>
-
-      <h3 id="reference">Iterator</h3>
+      <h4 id="iterator">Iterator</h4>
       <p>An iterator <code>rml:iterator</code> is used to refer to
         <ul>
           <li>a row in the case of databases, CSV or TSV files</li> 
@@ -927,6 +823,91 @@
         An iterator must be a valid identifier, considering the query language (<code>rml:queryLanguage</code>) specified. 
       </p>
 
+      <h4>Examples</h4>
+
+      <p>The following example shows a logical source specified for a CSV file.</p>
+        <pre class="ex-mapping">
+[] rml:logicalSource 
+  [
+    rml:sourceName "http://www.example.com/Airport.csv" ;
+    rml:queryLanguage rr:SQL2008;
+    rml:iterator "row"
+  ].
+          </pre>
+      </p>
+      <p>The following example shows a logical source specified for a database.</p>
+        <pre class="ex-mapping">
+[] rml:logicalSource 
+  [
+    rml:sourceName "TRANSPORT.BUS" ;
+    rml:iterator "BSU_NUM"
+  ].
+          </pre>
+      </p>
+      <p>The following example shows a logical source specified for an XML file.</p>
+        <pre class="ex-mapping">
+[] rml:logicalSource 
+  [
+    rml:sourceName "http://www.example.com/Transport.xml" ;
+    rml:queryLanguage ql:XPath;
+    rml:iterator "/transport/bus";
+  ].
+        </pre>
+      </p>
+      <p>The following example shows a logical source specified for a JSON file.</p>
+        <pre class="ex-mapping">
+[] rml:logicalSource 
+  [
+    rml:sourceName "http://www.example.com/files/Venue.json";
+    rml:queryLanguage ql:JSONPath;
+    rml:iterator "$.city"
+  ].
+        </pre>
+      </p>
+
+      <h3>1.2 RML Views (<code>rml:sourceName</code>, <code>rml:query</code>, <code>rml:queryLanguage</code>)</h3>
+
+      <p>An RML view is a <a href="#logical-source">logical source</a> 
+        whose contents are the result of executing a query against the logical source specified. 
+        It is represented by a resource that has 
+        <ul>
+          <li>exactly one source Name, <code>rml:sourceName</code> property,</li> 
+          <li>exactly one <code>rml:queryLanguage</code> property, 
+            whose value is the URI of the query language specified.
+          <li>exactly one <code>rml:query</code> property, 
+            whose value is a literal with a lexical form that is a valid query considering the query language specified.
+          </li>
+        </ul>
+      </p>
+
+       <p>
+        The source name, <code>rml:sourceName</code>, locates the source file. <br/>
+        The query language, <code>rml:queryLanguage</code>, defines the language used to define the query. <br/>
+        The query, <code>rml:query</code>, is the query executed to retrieve the extract of the data to be maaped. 
+      </p>
+
+      <p>
+        An RML view may be used when (A/N argue more on this):
+        <ul>
+          <li>
+            combinations or extracts of logical sources need to be mapped.<br/>
+            In this case, the query, <code>rml:query</code>, retrieves an extract of the data available in the corresponding file as an RML View and maps them. (A/N needs better way to express it..).
+          </li>
+          <li>
+            the values of the referred data need to be modified before mapped. <br/>
+            In this case the query, <code>rml:query</code>, retrieves the logical references and replaces the values of the logical reference with a specified value.
+          </li> 
+        </ul>
+
+      </p>
+
+      <h4>Query (<code>rml:query</code>)</h4  >
+
+      <p>A query <code>rml:query</code> is a string with a lexical form that is a valid query considering the query language specified.
+      (A/N Argue more regarding possible limitations..)</p>
+
+      <h4>Examples</h4>
+      <p>(A/N Provide examples)</p>
 
       <h2 id="triples-map">2. Mapping Logical Sources to RDF with Triples Maps</h2>
 
@@ -975,43 +956,43 @@
       </p>
 
       <pre class="ex-mapping">
-          @prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;.
-          @prefix rml: &lt;http://mmlab.be/ns/rml#&gt;.
-          @prefix ex: &lt;http://example.com/ns#&gt;.
-          @prefix ql: &lt;http://mmlab.be/ns/ql#&gt;.
-          @prefix transit: &lt;http://vocab.org/transit/terms/&gt;.
-          @prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;.
-          @prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;.
+@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;.
+@prefix rml: &lt;http://mmlab.be/ns/rml#&gt;.
+@prefix ex: &lt;http://example.com/ns#&gt;.
+@prefix ql: &lt;http://mmlab.be/ns/ql#&gt;.
+@prefix transit: &lt;http://vocab.org/transit/terms/&gt;.
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;.
+@prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;.
 
-          &lt;#TransportMapping&gt;
-            rml:logicalSource 
-              [
-                rml:sourceName "http://www.example.com/Transport.xml" ;
-                rml:query "transport/bus";
-                rml:language ql:XPath;
-              ];
-            rr:subjectMap 
-            [ 
-              rr:template "http://trans.example.com/{/transport/bus@id}";
-              rr:class transit:Stop 
-            ];
-            rr:predicateObjectMap 
-            [
-              rr:predicate transit:stop;
-              rr:objectMap 
-              [
-                rml:selector "/transport/bus/route/stop@id";
-                rr:datatype xsd:int 
-              ] 
-            ];
-            rr:predicateObjectMap 
-            [
-              rr:predicate rdfs:label;
-              rr:objectMap 
-              [
-                rml:selector "/transport/bus/route/stop"
-              ]
-            ].
+&lt;#TransportMapping&gt;
+  rml:logicalSource 
+  [
+    rml:sourceName "http://www.example.com/Transport.xml" ;
+    rml:iterator "/transport/bus";
+    rml:language ql:XPath;
+  ];
+  rr:subjectMap 
+  [ 
+    rr:template "http://trans.example.com/{/transport/bus@id}";
+    rr:class transit:Stop 
+  ];
+  rr:predicateObjectMap 
+  [
+    rr:predicate transit:stop;
+    rr:objectMap 
+    [
+      rml:reference "/transport/bus/route/stop@id";
+      rr:datatype xsd:int 
+    ] 
+  ];
+  rr:predicateObjectMap 
+  [
+    rr:predicate rdfs:label;
+    rr:objectMap 
+    [
+      rml:reference "/transport/bus/route/stop"
+    ]
+  ].
         </pre>
 
         <h3 id="subject-map">2.1 Creating Resources with Subject Maps</h3>
@@ -1024,14 +1005,10 @@
 
         <h3 id="typing">2.2 Typing Resources (<code>rr:class</code>)</h3>
 
-        <p>(A/N unchanged compared to R2RML)</p>
+        <p>(A/N almost unchanged compared to R2RML)</p>
 
         <p>
-          A <a href="#subject-map">subject map</a> may have one or more <dfn id="class-iri">class IRIs</dfn>. They are represented by the <code>rr:class</code> property. The values of the <code>rr:class</code> property must be <a href="#dfn-iri">IRIs</a>. For each <a href="#rdf-term">RDF term</a> generated by the subject map, <a href="#rdf-triple">RDF triples</a> with predicate <code>rdf:type</code> and the class IRI as object will be generated.
-        </p>
-
-        <p class="note">
-          Mappings where the class IRI is not constant, but needs to be computed based on the contents of the logical source to be maaped, can be achieved by defining a <a href="#predicate-object-map">predicate-object map</a> with predicate <code>rdf:type</code> and a non-constant <a href="#object-map">object map</a>.
+          A <a href="#subject-map">subject map</a> may have one or more <dfn id="class-iri">class IRIs</dfn>. They are represented by the <code>rr:class</code> property. The values of the <code>rr:class</code> property must be <a href="#iri">IRIs</a>. For each <a href="#rdf-term">RDF term</a> generated by the subject map, <a href="#rdf-triple">RDF triples</a> with predicate <code>rdf:type</code> and the class IRI as object will be generated.
         </p>
 
         <p>In the following example, the generated subject will be asserted as an instance of the <code>transit:Stop</code> class.</p>
@@ -1040,9 +1017,25 @@
           rr:class transit:Stop.
         </pre>
 
-        <p>Using the example <a href="#ex_EMP"><code>EMP</code> table</a>, the following RDF triple will be generated:</p>
+        <p>Using the example, the following RDF triple will be generated:</p>
         <pre class="ex-output">
           &lt;http://trans.example.com/25&gt; rdf:type transit:Stop.
+        </pre>
+
+        <p>
+          Mappings where the class IRI is not constant, but needs to be computed based on the contents of the logical source, can be achieved by defining a <a href="#predicate-object-map">predicate-object map</a> with predicate <code>rdf:type</code> and a non-constant <a href="#object-map">object map</a>.
+        </p>
+
+        <p>In the following example, the generated subject will be asserted based on the contents of the logical source to be mapped.</p>
+        <pre class="ex-mapping">
+[] rr:predicateObjectMap 
+  [
+    rr:predicate rdf:type;
+    rr:objectMap 
+    [
+      rr:template "http://spi-fm.uca.es/neologism/cerif#{/result/type}"
+    ] 
+  ]
         </pre>
 
       <h3 id="predicate-object-map">2.3 Creating Properties and Values with Predicate-Object Maps</h3>
@@ -1169,15 +1162,15 @@
         that uses a constant-valued term map both for its predicate and for its object.
       </p>
       <pre class="ex-mapping">
-        [] rr:predicateMap [ rr:constant rdf:type ];
-           rr:objectMap [ rr:constant ex:Employee ].
+[] rr:predicateMap [ rr:constant rdf:type ];
+  rr:objectMap [ rr:constant ex:Employee ].
       </pre>
       
       <p>If added to a <a href="#triples-map">triples map</a>,
       this predicate-object map would add the following triple to
       all resources <code>?x</code> generated by the triples map:</p>
       <pre class="ex-output">
-        ?x rdf:type ex:Employee.
+?x rdf:type ex:Employee.
       </pre>
 
       <p>The following example uses
@@ -1185,11 +1178,22 @@
       and is equivalent to the example above:</p>
 
       <pre class="ex-mapping">
-        [] rr:predicate rdf:type;
-           rr:object ex:Employee.
+[] rr:predicate rdf:type;
+  rr:object ex:Employee.
       </pre>
 
       <h3 id="from-column">3.2 From a Reference (<code>rml:reference</code>)</h3>
+
+      <p>A reference <code>rml:reference</code> is used to refer to
+        <ul>
+          <li>a column in case of databases,</li>
+          <li>a record in case of CSV or TSV files,</li> 
+          <li>an element in case of XML documents,</li>
+          <li>an object in case of a JSON file. </li>
+        </ul>
+        A reference must be a valid identifier, considering the query language (<code>rml:queryLanguage</code>) specified. 
+      </p>
+
 
       <p>A <dfn id="reference-valued-term-map">reference-valued term map</dfn>
       is a <a href="#term-map">term map</a> that is represented by a resource that has exactly one <code>rml:refrence</code> property.</p>
@@ -1205,22 +1209,22 @@
 
       <h4>Reference for a database</h4>
       <pre class="ex-mapping">
-        [] rr:objectMap [ rr:column "DNAME" ].
+[] rr:objectMap [ rr:column "DNAME" ].
       </pre>
 
       <h4>Reference for a CSV file</h4>
       <pre class="ex-mapping">
-        [] rr:objectMap [ rr:column "name" ].
+[] rr:objectMap [ rr:column "name" ].
       </pre>
 
       <h4>Reference for an XML file</h4>
       <pre class="ex-mapping">
-        [] rr:objectMap [ rr:column "/city/name" ].
+[] rr:objectMap [ rr:column "/city/name" ].
       </pre>
 
       <h4>Reference for a JSON file</h4>
       <pre class="ex-mapping">
-        [] rr:objectMap [ rr:column "$.city.name" ].
+[] rr:objectMap [ rr:column "$.city.name" ].
       </pre>
 
       <p>Using the sample specified in the beginning.</p>
@@ -1274,12 +1278,7 @@
       </ol>
       
       <pre class="ex-mapping">
-        [] rr:subjectMap [ rr:template "http://data.example.com/site/{LOC}" ].</pre>
-
-      <!-- <p>Using the sample row from the
-      <a href="#ex_DEPT"><code>DEPT</code> table</a> as a logical table
-      row, the <a href="#dfn-template-value">template value</a> of the subject map
-      would be:</p> -->
+[] rr:subjectMap [ rr:template "http://data.example.com/site/{LOC}" ].</pre>
 
       <pre class="ex-output">http://data.example.com/site/NEW%20YORK</pre>
 
