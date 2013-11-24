@@ -1227,41 +1227,40 @@
 
       <h3 id="from-template">3.3 From a Template (<code>rr:template</code>)</h3>
 
+      <p>(A/N almost unchanged compared to R2RML)</p>
+
       <p>A <dfn id="template-valued-term-map">template-valued term map</dfn> is a <a href="#term-map">term map</a> 
         that is represented by a resource that has exactly one <code>rr:template</code> property.
         The value of the <code>rr:template</code> property must be a valid <a href="#string-template">string template</a>.
       </p>
 
-      <p>A <dfn id="string-template">string template</dfn> is a format string that can be used to build strings from multiple
-      components. It can reference <a href="#column-name">column names</a> by enclosing them in curly braces (“<code>{</code>” and “<code>}</code>”).
-      The following syntax rules apply to valid string templates:</p>
+      <p>A <dfn id="string-template">string template</dfn> is a format string that can be used to build strings from multiple components. 
+        It can reference <a href="#logical-reference">logical references</a> by enclosing them in curly braces (“<code>{</code>” and “<code>}</code>”).
+        The following syntax rules apply to valid string templates:
+      </p>
 
       <ul>
-      <li>Pairs of unescaped curly braces must enclose valid <a href="#selector-name">selector names</a> according to the specified query language.</li>
-      <li>Curly braces that do not enclose selector's names must be escaped by a backslash character (“<code>\</code>”). 
-          This also applies to curly braces within column names.</li>
-      <li>Backslash characters (“<code>\</code>”) must be escaped by preceding them with another backslash character, yielding “<code>\\</code>”.
-      This also applies to backslashes within column names.</li>
-      <li>There <em class="rfc2119">SHOULD</em> be at least one pair
-      of unescaped curly braces.</li>
-      <li>If a template contains multiple pairs of unescaped curly braces,
-      then any pair should be separated from the next one
-      by a <dfn id="safe-separator">safe separator</dfn>. This is any character or
-      string that does not occur anywhere
-      in any of the data values of either referenced column; or in the
-      <a href="#iri-safe">IRI-safe versions</a> of the data values,
-      if the <a href="#term-type">term type</a> is <code>rr:IRI</code>
-      (see <a href="#note-safe-separators">note below</a>).</li>
+        <li>Pairs of unescaped curly braces must enclose valid <a href="#reference-name">reference names</a> according to the specified query language.</li>
+        <li>Curly braces that do not enclose references names must be escaped by a backslash character (“<code>\</code>”). 
+              This also applies to curly braces within reference names.</li>
+        <li>Backslash characters (“<code>\</code>”) must be escaped by preceding them with another backslash character, yielding “<code>\\</code>”.
+          This also applies to backslashes within reference names.</li>
+        <li>There should be at least one pair of unescaped curly braces.</li>
+        <li>If a template contains multiple pairs of unescaped curly braces,
+          then any pair should be separated from the next one
+          by a <dfn id="safe-separator">safe separator</dfn>. This is any character or string that does not occur anywhere
+          in any of the data values of either referenced column; or in the <a href="#iri-safe">IRI-safe versions</a> of the data values,
+          if the <a href="#term-type">term type</a> is <code>rr:IRI</code> (see <a href="#note-safe-separators">note below</a>).</li>
       </ul>
 
-      <p>The <dfn id="template-value">template value</dfn> of the term map for a given <a href="#dfn-logical-table-row">logical iterator</a>
+      <p>The <dfn id="template-value">template value</dfn> of the term map for a given <a href="#logical-iterator">logical iterator</a>
       is determined as follows:</p>
 
       <ol>
         <li>Let <code><em>result</em></code> be the <a href="#string-template">template string</a></li>
         <li>For each pair of unescaped curly braces in <code><em>result</em></code>:
           <ol>
-            <li>Let <code><em>value</em></code> be the data value of the selector whose name is enclosed in the curly braces</li>
+            <li>Let <code><em>value</em></code> be the data value of the reference whose name is enclosed in the curly braces</li>
             <li>If <code><em>value</em></code> is <code>NULL</code>, then return <code>NULL</code></li>
             <li>Let <code><em>value</em></code> be the <a href="#natural-rdf-lexical-form">natural RDF lexical form</a>
             corresponding to <code><em>value</em></code></li>
@@ -1273,67 +1272,7 @@
         </li>
         <li>Return <code><em>result</em></code></li>
       </ol>
-      <p>
-        (A/N make sure this is fullfield)
-        The <dfn id="iri-safe">IRI-safe version</dfn> of a string is obtained by applying the following transformation to any character
-        that is not in the <cite><a class="norm" href="http://tools.ietf.org/html/rfc3987#section-2.2">
-        <code>iunreserved</code> production</a></cite> in [<cite><a href="#RFC3987">RFC3987</a></cite>]:
-      </p>
-
-      <ol>
-      <li>Convert the character to a sequence of one or more octets using <cite><a class="norm" href="http://tools.ietf.org/html/rfc3629">UTF-8</a></cite>
-      [<cite><a href="#RFC3629">RFC3629</a></cite>]</li>
-      <li><cite><a class="norm" href="http://tools.ietf.org/html/rfc3986#section-2.1">Percent-encode</a></cite>
-      each octet [<cite><a href="#RFC3986">RFC3986</a></cite>]</li>
-      </ol>
-
-      <!-- <p>The following table shows examples of strings and their IRI-safe versions:</p>
-
-      <table rules="all" id="example-iri-safe">
-        <tr><th>String</th><th>IRI-safe version</th></tr>
-        <tr><td>42</td><td>42</td></tr>
-        <tr><td>Hello World!</td><td>Hello%20World%21</td></tr>
-        <tr><td>2011-08-23T22:17:00Z</td><td>2011-08-23T22%3A17%3A00Z</td></tr>
-        <tr><td>~A_17.1-2</td><td>~A_17.1-2</td></tr>
-        <tr><td>葉篤正</td><td>葉篤正</td></tr>
-      </table> 
-
-      <p class="note">R2RML always performs percent-encoding when IRIs are
-      generated from string templates. If IRIs need to be generated without
-      percent-encoding, then <code>rr:column</code> should be used instead
-      of <code>rr:template</code>, with an
-      <a href="#dfn-r2rml-view">R2RML view</a> that performs the string
-      concatenation.</p> -->
-
-      <p class="note" id="note-safe-separators">
-        (A/N look thoroughly into this)
-        In the case of string templates
-        that generate IRIs, any single character that is legal in an IRI, but percent-encoded in the <a href="#iri-safe">IRI-safe version</a> 
-        of a data value, is a <a href="#safe-separator">safe separator</a>.
-        This includes in particular the eleven <code>sub-delim</code> characters defined in
-        [<cite><a href="#RFC3987">RFC3987</a></cite>]: <code>!$&amp;'()*+,;=</code>
-      </p>
-
-      <p>The <a href="#referenced-columns">referenced selectors</a> of a <a href="#template-valued-term-map">template-valued term map</a>
-      is the set of <a href="#column-name">selectors</a> enclosed in unescaped curly braces in the <a href="#dfn-string-template">template string</a>.
-      </p>
-
-      <!-- <p>The following example defines a
-      <a href="#subject-map">subject map</a> that generates
-      <a href="#dfn-iri">IRIs</a> from the
-      <code>DEPTNO</code> column of a logical table.</p>
-      <pre class="ex-mapping">
-  [] rr:subjectMap [ rr:template "http://data.example.com/department/{DEPTNO}" ].</pre>
-
-      <p>Using the sample row from the
-      <a href="#ex_DEPT"><code>DEPT</code> table</a> as a logical table
-      row, the <a href="#dfn-template-value">template value</a> of the subject map
-      would be:</p>
-
-      <pre class="ex-output">http://data.example.com/department/10</pre>
-
-      <p>The following example shows how an <a href="#dfn-iri-safe">IRI-safe</a>
-      template value is created:</p> -->
+      
       <pre class="ex-mapping">
         [] rr:subjectMap [ rr:template "http://data.example.com/site/{LOC}" ].</pre>
 
@@ -1344,38 +1283,11 @@
 
       <pre class="ex-output">http://data.example.com/site/NEW%20YORK</pre>
 
-      <p>
-        The space character is not in the <code>iunreserved</code> set,
-        and therefore percent-encoding is applied to the character, yielding
-        “<code>%20</code>”.
-      </p>
-
-      <p>The following example shows the use of backslash escapes in string templates. 
-        The template will generate a fancy title such as</p>
-        <pre>{{{ \o/ Hello World! \o/ }}}</pre>
-        <p>from a string “<code>Hello World!</code>” in the <code>TITLE</code>
-          column. By default, <code>rr:template</code> generates IRIs. Since
-          the intention here is to create a literal instead,
-          the <a href="#dfn-term-type">term type</a> has to be set.
-        </p>
-        <pre class="ex-mapping">
-          [] rr:objectMap [
-              rr:template "\\{\\{\\{ \\\\o/ {TITLE} \\\\o/ \\}\\}\\}";
-              rr:termType rr:Literal;
-          ].
-        </pre>
-        <p>Note that because <a class="norm" href="http://www.w3.org/TR/turtle/#string">
-          backslashes need to be escaped by a second backslash in the Turtle syntax</a>
-          [<cite><a href="#TURTLE">TURTLE</a></cite>],
-          a double backslash is needed to escape each curly brace, and to get one literal backslash in the output one needs to write
-          four backslashes in the template.
-        </p>
-
-        <h3 id="termtype">IRIs, Literal, Blank Nodes (<code>rr:termType</code>)</h3>
-      <p>(A/N) unchanged compared to R2RML</p>
+      <h3 id="termtype">3.4 IRIs, Literal, Blank Nodes (<code>rr:termType</code>)</h3>
+      <p>(A/N almost unchanged compared to R2RML)</p>
       <p>
         The <dfn id="term-type">term type</dfn> of a
-        <a href="#selector-valued-term-map">selector-valued term map</a> or
+        <a href="#reference-valued-term-map">reference-valued term map</a> or
         <a href="#template-valued-term-map">template-valued term map</a>
         determines the kind of <a href="#dfn-generated-rdf-term">generated RDF term</a>
         (<a href="#iri">IRIs</a>, <a href="#dfn-blank-node">blank nodes</a> or <a href="#dfn-literal">literals</a>).
@@ -1402,14 +1314,13 @@
           </li>
         </ul>
 
-      <p>If the term map does not have a <code>rr:termType</code> property, then its <a href="#dfn-term-type">term type</a> is: </p>
+      <p>If the term map does not have a <code>rr:termType</code> property, then its <a href="#term-type">term type</a> is: </p>
 
       <ul>
-        <li><code>rr:Literal</code>, if it is an <a href="#dfn-object-map">object map</a> and at least one of the following conditions is true:
+        <li><code>rr:Literal</code>, if it is an <a href="#object-map">object map</a> and at least one of the following conditions is true:
           <ul>
-            <li>It is a <a href="#column-valued-term-map">column-based term map</a>.</li>
-            <li>It has a <code>rml:queryLanguage</code> property (and thus a
-              <a href="#dfn-specified-language-tag">specified language tag</a>).
+            <li>It is a <a href="#reference-valued-term-map">reference-based term map</a>.</li>
+            <li>It has a <code>rml:queryLanguage</code> property (and thus a <a href="#specified-language-tag">specified language tag</a>).
             </li>
             <li>It has a <code>rr:datatype</code> property (and thus a <a href="#specified-datatype">specified datatype</a>).</li>
           </ul>
@@ -1417,20 +1328,66 @@
         <li><code>rr:IRI</code>, otherwise.</li>
       </ul>
 
-      <p class="note">Term maps with term type <code>rr:IRI</code> cause <a href="#data-error">data errors</a> 
-        if the value is not a valid <a href="#dfn-iri">IRI</a> (see <a href="#dfn-generated-rdf-term">generated RDF term</a> for details).
-        Data values from the input database may require percent-encoding before they can be used in IRIs.
-        <a href="#template-valued-term-map">Template-valued term maps</a> are a convenient way of percent-encoding data values.
+      <h3 id="language-tags">3.5 Language Tags (<code>rr:language</code>)</h3>
+
+      <p>(A/N unchanged compared to R2RML)</p>
+
+      <p>
+        A <a href="#term-map">term map</a> with a <a href="#term-type">term type</a> of <code>rr:Literal</code> may have a <dfn id="specified-language-tag">specified language tag</dfn>.
+        It is represented by the <code>rr:language</code> property on a term map. If present, its value must be a valid <a href="#language-tag">language tag</a>.
       </p>
 
-      <p class="note">
-        <a href="#constant-valued-term-map">Constant-valued term maps</a>
-        are not considered as having a <a href="#dfn-term-type">term type</a>,
-        and specifying <code>rr:termType</code> on these term maps has no effect.
-        The type of the generated RDF term is determined directly by the value of <code>rr:constant</code>: 
-        If it is an IRI, then an IRI will be generated; if it is a literal, a literal will be
-        generated.
+      <p>A specified language tag causes generated literals to be language-tagged plain literals. 
+        In the following example, plain literals with language tag “<code>en-us</code>” (U.S. English) will be generated 
+        for the data values in the <code>DNAME</code> column.</p>
+
+      <pre class="ex-mapping">
+[] rr:objectMap [ rml:reference "DNAME"; rr:language "en-us" ].
+      </pre>
+
+      <h3 id="typed-literals">3.6 Typed Literals (<code>rr:datatype</code>)</h3>
+
+      <p>(A/N almost unchanged compared to R2RML)</p>
+
+      <p>
+        A <dfn id="datatypeable-term-map">datatypeable term map</dfn> is a <a href="#term-map">term map</a> with a <a href="#term-type">term type</a> of <code>rr:Literal</code> that does not have a <a href="#specified-language-tag">specified language tag</a>.
       </p>
+
+      <p>
+        Datatypeable term maps may generate <a href="#typed-literal">typed literals</a>. 
+        The datatype of these literals can be explicitly defined using <code>rr:datatype</code> (producing a <a href="#datatype-override-rdf-literal">datatype-override RDF literal</a>).
+      </p>
+
+      <p>
+        A <a href="#datatypeable-term-map">datatypeable term map</a> may have a <code>rr:datatype</code> property.
+        Its value must be an <a href="#iri">IRI</a>. This IRI is the <dfn id="specified-datatype">specified datatype</dfn> of the term map.
+      </p>
+
+      <p>A term map must not have more than one <code>rr:datatype</code> value.</p>
+
+      <p>A term map that is not a <a href="#datatypeable-term-map">datatypeable term map</a> must not have an <code>rr:datatype</code> property.</p>
+
+      <p class="note">One cannot explicitly state that a
+      <a href="#dfn-plain-literal">plain literal</a> without
+      <a href="#dfn-language-tag">language tag</a> should be generated.
+      They are the default for string columns. To generate one from a
+      non-string column, a
+      <a href="#dfn-template-valued-term-map">template-valued term map</a>
+      with a template such as <code>"{MY_COLUMN}"</code> and a
+      <a href="#dfn-term-type">term type</a> of <code>rr:Literal</code>
+      can be used.</p>
+
+      <p>The following example shows an <a href="#dfn-object-map">object map</a>
+      that overrides the default datatype of the logical table with
+      an explicitly specified <code>xsd:positiveInteger</code> type.
+      A <a href="#dfn-datatype-override-rdf-literal">datatype-override
+      RDF literal</a> of that datatype will be generated from whatever
+      is in the <code>EMPNO</code> column.</p>
+
+      <pre class="ex-mapping">
+  [] rr:objectMap [ rml:reference "EMPNO"; rr:datatype xsd:positiveInteger ].
+  </pre>
+
     </div>
   </body>
   </html>
