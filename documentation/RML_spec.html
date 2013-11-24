@@ -1198,7 +1198,7 @@
       <p>A <dfn id="reference-valued-term-map">reference-valued term map</dfn>
       is a <a href="#term-map">term map</a> that is represented by a resource that has exactly one <code>rml:refrence</code> property.</p>
 
-      <p>The value of the <code>rml:selector</code> property must be a valid reference to a column (in the case of databases and CSV and TSV files), to an element (in the case of XML files) and to an object (in the case of JSON files). 
+      <p>The value of the <code>rml:reference</code> property must be a valid reference to a column (in the case of databases and CSV and TSV files), to an element (in the case of XML files) and to an object (in the case of JSON files). 
          The <dfn id="reference-value">reference value</dfn> of the term map is the data value of that column/element/object in a given <a href="#logical-iteration">logical iteration</a>.
       </p>
 
@@ -1214,17 +1214,17 @@
 
       <h4>Reference for a CSV file</h4>
       <pre class="ex-mapping">
-[] rr:objectMap [ rr:column "name" ].
+[] rr:objectMap [ rml:reference "name" ].
       </pre>
 
       <h4>Reference for an XML file</h4>
       <pre class="ex-mapping">
-[] rr:objectMap [ rr:column "/city/name" ].
+[] rr:objectMap [ rml:reference "/city/name" ].
       </pre>
 
       <h4>Reference for a JSON file</h4>
       <pre class="ex-mapping">
-[] rr:objectMap [ rr:column "$.city.name" ].
+[] rr:objectMap [ rml:reference "$.city.name" ].
       </pre>
 
       <p>Using the sample specified in the beginning.</p>
@@ -1329,7 +1329,7 @@
 
       <h3 id="language-tags">3.5 Language Tags (<code>rr:language</code>)</h3>
 
-      <p>(A/N unchanged compared to R2RML)</p>
+      <p>(A/N almost unchanged compared to R2RML)</p>
 
       <p>
         A <a href="#term-map">term map</a> with a <a href="#term-type">term type</a> of <code>rr:Literal</code> may have a <dfn id="specified-language-tag">specified language tag</dfn>.
@@ -1337,11 +1337,10 @@
       </p>
 
       <p>A specified language tag causes generated literals to be language-tagged plain literals. 
-        In the following example, plain literals with language tag “<code>en-us</code>” (U.S. English) will be generated 
-        for the data values in the <code>DNAME</code> column.</p>
+      </p>
 
       <pre class="ex-mapping">
-[] rr:objectMap [ rml:reference "DNAME"; rr:language "en-us" ].
+[] rr:objectMap [ rml:reference "$.city.name"; rr:language "en-us" ].
       </pre>
 
       <h3 id="typed-literals">3.6 Typed Literals (<code>rr:datatype</code>)</h3>
@@ -1366,25 +1365,18 @@
 
       <p>A term map that is not a <a href="#datatypeable-term-map">datatypeable term map</a> must not have an <code>rr:datatype</code> property.</p>
 
-      <p class="note">One cannot explicitly state that a
-      <a href="#dfn-plain-literal">plain literal</a> without
-      <a href="#dfn-language-tag">language tag</a> should be generated.
-      They are the default for string columns. To generate one from a
-      non-string column, a
-      <a href="#dfn-template-valued-term-map">template-valued term map</a>
-      with a template such as <code>"{MY_COLUMN}"</code> and a
-      <a href="#dfn-term-type">term type</a> of <code>rr:Literal</code>
-      can be used.</p>
+      <p class="note">O
+        ne cannot explicitly state that a plain literal without <a href="#language-tag">language tag</a> should be generated.
+        They are the default for string columns. To generate one from a non-string logical reference, 
+        a <a href="#template-valued-term-map">template-valued term map</a> with a template such as <code>"{reference}"</code> and a
+        <a href="#term-type">term type</a> of <code>rr:Literal</code>can be used.</p>
 
-      <p>The following example shows an <a href="#dfn-object-map">object map</a>
-      that overrides the default datatype of the logical table with
-      an explicitly specified <code>xsd:positiveInteger</code> type.
-      A <a href="#dfn-datatype-override-rdf-literal">datatype-override
-      RDF literal</a> of that datatype will be generated from whatever
-      is in the <code>EMPNO</code> column.</p>
+      <p>
+        The following example shows an <a href="#object-map">object map</a> that overrides the default datatype of the logical source 
+        with an explicitly specified <code>xsd:positiveInteger</code> type. A <a href="#datatype-override-rdf-literal">datatype-override RDF literal</a> of that datatype will be generated from whatever is in the <code>intensity</code> element.</p>
 
       <pre class="ex-mapping">
-  [] rr:objectMap [ rml:reference "EMPNO"; rr:datatype xsd:positiveInteger ].
+  [] rr:objectMap [ rml:reference "/result/intensity"; rr:datatype xsd:positiveInteger ].
   </pre>
 
     </div>
