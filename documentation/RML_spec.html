@@ -112,11 +112,37 @@
 
   <ul class="toc">
     <li><a href="#introduction">Introduction</a>
-    <ul>
-      <li><a href="#conventions">Document Conventions</a></li>
-    </ul></li>
-    <li><a href="#overview">RML Overview and Example (Informative)</a>
+      <ul>
+        <li><a href="#vocabulary">RML Vocabulary</a></li>
+        <li><a href="#conventions">Document Conventions</a></li>
+      </ul>
+    </li>
     <li><a href="#terminology">RDF Terminology (Informative)</a></li>
+    <li><a href="#logical-source">1. Defining Logical Sources</a>
+      <ul>
+        <li><a href="#base-source">1.1 Base Sources</a></li>
+        <li><a href="#RML-view">1.2 RML Views</a></li>
+      </ul>
+    </li>
+    <li><a href="#triples-map">2. Mapping Logical Sources to RDF with Triples Maps</a>
+      <ul>
+        <li><a href="#subject-map">2.1 Creating Resources with Subject Maps</a></li>
+        <li><a href="#typing">2.2 Typing Resources</a></li>
+        <li><a href="#predicate-object-map">2.3 Creating Properties and Values with Predicate-Object Maps</a></li>
+      </ul>
+    </li>
+    <li><a href="#term-map">3. Creating RDF Terms with Term Maps</a>
+      <ul>
+        <li><a href="#constant">3.1 Constant RDF Terms</a></li>
+        <li><a href="#reference">3.2 From a Reference</a></li>
+        <li><a href="#from-template">3.3 From a Template</a></li>
+        <li><a href="#termtype">3.4 IRIs, Literal, Blank Nodes</a></li>
+        <li><a href="#language-tags">3.5 Language Tags</a></li>
+        <li><a href="#typed-literals">3.6 Typed Literals</a></li>
+      </ul>
+    </li>
+    <li><a href="#logical-join">4 Relationships among Logical Sources</a></li>
+    <li><a href="#overview">RML Overview and Example (Informative)</a></li>
     <li><a href="#index">Index of RML Vocabulary Terms (Informative)</a>
     <ul>
       <li><a href="#class-index">Classes</a></li>
@@ -149,7 +175,7 @@
       <p>RML follows the same syntax as R2RML; therefore they are expressed as RDF graphs and written down in
       <cite><a class="norm" href="http://www.w3.org/TR/turtle/">Turtle syntax</a></cite> [<cite><a href="#TURTLE">TURTLE</a></cite>].</p>
 
-      <h3 id="vocabulary">Mapping Graphs and the RML Vocabulary</h3>
+      <h3 id="vocabulary">RML Vocabulary</h3>
       <p>The RML vocabulary namespace is <code>http://mmlab.be/ns/rml#</code> 
         <pre><strong><a href="http://www.w3.org/ns/r2rml#">http://mmlab.be/ns/rml#</a></strong></pre>
       </p>
@@ -266,503 +292,11 @@
       </pre>
 
 
-      <h2 id="overview">RML Overview and Example (Informative)</h2>
-
-      <p>An RML mapping refers to logical sources to retrieve data from the input file or database. 
-        A logical source extends R2RML's logical Table. A logical source can be one of the following:</p>
-      <ol>
-        <li>A base source (A/N any input file or base table),</li>
-        <li>a view (A/N in case of databases), or</li>
-        <li>a view resulted from a valid query (called an RML view).</li>
-      </ol>
-
-      <h3 id="example-input-database">Example Input</h3>
-
-      <table class="ex-data" id="">
-          <caption>Airport.csv - CSV file</caption>
-          <tr>
-            <td>
-              id, city, bus, latitude, longitude <br/>
-              6523, Brussels, 25, 50.901389, 4.484444
-            </d>
-          </tr>
-        </table>
-
-        <table class="ex-data">
-          <caption>Transport.xml - XML file</caption>
-          <tr>
-            <td>
-              <span>
-                &#60;transport&#62; <br/>
-                &nbsp; &#60;bus id=“25”&#62; <br/>
-                &nbsp; &nbsp; &#60;route&#62; <br/>
-                &nbsp; &nbsp; &nbsp; &#60;stop id=“645”&#62; <br/>
-                &nbsp; &nbsp; &nbsp; &nbsp; Int. Airport <br/>
-                &nbsp; &nbsp; &nbsp; &#60;/stop&#62; <br/>
-                &nbsp; &nbsp; &nbsp; &#60;stop id=“651”&#62; <br/>
-                &nbsp; &nbsp; &nbsp; &nbsp; Conference center <br/>
-                &nbsp; &nbsp; &nbsp; &#60;/stop&#62; <br/>
-                &nbsp; &nbsp; &#60;/route&#62; <br/>
-                &nbsp; &#60;/bus&#62; <br/>
-                &#60;/transport&#62;
-              </span>
-            </d>
-          </tr>
-        </table>
-
-        <table class="ex-data" summary="EMP table: sample data" id="ex_EMP">
-          <caption>Venue.json - JSON file</caption>
-          <tr>
-            <td>
-              <span>
-                { <br/>
-                  &nbsp; "venue": <br/>
-                  &nbsp; &nbsp; { <br/>
-                  &nbsp; &nbsp; &nbsp; "latitude": "51.0500000", <br/>
-                  &nbsp; &nbsp; &nbsp; "longitude": "3.7166700" <br/>
-                  &nbsp; &nbsp; }, <br/>
-                  &nbsp; &nbsp; "location": <br/>
-                  &nbsp; &nbsp; &nbsp; { <br/>
-                  &nbsp; &nbsp; &nbsp; &nbsp; "continent": "EU", <br/>
-                  &nbsp; &nbsp; &nbsp; &nbsp; "country": "BE", <br/>
-                  &nbsp; &nbsp; &nbsp; &nbsp; "city": "Brussels" <br/>
-                  &nbsp; &nbsp; &nbsp; } <br/>
-                  }     
-              </span>
-            </d>
-          </tr>
-        </table>
-
-        <pre class="ex-mapping">
-          @prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;.
-          @prefix rml: &lt;http://mmlab.be/ns/rml#&gt;.
-          @prefix ex: &lt;http://example.com/ns#&gt;.
-
-          &lt;#AirportMapping&gt;
-            rml:logicalSource 
-              [
-                rml:sourceName “http://www.example.com/Airport.csv”
-              ];
-              rr:subjectMap 
-              [
-                rr:template “http://airport.example.com/{id}”;
-                rr:class transit:Stop 
-              ];
-
-            rr:predicateObjectMap 
-            [
-              rr:predicate transit:route;
-              rr:objectMap 
-              [ 
-                &lt;#TransportMapping&gt;
-                  rr:joinCondition 
-                  [
-                    rr:child “bus”;
-                    rr:parent “/transport/bus@id” 
-                  ]
-              ]
-            ];
-
-            rr:predicateObjectMap 
-            [
-              rr:predicate wgs84_pos:location;
-              rr:objectMap 
-              [ 
-                &lt;#VenueMapping&gt;
-                rr:joinCondition 
-                [
-                  rr:child “city”;
-                  rr:parent “$.location.city”
-                ]
-              ]
-            ].
-        </pre>
-
-        <pre class="ex-mapping">
-          @prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;.
-          @prefix rml: &lt;http://mmlab.be/ns/rml#&gt;.
-          @prefix ex: &lt;http://example.com/ns#&gt;.
-
-          &lt;#TransportMapping&gt;
-            rr:subjectMap 
-            [ 
-              rr:template “http://trans.example.com/{/transport/bus@id}”;
-              rr:class transit:Stop 
-            ];
-            rr:predicateObjectMap 
-            [
-              rr:predicate transit:stop;
-              rr:objectMap 
-              [
-                rml:selector “/transport/bus/route/stop@id”;
-                rr:datatype xsd:int 
-              ] 
-            ];
-            rr:predicateObjectMap 
-            [
-              rr:predicate rdfs:label;
-              rr:objectMap 
-              [
-                rml:selector “/transport/bus/route/stop”
-              ]
-            ].
-        </pre>
-
-        <pre class="ex-mapping">
-          @prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;.
-          @prefix rml: &lt;http://mmlab.be/ns/rml#&gt;.
-          @prefix ex: &lt;http://example.com/ns#&gt;.
-
-          &lt;#LocationMapping&gt;
-            rr:subjectMap 
-            [
-              rr:template http://loc.example.com/latlong/{$.venue.latitude},{$.venue.longitude}
-            ];
-
-            rr:predicateObjectMap 
-            [
-              rr:predicate wgs84_pos:lat;
-              rr:objectMap “$.venue.latitude” 
-            ]; 
-
-            rr:predicateObjectMap 
-            [
-              rr:predicate wgs84_pos:long;
-              rr:objectMap “$.venue.longitude” 
-            ] 
-          ].
-        </pre>
-
-        <pre class="ex-mapping">
-          @prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;.
-          @prefix rml: &lt;http://mmlab.be/ns/rml#&gt;.
-          @prefix ex: &lt;http://example.com/ns#&gt;.
-
-          &lt;#VenueMapping&gt;
-            rml:logicalSource 
-            [
-              rml:name “http://www.example.com/Venue.json”;
-              rml:language ql:JSONPath 
-            ];
-            rr:subjectMap 
-            [
-              rr:template “http://loc.example.com/city/{$.location.city}”;
-              rr:class schema:City;
-            ];
-            rr:predicateObjectMap 
-            [
-              rr:predicate geo:location;
-              rr:objectMap &lt;#LocationMapping&gt; 
-            ];
-            rr:predicateObjectMap 
-            [
-              rr:predicate gn:countryCode;
-              rr:objectMap “$.location.country” 
-            ]
-            rr:predicateObjectMap 
-            [
-              rr:predicate geosp:onContinent;
-              rr:objectMap “$.location.continent” 
-            ].
-        </pre>
-
-      <p>The desired RDF triples to be produced from this database are as follows:</p>
-
-      <pre class="ex-output">
-        for Venue.json <br/>
-          &lt;http://loc.example.com/city/Brussels&gt; geo:location &lt;http://loc.example.com/latlong/51.0500000,3.7166700&gt;.
-          &lt;http://loc.example.com/city/Brussels&gt; gn:countryCode "BE".
-          &lt;http://loc.example.com/city/Brussels&gt; geosp:onContinent "Europe".
-
-          &lt;http://loc.example.com/latlong/51.0500000,3.7166700&gt; wgs84_pos:lat "51.0500000".
-          &lt;http://loc.example.com/latlong/51.0500000,3.7166700&gt; wgs84_pos:long "3.7166700".
-      </pre>
-
-      <h3 id="example-simple">Example: Mapping a CSV file</h3>
-
-      <p>The following RML mapping document produces the desired triples from the corresponding CSV file. 
-        <br/>
-        RML mappings for CSV files follow exactly the same syntax as in R2RML to refer to the CSV's records.
-        <br/>
-        It is considered a correspondence of CSV records, delimited by a line break (CRLF), to databases' rows.</p>
-
-        <table class="ex-data" summary="EMP table: sample data" id="ex_EMP">
-          <caption>Airport.csv - CSV file</caption>
-          <tr>
-            <td>
-              id, stop, latitude, longitude <br/>
-              6523, 25, 50.901389, 4.484444
-            </d>
-          </tr>
-        </table>
-
-      <pre class="ex-mapping">
-          @prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;.
-          @prefix rml: &lt;http://mmlab.be/ns/rml#&gt;.
-          @prefix ex: &lt;http://example.com/ns#&gt;.
-          @prefix transit: &lt;http://vocab.org/transit/terms/&gt;.
-          @prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;.
-          @prefix wgs84_pos: &lt;http://www.w3.org/2003/01/geo/wgs84_pos#lat&gt;.
-
-          &lt;#AirportMapping&gt;
-            rml:logicalSource 
-              [
-                rml:sourceName "http://www.example.com/Airport.csv" ;
-                rml:iterator "row"
-              ];
-            rr:subjectMap 
-              [
-                rr:template "http://airport.example.com/{id}";
-                rr:class transit:Stop 
-              ];
-
-            rr:predicateObjectMap 
-            [
-              rr:predicate transit:route;
-              rr:objectMap 
-              [
-                rml:selector "stop";
-                rr:datatype xsd:int 
-              ]
-            ];
-
-            rr:predicateObjectMap 
-            [
-              rr:predicate wgs84_pos:lat;
-              rr:objectMap "latitude" 
-            ];
-              
-            rr:predicateObjectMap 
-            [
-              rr:predicate wgs84_pos:long;
-              rr:objectMap "longitude" 
-            ].
-        </pre>
-
-      <pre class="ex-output">
-        @prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;.
-        @prefix transit: &lt;http://vocab.org/transit/terms/&gt;.
-        @prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;.
-        @prefix wgs84_pos: &lt;http://www.w3.org/2003/01/geo/wgs84_pos#&gt;.
-        <br/>
-        &lt;http://airport.example.com/6523&gt; rdf:type transit:Stop.
-        &lt;http://airport.example.com/6523&gt; transit:route "25"^^xsd:int.
-        &lt;http://airport.example.com/6523&gt; wgs84_pos:lat "50.901389".
-        &lt;http://airport.example.com/6523&gt; wgs84_pos:long "4.484444".
-      </pre>
-
-
-      <h3 id="example-r2rml-view">Example: Mapping an XML file</h3>
-
-      <p>The following RML mapping document produces the desired triples from the corresponding XML file. <br/>
-        RML mappings for XML files follow the same syntax as in R2RML. <br/>
-        The references to the XML elements follow the syntax of the query language specified at the logical source. <br/>
-        A/N XPath is the supported/preferred/default query language for XML files. 
-      </p>
-
-      <table class="ex-data">
-        <caption>Transport.xml - XML file</caption>
-        <tr>
-          <td>
-            <span>
-              &#60;transport&#62; <br/>
-              &nbsp; &#60;bus id=“25”&#62; <br/>
-              &nbsp; &nbsp; &#60;route&#62; <br/>
-              &nbsp; &nbsp; &nbsp; &#60;stop id=“645”&#62; <br/>
-              &nbsp; &nbsp; &nbsp; &nbsp; International Airport <br/>
-              &nbsp; &nbsp; &nbsp; &#60;/stop&#62; <br/>
-              &nbsp; &nbsp; &nbsp; &#60;stop id=“651”&#62; <br/>
-              &nbsp; &nbsp; &nbsp; &nbsp; Conference center <br/>
-              &nbsp; &nbsp; &nbsp; &#60;/stop&#62; <br/>
-              &nbsp; &nbsp; &#60;/route&#62; <br/>
-              &nbsp; &#60;/bus&#62; <br/>
-              &#60;/transport&#62;
-            </span>
-          </d>
-        </tr>
-      </table>
-
-      <pre class="ex-mapping">
-          @prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;.
-          @prefix rml: &lt;http://mmlab.be/ns/rml#&gt;.
-          @prefix ex: &lt;http://example.com/ns#&gt;.
-          @prefix ql: &lt;http://mmlab.be/ns/ql#&gt;.
-          @prefix transit: &lt;http://vocab.org/transit/terms/&gt;.
-          @prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;.
-          @prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;.
-
-          &lt;#TransportMapping&gt;
-            rml:logicalSource 
-              [
-                rml:sourceName "http://www.example.com/Transport.xml" ;
-                rml:iterator "/transport/bus";
-                rml:language ql:XPath;
-              ];
-            rr:subjectMap 
-            [ 
-              rr:template "http://trans.example.com/{/transport/bus@id}";
-              rr:class transit:Stop 
-            ];
-            rr:predicateObjectMap 
-            [
-              rr:predicate transit:stop;
-              rr:objectMap 
-              [
-                rml:selector "/transport/bus/route/stop@id";
-                rr:datatype xsd:int 
-              ] 
-            ];
-            rr:predicateObjectMap 
-            [
-              rr:predicate rdfs:label;
-              rr:objectMap 
-              [
-                rml:selector "/transport/bus/route/stop"
-              ]
-            ].
-        </pre>
-
-      <pre class="ex-output">
-        @prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;.
-        @prefix transit: &lt;http://vocab.org/transit/terms/&gt;.
-        @prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;.
-        @prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;.
-
-        &lt;http://trans.example.com/25&gt; rdf:type transit:Stop.
-        &lt;http://trans.example.com/25&gt; transit:stop "645"^^xsd:int.
-        &lt;http://trans.example.com/25&gt; rdfs:label "International Airport".
-        &lt;http://trans.example.com/25&gt; transit:stop "651"^^xsd:int.
-        &lt;http://trans.example.com/25&gt; rdfs:label "Conference center".
-      </pre>
-
-      <h3 id="example-r2rml-view">Example: Mapping a JSON file</h3>
-
-      <p>The following RML mapping document produces the desired triples from the corresponding JSON file. <br/>
-        RML mappings for JSON files follow the same syntax as in R2RML. <br/>
-        The references to the JSON objects follow the syntax of the query language specified at the logical source. <br/>
-        A/N JSONPath is the preferred/supported query language for JSON files. 
-      </p>
-
-      <table class="ex-data">
-        <caption>Venue.json - JSON file</caption>
-        <tr>
-          <td>
-            <span>
-                { <br/>
-                &nbsp; "venue": <br/>
-                &nbsp; { <br/>
-                &nbsp; &nbsp; "latitude": "51.0500000", <br/>
-                &nbsp; &nbsp; "longitude": "3.7166700" <br/>
-                &nbsp; }, <br/>
-                &nbsp; "location": <br/>
-                &nbsp; { <br/>
-                &nbsp; &nbsp; "continent": " EU", <br/>
-                &nbsp; &nbsp; "country": "BE", <br/>
-                &nbsp; &nbsp; "city": "Brussels" <br/>
-                &nbsp;} <br/>
-                } <br/>
-
-            </span>
-          </d>
-        </tr>
-      </table>
-
-      <pre class="ex-mapping">
-          @prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;.
-          @prefix rml: &lt;http://mmlab.be/ns/rml#&gt;.
-          @prefix ql: &lt;http://mmlab.be/ns/ql#&gt;.
-          @prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;.
-          @prefix schema: &lt;http://schema.org/&gt;.
-          @prefix wgs84_pos: &lt;http://www.w3.org/2003/01/geo/wgs84_pos#lat&gt;.
-          @prefix gn: &lt;http://www.geonames.org/ontology#&gt;.
-
-          &lt;#VenueMapping&gt;
-            rml:logicalSource [
-              rml:sourceName "http://www.example.com/files/Venue.json";
-              rml:queryLanguage ql:JSONPath;
-              rml:iterator "$"
-            ];
-            rr:subjectMap [
-              rr:template "http://loc.example.com/city/{$.location.city}";
-              rr:class schema:City 
-            ];
       
-            rr:predicateObjectMap 
-            [
-              rr:predicate wgs84_pos:lat;
-              rr:objectMap "latitude" 
-            ];
-              
-            rr:predicateObjectMap 
-            [
-              rr:predicate wgs84_pos:long;
-              rr:objectMap "longitude" 
-            ];
 
-            rr:predicateObjectMap [
-              rr:predicate gn:countryCode;
-              rr:objectMap "$.location.country" 
-            ].
+      
 
-        </pre>
-
-      <pre class="ex-output">
-        @prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;.
-        @prefix schema: &lt;http://schema.org/&gt;.
-        @prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;.
-        @prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;.
-        @prefix wgs84_pos: &lt;http://www.w3.org/2003/01/geo/wgs84_pos#lat&gt;.
-        @prefix gn: &lt;http://www.geonames.org/ontology#&gt;.
-
-        &lt;http://loc.example.com/city/25&gt; rdf:type schema:City.
-        &lt;http://loc.example.com/city/25&gt; wgs84_pos:lat "50.901389".
-        &lt;http://loc.example.com/city/25&gt; wgs84_pos:long "4.484444".
-        &lt;http://loc.example.com/city/25&gt; gn:countryCode "BE".
-      </pre>
-
-
-      <h3 id="">Linking Two Files</h3>
-
-      <p>
-        To have more complete mappings, triples with the city where the airport is located needs to be generated.   
-        Those triples' subject come from the <code>&lt;#AirportMapping&gt;</code> triples map, 
-        while the objects come from the <code>&lt;#VenueMapping&gt;</code>.
-      </p>
-
-      <p>This can be achieved by adding another <code>rr:predicateObjectMap</code>
-      to the <code>&lt;#AirportMapping&gt;</code>. This one uses the other triples map,
-      <code>&lt;#VenueMapping&gt;</code>, as a parent triples map:</p>
-
-      <pre class="ex-mapping">
-&lt;#AirportMapping&gt;
-  rr:predicateObjectMap 
-  [
-    rr:predicate ex:located;
-    rr:objectMap 
-    [
-      rr:parentTriplesMap &lt;#VenueMapping&gt;;
-        rr:joinCondition 
-        [
-          rr:child "DEPTNO";
-          rr:parent "DEPTNO";
-        ];
-    ];
-  ].
-      </pre>
-
-      <p>This performs a union between the CSV file and the JSON file. The objects will be generated from
-      the subject map of the parent triples map, yielding the desired triple:</p>
-
-      <pre class="ex-output">
-        &lt;http://data.example.com/employee/7369&gt; ex:located &lt;http://data.example.com/department/10&gt;.
-      </pre>
-
-      <p>
-        This completes the RML mapping document. An RML processor will generate the triples listed above from this mapping document.
-      </p>
-
-
-      <h2 id="logical-sources">1. Defining Logical Sources</h2>
+      <h2 id="logical-source">1. Defining Logical Sources</h2>
 
       <p>A logical source is any source file that is mapped to RDF triples. A logical source is either</p>
       <ul>
@@ -770,7 +304,7 @@
         <li>an RML View, <code>rml:RMLView</code></li>
       </ul>
 
-      <h3>1.1 Base Sources (<code>rml:sourceName</code>, <code>rml:iterator</code>, <code>rml:queryLanguage</code>)</h3>
+      <h3 id="base-source">1.1 Base Sources (<code>rml:sourceName</code>, <code>rml:iterator</code>, <code>rml:queryLanguage</code>)</h3>
 
       <p>A base source is a logical source pointing to a file or a database that contains the data to be mapped. <br/>
         At least the source Name, <code>rml:sourceName</code>, of the source file and its iterator, <code>rml:iterator</code>, should be defined. 
@@ -865,7 +399,7 @@
         </pre>
       </p>
 
-      <h3>1.2 RML Views (<code>rml:sourceName</code>, <code>rml:query</code>, <code>rml:queryLanguage</code>)</h3>
+      <h3 id="RML-view">1.2 RML Views (<code>rml:sourceName</code>, <code>rml:query</code>, <code>rml:queryLanguage</code>)</h3>
 
       <p>An RML view is a <a href="#logical-source">logical source</a> 
         whose contents are the result of executing a query against the logical source specified. 
@@ -1103,7 +637,7 @@
         <li>a <a href="#template-valued-term-map">template-valued term map</a>.</li>
       </ul>
 
-      <p>The <dfn id="reference">references</dfn> of a <a href="#term-map">term map</a> are 
+      <p>The <dfn id="">references</dfn> of a <a href="#term-map">term map</a> are 
           the set of <a href="#logical-reference">logical references</a> referenced in the term map and depend on the type of term map.
       </p>
 
@@ -1182,7 +716,7 @@
   rr:object ex:Employee.
       </pre>
 
-      <h3 id="from-column">3.2 From a Reference (<code>rml:reference</code>)</h3>
+      <h3 id="reference">3.2 From a Reference (<code>rml:reference</code>)</h3>
 
       <p>A reference <code>rml:reference</code> is used to refer to
         <ul>
@@ -1378,6 +912,617 @@
       <pre class="ex-mapping">
   [] rr:objectMap [ rml:reference "/result/intensity"; rr:datatype xsd:positiveInteger ].
   </pre>
+
+  <h2 id="logical-join">
+    4 Relationships among Logical Sources 
+    (<code>rr:parentTriplesMap</code>, <code>rr:joinCondition</code>, <code>rr:child</code> and <code>rr:parent</code>)
+  </h2>
+
+    <p>A <dfn id="referencing-object-map">referencing object map</dfn> allows using the subjects of another <a href="#triples-map">triples map</a> 
+      as the objects generated by a <a href="#predicate-object-map">predicate-object map</a>.
+      <br/>
+      Since the triples maps may be based on different <a href="#logical-source">logical sources</a>, this may require joins between several logical sources. 
+    </p>
+
+    <p>A referencing object map is represented by a resource that:</p>
+
+    <ul>
+      <li>
+        has exactly one <code>rr:parentTriplesMap</code> property, whose value must be a <a href="#triples-map">triples map</a>, known as the
+        referencing object map's <dfn id="parent-triples-map">parent triples map</dfn>.
+      </li>
+      <li>may have one or more <code>rr:joinCondition</code> properties, whose values must be <a href="#join-condition">join conditions</a>.</li>
+    </ul>
+
+    <p>
+      A <dfn id="join-condition">join condition</dfn> is represented by a resource that has exactly one value for each of the following two properties:
+    </p>
+
+    <ul>
+      <li>
+        <code>rr:child</code>, whose value is known as the join condition's <dfn id="child-reference">child reference</dfn> and 
+        must be a <a href="#logical-reference">logical reference</a> that exists in the <a href="#logical-source">logical source</a> of the
+        <a href="#triples-map">triples map</a> that contains the referencing object map.
+      </li>
+      <li>
+        <code>rr:parent</code>, whose value is known as the join condition's <dfn id="parent-source">parent source</dfn> and must be a <a href="#logical-reference">logical reference</a> that exists in the <a href="#logical-source">logical source</a> of the referencing object map's <a href="#parent-triples-map">parent triples map</a>.
+      </li>
+    </ul>
+
+    <p>
+      The <dfn id="child-query">child query</dfn> of a <a href="#referencing-object-map">referencing object map</a> is the <a href="#reference">reference</a> of the <a href="#logical-source">logical source</a> of the <a href="#term-map">term map</a> containing the referencing object map.
+    </p>
+
+    <p>
+      The <dfn id="parent-query">parent query</dfn> of a <a href="#referencing-object-map">referencing object map</a> is the <a href="#reference">reference</a> or the <a href="#query">query</a> of the <a href="#logical-source">logical source</a> of its <a href="#parent-triples-map">parent triples map</a>.
+    </p>
+
+    <p>
+      The <a href="#joint-query">joint query</a> is used when generating RDF triples from <a href="#referencing-object-map">referencing object maps</a>. If the <a href="#logical-source">logical source</a> of the <a href="#child-triples-map">child triples map</a> and the <a href="#logical-source">logical source</a> of the <a href="#parent-triples-map">parent triples map</a> of a <a href="#referencing-object-map">referencing object map</a> are not identical, then the <a href="#referencing-object-map">referencing object map</a> must have at least one <a href="#join-condition">join condition</a>.
+    </p>
+
+    <p>The following example shows a referencing object map as part of a <a href="#predicate-object-map">predicate-object map</a>:</p>
+    <pre class="ex-mapping" id="ex-ref-object-map1">
+[] rr:predicateObjectMap [
+    rr:predicate ex:department;
+    rr:objectMap [
+        rr:parentTriplesMap &lt;#TriplesMap2&gt;;
+        rr:joinCondition [
+            rr:child "DEPTNO";
+            rr:parent "DEPTNO";
+        ];
+    ];
+].</pre>
+    <p>If the logical table of the surrounding
+    triples map is <code>EMP</code>, and the logical table
+    of <code>&lt;#TriplesMap2&gt;</code> is <code>DEPT</code>,
+    this would result in a join between these two tables
+    with the condition</p>
+    <pre>EMP.DEPTNO = DEPT.DEPTNO</pre>
+    <p>and the objects of the triples would be generated using
+    the subject map of <code>&lt;#TriplesMap2&gt;</code>.</p>
+
+    <p>Given the two <a href="#example-input-database">example
+    tables</a>, and subject maps as defined in the
+    <a href="#example-simple">example mapping</a>, this would
+    result in a triple:</p>
+
+    <pre class="ex-output">&lt;http://data.example.com/employee/7369&gt; ex:department &lt;http://data.example.com/department/10&gt;.</pre>
+
+    <p>The following example shows a
+    <a href="#dfn-referencing-object-map">referencing object map</a>
+    that does not have a <a href="#dfn-join-condition">join condition</a>.
+    It creates two kinds of resources from the
+    <a href="#example-input-database"><code>DEPT</code> table</a>:
+    departments and sites.</p>
+
+    <pre class="ex-mapping" id="ex-ref-object-map2">&lt;#DeptTriplesMap&gt;
+    rr:logicalTable [ rr:tableName "DEPT" ];
+    rr:subjectMap [
+        rr:template "department/{DEPTNO}";
+        rr:class ex:Department;
+    ];
+    rr:predicateObjectMap [
+        rr:predicate ex:location;
+        rr:objectMap [ rr:parentTriplesMap &lt;#SiteTriplesMap&gt; ];
+    ].
+
+&lt;#SiteTriplesMap&gt;
+    rr:logicalTable [ rr:tableName "DEPT" ];
+    rr:subjectMap [
+        rr:template "site/{LOC}";
+        rr:class ex:Site;
+    ];
+    rr:predicateObjectMap [
+        rr:predicate ex:siteName;
+        rr:objectMap [ ex:column "LOC" ];
+    ].</pre>
+
+    <p>An <code>ex:Site</code> resource is created
+    for each distinct value in the <code>LOC</code> column, using the
+    <code>&lt;#SiteTriplesMap&gt;</code>. Departments and sites are
+    linked by <code>ex:location</code> triples, and the objects
+    of these triples are specified using a
+    <a href="#dfn-referencing-object-map">referencing object map</a>
+    that references the sites triples map. No join condition is
+    needed as both triples maps use the same logical table
+    (the base table <code>DEPT</code>). Given the example table,
+    this mapping would result in four triples
+    (assuming an appropriate <a href="#dfn-base-iri">base IRI</a>):</p>
+
+    <pre class="ex-output">&lt;http://data.example.com/department/10&gt; rdf:type ex:Department.
+&lt;http://data.example.com/department/10&gt; ex:location &lt;http://data.example.com/site/NEW%20YORK&gt;.
+&lt;http://data.example.com/site/NEW%20YORK&gt; rdf:type ex:Site.
+&lt;http://data.example.com/site/NEW%20YORK&gt; ex:siteName "NEW YORK".</pre>
+
+    <h2 id="overview">RML Overview and Example (Informative)</h2>
+
+      <p>An RML mapping refers to logical sources to retrieve data from the input file or database. 
+        A logical source extends R2RML's logical Table. A logical source can be one of the following:</p>
+      <ol>
+        <li>A base source (A/N any input file or base table),</li>
+        <li>a view (A/N in case of databases), or</li>
+        <li>a view resulted from a valid query (called an RML view).</li>
+      </ol>
+
+      <h3 id="example-input">Example Input</h3>
+
+      <table class="ex-data" id="">
+          <caption>Airport.csv - CSV file</caption>
+          <tr>
+            <td>
+              id, city, bus, latitude, longitude <br/>
+              6523, Brussels, 25, 50.901389, 4.484444
+            </d>
+          </tr>
+        </table>
+
+        <table class="ex-data">
+          <caption>Transport.xml - XML file</caption>
+          <tr>
+            <td>
+              <span>
+                &#60;transport&#62; <br/>
+                &nbsp; &#60;bus id=“25”&#62; <br/>
+                &nbsp; &nbsp; &#60;route&#62; <br/>
+                &nbsp; &nbsp; &nbsp; &#60;stop id=“645”&#62; <br/>
+                &nbsp; &nbsp; &nbsp; &nbsp; Int. Airport <br/>
+                &nbsp; &nbsp; &nbsp; &#60;/stop&#62; <br/>
+                &nbsp; &nbsp; &nbsp; &#60;stop id=“651”&#62; <br/>
+                &nbsp; &nbsp; &nbsp; &nbsp; Conference center <br/>
+                &nbsp; &nbsp; &nbsp; &#60;/stop&#62; <br/>
+                &nbsp; &nbsp; &#60;/route&#62; <br/>
+                &nbsp; &#60;/bus&#62; <br/>
+                &#60;/transport&#62;
+              </span>
+            </d>
+          </tr>
+        </table>
+
+        <table class="ex-data" summary="EMP table: sample data" id="ex_EMP">
+          <caption>Venue.json - JSON file</caption>
+          <tr>
+            <td>
+              <span>
+                { <br/>
+                  &nbsp; "venue": <br/>
+                  &nbsp; &nbsp; { <br/>
+                  &nbsp; &nbsp; &nbsp; "latitude": "51.0500000", <br/>
+                  &nbsp; &nbsp; &nbsp; "longitude": "3.7166700" <br/>
+                  &nbsp; &nbsp; }, <br/>
+                  &nbsp; &nbsp; "location": <br/>
+                  &nbsp; &nbsp; &nbsp; { <br/>
+                  &nbsp; &nbsp; &nbsp; &nbsp; "continent": "EU", <br/>
+                  &nbsp; &nbsp; &nbsp; &nbsp; "country": "BE", <br/>
+                  &nbsp; &nbsp; &nbsp; &nbsp; "city": "Brussels" <br/>
+                  &nbsp; &nbsp; &nbsp; } <br/>
+                  }     
+              </span>
+            </d>
+          </tr>
+        </table>
+
+        <pre class="ex-mapping">
+          @prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;.
+          @prefix rml: &lt;http://mmlab.be/ns/rml#&gt;.
+          @prefix ex: &lt;http://example.com/ns#&gt;.
+
+          &lt;#AirportMapping&gt;
+            rml:logicalSource 
+              [
+                rml:sourceName “http://www.example.com/Airport.csv”
+              ];
+              rr:subjectMap 
+              [
+                rr:template “http://airport.example.com/{id}”;
+                rr:class transit:Stop 
+              ];
+
+            rr:predicateObjectMap 
+            [
+              rr:predicate transit:route;
+              rr:objectMap 
+              [ 
+                &lt;#TransportMapping&gt;
+                  rr:joinCondition 
+                  [
+                    rr:child “bus”;
+                    rr:parent “/transport/bus@id” 
+                  ]
+              ]
+            ];
+
+            rr:predicateObjectMap 
+            [
+              rr:predicate wgs84_pos:location;
+              rr:objectMap 
+              [ 
+                &lt;#VenueMapping&gt;
+                rr:joinCondition 
+                [
+                  rr:child “city”;
+                  rr:parent “$.location.city”
+                ]
+              ]
+            ].
+        </pre>
+
+        <pre class="ex-mapping">
+          @prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;.
+          @prefix rml: &lt;http://mmlab.be/ns/rml#&gt;.
+          @prefix ex: &lt;http://example.com/ns#&gt;.
+
+          &lt;#TransportMapping&gt;
+            rr:subjectMap 
+            [ 
+              rr:template “http://trans.example.com/{/transport/bus@id}”;
+              rr:class transit:Stop 
+            ];
+            rr:predicateObjectMap 
+            [
+              rr:predicate transit:stop;
+              rr:objectMap 
+              [
+                rml:selector “/transport/bus/route/stop@id”;
+                rr:datatype xsd:int 
+              ] 
+            ];
+            rr:predicateObjectMap 
+            [
+              rr:predicate rdfs:label;
+              rr:objectMap 
+              [
+                rml:selector “/transport/bus/route/stop”
+              ]
+            ].
+        </pre>
+
+        <pre class="ex-mapping">
+          @prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;.
+          @prefix rml: &lt;http://mmlab.be/ns/rml#&gt;.
+          @prefix ex: &lt;http://example.com/ns#&gt;.
+
+          &lt;#LocationMapping&gt;
+            rr:subjectMap 
+            [
+              rr:template http://loc.example.com/latlong/{$.venue.latitude},{$.venue.longitude}
+            ];
+
+            rr:predicateObjectMap 
+            [
+              rr:predicate wgs84_pos:lat;
+              rr:objectMap “$.venue.latitude” 
+            ]; 
+
+            rr:predicateObjectMap 
+            [
+              rr:predicate wgs84_pos:long;
+              rr:objectMap “$.venue.longitude” 
+            ] 
+          ].
+        </pre>
+
+        <pre class="ex-mapping">
+          @prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;.
+          @prefix rml: &lt;http://mmlab.be/ns/rml#&gt;.
+          @prefix ex: &lt;http://example.com/ns#&gt;.
+
+          &lt;#VenueMapping&gt;
+            rml:logicalSource 
+            [
+              rml:name “http://www.example.com/Venue.json”;
+              rml:language ql:JSONPath 
+            ];
+            rr:subjectMap 
+            [
+              rr:template “http://loc.example.com/city/{$.location.city}”;
+              rr:class schema:City;
+            ];
+            rr:predicateObjectMap 
+            [
+              rr:predicate geo:location;
+              rr:objectMap &lt;#LocationMapping&gt; 
+            ];
+            rr:predicateObjectMap 
+            [
+              rr:predicate gn:countryCode;
+              rr:objectMap “$.location.country” 
+            ]
+            rr:predicateObjectMap 
+            [
+              rr:predicate geosp:onContinent;
+              rr:objectMap “$.location.continent” 
+            ].
+        </pre>
+
+      <p>The desired RDF triples to be produced from this database are as follows:</p>
+
+      <pre class="ex-output">
+        for Venue.json <br/>
+          &lt;http://loc.example.com/city/Brussels&gt; geo:location &lt;http://loc.example.com/latlong/51.0500000,3.7166700&gt;.
+          &lt;http://loc.example.com/city/Brussels&gt; gn:countryCode "BE".
+          &lt;http://loc.example.com/city/Brussels&gt; geosp:onContinent "Europe".
+
+          &lt;http://loc.example.com/latlong/51.0500000,3.7166700&gt; wgs84_pos:lat "51.0500000".
+          &lt;http://loc.example.com/latlong/51.0500000,3.7166700&gt; wgs84_pos:long "3.7166700".
+      </pre>
+
+      <h3 id="example-CSV">Example: Mapping a CSV file</h3>
+
+      <p>The following RML mapping document produces the desired triples from the corresponding CSV file. 
+        <br/>
+        RML mappings for CSV files follow exactly the same syntax as in R2RML to refer to the CSV's records.
+        <br/>
+        It is considered a correspondence of CSV records, delimited by a line break (CRLF), to databases' rows.</p>
+
+        <table class="ex-data" summary="EMP table: sample data" id="ex_EMP">
+          <caption>Airport.csv - CSV file</caption>
+          <tr>
+            <td>
+              id, stop, latitude, longitude <br/>
+              6523, 25, 50.901389, 4.484444
+            </d>
+          </tr>
+        </table>
+
+      <pre class="ex-mapping">
+@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;.
+@prefix rml: &lt;http://mmlab.be/ns/rml#&gt;.
+@prefix ex: &lt;http://example.com/ns#&gt;.
+@prefix transit: &lt;http://vocab.org/transit/terms/&gt;.
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;.
+@prefix wgs84_pos: &lt;http://www.w3.org/2003/01/geo/wgs84_pos#lat&gt;.
+
+&lt;#AirportMapping&gt;
+  rml:logicalSource [
+    rml:sourceName "http://www.example.com/Airport.csv" ;
+    rml:iterator "row" 
+  ];
+  rr:subjectMap [
+    rr:template "http://airport.example.com/{id}";
+    rr:class transit:Stop 
+  ];
+
+  rr:predicateObjectMap [
+    rr:predicate transit:route;
+    rr:objectMap [
+      rml:selector "stop";
+      rr:datatype xsd:int 
+    ]
+  ];
+
+  rr:predicateObjectMap [
+    rr:predicate wgs84_pos:lat;
+    rr:objectMap "latitude" 
+  ];
+              
+  rr:predicateObjectMap [
+    rr:predicate wgs84_pos:long;
+    rr:objectMap "longitude" 
+  ].
+        </pre>
+
+      <pre class="ex-output">
+@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;.
+@prefix transit: &lt;http://vocab.org/transit/terms/&gt;.
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;.
+@prefix wgs84_pos: &lt;http://www.w3.org/2003/01/geo/wgs84_pos#&gt;.
+
+&lt;http://airport.example.com/6523&gt; rdf:type transit:Stop.
+&lt;http://airport.example.com/6523&gt; transit:route "25"^^xsd:int.
+&lt;http://airport.example.com/6523&gt; wgs84_pos:lat "50.901389".
+&lt;http://airport.example.com/6523&gt; wgs84_pos:long "4.484444".
+      </pre>
+
+
+      <h3 id="example-XML">Example: Mapping an XML file</h3>
+
+      <p>The following RML mapping document produces the desired triples from the corresponding XML file. <br/>
+        RML mappings for XML files follow the same syntax as in R2RML. <br/>
+        The references to the XML elements follow the syntax of the query language specified at the logical source. <br/>
+        A/N XPath is the supported/preferred/default query language for XML files. 
+      </p>
+
+      <table class="ex-data">
+        <caption>Transport.xml - XML file</caption>
+        <tr>
+          <td>
+            <span>
+              &#60;transport&#62; <br/>
+              &nbsp; &#60;bus id=“25”&#62; <br/>
+              &nbsp; &nbsp; &#60;route&#62; <br/>
+              &nbsp; &nbsp; &nbsp; &#60;stop id=“645”&#62; <br/>
+              &nbsp; &nbsp; &nbsp; &nbsp; International Airport <br/>
+              &nbsp; &nbsp; &nbsp; &#60;/stop&#62; <br/>
+              &nbsp; &nbsp; &nbsp; &#60;stop id=“651”&#62; <br/>
+              &nbsp; &nbsp; &nbsp; &nbsp; Conference center <br/>
+              &nbsp; &nbsp; &nbsp; &#60;/stop&#62; <br/>
+              &nbsp; &nbsp; &#60;/route&#62; <br/>
+              &nbsp; &#60;/bus&#62; <br/>
+              &#60;/transport&#62;
+            </span>
+          </d>
+        </tr>
+      </table>
+
+      <pre class="ex-mapping">
+@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;.
+@prefix rml: &lt;http://mmlab.be/ns/rml#&gt;.
+@prefix ex: &lt;http://example.com/ns#&gt;.
+@prefix ql: &lt;http://mmlab.be/ns/ql#&gt;.
+@prefix transit: &lt;http://vocab.org/transit/terms/&gt;.
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;.
+@prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;.
+
+&lt;#TransportMapping&gt;
+  rml:logicalSource 
+  [
+    rml:sourceName "http://www.example.com/Transport.xml" ;
+    rml:iterator "/transport/bus";
+    rml:language ql:XPath;
+  ];
+  rr:subjectMap 
+  [ 
+    rr:template "http://trans.example.com/{/transport/bus@id}";
+    rr:class transit:Stop 
+  ];
+  rr:predicateObjectMap 
+  [
+    rr:predicate transit:stop;
+    rr:objectMap 
+    [
+      rml:reference "/transport/bus/route/stop@id";
+      rr:datatype xsd:int 
+    ] 
+  ];
+  rr:predicateObjectMap 
+  [
+    rr:predicate rdfs:label;
+    rr:objectMap [
+      rml:reference "/transport/bus/route/stop"
+    ]
+  ].
+        </pre>
+
+      <pre class="ex-output">
+        @prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;.
+        @prefix transit: &lt;http://vocab.org/transit/terms/&gt;.
+        @prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;.
+        @prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;.
+
+        &lt;http://trans.example.com/25&gt; rdf:type transit:Stop.
+        &lt;http://trans.example.com/25&gt; transit:stop "645"^^xsd:int.
+        &lt;http://trans.example.com/25&gt; rdfs:label "International Airport".
+        &lt;http://trans.example.com/25&gt; transit:stop "651"^^xsd:int.
+        &lt;http://trans.example.com/25&gt; rdfs:label "Conference center".
+      </pre>
+
+      <h3 id="example-JSON">Example: Mapping a JSON file</h3>
+
+      <p>The following RML mapping document produces the desired triples from the corresponding JSON file. <br/>
+        RML mappings for JSON files follow the same syntax as in R2RML. <br/>
+        The references to the JSON objects follow the syntax of the query language specified at the logical source. <br/>
+        A/N JSONPath is the preferred/supported query language for JSON files. 
+      </p>
+
+      <table class="ex-data">
+        <caption>Venue.json - JSON file</caption>
+        <tr>
+          <td>
+            <span>
+                { <br/>
+                &nbsp; "venue": <br/>
+                &nbsp; { <br/>
+                &nbsp; &nbsp; "latitude": "51.0500000", <br/>
+                &nbsp; &nbsp; "longitude": "3.7166700" <br/>
+                &nbsp; }, <br/>
+                &nbsp; "location": <br/>
+                &nbsp; { <br/>
+                &nbsp; &nbsp; "continent": " EU", <br/>
+                &nbsp; &nbsp; "country": "BE", <br/>
+                &nbsp; &nbsp; "city": "Brussels" <br/>
+                &nbsp;} <br/>
+                } <br/>
+
+            </span>
+          </d>
+        </tr>
+      </table>
+
+      <pre class="ex-mapping">
+          @prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;.
+          @prefix rml: &lt;http://mmlab.be/ns/rml#&gt;.
+          @prefix ql: &lt;http://mmlab.be/ns/ql#&gt;.
+          @prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;.
+          @prefix schema: &lt;http://schema.org/&gt;.
+          @prefix wgs84_pos: &lt;http://www.w3.org/2003/01/geo/wgs84_pos#lat&gt;.
+          @prefix gn: &lt;http://www.geonames.org/ontology#&gt;.
+
+          &lt;#VenueMapping&gt;
+            rml:logicalSource [
+              rml:sourceName "http://www.example.com/files/Venue.json";
+              rml:queryLanguage ql:JSONPath;
+              rml:iterator "$"
+            ];
+            rr:subjectMap [
+              rr:template "http://loc.example.com/city/{$.location.city}";
+              rr:class schema:City 
+            ];
+      
+            rr:predicateObjectMap 
+            [
+              rr:predicate wgs84_pos:lat;
+              rr:objectMap "latitude" 
+            ];
+              
+            rr:predicateObjectMap 
+            [
+              rr:predicate wgs84_pos:long;
+              rr:objectMap "longitude" 
+            ];
+
+            rr:predicateObjectMap [
+              rr:predicate gn:countryCode;
+              rr:objectMap "$.location.country" 
+            ].
+
+        </pre>
+
+      <pre class="ex-output">
+        @prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;.
+        @prefix schema: &lt;http://schema.org/&gt;.
+        @prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;.
+        @prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;.
+        @prefix wgs84_pos: &lt;http://www.w3.org/2003/01/geo/wgs84_pos#lat&gt;.
+        @prefix gn: &lt;http://www.geonames.org/ontology#&gt;.
+
+        &lt;http://loc.example.com/city/25&gt; rdf:type schema:City.
+        &lt;http://loc.example.com/city/25&gt; wgs84_pos:lat "50.901389".
+        &lt;http://loc.example.com/city/25&gt; wgs84_pos:long "4.484444".
+        &lt;http://loc.example.com/city/25&gt; gn:countryCode "BE".
+      </pre>
+
+
+      <h3 id="">Linking Two Files</h3>
+
+      <p>
+        To have more complete mappings, triples with the city where the airport is located needs to be generated.   
+        Those triples' subject come from the <code>&lt;#AirportMapping&gt;</code> triples map, 
+        while the objects come from the <code>&lt;#VenueMapping&gt;</code>.
+      </p>
+
+      <p>This can be achieved by adding another <code>rr:predicateObjectMap</code>
+      to the <code>&lt;#AirportMapping&gt;</code>. This one uses the other triples map,
+      <code>&lt;#VenueMapping&gt;</code>, as a parent triples map:</p>
+
+      <pre class="ex-mapping">
+&lt;#AirportMapping&gt;
+  rr:predicateObjectMap 
+  [
+    rr:predicate ex:located;
+    rr:objectMap 
+    [
+      rr:parentTriplesMap &lt;#VenueMapping&gt;;
+        rr:joinCondition 
+        [
+          rr:child "DEPTNO";
+          rr:parent "DEPTNO";
+        ];
+    ];
+  ].
+      </pre>
+
+      <p>This performs a union between the CSV file and the JSON file. The objects will be generated from
+      the subject map of the parent triples map, yielding the desired triple:</p>
+
+      <pre class="ex-output">
+        &lt;http://data.example.com/employee/7369&gt; ex:located &lt;http://data.example.com/department/10&gt;.
+      </pre>
+
+      <p>
+        This completes the RML mapping document. An RML processor will generate the triples listed above from this mapping document.
+      </p>
+
 
     </div>
   </body>
