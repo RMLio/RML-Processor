@@ -115,9 +115,10 @@
       <ul>
         <li><a href="#vocabulary">RML Vocabulary</a></li>
         <li><a href="#conventions">Document Conventions</a></li>
+        <li><a href="#example-input">Example input</a></li>
       </ul>
     </li>
-    <li><a href="#terminology">RDF Terminology (Informative)</a></li>
+    <li><a href="#terminology">RDF Terminology</a></li>
     <li><a href="#logical-source">1. Defining Logical Sources</a>
       <ul>
         <li><a href="#base-source">1.1 Base Sources</a></li>
@@ -142,8 +143,8 @@
       </ul>
     </li>
     <li><a href="#logical-join">4 Relationships among Logical Sources</a></li>
-    <li><a href="#overview">RML Overview and Example (Informative)</a></li>
-    <li><a href="#index">Index of RML Vocabulary Terms (Informative)</a>
+    <li><a href="#overview">RML Overview and Example</a></li>
+    <li><a href="#index">Index of RML Vocabulary Terms</a>
     <ul>
       <li><a href="#class-index">Classes</a></li>
       <li><a href="#property-index">Properties</a></li>
@@ -292,8 +293,78 @@
       </pre>
 
 
-      
-
+     <h3 id="example-input">Example Input</h3>
+     <table>
+      <tr>
+        <td>
+          <table class="ex-data" id="">
+              <caption>Airport.csv - CSV file</caption>
+              <tr>
+                <td>
+                  id, city, bus, latitude, longitude <br/>
+                  6523, Brussels, 25, 50.901389, 4.484444
+                </d>
+              </tr>
+          </table>
+        </td>
+        <td>
+            <table class="ex-data" float="left">
+          <caption>Transport.xml - XML file</caption>
+          <tr>
+            <td>
+              <span>
+                &#60;transport&#62; <br/>
+                &nbsp; &#60;bus id=“25” type="SingeDecker"&#62; <br/>
+                &nbsp; &nbsp; &#60;route&#62; <br/>
+                &nbsp; &nbsp; &nbsp; &#60;stop id=“645”&#62; <br/>
+                &nbsp; &nbsp; &nbsp; &nbsp; Airport <br/>
+                &nbsp; &nbsp; &nbsp; &#60;/stop&#62; <br/>
+                &nbsp; &nbsp; &nbsp; &#60;stop id=“651”&#62; <br/>
+                &nbsp; &nbsp; &nbsp; &nbsp; Conference center <br/>
+                &nbsp; &nbsp; &nbsp; &#60;/stop&#62; <br/>
+                &nbsp; &nbsp; &#60;/route&#62; <br/>
+                &nbsp; &#60;/bus&#62; <br/>
+                &nbsp; &#60;bus id=“47” type="DoubleDecker"&#62; <br/>
+                &nbsp; &nbsp; &#60;route&#62; <br/>
+                &nbsp; &nbsp; &nbsp; &#60;stop id=“873”&#62; <br/>
+                &nbsp; &nbsp; &nbsp; &nbsp; Central Park <br/>
+                &nbsp; &nbsp; &nbsp; &#60;/stop&#62; <br/>
+                &nbsp; &nbsp; &nbsp; &#60;stop id=“651”&#62; <br/>
+                &nbsp; &nbsp; &nbsp; &nbsp; Conference center <br/>
+                &nbsp; &nbsp; &nbsp; &#60;/stop&#62; <br/>
+                &nbsp; &nbsp; &#60;/route&#62; <br/>
+                &nbsp; &#60;/bus&#62; <br/>
+                &#60;/transport&#62;
+              </span>
+            </d>
+          </tr>
+        </table>
+          </td>
+          <td>
+            <table class="ex-data">
+              <caption>Venue.json - JSON file</caption>
+              <tr>
+                <td>
+                  <span>
+                    { <br/>
+                      &nbsp; "venue": <br/>
+                      &nbsp; &nbsp; { <br/>
+                      &nbsp; &nbsp; &nbsp; "latitude": "51.0500000", <br/>
+                      &nbsp; &nbsp; &nbsp; "longitude": "3.7166700", <br/>
+                      &nbsp; &nbsp; &nbsp; "location": <br/>
+                      &nbsp; &nbsp; &nbsp; { <br/>
+                      &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; "continent": "EU", <br/>
+                      &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; "country": "BE", <br/>
+                      &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; "city": "Brussels" <br/>
+                      &nbsp; &nbsp; &nbsp; } <br/>
+                      }     
+                  </span>
+                </d>
+              </tr>
+            </table> 
+          </td>
+        </tr>
+      </table>
       
 
       <h2 id="logical-source">1. Defining Logical Sources</h2>
@@ -364,7 +435,6 @@
 [] rml:logicalSource 
   [
     rml:sourceName "http://www.example.com/Airport.csv" ;
-    rml:queryLanguage rr:SQL2008;
     rml:iterator "row"
   ].
           </pre>
@@ -374,6 +444,7 @@
 [] rml:logicalSource 
   [
     rml:sourceName "TRANSPORT.BUS" ;
+    rml:queryLanguage rr:SQL2008;
     rml:iterator "BSU_NUM"
   ].
           </pre>
@@ -394,7 +465,7 @@
   [
     rml:sourceName "http://www.example.com/files/Venue.json";
     rml:queryLanguage ql:JSONPath;
-    rml:iterator "$.city"
+    rml:iterator "$.venue"
   ].
         </pre>
       </p>
@@ -488,47 +559,51 @@
       <p>The following example shows a <a href="#triples-map">triples map</a> including 
           its logical source, the subject map, and two predicate-object maps for an XML file.
       </p>
-
+      
+        <table>
+        <tr>
+          <td>
+            <td>
       <pre class="ex-mapping">
 @prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;.
 @prefix rml: &lt;http://mmlab.be/ns/rml#&gt;.
 @prefix ex: &lt;http://example.com/ns#&gt;.
 @prefix ql: &lt;http://mmlab.be/ns/ql#&gt;.
-@prefix transit: &lt;http://vocab.org/transit/terms/&gt;.
 @prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;.
 @prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;.
 
 &lt;#TransportMapping&gt;
-  rml:logicalSource 
-  [
+  rml:logicalSource [
     rml:sourceName "http://www.example.com/Transport.xml" ;
-    rml:iterator "/transport/bus";
+    rml:iterator "/transport/bus/route/stop";
     rml:language ql:XPath;
   ];
-  rr:subjectMap 
-  [ 
-    rr:template "http://trans.example.com/{/transport/bus@id}";
-    rr:class transit:Stop 
+  rr:subjectMap [ 
+    rr:template 
+      "http://trans.example.com/stop/{/transport/bus/route/stop@id}";
+    rr:class ex:Stop 
   ];
-  rr:predicateObjectMap 
-  [
-    rr:predicate transit:stop;
-    rr:objectMap 
-    [
-      rml:reference "/transport/bus/route/stop@id";
-      rr:datatype xsd:int 
-    ] 
-  ];
-  rr:predicateObjectMap 
-  [
+  rr:predicateObjectMap [
     rr:predicate rdfs:label;
-    rr:objectMap 
-    [
+    rr:objectMap [
       rml:reference "/transport/bus/route/stop"
-    ]
-  ].
+  ] ].
         </pre>
+      </td>
+      <td>
+        <pre class="ex-output">
+&lt;http://trans.example.com/stop/645&gt; rdf:type ex:Stop.
+&lt;http://trans.example.com/stop/645&gt; rdfs:label "International Airport".
 
+&lt;http://trans.example.com/stop/651&gt; rdf:type ex:Stop.
+&lt;http://trans.example.com/stop/651&gt; rdfs:label "Conference center".
+
+&lt;http://trans.example.com/stop/873&gt; rdf:type ex:Stop.
+&lt;http://trans.example.com/stop/645&gt; rdfs:label "Central park".
+        </pre>
+      </td>
+    </tr>
+  </table>
         <h3 id="subject-map">2.1 Creating Resources with Subject Maps</h3>
 
         <p>(A/N unchanged compared to R2RML)</p>
@@ -545,16 +620,24 @@
           A <a href="#subject-map">subject map</a> may have one or more <dfn id="class-iri">class IRIs</dfn>. They are represented by the <code>rr:class</code> property. The values of the <code>rr:class</code> property must be <a href="#iri">IRIs</a>. For each <a href="#rdf-term">RDF term</a> generated by the subject map, <a href="#rdf-triple">RDF triples</a> with predicate <code>rdf:type</code> and the class IRI as object will be generated.
         </p>
 
-        <p>In the following example, the generated subject will be asserted as an instance of the <code>transit:Stop</code> class.</p>
+        <p>In the following example, the generated subject will be asserted as an instance of the <code>ex:Stop</code> class. Using the example, the following RDF triple will be generated:</p>
+        <table>
+          <tr>
+            <td>
         <pre class="ex-mapping">
-          [] rr:template "http://trans.example.com/{/transport/bus@id}"; 
-          rr:class transit:Stop.
+[] rr:template "http://trans.example.com/{/transport/bus/route/stop@id}"; 
+   rr:class ex:Stop.
         </pre>
-
-        <p>Using the example, the following RDF triple will be generated:</p>
+            </td>
+            <td>
         <pre class="ex-output">
-          &lt;http://trans.example.com/25&gt; rdf:type transit:Stop.
+&lt;http://trans.example.com/stop/645&gt; rdf:type ex:Stop.
+&lt;http://trans.example.com/stop/651&gt; rdf:type ex:Stop.
+&lt;http://trans.example.com/stop/873&gt; rdf:type ex:Stop.
         </pre>
+            </td>
+          </tr>
+        </table>
 
         <p>
           Mappings where the class IRI is not constant, but needs to be computed based on the contents of the logical source, can be achieved by defining a <a href="#predicate-object-map">predicate-object map</a> with predicate <code>rdf:type</code> and a non-constant <a href="#object-map">object map</a>.
@@ -562,14 +645,11 @@
 
         <p>In the following example, the generated subject will be asserted based on the contents of the logical source to be mapped.</p>
         <pre class="ex-mapping">
-[] rr:predicateObjectMap 
-  [
+[] rr:predicateObjectMap [
     rr:predicate rdf:type;
-    rr:objectMap 
-    [
-      rr:template "http://spi-fm.uca.es/neologism/cerif#{/result/type}"
-    ] 
-  ]
+    rr:objectMap [
+      rr:template "http://trans.example.com/{/transport/bus@type}"
+    ] ]
         </pre>
 
       <h3 id="predicate-object-map">2.3 Creating Properties and Values with Predicate-Object Maps</h3>
@@ -697,14 +777,14 @@
       </p>
       <pre class="ex-mapping">
 [] rr:predicateMap [ rr:constant rdf:type ];
-  rr:objectMap [ rr:constant ex:Employee ].
+  rr:objectMap [ rr:constant ex:Stop ].
       </pre>
       
       <p>If added to a <a href="#triples-map">triples map</a>,
       this predicate-object map would add the following triple to
       all resources <code>?x</code> generated by the triples map:</p>
       <pre class="ex-output">
-?x rdf:type ex:Employee.
+?x rdf:type ex:Stop.
       </pre>
 
       <p>The following example uses
@@ -713,7 +793,7 @@
 
       <pre class="ex-mapping">
 [] rr:predicate rdf:type;
-  rr:object ex:Employee.
+  rr:object ex:Stop.
       </pre>
 
       <h3 id="reference">3.2 From a Reference (<code>rml:reference</code>)</h3>
@@ -748,17 +828,17 @@
 
       <h4>Reference for a CSV file</h4>
       <pre class="ex-mapping">
-[] rr:objectMap [ rml:reference "name" ].
+[] rr:objectMap [ rml:reference "city" ].
       </pre>
 
       <h4>Reference for an XML file</h4>
       <pre class="ex-mapping">
-[] rr:objectMap [ rml:reference "/city/name" ].
+[] rr:objectMap [ rml:reference "/transport/bus/route/stop" ].
       </pre>
 
       <h4>Reference for a JSON file</h4>
       <pre class="ex-mapping">
-[] rr:objectMap [ rml:reference "$.city.name" ].
+[] rr:objectMap [ rml:reference "$.venue.location.city" ].
       </pre>
 
       <p>Using the sample specified in the beginning.</p>
@@ -812,9 +892,9 @@
       </ol>
       
       <pre class="ex-mapping">
-[] rr:subjectMap [ rr:template "http://data.example.com/site/{LOC}" ].</pre>
+[] rr:subjectMap [ rr:template "http://trans.example.com/stop/{/transport/bus/route/stop@id}" ].</pre>
 
-      <pre class="ex-output">http://data.example.com/site/NEW%20YORK</pre>
+      <pre class="ex-output">http://trans.example.com/stop/645</pre>
 
       <h3 id="termtype">3.4 IRIs, Literal, Blank Nodes (<code>rr:termType</code>)</h3>
       <p>(A/N almost unchanged compared to R2RML)</p>
@@ -874,7 +954,7 @@
       </p>
 
       <pre class="ex-mapping">
-[] rr:objectMap [ rml:reference "$.city.name"; rr:language "en-us" ].
+[] rr:objectMap [ rml:reference "$.venue.location.city"; rr:language "en-us" ].
       </pre>
 
       <h3 id="typed-literals">3.6 Typed Literals (<code>rr:datatype</code>)</h3>
@@ -910,7 +990,7 @@
         with an explicitly specified <code>xsd:positiveInteger</code> type. A <a href="#datatype-override-rdf-literal">datatype-override RDF literal</a> of that datatype will be generated from whatever is in the <code>intensity</code> element.</p>
 
       <pre class="ex-mapping">
-  [] rr:objectMap [ rml:reference "/result/intensity"; rr:datatype xsd:positiveInteger ].
+  [] rr:objectMap [ rml:reference "/transport/bus/route/stop@id"; rr:datatype xsd:positiveInteger ].
   </pre>
 
   <h2 id="logical-join">
@@ -962,80 +1042,98 @@
     </p>
 
     <p>The following example shows a referencing object map as part of a <a href="#predicate-object-map">predicate-object map</a>:</p>
-    <pre class="ex-mapping" id="ex-ref-object-map1">
-[] rr:predicateObjectMap [
-    rr:predicate ex:department;
-    rr:objectMap [
+
+    
+      <table>
+        <tr>
+          <td>
+            <pre class="ex-mapping" id="">
+&lt;#TriplesMap1&gt; rr:predicateObjectMap [
+  rml:logicalSource [
+    rml:sourceName "http://www.example.com/Airport.csv" ;
+    rml:iterator "row";
+  ]
+    rr:subjectMap [ 
+      rr:template "http://trans.example.com/airport/{id}";
+      rr:predicate ex:located;
+      rr:objectMap [
         rr:parentTriplesMap &lt;#TriplesMap2&gt;;
         rr:joinCondition [
-            rr:child "DEPTNO";
-            rr:parent "DEPTNO";
+            rr:child "city";
+            rr:parent "$.venue.location.city";
         ];
     ];
-].</pre>
-    <p>If the logical table of the surrounding
-    triples map is <code>EMP</code>, and the logical table
-    of <code>&lt;#TriplesMap2&gt;</code> is <code>DEPT</code>,
-    this would result in a join between these two tables
-    with the condition</p>
-    <pre>EMP.DEPTNO = DEPT.DEPTNO</pre>
-    <p>and the objects of the triples would be generated using
-    the subject map of <code>&lt;#TriplesMap2&gt;</code>.</p>
+  ].
+          </pre>
+          </td>
+          <td>
+            <pre class="ex-mapping" id="">
+&lt;#TriplesMap2&gt; rr:predicateObjectMap [
+  rml:logicalSource [
+    rml:sourceName "http://venue.example.com/Venue.json" ;
+    rml:iterator "$";
+  ]
+  rr:subjectMap [
+    rr:template "http://venue.example.com/{$.venue.location.city}"
+  ]
+            </pre>
 
-    <p>Given the two <a href="#example-input-database">example
-    tables</a>, and subject maps as defined in the
-    <a href="#example-simple">example mapping</a>, this would
-    result in a triple:</p>
+          </td>
+        </tr>
+      </table>
 
-    <pre class="ex-output">&lt;http://data.example.com/employee/7369&gt; ex:department &lt;http://data.example.com/department/10&gt;.</pre>
+    <p>Given the example input</a>, and subject maps as defined in the <a href="#example-simple">example mapping</a>, this would result in a triple:</p>
 
-    <p>The following example shows a
-    <a href="#dfn-referencing-object-map">referencing object map</a>
-    that does not have a <a href="#dfn-join-condition">join condition</a>.
-    It creates two kinds of resources from the
-    <a href="#example-input-database"><code>DEPT</code> table</a>:
-    departments and sites.</p>
+    <pre class="ex-output">&lt;http://trans.example.com/airport/6523&gt; ex:located &lt;http://venue.example.com/Brussels&gt;.</pre>
 
-    <pre class="ex-mapping" id="ex-ref-object-map2">&lt;#DeptTriplesMap&gt;
-    rr:logicalTable [ rr:tableName "DEPT" ];
-    rr:subjectMap [
-        rr:template "department/{DEPTNO}";
-        rr:class ex:Department;
+    <p>
+      The following example shows a <a href="#referencing-object-map">referencing object map</a> 
+      that does not have a <a href="#join-condition">join condition</a>.
+    </p>
+
+    <table>
+        <tr>
+          <td>
+            <pre class="ex-mapping" id="">
+&lt;#TriplesMap1&gt; rr:predicateObjectMap [
+  rml:logicalSource [
+    rml:sourceName "http://www.example.com/Airport.csv" ;
+    rml:iterator "row";
+  ]
+    rr:subjectMap [ 
+      rr:template "http://trans.example.com/airport/{id}";
+      rr:predicate ex:located;
+      rr:objectMap [
+        rr:parentTriplesMap &lt;#TriplesMap2&gt;;
     ];
-    rr:predicateObjectMap [
-        rr:predicate ex:location;
-        rr:objectMap [ rr:parentTriplesMap &lt;#SiteTriplesMap&gt; ];
-    ].
+  ].
+          </pre>
+          </td>
+          <td>
+            <pre class="ex-mapping" id="">
+&lt;#TriplesMap2&gt; rr:predicateObjectMap [
+  rml:logicalSource [
+    rml:sourceName "http://venue.example.com/Airport.csv" ;
+    rml:iterator "$";
+  ]
+  rr:subjectMap [
+    rr:template "http://venue.example.com/{latitude},{longitude}"
+  ]
+            </pre>
 
-&lt;#SiteTriplesMap&gt;
-    rr:logicalTable [ rr:tableName "DEPT" ];
-    rr:subjectMap [
-        rr:template "site/{LOC}";
-        rr:class ex:Site;
-    ];
-    rr:predicateObjectMap [
-        rr:predicate ex:siteName;
-        rr:objectMap [ ex:column "LOC" ];
-    ].</pre>
+          </td>
+        </tr>
+      </table>
 
-    <p>An <code>ex:Site</code> resource is created
-    for each distinct value in the <code>LOC</code> column, using the
-    <code>&lt;#SiteTriplesMap&gt;</code>. Departments and sites are
-    linked by <code>ex:location</code> triples, and the objects
-    of these triples are specified using a
-    <a href="#dfn-referencing-object-map">referencing object map</a>
-    that references the sites triples map. No join condition is
-    needed as both triples maps use the same logical table
-    (the base table <code>DEPT</code>). Given the example table,
-    this mapping would result in four triples
-    (assuming an appropriate <a href="#dfn-base-iri">base IRI</a>):</p>
+    <p> No join condition is needed as both triples maps use the same logical source. Given the example input,
+    this mapping would result in the following triples (assuming an appropriate <a href="#dfn-base-iri">base IRI</a>):</p>
 
     <pre class="ex-output">&lt;http://data.example.com/department/10&gt; rdf:type ex:Department.
 &lt;http://data.example.com/department/10&gt; ex:location &lt;http://data.example.com/site/NEW%20YORK&gt;.
 &lt;http://data.example.com/site/NEW%20YORK&gt; rdf:type ex:Site.
 &lt;http://data.example.com/site/NEW%20YORK&gt; ex:siteName "NEW YORK".</pre>
 
-    <h2 id="overview">RML Overview and Example (Informative)</h2>
+    <h2 id="overview">RML Overview and Example</h2>
 
       <p>An RML mapping refers to logical sources to retrieve data from the input file or database. 
         A logical source extends R2RML's logical Table. A logical source can be one of the following:</p>
@@ -1079,7 +1177,7 @@
           </tr>
         </table>
 
-        <table class="ex-data" summary="EMP table: sample data" id="ex_EMP">
+        <table class="ex-data">
           <caption>Venue.json - JSON file</caption>
           <tr>
             <td>
