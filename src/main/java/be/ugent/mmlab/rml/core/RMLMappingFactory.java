@@ -3,7 +3,7 @@
  *
  * RML : RML Mapping Factory abstract class
  *
- * Factory responsible of R2RML Mapping generation.
+ * Factory responsible of RML Mapping generation.
  *
  * based on R2RMLMappingFactory in db2triples
  *
@@ -11,12 +11,6 @@
  */
 package be.ugent.mmlab.rml.core;
 
-import be.ugent.mmlab.rml.model.selector.SelectorIdentifier;
-import be.ugent.mmlab.rml.model.TriplesMap;
-import be.ugent.mmlab.rml.vocabulary.Vocab;
-import be.ugent.mmlab.rml.vocabulary.Vocab.R2RMLTerm;
-import be.ugent.mmlab.rml.vocabulary.Vocab.RMLTerm;
-import be.ugent.mmlab.rml.model.selector.SelectorIdentifierImpl;
 import be.ugent.mmlab.rml.model.GraphMap;
 import be.ugent.mmlab.rml.model.JoinCondition;
 import be.ugent.mmlab.rml.model.LogicalSource;
@@ -35,6 +29,12 @@ import be.ugent.mmlab.rml.model.StdReferencingObjectMap;
 import be.ugent.mmlab.rml.model.StdSubjectMap;
 import be.ugent.mmlab.rml.model.StdTriplesMap;
 import be.ugent.mmlab.rml.model.SubjectMap;
+import be.ugent.mmlab.rml.model.TriplesMap;
+import be.ugent.mmlab.rml.model.selector.SelectorIdentifier;
+import be.ugent.mmlab.rml.model.selector.SelectorIdentifierImpl;
+import be.ugent.mmlab.rml.vocabulary.Vocab;
+import be.ugent.mmlab.rml.vocabulary.Vocab.R2RMLTerm;
+import be.ugent.mmlab.rml.vocabulary.Vocab.RMLTerm;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -75,7 +75,7 @@ public abstract class RMLMappingFactory {
      * order to identify each triple type, a rule will be used to extract the
      * applicable class of a resource.
      *
-     * @param fileToR2RMLFile
+     * @param fileToRMLFile
      * @return
      * @throws InvalidR2RMLSyntaxException
      * @throws InvalidR2RMLStructureException
@@ -84,14 +84,14 @@ public abstract class RMLMappingFactory {
      * @throws RDFParseException
      * @throws RepositoryException
      */
-    public static RMLMapping extractRMLMapping(String fileToR2RMLFile)
+    public static RMLMapping extractRMLMapping(String fileToRMLFile)
             throws InvalidR2RMLStructureException, InvalidR2RMLSyntaxException,
             R2RMLDataError, RepositoryException, RDFParseException, IOException {
         // Load RDF data from R2RML Mapping document
         SesameDataSet r2rmlMappingGraph = new SesameDataSet();
-        r2rmlMappingGraph.loadDataFromFile(fileToR2RMLFile, RDFFormat.TURTLE);
+        r2rmlMappingGraph.loadDataFromFile(fileToRMLFile, RDFFormat.TURTLE);
         log.debug("[RMLMappingFactory:extractRMLMapping] Number of R2RML triples in file "
-                + fileToR2RMLFile + " : " + r2rmlMappingGraph.getSize());
+                + fileToRMLFile + " : " + r2rmlMappingGraph.getSize());
         // Transform RDF with replacement shortcuts
         replaceShortcuts(r2rmlMappingGraph);
         // Run few tests to help user in its RDF syntax
@@ -103,7 +103,7 @@ public abstract class RMLMappingFactory {
                 + " type "
                 + R2RMLTerm.TRIPLES_MAP_CLASS
                 + " in file "
-                + fileToR2RMLFile + " : " + triplesMapResources.size());
+                + fileToRMLFile + " : " + triplesMapResources.size());
         // Fill each triplesMap object
         for (Resource triplesMapResource : triplesMapResources.keySet()) // Extract each triplesMap
         {

@@ -1,10 +1,8 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package be.ugent.mmlab.rml.model.selector;
 
 /**
+ * 
+ * This interface offers a method for replacing a template with the expression it holds
  *
  * @author mielvandersande
  */

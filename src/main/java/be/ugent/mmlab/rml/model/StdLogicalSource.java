@@ -1,13 +1,10 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package be.ugent.mmlab.rml.model;
 
 import be.ugent.mmlab.rml.vocabulary.Vocab.QLTerm;
 
 /**
- *
+ *  Concrete implementation of a Logical Source
+ * 
  * @author mielvandersande
  */
 public class StdLogicalSource implements LogicalSource {

@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package be.ugent.mmlab.rml.core;
 
 import be.ugent.mmlab.rml.model.RMLMapping;
@@ -19,7 +15,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- *
+ * Engine that will perform the mapping starting from the TermMaps
+ * 
  * @author mielvandersande
  */
 public class RMLEngine {
@@ -33,12 +30,32 @@ public class RMLEngine {
     //There are probably better ways to do this than a static variable
     public static HashMap<String,String> fileMap = new HashMap<String, String>();
 
+    /**
+     * Generate RDF based on a RML mapping
+     * 
+     * @param rmlMapping Parsed RML mapping
+     * @param baseIRI base URI of the resulting RDF
+     * @return dataset containing the triples
+     * @throws SQLException
+     * @throws R2RMLDataError
+     * @throws UnsupportedEncodingException 
+     */
     public SesameDataSet runRMLMapping(RMLMapping rmlMapping,
             String baseIRI) throws SQLException,
             R2RMLDataError, UnsupportedEncodingException {
         return runRMLMapping(rmlMapping, baseIRI, null);
     }
 
+    /**
+     * 
+     * @param rmlMapping Parsed RML mapping
+     * @param baseIRI base URI of the resulting RDF
+     * @param pathToNativeStore path if triples have to be stored in sesame triple store instead of memory
+     * @return
+     * @throws SQLException
+     * @throws R2RMLDataError
+     * @throws UnsupportedEncodingException 
+     */
     public SesameDataSet runRMLMapping(RMLMapping rmlMapping,
             String baseIRI, String pathToNativeStore) throws SQLException,
             R2RMLDataError, UnsupportedEncodingException {
