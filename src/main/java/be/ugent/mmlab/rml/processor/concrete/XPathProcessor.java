@@ -1,11 +1,8 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-package be.ugent.mmlab.rml.processor;
+package be.ugent.mmlab.rml.processor.concrete;
 
 import be.ugent.mmlab.rml.core.RMLPerformer;
 import be.ugent.mmlab.rml.model.TriplesMap;
+import be.ugent.mmlab.rml.processor.AbstractRMLProcessor;
 import com.sun.org.apache.xpath.internal.domapi.XPathEvaluatorImpl;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -45,17 +42,16 @@ public class XPathProcessor extends AbstractRMLProcessor {
             //adding expression to the xpathprocessor
             dog.addXPath(selector);
 
-
-
             jlibs.xml.sax.dog.sniff.Event event = dog.createEvent();
 
             event.setXMLBuilder(new DOMBuilder());
 
             event.setListener(new InstantEvaluationListener() {
+                //When an XPath expression matches
                 @Override
                 public void onNodeHit(Expression expression, NodeItem nodeItem) {
                     Node node = (Node) nodeItem.xml;
-
+                    //Let the performer do its thing
                     performer.perform(node, dataset, map);
                     //System.out.println("XPath: " + expression.getXPath() + " has hit: " + node.getTextContent());
                 }
@@ -72,7 +68,7 @@ public class XPathProcessor extends AbstractRMLProcessor {
                     //System.out.println("XPath: " + expression.getXPath() + " result: " + result);
                 }
             });
-
+            //Execute the streaming
             dog.sniff(event, new InputSource(fileName));
         } catch (SAXPathException ex) {
             Logger.getLogger(XPathProcessor.class.getName()).log(Level.SEVERE, null, ex);
@@ -83,7 +79,7 @@ public class XPathProcessor extends AbstractRMLProcessor {
     }
 
     /**
-     *
+     * Process a XPath expression against an XML node
      * @param node
      * @param expression
      * @return value that matches expression

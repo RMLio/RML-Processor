@@ -2,10 +2,11 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.mmlab.rml.processor;
+package be.ugent.mmlab.rml.processor.concrete;
 
 import be.ugent.mmlab.rml.core.RMLPerformer;
 import be.ugent.mmlab.rml.model.TriplesMap;
+import be.ugent.mmlab.rml.processor.AbstractRMLProcessor;
 import com.jayway.jsonpath.JsonPath;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -32,6 +33,7 @@ public class JSONPathProcessor extends AbstractRMLProcessor {
 
             fis = new FileInputStream(identifier);
             List<Object> nodes = path.read(fis);
+            //iterate over all the objects
             for (Object object : nodes) {
                 performer.perform(object, dataset, map);
             }
