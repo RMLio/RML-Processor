@@ -78,13 +78,13 @@
 
       <dl>
         <dt>This version:</dt> 
-        <dd><a href="http://mmlab.ugent.be/rml_spec.html">http://mmlab.ugent.be/rml_spec.html</a></dd> 
+        <dd><a href="http://semweb.mmlab.be/ns/rml/spec.html">http://semweb.mmlab.be/ns/rml/spec.html</a></dd> 
 
         <dt>Latest version:</dt>
-        <dd><a href="http://mmlab.ugent.be/rml_spec.html">http://mmlab.ugent.be/rml_spec.html</a></dd>
+        <dd><a href="http://semweb.mmlab.be/ns/rml/spec.html">http://semweb.mmlab.be/ns/rml/spec.html</a></dd>
 
         <dt>Previous version:</dt>
-        <dd><a href="http://mmlab.ugent.be/rml_spec.html">http://mmlab.ugent.be/rml_spec.html</a></dd>
+        <dd><a href="http://semweb.mmlab.be/ns/rml/spec.html">http://semweb.mmlab.be/ns/rml/spec.html</a></dd>
 
         <dt>Editors:</dt>
         <dd>Anastasia Dimou</dd>
@@ -98,13 +98,20 @@
 
     <h2><a name="abstract" id="abstract"></a>Abstract</h2>
 
-    <p>This document describes RML, a generic mapping language, based on and extending R2RML.
-       R2RML is the W3C standard to express customized mappings from relational databases to RDF.
-       RML extends R2RML to support data in other structured formats, too. 
-       RML is a lnaguage for expressing customized mappings from data in structured formats to RDF datasets. 
-       Such mappings provide the ability to view existing data in the RDF data model described using the mapping author's choice of vocabulary. 
-       RML follows exactly the same syntax as R2RML; therefore, RML mappings are themselves RDF graphs and written down in Turtle syntax. 
+    <p>This document describes RML, a generic mapping language, based on and extending <cite>
+        <a class="norm" href="http://www.w3.org/TR/r2rml/">R2RML</a></cite>.
+       <cite>
+        <a class="norm" href="http://www.w3.org/TR/r2rml/">R2RML</a></cite> is the W3C standard to express customized mappings from relational databases to RDF.
+       RML extends <cite>
+        <a class="norm" href="http://www.w3.org/TR/r2rml/">R2RML</a></cite> to support data in other structured formats, too. 
+       <!-- RML is a language for expressing customized mappings from data in structured formats to RDF datasets. 
+       Such mappings provide the ability to view existing data in the RDF data model described using the mapping author's choice of vocabulary. -->
+       RML follows exactly the same syntax as <cite> <a class="norm" href="http://www.w3.org/TR/r2rml/">R2RML</a></cite>; therefore, RML mappings are themselves RDF graphs and written down in Turtle syntax. <br/>
+        RML is used to express customized mappings from data in structured formats to RDF datasets. 
+        Such mappings provide the ability to view existing data in the RDF data model described using the mapping author's choice of vocabulary.
     </p>
+
+
 
     
     <div class="toc">
@@ -165,29 +172,28 @@
       from data in structured formats (databases and CSV, TSV, XML and JSON files) to RDF datasets. 
       Such mappings describe how existing data can be represented using the RDF data model.</p>
 
-      <p>RML is based on and extends <cite>
-        <a class="norm" href="http://www.w3.org/TR/r2rml/">R2RML</a></cite> [<cite><a href="#R2RML">R2RML</a></cite>].
-      R2RML is defined to express customized mappings only from relational databases to RDF datasets. </p>
+      <p>RML is based on and extends <cite><a class="norm" href="http://www.w3.org/TR/r2rml/">R2RML</a></cite>.
+      <cite> <a class="norm" href="http://www.w3.org/TR/r2rml/">R2RML</a></cite> is defined to express customized mappings only from relational databases to RDF datasets. </p>
 
       <p>An RML mapping is not tailored to a specific database schema as an R2RML mapping, but can be defined for data in any other structure format (CSV, TSV, XML, JSON). 
         The input to an RML mapping can be any source file - currently in a structured format or a database. 
         The output is an RDF dataset that uses predicates and types from the target vocabulary. </p>
 
       <p>RML follows the same syntax as R2RML; therefore they are expressed as RDF graphs and written down in
-      <cite><a class="norm" href="http://www.w3.org/TR/turtle/">Turtle syntax</a></cite> [<cite><a href="#TURTLE">TURTLE</a></cite>].</p>
+      <cite><a class="norm" href="http://www.w3.org/TR/turtle/">Turtle syntax</a></cite>.</p>
 
       <h3 id="vocabulary">RML Vocabulary</h3>
-      <p>The RML vocabulary namespace is <code>http://mmlab.be/ns/rml#</code> 
-        <pre><strong><a href="http://www.w3.org/ns/r2rml#">http://mmlab.be/ns/rml#</a></strong></pre>
+      <p>The RML vocabulary namespace is <code>http://semweb.mmlab.be/ns/rml#</code> 
+        <pre><strong><a href="http://semweb.mmlab.be/ns/rml#">http://semweb.mmlab.be/ns/rml#</a></strong></pre>
       </p>
-      <p>The RML vocabulary preferred prefix is the <code>rml:</code> </p>
+      <p>The RML vocabulary preferred prefix is the <code>rml:</code>. </p>
 
       <p>An RML mapping defines a mapping from any data in a structured source format to RDF. 
         It consists of one or more triples maps</a>.</p>
 
       <p>The input to an RML mapping is called source file.</p>
 
-      <p>The RML vocabulary consists of the RML specific defined classes but also includes all the R2RML classes</p>
+      <p>The RML vocabulary consists of the RML specific defined classes but also includes all the <cite><a class="norm" href="http://www.w3.org/TR/r2rml/">R2RML</a></cite> classes</p>
 
       <ul>
         <li><code>rr:TriplesMap</code> is the class of triples maps as defined by R2RML.</li>
@@ -212,6 +218,36 @@
         <li><code>rr:Join</code> is the class of join conditions.</li>
         <li><code>rml:QueryLanguage</code> is the class of supported query languages.</li>
       </ul>
+
+      <p>
+        An <dfn id="rml-mapping">RML mapping</dfn>, defines a mapping from any logical source to RDF. It is a structure that consists of one or more <a href="#triples-map">triples maps</a>.
+      </p>
+      <p>The input to an RML mapping is called the <dfn id="input-source">input source</dfn>.</p>
+
+      <p>
+        An <a href="#rml-processor">RML processor</a> has access to one of the followings:
+        <ul>
+          <li>an execution environment consisting of an SQL connection and an input database (as stated by the <cite><a class="norm" href="http://www.w3.org/TR/r2rml/">R2RML</a></cite> specification)</li>
+          <li>an input source in a structured format</li>
+        </ul>
+      </p>
+
+      <p>
+        An <a href="#rml-processor">RML processor</a> may include an <a href="#rml-data-validator">RML data validator</a> or an <a href="rml-default-mapping-generator">R2RML default mapping generator</a>, but these are not required.
+      </p>
+
+      <p>
+        An <dfn id="rml-data-validator">RML data validator</dfn> is a system that takes as its input an <a href="#rml-mapping">RML mapping</a>, a <a href="#base-iri">base IRI</a>, and a <a href="#input-source">input source</a>, and checks for the presence of data errors.
+        When checking the input source, a data validator must report any data errors that are raised in the process of generating the output dataset.
+      </p>
+
+      <p>
+        An <dfn id="rml-default-mapping-generator">R2RML default mapping generator</dfn> may introspect the <a href="#input-source">input source</a> and generates an <a href="#rml-mapping">RML mapping</a>, intended for further customization by a mapping author. Such a mapping is known as a <dfn id="default-mapping">default mapping</dfn>.
+      </p>
+
+      <p>
+        A <dfn id="base-iri">base IRI</dfn> is used in resolving relative IRIs produced by the RML mapping. According to the <cite><a class="norm" href="http://www.w3.org/TR/r2rml/">R2RML</a></cite> spec document, the base IRI must be a valid IRI. It should not contain question mark (“?”) or hash (“#”) characters and should end in a slash (“/”) character.
+      </p>
 
       <h3 id="conventions">Document Conventions</h3>
 
