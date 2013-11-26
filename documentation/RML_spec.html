@@ -125,7 +125,6 @@
         <li><a href="#example-input">Example input</a></li>
       </ul>
     </li>
-    <li><a href="#terminology">RDF Terminology</a></li>
     <li><a href="#logical-source">1. Defining Logical Sources</a>
       <ul>
         <li><a href="#base-source">1.1 Base Sources</a></li>
@@ -233,7 +232,7 @@
       </p>
 
       <p>
-        An <a href="#rml-processor">RML processor</a> may include an <a href="#rml-data-validator">RML data validator</a> or an <a href="rml-default-mapping-generator">R2RML default mapping generator</a>, but these are not required.
+        An <dfn id="#rml-processor">RML processor</dfn> may include an <a href="#rml-data-validator">RML data validator</a> or an <a href="#rml-default-mapping-generator">RML default mapping generator</a>, but these are not required.
       </p>
 
       <p>
@@ -359,6 +358,9 @@
                 &nbsp; &nbsp; &nbsp; &nbsp; Conference center <br/>
                 &nbsp; &nbsp; &nbsp; &#60;/stop&#62; <br/>
                 &nbsp; &nbsp; &#60;/route&#62; <br/>
+                &nbsp; &nbsp; &#60;aircondition&#62; <br/>
+                &nbsp; &nbsp; &nbsp; false <br/>
+                &nbsp; &nbsp; &#60;/aircondition&#62; <br/>
                 &nbsp; &#60;/bus&#62; <br/>
                 &nbsp; &#60;bus id=“47” type="DoubleDecker"&#62; <br/>
                 &nbsp; &nbsp; &#60;route&#62; <br/>
@@ -369,6 +371,9 @@
                 &nbsp; &nbsp; &nbsp; &nbsp; Conference center <br/>
                 &nbsp; &nbsp; &nbsp; &#60;/stop&#62; <br/>
                 &nbsp; &nbsp; &#60;/route&#62; <br/>
+                &nbsp; &nbsp; &#60;aircondition&#62; <br/>
+                &nbsp; &nbsp; &nbsp; true <br/>
+                &nbsp; &nbsp; &#60;/aircondition&#62; <br/>
                 &nbsp; &#60;/bus&#62; <br/>
                 &#60;/transport&#62;
               </span>
@@ -393,7 +398,19 @@
                       &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; "country": "BE", <br/>
                       &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; "city": "Brussels" <br/>
                       &nbsp; &nbsp; &nbsp; } <br/>
-                      }     
+                      &nbsp; &nbsp; }, <br/>
+                      &nbsp; "venue": <br/>
+                      &nbsp; &nbsp; { <br/>
+                      &nbsp; &nbsp; &nbsp; "latitude": "51.51334", <br/>
+                      &nbsp; &nbsp; &nbsp; "longitude": "-0.08901", <br/>
+                      &nbsp; &nbsp; &nbsp; "location": <br/>
+                      &nbsp; &nbsp; &nbsp; { <br/>
+                      &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; "continent": "EU", <br/>
+                      &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; "country": "GB", <br/>
+                      &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; "city": "London" <br/>
+                      &nbsp; &nbsp; &nbsp; } <br/>
+                      &nbsp; &nbsp;}  <br/>
+                    }       
                   </span>
                 </d>
               </tr>
@@ -405,7 +422,7 @@
 
       <h2 id="logical-source">1. Defining Logical Sources</h2>
 
-      <p>A logical source is any source file that is mapped to RDF triples. A logical source is either</p>
+      <p>A logical source is any source file that is mapped to <a href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/#dfn-rdf-triple">RDF triples</a>. A logical source is either</p>
       <ul>
         <li>a  Base Source, <code>rml:BaseSource</code></li>
         <li>an RML View, <code>rml:RMLView</code></li>
@@ -415,34 +432,34 @@
         (<code>rml:iterator</code>, <code>rml:logicalSource</code>, <code>rml:queryLanguage</code>, <code>rml:sourceName</code>)
       </h3>
 
-      <p>A base source, <code>rml:baseSource</code>, is a logical source, <code>rml:logicalSource</code>, pointing to a file or a database that contains the data to be mapped. <br/>
-        At least the source Name, <code>rml:sourceName</code>, of the source file and its iterator, <code>rml:iterator</code>, should be defined. 
+      <p>A base source, <code>rml:baseSource</code>, is a <a href="#logical-source">logical source</a>, <code>rml:logicalSource</code>, pointing to a file or a database that contains the data to be mapped. <br/>
+        At least the <a href="#sourceName">source Name</a>, <code>rml:sourceName</code>, of the source file and its iterator, <code>rml:iterator</code>, should be defined. 
       </p>
       <p>
         A base source, <code>rml:baseSource</code>, is represented by a resource that has:
         <ul>
-          <li>exactly one source Name, <code>rml:sourceName</code> property,</li> 
-          <li>exactly one iterator over the file <code>rml:iterator</code>.</li>
-          <li>and zero or one query language property, <code>rml:queryLanguage</code>.</li> 
+          <li>exactly one <a href="#sourceName">source Name</a>, <code>rml:sourceName</code> property,</li> 
+          <li>exactly one <a href="#iterator">iterator</a> over the file <code>rml:iterator</code>.</li>
+          <li>and zero or one <a href="#queryLanguage">query language</a> property, <code>rml:queryLanguage</code>.</li> 
         </ul>
       </p>
       <p>
         The <dfn id="sourceName">source name</dfn>, <code>rml:sourceName</code>, locates the source file. <br/>
         The <dfn id="iterator">iterator</dfn>, <code>rml:iterator</code>, defines the iteration loop used to map the data of the file or the database. <br/>
-        The <dfn id="queryLanguage">query language</dfn>, <code>rml:queryLanguage</code>, defines the query language used to refer to the elements of the source file (by default SQL2008 for databases, XPath for XML and JSONPath for JSON files). The query language must be specified in the case of databases and XML and JSON files.
+        The <dfn id="queryLanguage">query language</dfn>, <code>rml:queryLanguage</code>, defines the query language used to refer to the elements of the source file. The query language must be specified in the case of databases and XML and JSON files. By default SQL2008 for databases, as SQL2008 is the default for R2RML, XPath for XML and JSONPath for JSON files.
       </p>
 
        <p>
-        The logical source, <code>rml:logicalSource</code>, definition requires:
+        The <a href="#logical-source">logical source</a>, <code>rml:logicalSource</code>, definition requires:
         <ul>
-          <li>the <code>rml:sourceName</code> and the <code>rml:queryLanguage</code> to be defined and optionally the <code>rml:iterator</code>, in the case of databases.</li>
-          <li>only the <code>rml:sourceName</code> and, optionally, the <code>rml:iterator</code> to be defined, in the case of CSV files.</li>
-          <li>all three: the <code>rml:sourceName</code>, the <code>rml:iterator</code> and the <code>rml:queryLanguage</code> properties to be defined, in the case of XML and JSON files.</li>
+          <li>the <a href="#sourceName">source name</a>, <code>rml:sourceName</code> and the <a href="#queryLanguage">query language</a> <code>rml:queryLanguage</code> to be defined and optionally the <a href="#iterator">iterator</a><code>rml:iterator</code>, in the case of databases.</li>
+          <li>only the <a href="#sourceName">source name</a>, <code>rml:sourceName</code>, and, optionally, the <a href="#iterator">iterator</a>, <code>rml:iterator</code>, to be defined, in the case of CSV files.</li>
+          <li>all three: the <a href="#sourceName">source name</a>, <code>rml:sourceName</code>, the <a href="#iterator">iterator</a>, <code>rml:iterator</code> and the <a href="#queryLanguage">query language</a>, <code>rml:queryLanguage</code>, properties to be defined, in the case of XML and JSON files.</li>
         </ul>
       </p>
 
       <p>
-        The value of the source Name, <code>rr:sourceName</code>, specifies the file or the database to be mapped.
+        The value of the <a href="#sourceName">source Name</a>, <code>rr:sourceName</code>, specifies the file or the database to be mapped.
         Its value can be either a string (A/N implicit reference to the file) or a valid URI of an existing file.
       </p>
 
@@ -452,7 +469,7 @@
           <li>a repetition pattern expressed as an element in the case of XML documents,</li>
           <li>a repetition pattern expressed as an object in the case of a JSON file. </li>
         </ul>
-        An iterator must be a valid identifier, considering the query language (<code>rml:queryLanguage</code>) specified. 
+        An iterator must be a valid identifier, considering the <a href="#queryLanguage">query language</a> (<code>rml:queryLanguage</code>) specified. 
       </p>
 
       <p>
@@ -511,7 +528,7 @@
         whose contents are the result of executing a query against the logical source specified. 
         It is represented by a resource that has 
         <ul>
-          <li>exactly one <a href="#logical-source">source Name</a>, <code>rml:sourceName</code> property,</li> 
+          <li>exactly one <a href="#sourceName">source Name</a>, <code>rml:sourceName</code> property,</li> 
           <li>exactly one <a href="#queryLanguage">query language</a>, <code>rml:queryLanguage</code> property, whose value is the URI of the query language specified.
           <li>exactly one <a href="#query">query</a>, <code>rml:query</code> property, whose value is a literal with a lexical form that is a valid query considering the query language specified.
           </li>
@@ -544,7 +561,28 @@
       (A/N Argue more regarding possible limitations..)</p>
 
       <h4>Examples</h4>
-      <p>(A/N Provide examples)</p>
+      <p>The following example shows an RMLView specified for an XML file.</p>
+        <pre class="ex-mapping">
+[] rml:logicalSource 
+  [
+    rml:sourceName "http://www.example.com/Transport.xml" ;
+    rml:queryLanguage ql:XPath;
+    rml:iterator "//bus[aircondition=\"true\"]";
+  ].
+        </pre>
+        The example extracts only the busses that have airconditioning and maps only them. 
+      </p>
+      <p>The following example shows an RMLView specified for a JSON file.</p>
+        <pre class="ex-mapping">
+[] rml:logicalSource 
+  [
+    rml:sourceName "http://www.example.com/files/Venue.json";
+    rml:queryLanguage ql:JSONPath;
+    rml:iterator "$.venue.location[?(@.longitude > 3.500)]"
+  ].
+        </pre>
+        This example extracts and maps only the data of the JSON file that have longitude higher than 3.500.
+      </p>
 
       <h2 id="triples-map">2. Mapping Logical Sources to RDF with Triples Maps</h2>
 
@@ -555,36 +593,36 @@
           <li>each element of an XML file, </li>
           <li>each object of a JSON file, </li>
         </ul>
-        to zero or more RDF triples.</li>
+        to zero or more <a href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/#dfn-rdf-triple">RDF triples</a>.</li>
       </p>
 
       <!-- <p>The RDF triples generated from one row in the logical table all share the same subject.</p> -->
 
-      <p>A triples map in RML is defined as a triples map in R2RML.<br/>
-         A triples map is represented by a resource that references the following other resources:</p>
+      <p>A triples map in RML is defined as a triples map in R2RML.</p>
+
+      <p>A triples map is represented by a resource that references the following other resources:</p>
 
       <ul>
-        <li>It must have exactly one <code>rml:logicalSource</code> property.
-            Its value is a <a href="#logical-source">logical source</a>
-            that specifies the file or the database to be mapped to triples.</li>
+        <li>It must have exactly one <a href="#logical-source">logical source</a>, <code>rml:logicalSource</code> property.
+            Its value specifies the file or the database to be mapped to triples.</li>
 
       <li>It must have exactly one <a href="#subject-map">subject map</a>
           that specifies how to generate a subject for each row/record/element/object of the
-          logical source (database/CSV file/XML file/JSON file accordingly). It may be specified in two ways:
+          <a href="#logical-source">logical source</a> (database/CSV file/XML file/JSON file accordingly). It may be specified in two ways:
         <ol>
-          <li>using the <code>rr:subjectMap</code> property, whose value must be the subject map, or</li>
+          <li>using the <a href="#subject-map">subject map</a>, <code>rr:subjectMap</code> property, whose value must be the subject map, or</li>
           <li>using the constant shortcut property, <code>rr:subject</code>.</li>
         </ol>
       </li>
 
-      <li>It may have zero or more <code>rr:predicateObjectMap</code> properties,
+      <li>It may have zero or more <a href="#predicate-object-map">predicate-object-map</a>, <code>rr:predicateObjectMap</code> properties,
           whose values must be a <a href="#predicate-object-map">predicate-object maps</a>.
-          <code>rr:predicateObjectMap</code> properties specify pairs of predicate maps and object maps that,
+          <a href="#predicate-object-map">Predicate-object-map</a> <code>rr:predicateObjectMap</code> properties specify pairs of predicate maps and object maps that,
           together with the subjects generated by the subject map, may form one or more
-          <a href="#rdf-triple">RDF triples</a> for each row/record/element/object of the (database/CSV file/XML file/JSON file respectively).</li>
+          <a href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/#dfn-rdf-triple">RDF triples</a> for each row/record/element/object of the (database/CSV file/XML file/JSON file respectively).</li>
       </ul>
       
-      <p>The references of all <a href="#term-map">term maps</a> of a triples map (subject map, predicate maps, object maps, graph maps) must be references to rows/records/elements/objects that exist in the term map's <a href="#logical-table">logical source</a>.</p>
+      <p>The references of all <a href="#term-map">term maps</a> of a triples map (subject map, predicate maps, object maps, graph maps) must be references to rows/records/elements/objects that exist in the term map's <a href="#logical-source">logical source</a>.</p>
 
       <h4>Examples</h4>
 
@@ -638,21 +676,18 @@
   </table>
         <h3 id="subject-map">2.1 Creating Resources with Subject Maps</h3>
 
-        <p>(A/N unchanged compared to R2RML)</p>
-
-        <p>
-          A <dfn id="subject-map">subject map</dfn> is a <a href="#term-map">term map</a>. It specifies a rule for generating the subjects of the <a href="#rdf-triple">RDF triples</a> generated by a <a href="#triples-map">triples map</a>.
+        <p>As defined in <cite><a class="norm" href="http://www.w3.org/TR/r2rml/">R2RML</a></cite>: A <dfn id="subject-map">subject map</dfn> is a <a href="#term-map">term map</a>. It specifies a rule for generating the subjects of the <a href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/#dfn-rdf-triple">RDF triples</a> generated by a <a href="#triples-map">triples map</a>.
         </p>
 
         <h3 id="typing">2.2 Typing Resources (<code>rr:class</code>)</h3>
 
-        <p>(A/N almost unchanged compared to R2RML)</p>
+        <p>As defined in <cite> <a class="norm" href="http://www.w3.org/TR/r2rml/">R2RML</a></cite> (text adjusted to refer to data in other structured formats):</p>
 
         <p>
-          A <a href="#subject-map">subject map</a> may have one or more <dfn id="class-iri">class IRIs</dfn>. They are represented by the <code>rr:class</code> property. The values of the <code>rr:class</code> property must be <a href="#iri">IRIs</a>. For each <a href="#rdf-term">RDF term</a> generated by the subject map, <a href="#rdf-triple">RDF triples</a> with predicate <code>rdf:type</code> and the class IRI as object will be generated.
+          A <a href="#subject-map">subject map</a> may have one or more <dfn id="class-iri">class IRIs</dfn>. They are represented by the <code>rr:class</code> property. The values of the <code>rr:class</code> property must be IRIs. For each <a href="#rdf-term">RDF term</a> generated by the subject map, <a href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/#dfn-rdf-triple">RDF triples</a> with predicate <code>rdf:type</code> and the class IRI as object will be generated.
         </p>
 
-        <p>In the following example, the generated subject will be asserted as an instance of the <code>ex:Stop</code> class. Using the example, the following RDF triple will be generated:</p>
+        <p>In the following example, the generated subject will be asserted as an instance of the <code>ex:Stop</code> class. Using the example, the following <a href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/#dfn-rdf-triple">RDF triple</a> will be generated:</p>
         <table>
           <tr>
             <td>
@@ -688,7 +723,7 @@
 
       <p>A <span id="predicate-object-map">predicate-object map</span> is a function that creates one or more predicate-object pairs for
          each row/record/element/object of a <a href="#logical-source">logical source</a>. 
-         It is used in conjunction with a <a href="#subject-map">subject map</a> to generate <a href="#rdf-triple">RDF triples</a> in a
+         It is used in conjunction with a <a href="#subject-map">subject map</a> to generate <a href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/#dfn-rdf-triple">RDF triples</a> in a
          <a href="#triples-map">triples map</a>.
        </p>
 
@@ -720,9 +755,9 @@
 
       <h2 id="term-map">3. Creating RDF Terms with Term Maps</h2>
 
-      <p>(A/N unchanged compared to R2RML)</p>
+      <p>As defined in <cite> <a class="norm" href="http://www.w3.org/TR/r2rml/">R2RML</a></cite> (text adjusted to refer to data in other structured formats):</p>
 
-      <p>An <span id="rdf-term">RDF term</span> is either an <a href="#iri">IRI</a>, or a <a href="#blank-node">blank node</a>,
+      <p>An <span id="rdf-term">RDF term</span> is either an IRI, or a <a href="#blank-node">blank node</a>,
          or a <a href="#literal">literal</a>.
       </p>
 
@@ -732,7 +767,7 @@
         <a href="#generated-rdf-term">generated RDF term</a>.
       </p>
 
-      <p>Term maps are used to generate the subjects, predicates and objects of the <a href="#rdf-triple">RDF triples</a> 
+      <p>Term maps are used to generate the subjects, predicates and objects of the <a href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/#dfn-rdf-triple">RDF triples</a> 
         that are generated by a <a href="#triples-map">triples map</a>. 
         Consequently, there are several kinds of <a href="#dfn-term-map">term maps</a>, depending on where in the mapping they occur:
         <a href="#subject-map">subject maps</a>,
@@ -767,11 +802,11 @@
 
       <p>If the <a href="#constant-valued-term-map">constant-valued term map</a> is a <a href="#subject-map">subject map</a>,
       <a href="#predicate-map">predicate map</a> or <a href="#graph-map">graph map</a>, then its <a href="#constant-value">constant value</a>
-      must be an <a href="#iri">IRI</a>.</p>
+      must be an IRI.</p>
 
       <p>
         If the <a href="#constant-valued-term-map">constant-valued term map</a> is an <a href="#object-map">object map</a>, then its
-        <a href="#constant-value">constant value</a> must be an <a href="#iri">IRI</a> or <a href="#literal">literal</a>.
+        <a href="#constant-value">constant value</a> must be an IRI or <a href="#literal">literal</a>.
       </p>
 
       <p>The <a href="#reference">references</a> of a <a href="#constant-valued-term-map">constant-valued term map</a> is the empty set.</p>
@@ -935,7 +970,7 @@
         <a href="#reference-valued-term-map">reference-valued term map</a> or
         <a href="#template-valued-term-map">template-valued term map</a>
         determines the kind of <a href="#dfn-generated-rdf-term">generated RDF term</a>
-        (<a href="#iri">IRIs</a>, <a href="#dfn-blank-node">blank nodes</a> or <a href="#dfn-literal">literals</a>).
+        (IRIs, <a href="#blank-node">blank nodes</a> or <a href="#literal">literals</a>).
       </p>
 
       <p>
@@ -1004,7 +1039,7 @@
 
       <p>
         A <a href="#datatypeable-term-map">datatypeable term map</a> may have a <code>rr:datatype</code> property.
-        Its value must be an <a href="#iri">IRI</a>. This IRI is the <dfn id="specified-datatype">specified datatype</dfn> of the term map.
+        Its value must be an IRI This IRI is the <dfn id="specified-datatype">specified datatype</dfn> of the term map.
       </p>
 
       <p>A term map must not have more than one <code>rr:datatype</code> value.</p>
@@ -1070,7 +1105,7 @@
     </p>
 
     <p>
-      The <a href="#joint-query">joint query</a> is used when generating RDF triples from <a href="#referencing-object-map">referencing object maps</a>. If the <a href="#logical-source">logical source</a> of the <a href="#child-triples-map">child triples map</a> and the <a href="#logical-source">logical source</a> of the <a href="#parent-triples-map">parent triples map</a> of a <a href="#referencing-object-map">referencing object map</a> are not identical, then the <a href="#referencing-object-map">referencing object map</a> must have at least one <a href="#join-condition">join condition</a>.
+      The <a href="#joint-query">joint query</a> is used when generating <a href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/#dfn-rdf-triple">RDF triples</a> from <a href="#referencing-object-map">referencing object maps</a>. If the <a href="#logical-source">logical source</a> of the <a href="#child-triples-map">child triples map</a> and the <a href="#logical-source">logical source</a> of the <a href="#parent-triples-map">parent triples map</a> of a <a href="#referencing-object-map">referencing object map</a> are not identical, then the <a href="#referencing-object-map">referencing object map</a> must have at least one <a href="#join-condition">join condition</a>.
     </p>
 
     <p>The following example shows a referencing object map as part of a <a href="#predicate-object-map">predicate-object map</a>:</p>
@@ -1158,7 +1193,7 @@
       </table>
 
     <p> No join condition is needed as both triples maps use the same logical source. Given the example input,
-    this mapping would result in the following triples (assuming an appropriate <a href="#dfn-base-iri">base IRI</a>):</p>
+    this mapping would result in the following triples (assuming an appropriate <a href="#base-iri">base IRI</a>):</p>
 
     <pre class="ex-output">&lt;http://data.example.com/department/10&gt; rdf:type ex:Department.
 &lt;http://data.example.com/department/10&gt; ex:location &lt;http://data.example.com/site/NEW%20YORK&gt;.
@@ -1365,7 +1400,7 @@
             ].
         </pre>
 
-      <p>The desired RDF triples to be produced from this database are as follows:</p>
+      <p>The desired <a href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/#dfn-rdf-triple">RDF triples</a> to be produced from this database are as follows:</p>
 
       <pre class="ex-output">
         for Venue.json <br/>
