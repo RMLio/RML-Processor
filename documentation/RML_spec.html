@@ -411,12 +411,15 @@
         <li>an RML View, <code>rml:RMLView</code></li>
       </ul>
 
-      <h3 id="base-source">1.1 Base Sources (<code>rml:sourceName</code>, <code>rml:iterator</code>, <code>rml:queryLanguage</code>)</h3>
+      <h3 id="base-source">1.1 Base Sources 
+        (<code>rml:iterator</code>, <code>rml:logicalSource</code>, <code>rml:queryLanguage</code>, <code>rml:sourceName</code>)
+      </h3>
 
-      <p>A base source is a logical source pointing to a file or a database that contains the data to be mapped. <br/>
+      <p>A base source, <code>rml:baseSource</code>, is a logical source, <code>rml:logicalSource</code>, pointing to a file or a database that contains the data to be mapped. <br/>
         At least the source Name, <code>rml:sourceName</code>, of the source file and its iterator, <code>rml:iterator</code>, should be defined. 
-        <br/>
-        A base source is represented by a resource that has:
+      </p>
+      <p>
+        A base source, <code>rml:baseSource</code>, is represented by a resource that has:
         <ul>
           <li>exactly one source Name, <code>rml:sourceName</code> property,</li> 
           <li>exactly one iterator over the file <code>rml:iterator</code>.</li>
@@ -424,13 +427,13 @@
         </ul>
       </p>
       <p>
-        The source name, <code>rml:sourceName</code>, locates the source file. <br/>
-        The iterator, <code>rml:iterator</code>, defines the iteration loop used to map the data of the file or the database. <br/>
-        The query language, <code>rml:queryLanguage</code>, defines the language that the iterator and the rest references to the source's data should be defined at.
+        The <dfn id="sourceName">source name</dfn>, <code>rml:sourceName</code>, locates the source file. <br/>
+        The <dfn id="iterator">iterator</dfn>, <code>rml:iterator</code>, defines the iteration loop used to map the data of the file or the database. <br/>
+        The <dfn id="queryLanguage">query language</dfn>, <code>rml:queryLanguage</code>, defines the query language used to refer to the elements of the source file (by default SQL2008 for databases, XPath for XML and JSONPath for JSON files). The query language must be specified in the case of databases and XML and JSON files.
       </p>
 
        <p>
-        The logical source definition requires:
+        The logical source, <code>rml:logicalSource</code>, definition requires:
         <ul>
           <li>the <code>rml:sourceName</code> and the <code>rml:queryLanguage</code> to be defined and optionally the <code>rml:iterator</code>, in the case of databases.</li>
           <li>only the <code>rml:sourceName</code> and, optionally, the <code>rml:iterator</code> to be defined, in the case of CSV files.</li>
@@ -439,29 +442,25 @@
       </p>
 
       <p>
-        The value of the source Name, <code>rr:sourceName</code>, specifies the file or the database to be mapped.<br/>
+        The value of the source Name, <code>rr:sourceName</code>, specifies the file or the database to be mapped.
         Its value can be either a string (A/N implicit reference to the file) or a valid URI of an existing file.
       </p>
 
+      <p>An <dfn id="iterator">iterator</dfn> <code>rml:iterator</code> is used to refer to
+        <ul>
+          <li>a row in the case of databases, CSV or TSV files</li> 
+          <li>a repetition pattern expressed as an element in the case of XML documents,</li>
+          <li>a repetition pattern expressed as an object in the case of a JSON file. </li>
+        </ul>
+        An iterator must be a valid identifier, considering the query language (<code>rml:queryLanguage</code>) specified. 
+      </p>
+
       <p>
-        As default iterator is considered the row. 
+        As <dfn id="default-iterator">default iterator</dfn> is considered the row. 
         <ul>
           <li>In the case of databases, CSV or TSV source files, the value of the <code>rml:iterator</code>, if specified, is "row". </li>
           <li>In the case of XML and JSON source files, it is a valid reference to an element or an object respectively considering the query language specified. </li>
         </ul>
-      </p>
-      <p>
-        The query language,<code>rml:queryLanguage</code>, defines the query language used to refer to the elements of the source file (by default SQL2008 for databases, XPath for XML and JSONPath for JSON files). The query language must be specified in the case of databases and XML and JSON files.
-      </p>
-
-      <h4 id="iterator">Iterator</h4>
-      <p>An iterator <code>rml:iterator</code> is used to refer to
-        <ul>
-          <li>a row in the case of databases, CSV or TSV files</li> 
-          <li>a repeatition pattern expressed as an element in the case of XML documents,</li>
-          <li>a repeatition pattern expressed as an object in the case of a JSON file. </li>
-        </ul>
-        An iterator must be a valid identifier, considering the query language (<code>rml:queryLanguage</code>) specified. 
       </p>
 
       <h4>Examples</h4>
@@ -506,25 +505,23 @@
         </pre>
       </p>
 
-      <h3 id="RML-view">1.2 RML Views (<code>rml:sourceName</code>, <code>rml:query</code>, <code>rml:queryLanguage</code>)</h3>
+      <h3 id="RML-view">1.2 RML Views (<code>rml:query</code>, <code>rml:queryLanguage</code>,<code>rml:sourceName</code>)</h3>
 
-      <p>An RML view is a <a href="#logical-source">logical source</a> 
+      <p>An RML view, <code>rml:RMLView</code>, is a <a href="#logical-source">logical source</a> 
         whose contents are the result of executing a query against the logical source specified. 
         It is represented by a resource that has 
         <ul>
-          <li>exactly one source Name, <code>rml:sourceName</code> property,</li> 
-          <li>exactly one <code>rml:queryLanguage</code> property, 
-            whose value is the URI of the query language specified.
-          <li>exactly one <code>rml:query</code> property, 
-            whose value is a literal with a lexical form that is a valid query considering the query language specified.
+          <li>exactly one <a href="#logical-source">source Name</a>, <code>rml:sourceName</code> property,</li> 
+          <li>exactly one <a href="#queryLanguage">query language</a>, <code>rml:queryLanguage</code> property, whose value is the URI of the query language specified.
+          <li>exactly one <a href="#query">query</a>, <code>rml:query</code> property, whose value is a literal with a lexical form that is a valid query considering the query language specified.
           </li>
         </ul>
       </p>
 
        <p>
-        The source name, <code>rml:sourceName</code>, locates the source file. <br/>
-        The query language, <code>rml:queryLanguage</code>, defines the language used to define the query. <br/>
-        The query, <code>rml:query</code>, is the query executed to retrieve the extract of the data to be maaped. 
+        The <a href="#sourceName">source name</a>, <code>rml:sourceName</code>, locates the source file. <br/>
+        The <a href="#queryLanguage">query language</a>, <code>rml:queryLanguage</code>, defines the language used to define the query. <br/>
+        The <a href="#query">query</a>, <code>rml:query</code>, is the query executed to retrieve the extract of the data to be mapped. 
       </p>
 
       <p>
@@ -542,9 +539,8 @@
 
       </p>
 
-      <h4>Query (<code>rml:query</code>)</h4  >
-
-      <p>A query <code>rml:query</code> is a string with a lexical form that is a valid query considering the query language specified.
+      <p>
+        A <dfn id="query">query</dfn>, <code>rml:query</code> is a string with a lexical form that is a valid query considering the query language specified.
       (A/N Argue more regarding possible limitations..)</p>
 
       <h4>Examples</h4>
