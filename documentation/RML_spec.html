@@ -1125,15 +1125,17 @@
     rml:sourceName "http://www.example.com/Airport.csv" ;
     rml:iterator "row";
   ] ;
-    rr:subjectMap [ 
-      rr:template "http://trans.example.com/airport/{id}";
-      rr:predicate ex:located;
-      rr:objectMap [
-        rr:parentTriplesMap &lt;#TriplesMap2&gt;;
-        rr:joinCondition [
-            rr:child "city";
-            rr:parent "$.venue.location.city";
-        ];
+  rr:subjectMap [ 
+    rr:template "http://trans.example.com/airport/{id}";
+  ] ;
+  rr:predicateObjectMap[
+    rr:predicate ex:located;
+    rr:objectMap [
+      rr:parentTriplesMap &lt;#TriplesMap2&gt;;
+      rr:joinCondition [
+          rr:child "city";
+          rr:parent "$.venue.location.city";
+      ];
     ];
   ]
 ].
@@ -1174,12 +1176,12 @@
     rml:sourceName "http://www.example.com/Airport.csv" ;
     rml:iterator "row";
   ] ;
-    rr:subjectMap [ 
-      rr:template "http://trans.example.com/airport/{id}";
-      rr:predicate ex:located;
-      rr:objectMap [
-        rr:parentTriplesMap &lt;#TriplesMap2&gt;;
-    ]
+  rr:subjectMap [ 
+    rr:template "http://trans.example.com/airport/{id}";
+  ] ;
+    rr:predicate ex:located;
+  rr:objectMap [
+    rr:parentTriplesMap &lt;#TriplesMap2&gt;;
   ]
 ].
           </pre>
@@ -1204,10 +1206,9 @@
     <p> No join condition is needed as both triples maps use the same logical source. Given the example input,
     this mapping would result in the following triples (assuming an appropriate <a href="#base-iri">base IRI</a>):</p>
 
-    <pre class="ex-output">&lt;http://data.example.com/department/10&gt; rdf:type ex:Department.
-&lt;http://data.example.com/department/10&gt; ex:location &lt;http://data.example.com/site/NEW%20YORK&gt;.
-&lt;http://data.example.com/site/NEW%20YORK&gt; rdf:type ex:Site.
-&lt;http://data.example.com/site/NEW%20YORK&gt; ex:siteName "NEW YORK".</pre>
+    <pre class="ex-output">
+&lt;http://trans.example.com/airport/6523&gt; ex:located &lt;http://venue.example.com/50.901389,4.484444&gt;.
+    </pre>
 
     <h2 id="named-graphs">5 Named Graphs</h2>
 
