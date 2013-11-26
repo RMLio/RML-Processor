@@ -641,13 +641,12 @@
           <td>
             <td>
       <pre class="ex-mapping">
-@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;.
+<!-- @prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;.
 @prefix rml: &lt;http://mmlab.be/ns/rml#&gt;.
 @prefix ex: &lt;http://example.com/ns#&gt;.
 @prefix ql: &lt;http://mmlab.be/ns/ql#&gt;.
 @prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;.
-@prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;.
-
+@prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;. -->
 &lt;#TransportMapping&gt;
   rml:logicalSource [
     rml:sourceName "http://www.example.com/Transport.xml" ;
@@ -722,7 +721,8 @@
     rr:predicate rdf:type;
     rr:objectMap [
       rr:template "http://trans.example.com/{/transport/bus@type}"
-    ] ]
+    ] 
+  ].
         </pre>
 
       <h3 id="predicate-object-map">2.3 Creating Properties and Values with Predicate-Object Maps</h3>
@@ -1124,7 +1124,7 @@
   rml:logicalSource [
     rml:sourceName "http://www.example.com/Airport.csv" ;
     rml:iterator "row";
-  ]
+  ] ;
     rr:subjectMap [ 
       rr:template "http://trans.example.com/airport/{id}";
       rr:predicate ex:located;
@@ -1135,7 +1135,8 @@
             rr:parent "$.venue.location.city";
         ];
     ];
-  ].
+  ]
+].
           </pre>
           </td>
           <td>
@@ -1144,10 +1145,11 @@
   rml:logicalSource [
     rml:sourceName "http://venue.example.com/Venue.json" ;
     rml:iterator "$";
-  ]
+  ] ;
   rr:subjectMap [
     rr:template "http://venue.example.com/{$.venue.location.city}"
   ]
+].
             </pre>
 
           </td>
@@ -1171,14 +1173,15 @@
   rml:logicalSource [
     rml:sourceName "http://www.example.com/Airport.csv" ;
     rml:iterator "row";
-  ]
+  ] ;
     rr:subjectMap [ 
       rr:template "http://trans.example.com/airport/{id}";
       rr:predicate ex:located;
       rr:objectMap [
         rr:parentTriplesMap &lt;#TriplesMap2&gt;;
-    ];
-  ].
+    ]
+  ]
+].
           </pre>
           </td>
           <td>
@@ -1187,10 +1190,11 @@
   rml:logicalSource [
     rml:sourceName "http://venue.example.com/Airport.csv" ;
     rml:iterator "$";
-  ]
+  ] ;
   rr:subjectMap [
     rr:template "http://venue.example.com/{latitude},{longitude}"
   ]
+].
             </pre>
 
           </td>
