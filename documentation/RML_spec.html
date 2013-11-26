@@ -245,7 +245,7 @@
       </p>
 
       <p>
-        A <dfn id="base-iri">base IRI</dfn> is used in resolving relative IRIs produced by the RML mapping. According to the <cite><a class="norm" href="http://www.w3.org/TR/r2rml/">R2RML</a></cite> spec document, the base IRI must be a valid IRI. It should not contain question mark (“?”) or hash (“#”) characters and should end in a slash (“/”) character.
+        A <dfn id="base-iri">base IRI</dfn> is used in resolving relative <a href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/#dfn-URI-reference">IRIs</a> produced by the RML mapping. According to the <cite><a class="norm" href="http://www.w3.org/TR/r2rml/">R2RML</a></cite> spec document, the base IRI must be a valid <a href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/#dfn-URI-reference">IRI</a>. It should not contain question mark (“?”) or hash (“#”) characters and should end in a slash (“/”) character.
       </p>
 
       <h3 id="conventions">Document Conventions</h3>
@@ -433,28 +433,28 @@
       </h3>
 
       <p>A base source, <code>rml:baseSource</code>, is a <a href="#logical-source">logical source</a>, <code>rml:logicalSource</code>, pointing to a file or a database that contains the data to be mapped. <br/>
-        At least the <a href="#sourceName">source Name</a>, <code>rml:sourceName</code>, of the source file and its iterator, <code>rml:iterator</code>, should be defined. 
+        At least the <a href="#sourceName">source Name</a>, <code>rml:sourceName</code>, of the source file and its <a href="iterator">logical iterator</a>, <code>rml:iterator</code>, should be defined. 
       </p>
       <p>
         A base source, <code>rml:baseSource</code>, is represented by a resource that has:
         <ul>
           <li>exactly one <a href="#sourceName">source Name</a>, <code>rml:sourceName</code> property,</li> 
-          <li>exactly one <a href="#iterator">iterator</a> over the file <code>rml:iterator</code>.</li>
+          <li>exactly one <a href="#iterator">logical iterator</a> over the file <code>rml:iterator</code>.</li>
           <li>and zero or one <a href="#queryLanguage">query language</a> property, <code>rml:queryLanguage</code>.</li> 
         </ul>
       </p>
       <p>
         The <dfn id="sourceName">source name</dfn>, <code>rml:sourceName</code>, locates the source file. <br/>
-        The <dfn id="iterator">iterator</dfn>, <code>rml:iterator</code>, defines the iteration loop used to map the data of the file or the database. <br/>
+        The <dfn id="iterator">logical iterator</dfn>, <code>rml:iterator</code>, defines the iteration loop used to map the data of the file or the database. <br/>
         The <dfn id="queryLanguage">query language</dfn>, <code>rml:queryLanguage</code>, defines the query language used to refer to the elements of the source file. The query language must be specified in the case of databases and XML and JSON files. By default SQL2008 for databases, as SQL2008 is the default for R2RML, XPath for XML and JSONPath for JSON files.
       </p>
 
        <p>
         The <a href="#logical-source">logical source</a>, <code>rml:logicalSource</code>, definition requires:
         <ul>
-          <li>the <a href="#sourceName">source name</a>, <code>rml:sourceName</code> and the <a href="#queryLanguage">query language</a> <code>rml:queryLanguage</code> to be defined and optionally the <a href="#iterator">iterator</a><code>rml:iterator</code>, in the case of databases.</li>
-          <li>only the <a href="#sourceName">source name</a>, <code>rml:sourceName</code>, and, optionally, the <a href="#iterator">iterator</a>, <code>rml:iterator</code>, to be defined, in the case of CSV files.</li>
-          <li>all three: the <a href="#sourceName">source name</a>, <code>rml:sourceName</code>, the <a href="#iterator">iterator</a>, <code>rml:iterator</code> and the <a href="#queryLanguage">query language</a>, <code>rml:queryLanguage</code>, properties to be defined, in the case of XML and JSON files.</li>
+          <li>the <a href="#sourceName">source name</a>, <code>rml:sourceName</code> and the <a href="#queryLanguage">query language</a> <code>rml:queryLanguage</code> to be defined and optionally the <a href="#iterator">logical iterator</a><code>rml:iterator</code>, in the case of databases.</li>
+          <li>only the <a href="#sourceName">source name</a>, <code>rml:sourceName</code>, and, optionally, the <a href="#iterator">logical iterator</a>, <code>rml:iterator</code>, to be defined, in the case of CSV files.</li>
+          <li>all three: the <a href="#sourceName">source name</a>, <code>rml:sourceName</code>, the <a href="#iterator">logical iterator</a>, <code>rml:iterator</code> and the <a href="#queryLanguage">query language</a>, <code>rml:queryLanguage</code>, properties to be defined, in the case of XML and JSON files.</li>
         </ul>
       </p>
 
@@ -463,13 +463,13 @@
         Its value can be either a string (A/N implicit reference to the file) or a valid URI of an existing file.
       </p>
 
-      <p>An <dfn id="iterator">iterator</dfn> <code>rml:iterator</code> is used to refer to
+      <p>An <dfn id="iterator">logical iterator</dfn> <code>rml:iterator</code> is used to refer to
         <ul>
           <li>a row in the case of databases, CSV or TSV files</li> 
           <li>a repetition pattern expressed as an element in the case of XML documents,</li>
           <li>a repetition pattern expressed as an object in the case of a JSON file. </li>
         </ul>
-        An iterator must be a valid identifier, considering the <a href="#queryLanguage">query language</a> (<code>rml:queryLanguage</code>) specified. 
+        A logical iterator must be a valid identifier, considering the <a href="#queryLanguage">query language</a> (<code>rml:queryLanguage</code>) specified. 
       </p>
 
       <p>
@@ -684,7 +684,7 @@
         <p>As defined in <cite> <a class="norm" href="http://www.w3.org/TR/r2rml/">R2RML</a></cite> (text adjusted to refer to data in other structured formats):</p>
 
         <p>
-          A <a href="#subject-map">subject map</a> may have one or more <dfn id="class-iri">class IRIs</dfn>. They are represented by the <code>rr:class</code> property. The values of the <code>rr:class</code> property must be IRIs. For each <a href="#rdf-term">RDF term</a> generated by the subject map, <a href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/#dfn-rdf-triple">RDF triples</a> with predicate <code>rdf:type</code> and the class IRI as object will be generated.
+          A <a href="#subject-map">subject map</a> may have one or more <dfn id="class-iri">class IRIs</dfn>. They are represented by the <code>rr:class</code> property. The values of the <code>rr:class</code> property must be <a href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/#dfn-URI-reference">IRIs</a>. For each <a href="#rdf-term">RDF term</a> generated by the subject map, <a href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/#dfn-rdf-triple">RDF triples</a> with predicate <code>rdf:type</code> and the class IRI as object will be generated.
         </p>
 
         <p>In the following example, the generated subject will be asserted as an instance of the <code>ex:Stop</code> class. Using the example, the following <a href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/#dfn-rdf-triple">RDF triple</a> will be generated:</p>
@@ -757,8 +757,8 @@
 
       <p>As defined in <cite> <a class="norm" href="http://www.w3.org/TR/r2rml/">R2RML</a></cite> (text adjusted to refer to data in other structured formats):</p>
 
-      <p>An <span id="rdf-term">RDF term</span> is either an IRI, or a <a href="#blank-node">blank node</a>,
-         or a <a href="#literal">literal</a>.
+      <p>An <dfn id="rdf-term">RDF term</dfn> is either an <a href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/#dfn-URI-reference">IRI</a>, or a <a href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/#dfn-blank-node">blank node</a>,
+         or a <a href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/#dfn-literal">literal</a>.
       </p>
 
       <p>
@@ -769,7 +769,7 @@
 
       <p>Term maps are used to generate the subjects, predicates and objects of the <a href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/#dfn-rdf-triple">RDF triples</a> 
         that are generated by a <a href="#triples-map">triples map</a>. 
-        Consequently, there are several kinds of <a href="#dfn-term-map">term maps</a>, depending on where in the mapping they occur:
+        Consequently, there are several kinds of <a href="#term-map">term maps</a>, depending on where in the mapping they occur:
         <a href="#subject-map">subject maps</a>,
         <a href="#predicate-map">predicate maps</a>,
         <a href="#object-map">object maps</a> and
@@ -790,23 +790,22 @@
 
       <h3 id="constant">3.1 Constant RDF Terms (<code>rr:constant</code>)</h3>
 
-      <p>(A/N almost unchanged compared to R2RML)</p>
+      <p>As defined in <cite> <a class="norm" href="http://www.w3.org/TR/r2rml/">R2RML</a></cite> (text adjusted to refer to data in other structured formats):</p>
 
-      <p>A <dfn id="constant-valued-term-map">constant-valued term map</dfn> is a <a href="#dfn-term-map">term map</a> that ignores the <a href="#logical-iterator">logical iterator</a> specified by the query and always generates the same RDF term. 
-      <br/>  
+      <p>A <dfn id="constant-valued-term-map">constant-valued term map</dfn> is a <a href="#term-map">term map</a> that ignores the <a href="#iterator">logical iterator</a> specified by the query and always generates the same <a href="#rdf-term">RDF term</a>. 
       A constant-valued term map is represented by a resource that has exactly one <code>rr:constant</code> property.
       </p>
 
       <p>The <dfn id="constant-value">constant value</dfn> of a <a href="#constant-valued-term-map">constant-valued term map</a>
-      is the RDF term that is the value of its <code>rr:constant</code> property.</p>
+      is the <a href="#rdf-term">RDF term</a> that is the value of its <code>rr:constant</code> property.</p>
 
       <p>If the <a href="#constant-valued-term-map">constant-valued term map</a> is a <a href="#subject-map">subject map</a>,
       <a href="#predicate-map">predicate map</a> or <a href="#graph-map">graph map</a>, then its <a href="#constant-value">constant value</a>
-      must be an IRI.</p>
+      must be an <a href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/#dfn-URI-reference">IRI</a>.</p>
 
       <p>
         If the <a href="#constant-valued-term-map">constant-valued term map</a> is an <a href="#object-map">object map</a>, then its
-        <a href="#constant-value">constant value</a> must be an IRI or <a href="#literal">literal</a>.
+        <a href="#constant-value">constant value</a> must be an <a href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/#dfn-URI-reference">IRI</a> or <a href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/#dfn-literal">literal</a>.
       </p>
 
       <p>The <a href="#reference">references</a> of a <a href="#constant-valued-term-map">constant-valued term map</a> is the empty set.</p>
@@ -880,13 +879,13 @@
       is a <a href="#term-map">term map</a> that is represented by a resource that has exactly one <code>rml:refrence</code> property.</p>
 
       <p>The value of the <code>rml:reference</code> property must be a valid reference to a column (in the case of databases and CSV and TSV files), to an element (in the case of XML files) and to an object (in the case of JSON files). 
-         The <dfn id="reference-value">reference value</dfn> of the term map is the data value of that column/element/object in a given <a href="#logical-iteration">logical iteration</a>.
+         The <dfn id="reference-value">reference value</dfn> of the term map is the data value of that column/element/object in a given <a href="#iterator">logical iteration</a>.
       </p>
 
-      <p>The <a href="#reference">references</a> of a <a href="#selector-valued-term-map">reference-valued term map</a>
+      <p>The <a href="#reference">references</a> of a <a href="#reference-valued-term-map">reference-valued term map</a>
       is the singleton set containing the value of the term map's <code>rml:reference</code> property.</p>
 
-      <p>The following examples defines an <a href="#object-map">object map</a> that generates <a href="#literal">literals</a> for each different case of file formats.
+      <p>The following examples defines an <a href="#object-map">object map</a> that generates <a href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/#dfn-literal">literals</a> for each different case of file formats.
 
       <h4>Reference for a database</h4>
       <pre class="ex-mapping">
@@ -912,7 +911,7 @@
 
       <h3 id="from-template">3.3 From a Template (<code>rr:template</code>)</h3>
 
-      <p>(A/N almost unchanged compared to R2RML)</p>
+      <p>As defined in <cite> <a class="norm" href="http://www.w3.org/TR/r2rml/">R2RML</a></cite> (text adjusted to refer to data in other structured formats):</p>
 
       <p>A <dfn id="template-valued-term-map">template-valued term map</dfn> is a <a href="#term-map">term map</a> 
         that is represented by a resource that has exactly one <code>rr:template</code> property.
@@ -920,7 +919,7 @@
       </p>
 
       <p>A <dfn id="string-template">string template</dfn> is a format string that can be used to build strings from multiple components. 
-        It can reference <a href="#logical-reference">logical references</a> by enclosing them in curly braces (“<code>{</code>” and “<code>}</code>”).
+        It can reference <a href="#reference">logical references</a> by enclosing them in curly braces (“<code>{</code>” and “<code>}</code>”).
         The following syntax rules apply to valid string templates:
       </p>
 
@@ -938,7 +937,7 @@
           if the <a href="#term-type">term type</a> is <code>rr:IRI</code> (see <a href="#note-safe-separators">note below</a>).</li>
       </ul>
 
-      <p>The <dfn id="template-value">template value</dfn> of the term map for a given <a href="#logical-iterator">logical iterator</a>
+      <p>The <dfn id="template-value">template value</dfn> of the term map for a given <a href="#iterator">logical iterator</a>
       is determined as follows:</p>
 
       <ol>
@@ -964,19 +963,19 @@
       <pre class="ex-output">http://trans.example.com/stop/645</pre>
 
       <h3 id="termtype">3.4 IRIs, Literal, Blank Nodes (<code>rr:termType</code>)</h3>
-      <p>(A/N almost unchanged compared to R2RML)</p>
+      <p>As defined in <cite> <a class="norm" href="http://www.w3.org/TR/r2rml/">R2RML</a></cite> (text adjusted to refer to data in other structured formats):</p>
       <p>
         The <dfn id="term-type">term type</dfn> of a
         <a href="#reference-valued-term-map">reference-valued term map</a> or
         <a href="#template-valued-term-map">template-valued term map</a>
         determines the kind of <a href="#dfn-generated-rdf-term">generated RDF term</a>
-        (IRIs, <a href="#blank-node">blank nodes</a> or <a href="#literal">literals</a>).
+        (<a href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/#dfn-URI-reference">IRIs</a>, <a href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/#dfn-blank-node">blank nodes</a> or <a href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/#dfn-literal">literals</a>).
       </p>
 
       <p>
         If the term map has an optional <code>rr:termType</code> property,
         then its <a href="#term-type">term type</a> is the value of that property.
-         The value must be an IRI and must be one of the following options:</p>
+         The value must be an <a href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/#dfn-URI-reference">IRI</a> and must be one of the following options:</p>
         <ul>
           <li>If the term map is a <a href="#subject-map">subject map</a>:
             <code>rr:IRI</code> or <code>rr:BlankNode</code>
@@ -1010,7 +1009,7 @@
 
       <h3 id="language-tags">3.5 Language Tags (<code>rr:language</code>)</h3>
 
-      <p>(A/N almost unchanged compared to R2RML)</p>
+      <p>As defined in <cite> <a class="norm" href="http://www.w3.org/TR/r2rml/">R2RML</a></cite> (text adjusted to refer to data in other structured formats):</p>
 
       <p>
         A <a href="#term-map">term map</a> with a <a href="#term-type">term type</a> of <code>rr:Literal</code> may have a <dfn id="specified-language-tag">specified language tag</dfn>.
@@ -1026,7 +1025,7 @@
 
       <h3 id="typed-literals">3.6 Typed Literals (<code>rr:datatype</code>)</h3>
 
-      <p>(A/N almost unchanged compared to R2RML)</p>
+      <p>As defined in <cite> <a class="norm" href="http://www.w3.org/TR/r2rml/">R2RML</a></cite> (text adjusted to refer to data in other structured formats):</p>
 
       <p>
         A <dfn id="datatypeable-term-map">datatypeable term map</dfn> is a <a href="#term-map">term map</a> with a <a href="#term-type">term type</a> of <code>rr:Literal</code> that does not have a <a href="#specified-language-tag">specified language tag</a>.
@@ -1039,7 +1038,7 @@
 
       <p>
         A <a href="#datatypeable-term-map">datatypeable term map</a> may have a <code>rr:datatype</code> property.
-        Its value must be an IRI This IRI is the <dfn id="specified-datatype">specified datatype</dfn> of the term map.
+        Its value must be an <a href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/#dfn-URI-reference">IRI</a>. This <a href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/#dfn-URI-reference">IRI</a> is the <dfn id="specified-datatype">specified datatype</dfn> of the term map.
       </p>
 
       <p>A term map must not have more than one <code>rr:datatype</code> value.</p>
