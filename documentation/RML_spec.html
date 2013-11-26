@@ -125,20 +125,20 @@
         <li><a href="#example-input">Example input</a></li>
       </ul>
     </li>
-    <li><a href="#logical-source">1. Defining Logical Sources</a>
+    <li><a href="#logical-source">1. Logical Sources</a>
       <ul>
         <li><a href="#base-source">1.1 Base Sources</a></li>
         <li><a href="#RML-view">1.2 RML Views</a></li>
       </ul>
     </li>
-    <li><a href="#triples-map">2. Mapping Logical Sources to RDF with Triples Maps</a>
+    <li><a href="#triples-map">2. Triples Maps</a>
       <ul>
         <li><a href="#subject-map">2.1 Creating Resources with Subject Maps</a></li>
         <li><a href="#typing">2.2 Typing Resources</a></li>
         <li><a href="#predicate-object-map">2.3 Creating Properties and Values with Predicate-Object Maps</a></li>
       </ul>
     </li>
-    <li><a href="#term-map">3. Creating RDF Terms with Term Maps</a>
+    <li><a href="#term-map">3. Term Maps</a>
       <ul>
         <li><a href="#constant">3.1 Constant RDF Terms</a></li>
         <li><a href="#reference">3.2 From a Reference</a></li>
@@ -149,6 +149,7 @@
       </ul>
     </li>
     <li><a href="#logical-join">4 Relationships among Logical Sources</a></li>
+    <li><a href="#named-graphs">5 Named Graphs</a></li>
     <li><a href="#overview">RML Overview and Example</a></li>
     <li><a href="#index">Index of RML Vocabulary Terms</a>
     <ul>
@@ -175,7 +176,7 @@
       <cite> <a class="norm" href="http://www.w3.org/TR/r2rml/">R2RML</a></cite> is defined to express customized mappings only from relational databases to RDF datasets. </p>
 
       <p>An RML mapping is not tailored to a specific database schema as an R2RML mapping, but can be defined for data in any other structure format (CSV, TSV, XML, JSON). 
-        The input to an RML mapping can be any source file - currently in a structured format or a database. 
+        The input to an RML mapping can be any source file in a structured format or a database. 
         The output is an RDF dataset that uses predicates and types from the target vocabulary. </p>
 
       <p>RML follows the same syntax as R2RML; therefore they are expressed as RDF graphs and written down in
@@ -190,7 +191,12 @@
       <p>An RML mapping defines a mapping from any data in a structured source format to RDF. 
         It consists of one or more triples maps</a>.</p>
 
-      <p>The input to an RML mapping is called source file.</p>
+      <p>The <dfn>input file</dfn> to an RML mapping is called source file. the output of an RML mapping is called output dataset</p>
+
+      <p>
+        The <dfn id="output-dataset">output dataset</dfn> of an RML mapping is an <a href="#rdf-dataset">RDF dataset</a> that contains the <a href="#generating-rdf-triples">generated RDF triples</a> for each of the <a href="#triples-map">triples maps</a> of the RML mapping. 
+        <a href="#rml-processor">RML processors</a> may provide additional triples or graphs, such as inferred triples or provenance information.
+      </p>
 
       <p>The RML vocabulary consists of the RML specific defined classes but also includes all the <cite><a class="norm" href="http://www.w3.org/TR/r2rml/">R2RML</a></cite> classes</p>
 
@@ -1198,6 +1204,70 @@
 &lt;http://data.example.com/department/10&gt; ex:location &lt;http://data.example.com/site/NEW%20YORK&gt;.
 &lt;http://data.example.com/site/NEW%20YORK&gt; rdf:type ex:Site.
 &lt;http://data.example.com/site/NEW%20YORK&gt; ex:siteName "NEW YORK".</pre>
+
+    <h2 id="named-graphs">5 Named Graphs</h2>
+
+    <p>As defined in <cite> <a class="norm" href="http://www.w3.org/TR/r2rml/">R2RML</a></cite> (text adjusted to refer to data in other structured formats):</p>
+
+    <p>
+      Each triple generated from an <a href="#rml-mapping">RML mapping</a> is placed into one or more graphs of the <a href="#output-dataset">output dataset</a>.
+      Possible target graphs are the unnamed <a href="#default-graph">default graph</a>, and the <a href="#iri">IRI</a>-named <a href="#named-graph">named graphs</a>.
+    </p>
+
+    <p>
+      Any <a href="#subject-map">subject map</a> or <a href="#predicate-object-map">predicate-object map</a> may have one or more associated <dfn id="graph-map">graph maps</dfn>.
+    </p>
+     They are specified in one of two ways:</p>
+    <ol>
+      <li>using the <code>rr:graphMap</code> property, whose value must be a <a href="#graph-map">graph map</a>,</li>
+      <li>using the <a href="#constant-shortcut-property">constant shortcut property</a> <code>rr:graph</code>.</li>
+    </ol>
+
+    <p>
+      Graph maps are themselves <a href="#term-map">term maps</a>. 
+      When <a href="#generating-rdf-triples">RDF triples are generated</a>, the set of target graphs is determined by taking into account any graph maps associated with the subject map or predicate-object map.
+    </p>
+    <p>
+      If a <a href="#graph-map">graph map</a> generates the special IRI <code>rr:defaultGraph</code>, then the target graph is the <a href="#default-graph">default graph</a> of the <a href="#output-dataset">output dataset</a>.
+    </p>
+
+    <h4>Example</h4>
+
+    <pre class="ex-mapping">
+[] rr:subjectMap [
+    rr:template "http://trans.example.com/stop/{/transport/bus/route/stop@id}";
+    rr:graphMap [ rr:constant ex:StopsGraph ];
+].</pre>
+
+    <p>This is equivalent to the following example, which uses a <a href="#constant-shortcut-property">constant shortcut property</a>:</p>
+
+    <pre class="ex-mapping">
+[] rr:subjectMap [
+    rr:template "http://trans.example.com/stop/{/transport/bus/route/stop@id}";
+    rr:graph ex:StopsGraph;
+].</pre>
+
+    <pre class="ex-mapping">
+[] rr:subjectMap [
+    rr:template "http://trans.example.com/stop/{/transport/bus/route/stop@id}";
+    rr:graphMap [ rr:template "http://www.example.com/{/transport/bus/route/stop@type}" ];
+].</pre>
+    In this example, the generated triples are placed into named graphs according to their type.
+
+    <pre class="ex-output">
+&lt;http://www.example.com/SingleDecker&gt;
+&lt;http://www.example.com/DoubleDecker&gt;
+    </pre>
+    These are the two graphs to be generated. 
+
+    <h3 id="blank-nodes">9.1 Scope of Blank Nodes</h3>
+
+    <p>
+      <a href="#blank-node">Blank nodes</a> in the <a href="#output-dataset">output dataset</a> are scoped to a single <a href="#rdf-graph">RDF graph</a>.
+      If the same <a href="#blank-node-identifier">blank node identifier</a> occurs in multiple <a href="#rdf-triple">RDF triples</a> that are in the same graph, then the triples will share the same blank node. If, however, the same blank node identifier occurs in multiple graphs, then a distinct blank node be created for each graph. An RML-generated blank node can never be shared by two triples in two different graphs.
+    </p>
+
+    <p>This implies that triples generated from a single <a href="logical-source">logical source</a> will have different subjects if the subjects are blank nodes and the triples are placed into different graphs.</p>
 
     <h2 id="overview">RML Overview and Example</h2>
 
