@@ -1,0 +1,233 @@
+@prefix cc: <http://creativecommons.org/ns#> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix ql: <http://semweb.mmlab.be/ql#> .
+@prefix rml: <http://semweb.mmlab.be/ns/rml#> .
+@prefix rr: <http://www.w3.org/ns/r2rml#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix vann: <http://purl.org/vocab/vann/> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix : <http://semweb.mmlab.be/ns/rml#> .
+@base <http://semweb.mmlab.be/ns/rml#> .
+
+<> 	rdf:type owl:Ontology ;
+	rdf:type <http://purl.org/vocommons/voaf#Vocabulary> ;
+	dc:title "RML: Generic Mapping Language for RDF"@en ;
+	rdf:type <http://purl.org/vocommons/voaf#Vocabulary> ;
+	dc:issued "2013-07-01"^^<http://www.w3.org/2001/XMLSchema#date> ;
+	dc:modified "2013-11-15"^^<http://www.w3.org/2001/XMLSchema#date> ;
+	dc:descripion "Generic Mapping Language for RDF (RDB/CSV/TSV/XML/JSON to RDF) - Vocabulary description"@en ;
+	dc:creator 
+      	     [ foaf:name "Anastasia Dimou" ], [ foaf:name "Miel Vander Sande"];
+	cc:license <http://creativecommons.org/licenses/by/3.0/> ;
+	vann:preferredNamespacePrefix "rml" ;
+	vann:preferredNamespaceUri "http://semweb.mmlab.be/ns/rml#";
+      owl:imports <http://www.w3.org/ns/r2rml#>.
+        
+
+
+#################################################################
+#
+#    Object Properties
+#
+#################################################################
+
+       
+
+###  http://www.w3.org/ns/r2rml#object  - extended in RML
+
+rr:object rdfs:domain [
+		rdf:type owl:Class ;
+		owl:intersectionOf ( 
+			rr:ObjectMap [
+	        		rdf:type owl:Restriction ;
+				#extended in RML
+	        		owl:onProperty :resource ;
+            			owl:maxQualifiedCardinality "0"^^xsd:nonNegativeInteger ;
+         			owl:onDataRange xsd:string 
+			]
+		)
+    	].
+
+
+###  http://www.w3.org/ns/r2rml#predicate - extended in RML
+
+rr:predicate rdfs:domain [
+	rdf:type owl:Class ;
+        owl:intersectionOf ( 
+		rr:PredicateMap[
+			rdf:type owl:Restriction ;
+            		#extended in RML
+			owl:onProperty :resource ;
+            		owl:maxQualifiedCardinality "0"^^xsd:nonNegativeInteger ;
+            		owl:onDataRange xsd:string
+            	] 
+        )
+    ].
+
+                
+###  http://www.w3.org/ns/r2rml#subject - extended in RML
+
+rr:subject rdfs:domain [
+	rdf:type owl:Class ;
+	owl:intersectionOf (
+		rr:SubjectMap [ 
+        		rdf:type owl:Restriction ;
+        		#extended in RML
+			owl:onProperty :resource ;
+        		owl:maxQualifiedCardinality "0"^^xsd:nonNegativeInteger ;
+        		owl:onDataRange xsd:string
+        	]
+	)
+	].
+  
+         
+###  http://semweb.mmlab.be/rml#logicalSource
+
+:logicalSource rdf:type owl:ObjectProperty ;
+    rdfs:comment "Represents the logical source to be mapped. This can be a pointer to any dataset."@en ;
+    rdfs:range :LogicalSource;
+    rdfs:domain rr:TriplesMap .
+               
+
+###  http://www.w3.org/ns/r2rml#logicalTable - extended in RML
+
+rr:logicalTable rdfs:subPropertyOf :logicalSource .
+
+
+###  http://semweb.mmlab.be/rml#queryLanguage
+
+:queryLanguage rdf:type owl:ObjectProperty ;
+    rdfs:comment "It defines the query language used or the language used to refer to the elements of the source file. "@en ;
+    rdfs:domain :LogicalSource;
+    rdfs:range :QueryLanguage .
+
+
+
+#################################################################
+#
+#    Data properties
+#
+#################################################################
+
+
+
+###  http://www.w3.org/ns/r2rml#column - extended in RML
+
+rr:column rdfs:subPropertyOf :selector .
+
+
+###  http://semweb.mmlab.be/rml#selector
+
+:selector rdf:type owl:DatatypeProperty ;
+    rdfs:comment "A valid expression that selects values from the source file. The selector should confront to the syntax rules of the logicalSource's type. "@en ;
+    rdfs:domain rr:TermMap;
+    rdfs:range xsd:string .
+
+###  http://semweb.mmlab.be/rml#query
+
+:query rdf:type owl:DatatypeProperty ;
+    rdfs:comment "A valid query."@en ;
+    rdfs:domain :RMLView ;
+    rdfs:range xsd:string .
+
+
+###  http://www.w3.org/ns/r2rml#sqlQuery - extended in RML
+
+# rr:sqlQuery rdfs:subPropertyOf :query .
+
+
+###  http://semweb.mmlab.be/rml#version
+
+:version rdf:type owl:DatatypeProperty ;
+    rdfs:comment "It defines the version of the query language used. "@en ;
+    rdfs:domain :RMLView;
+    rdfs:range xsd:string .
+
+
+###  http://semweb.mmlab.be/rml#sqlVersion - extended in RML
+
+rr:sqlVersion rdfs:subPropertyOf :version .
+
+
+###  http://semweb.mmlab.be/rml#sourceName
+
+:sourceName rdf:type rdf:Property ;
+	rdfs:comment "Schema-qualified name of a source (e.g., the filename, valid URL)."@en ;
+	rdfs:range xsd:string, rdfs:Resource;
+	rdfs:domain :BaseSource .
+
+
+###  http://www.w3.org/ns/r2rml#tableName - extended in RML
+
+rr:tableName rdfs:subPropertyOf :sourceName .
+
+
+
+#################################################################
+#
+#    Classes
+#
+#################################################################
+
+###  http://www.w3.org/ns/r2rml#TriplesMap - extended in RML
+
+:TriplesMap rdfs:subClassOf [
+          rdf:type owl:Restriction ;
+	  #extended in RML
+          owl:onProperty :logicalSource ;
+          owl:onClass :LogicalSource ;
+          owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger
+        ] .
+
+###  http://semweb.mmlab.be/rml#RMLView
+
+:RMLView rdf:type owl:Class ;
+	rdfs:subClassOf :LogicalSource .
+	
+
+###  http://semweb.mmlab.be/rml#BaseSource
+
+:BaseSource rdf:type owl:Class ;
+	rdfs:subClassOf :LogicalSource .
+
+
+###  http://semweb.mmlab.be/rml#LogicalSource
+
+:LogicalSource rdf:type owl:Class ;
+	rdfs:subClassOf owl:Thing ;
+	rdfs:comment "Represents a logical source."@en .
+
+
+###  http://www.w3.org/ns/r2rml#LogicalTable - extended in RML
+
+rr:LogicalTable rdfs:subClassOf :LogicalSource .
+
+
+###  http://semweb.mmlab.be/rml#QueryLanguage
+
+:QueryLanguage rdf:type owl:Class ;
+owl:oneOf ( ql:XPath ql:SQL ql:JSONPath ).
+
+
+
+#################################################################
+#
+#    Individuals
+#
+#################################################################
+
+
+###  http://semweb.mmlab.be/queryLanguage/XPath
+
+ql:XPath rdf:type owl:NamedIndividual ; 
+         rdfs:comment "Denotes the XPath query language, used for querying XML sources."@en .
+
+
+###  http://semweb.mmlab.be/queryLanguage/JSONPath
+
+ql:JSONPath rdf:type owl:NamedIndividual ; 
+         rdfs:comment "Denotes the JSONPath query language, used for querying JSON sources."@en .
