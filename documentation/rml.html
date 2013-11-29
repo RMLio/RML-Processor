@@ -331,7 +331,7 @@
 	          		<tr>
 	      				<td>The domain of this property is</td>
 	      				<td>
-	      					<span rel="rdfs:domain" href="http://www.w3.org/ns/r2rml#TriplesMap">          
+	      					<span rel="rdfs:domain" href="http://www.w3.org/ns/r2rml#TermMap">          
 	      						<a href="#TermMap">Term Map</a>   
 	      					</span>
 	      				</td>
@@ -358,7 +358,7 @@
 				<span rel="rdf:type" href="http://www.w3.org/2002/07/owl#ObjectProperty"></span>
 				<span class="menu"></span>   
 			</h3>
-			<p class="description">A valid expression that refers to the values from the source file. The reference should conform to the syntax rules of the logicalSource’s type.</p>
+			<p class="description">A valid expression that refers to the values from the source file. The reference should conform to the syntax rules of the query language defined at the logical Source.</p>
 
 			<div> 
 	  			<h4>Definition</h4> 
@@ -594,7 +594,7 @@
 				<div> 
 		  			<h4>Extension</h4> 
 					<p>
-						The <a href="http://www.w3.org/ns/r2rml#TriplesMap">triples map</a> is extended to any resource of a logical source.
+						The <a href="http://www.w3.org/ns/r2rml#TriplesMap">triples map</a> is extended to support any resource of a logical source (e.g. a CSv record, an XML element or a JSON object).
 					</p>
 				</div>
 	    	</div>

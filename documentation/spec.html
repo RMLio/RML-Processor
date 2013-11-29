@@ -95,7 +95,7 @@
     <p>This document describes RML, a generic mapping language, based on and extending <cite>
       <a class="norm" href="http://www.w3.org/TR/r2rml/">R2RML</a></cite>.
       <cite><a class="norm" href="http://www.w3.org/TR/r2rml/">R2RML</a></cite> is the W3C standard to express customized mappings from relational databases to RDF. RML extends <cite> <a class="norm" href="http://www.w3.org/TR/r2rml/">R2RML</a></cite> adding support for data in other structured formats. 
-      RML provides the ability to view existing data in an RDF data model, described in a vocabulary of choice. It is a generic mapping language that expresses customized mappings from data in structured formats to RDF datasets. RML follows exactly the same syntax as R2RML; therefore, RML mappings are themselves RDF graphs and written down in Turtle syntax. The present document describes the RML language and its concepts through definitions and examples.
+      RML provides the ability to view existing data in an RDF data model, described in a vocabulary of choice. It is a generic mapping language that expresses customized mappings from data in structured formats to RDF datasets. RML follows exactly the same syntax as R2RML; therefore, RML mappings are themselves RDF graphs. The present document describes the RML language and its concepts through definitions and examples.
     </p>
 
 
@@ -164,8 +164,7 @@
         The input to an RML mapping can be any source file in a structured format or a database. 
         The output is an RDF dataset that uses predicates and types from the target vocabulary. 
 
-        RML follows the same syntax as R2RML; therefore they are expressed as RDF graphs and written down in
-        <cite><a class="norm" href="http://www.w3.org/TR/turtle/">Turtle syntax</a></cite>.
+        RML follows the same syntax as R2RML; therefore they are expressed as RDF graphs.
       </p>
 
       <h3 id="conventions">Document Conventions</h3>
@@ -274,7 +273,7 @@
           It has two subclasses:
           <ul>
             <li><code>rml:RMLView</code> is the class of RML views</a>. R2RML's <code>rr:R2RMLView</code> is a subclass of <code>rml:RMLView</code></li>
-            <li><code>rml:BaseSource</code> is the class of SQL base tables or views</a>. R2RML's <code>rr:BaseTableOrView</code> is a subclass of <code>rml:BaseSource</code></li>
+            <li><code>rml:BaseSource</code> is the class of tables and files used as input source</a>. R2RML's <code>rr:BaseTableOrView</code> is a subclass of <code>rml:BaseSource</code></li>
           </ul>
         </li>
         <li><code>rr:TermMap</code> is the class of term maps, as defined by R2RML. 
