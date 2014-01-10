@@ -39,7 +39,7 @@ public class Vocab {
         // RPROPERTIES
         QUERY_LANGUAGE("queryLanguage"),
         LOGICAL_SOURCE("logicalSource"),
-        SELECTOR("selector"),
+        REFERENCE("reference"),
         QUERY("query"),
         VERSION("version"),
         SOURCE_NAME("sourceName");

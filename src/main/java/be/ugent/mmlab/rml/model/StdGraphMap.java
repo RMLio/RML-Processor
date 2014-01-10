@@ -31,7 +31,7 @@
  ****************************************************************************/
 package be.ugent.mmlab.rml.model;
 
-import be.ugent.mmlab.rml.model.selector.SelectorIdentifier;
+import be.ugent.mmlab.rml.model.reference.ReferenceIdentifier;
 import net.antidot.semantic.rdf.model.tools.RDFDataValidator;
 import net.antidot.semantic.rdf.rdb2rdf.r2rml.exception.InvalidR2RMLStructureException;
 import net.antidot.semantic.rdf.rdb2rdf.r2rml.exception.InvalidR2RMLSyntaxException;
@@ -45,14 +45,14 @@ public class StdGraphMap extends AbstractTermMap implements GraphMap {
 
 	public StdGraphMap(Value constantValue,
 			String stringTemplate, String inverseExpression,
-			SelectorIdentifier selectorValue, URI termType) throws R2RMLDataError,
+			ReferenceIdentifier referenceValue, URI termType) throws R2RMLDataError,
 			InvalidR2RMLStructureException, InvalidR2RMLSyntaxException {
 		// No Literal term type
 		// ==> No datatype
 		// ==> No specified language tag
 		// Only termType possible : IRI => by default
 		super(constantValue, null, null, stringTemplate,
-				termType, inverseExpression, selectorValue);
+				termType, inverseExpression, referenceValue);
 		
 	}
 

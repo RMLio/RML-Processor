@@ -27,14 +27,13 @@
  ****************************************************************************/
 package be.ugent.mmlab.rml.model;
 
-import be.ugent.mmlab.rml.model.selector.SelectorIdentifier;
+import be.ugent.mmlab.rml.model.reference.ReferenceIdentifier;
 import java.util.HashSet;
 
 import net.antidot.semantic.rdf.model.tools.RDFDataValidator;
 import net.antidot.semantic.rdf.rdb2rdf.r2rml.exception.InvalidR2RMLStructureException;
 import net.antidot.semantic.rdf.rdb2rdf.r2rml.exception.InvalidR2RMLSyntaxException;
 import net.antidot.semantic.rdf.rdb2rdf.r2rml.exception.R2RMLDataError;
-import net.antidot.sql.model.db.ColumnIdentifier;
 
 import org.openrdf.model.URI;
 import org.openrdf.model.Value;
@@ -46,10 +45,10 @@ public class StdObjectMap extends AbstractTermMap implements TermMap, ObjectMap 
 	public StdObjectMap(PredicateObjectMap predicateObjectMap,
 			Value constantValue, URI dataType, String languageTag,
 			String stringTemplate, URI termType, String inverseExpression,
-			SelectorIdentifier selectorValue) throws R2RMLDataError,
+			ReferenceIdentifier referenceValue) throws R2RMLDataError,
 			InvalidR2RMLStructureException, InvalidR2RMLSyntaxException {
 		super(constantValue, dataType, languageTag, stringTemplate, termType,
-				inverseExpression, selectorValue);
+				inverseExpression, referenceValue);
 		setPredicateObjectMap(predicateObjectMap);
 	}
 

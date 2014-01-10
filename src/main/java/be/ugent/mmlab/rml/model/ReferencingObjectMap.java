@@ -46,20 +46,20 @@ public interface ReferencingObjectMap {
 	public Set<JoinCondition> getJoinConditions();
 	
 	/**
-	 * The effective selector of the logical source containing the 
+	 * The effective reference of the logical source containing the 
 	 * referencing object map.
 	 */
-	public String getChildSelector();
+	public String getChildReference();
 	
 	/**
-	 * The effective selector of the logical source of its parent triples map.
+	 * The effective reference of the logical source of its parent triples map.
 	 */
-	public String getParentSelector();
+	public String getParentReference();
 	
         /*
          * Is this still relevant??
          */
-	public String getJointSelector();
+	public String getJointReference();
 	
 	/**
 	 * A object map knows in own Predicate Object container.

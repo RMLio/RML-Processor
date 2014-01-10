@@ -9,29 +9,29 @@ import be.ugent.mmlab.rml.vocabulary.Vocab.QLTerm;
  */
 public class StdLogicalSource implements LogicalSource {
 
-    private String selector;
+    private String reference;
     private QLTerm queryLanguage = QLTerm.SQL_CLASS;
     private String identifier;
 
-    public StdLogicalSource(String selector, String identifier) {
-        this.selector = selector;
+    public StdLogicalSource(String reference, String identifier) {
+        this.reference = reference;
         this.identifier = identifier;
     }
 
-    public StdLogicalSource(String selector) {
-        this.selector = selector;
+    public StdLogicalSource(String reference) {
+        this.reference = reference;
     }
 
-    public StdLogicalSource(String selector, String identifier, QLTerm queryLanguage) {
-        this.selector = selector;
+    public StdLogicalSource(String reference, String identifier, QLTerm queryLanguage) {
+        this.reference = reference;
         this.identifier = identifier;
         this.queryLanguage = queryLanguage;
     }
     
     
 
-    public String getSelector() {
-        return selector;
+    public String getReference() {
+        return reference;
     }
 
     public QLTerm getQueryLanguage() {
@@ -44,7 +44,7 @@ public class StdLogicalSource implements LogicalSource {
 
     @Override
     public String toString() {
-        return "[StdLogicalSource : selector = " + selector
+        return "[StdLogicalSource : reference = " + reference
                 + "; identifier" + identifier + "; queryLanguage = " + queryLanguage + "]";
     }
 }

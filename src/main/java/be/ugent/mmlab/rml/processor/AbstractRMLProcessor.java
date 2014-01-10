@@ -11,7 +11,7 @@ import be.ugent.mmlab.rml.model.ReferencingObjectMap;
 import be.ugent.mmlab.rml.model.SubjectMap;
 import be.ugent.mmlab.rml.model.TermMap;
 import be.ugent.mmlab.rml.model.TriplesMap;
-import be.ugent.mmlab.rml.model.selector.SelectorIdentifierImpl;
+import be.ugent.mmlab.rml.model.reference.ReferenceIdentifierImpl;
 import be.ugent.mmlab.rml.vocabulary.Vocab.QLTerm;
 import java.util.HashMap;
 import java.util.Set;
@@ -46,8 +46,8 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
      * @param ls
      * @return 
      */
-    protected String getSelector(LogicalSource ls) {
-        return ls.getSelector();
+    protected String getReference(LogicalSource ls) {
+        return ls.getReference();
     }
 
     /**
@@ -88,9 +88,9 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
         String value = null;
 
         switch (map.getTermMapType()) {
-            case SELECTOR_VALUED:
+            case REFERENCE_VALUED:
                 //Get the expression and extract the value
-                SelectorIdentifierImpl identifier = (SelectorIdentifierImpl) map.getSelectorValue();
+                ReferenceIdentifierImpl identifier = (ReferenceIdentifierImpl) map.getReferenceValue();
                 value = extractValueFromNode(node, identifier.toString());
 
                 break;
