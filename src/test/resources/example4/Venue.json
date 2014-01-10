@@ -1,11 +1,20 @@
-{
-    "venue": {
-        "latitude": "51.0500000",
-        "longitude": "3.7166700"
-    },
-    "location": {
-        "continent": " EU",
+[
+    {
+        "continent": "EU",
         "country": "BE",
-        "city": "Brussels"
+        "city": "Brussels",
+        "venue": {
+            "latitude": "51.0000000",
+            "longitude": "3.7166700"
+        }
+    },
+    {
+        "continent": "EU",
+        "country": "BE",
+        "city": "Gent",
+        "venue": {
+            "latitude": "51.4657890",
+            "longitude": "3.7166700"
+        }
     }
-}
+]
