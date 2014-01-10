@@ -50,15 +50,15 @@ public class StdReferencingObjectMap implements ReferencingObjectMap {
 		this.joinConditions.addAll(joinConditions);
 	}
 
-	public String getChildSelector() {
-		return predicateObjectMap.getOwnTriplesMap().getLogicalSource().getSelector();
+	public String getChildReference() {
+		return predicateObjectMap.getOwnTriplesMap().getLogicalSource().getReference();
 	}
 
 	public Set<JoinCondition> getJoinConditions() {
 		return joinConditions;
 	}
 
-	public String getJointSelector() {
+	public String getJointReference() {
 //		String jointSQLQuery = "SELECT * FROM (" + getChildQuery()
 //				+ ") AS child, (" + getParentQuery() + ") AS parent";
 //		// If the referencing object map has no join condition
@@ -81,8 +81,8 @@ public class StdReferencingObjectMap implements ReferencingObjectMap {
             return "";
 	}
 
-	public String getParentSelector() {
-		return parentTriplesMap.getLogicalSource().getSelector();
+	public String getParentReference() {
+		return parentTriplesMap.getLogicalSource().getReference();
 	}
 
 	public TriplesMap getParentTriplesMap() {

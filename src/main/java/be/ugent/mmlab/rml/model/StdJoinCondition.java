@@ -56,7 +56,7 @@ public class StdJoinCondition implements JoinCondition {
 //					"[StdJoinCondition:setParent] Not a valid column "
 //							+ "value : " + parent);
                 
-                // TODO check if selector is valid
+                // TODO check if reference is valid
 
 		this.parent = parent;
 	}
@@ -72,7 +72,7 @@ public class StdJoinCondition implements JoinCondition {
 //			throw new InvalidR2RMLSyntaxException(
 //					"[StdJoinCondition:setParent] Not a valid column "
 //							+ "value : " + child);
-                // TODO check if selector is valid
+                // TODO check if reference is valid
                 
                 
 		this.child = child;

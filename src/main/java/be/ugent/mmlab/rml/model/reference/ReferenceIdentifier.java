@@ -1,4 +1,4 @@
-package be.ugent.mmlab.rml.model.selector;
+package be.ugent.mmlab.rml.model.reference;
 
 /**
  * 
@@ -6,7 +6,7 @@ package be.ugent.mmlab.rml.model.selector;
  *
  * @author mielvandersande
  */
-public interface SelectorIdentifier {
+public interface ReferenceIdentifier {
     
     /** Made a replaceAll on the input String to replace all occurrence of
      * the "{parameter}" in.

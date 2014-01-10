@@ -32,13 +32,13 @@ package be.ugent.mmlab.rml.model;
 public interface JoinCondition {
 	
 	/**
-	 * Child selector must be a selector in the language defined by the logical source 
+	 * Child reference must be a reference in the language defined by the logical source 
 	 * of the triples map that contains the referencing object map
 	 */
 	public String getChild();
 	
 	/**
-	 * Parent selector must be a selector in the language defined by the parent triples map and exist there.  
+	 * Parent reference must be a reference in the language defined by the parent triples map and exist there.  
 	 */
 	public String getParent();
 

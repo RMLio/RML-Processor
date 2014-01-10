@@ -67,7 +67,7 @@
     rr:predicateObjectMap [
         rr:predicate transit:stop;
         rr:objectMap [
-            rml:selector "/route/stop/@id";
+            rml:reference "/route/stop/@id";
             rr:datatype xsd:int 
         ] 
     ];
@@ -75,7 +75,7 @@
     rr:predicateObjectMap [
         rr:predicate rdfs:label;
         rr:objectMap [
-            rml:selector "stop" 
+            rml:reference "stop" 
         ] 
     ] .
 
@@ -103,11 +103,11 @@
     ];
 rr:predicateObjectMap [
       rr:predicate geosp:onContinent;
-      rr:objectMap [ rml:selector "$.location.continent" ]
+      rr:objectMap [ rml:reference "$.location.continent" ]
      ];
     rr:predicateObjectMap [
       rr:predicate gn:countryCode;
-      rr:objectMap [ rml:selector "$.location.country" ]
+      rr:objectMap [ rml:reference "$.location.country" ]
      ].
 
 
@@ -124,12 +124,12 @@ rr:predicateObjectMap [
 
   rr:predicateObjectMap [
     rr:predicate wgs84_pos:lat;
-    rr:objectMap [ rml:selector "$.latitude" ]
+    rr:objectMap [ rml:reference "$.latitude" ]
   ];
     
   rr:predicateObjectMap [
     rr:predicate wgs84_pos:long;
-    rr:objectMap [rml:selector "$.longitude"]
+    rr:objectMap [rml:reference "$.longitude"]
   ].
 
 

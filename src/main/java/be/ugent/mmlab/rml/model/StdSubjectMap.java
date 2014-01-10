@@ -28,7 +28,7 @@
  ****************************************************************************/
 package be.ugent.mmlab.rml.model;
 
-import be.ugent.mmlab.rml.model.selector.SelectorIdentifier;
+import be.ugent.mmlab.rml.model.reference.ReferenceIdentifier;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -49,14 +49,14 @@ public class StdSubjectMap extends AbstractTermMap implements SubjectMap {
 
 	public StdSubjectMap(TriplesMap ownTriplesMap, Value constantValue,
 			String stringTemplate, URI termType, String inverseExpression,
-			SelectorIdentifier selectorValue, Set<URI> classIRIs, Set<GraphMap> graphMaps)
+			ReferenceIdentifier referenceValue, Set<URI> classIRIs, Set<GraphMap> graphMaps)
 			throws R2RMLDataError, InvalidR2RMLStructureException,
 			InvalidR2RMLSyntaxException {
 		// No Literal term type
 		// ==> No datatype
 		// ==> No specified language tag
 		super(constantValue, null, null, stringTemplate, termType,
-				inverseExpression, selectorValue);
+				inverseExpression, referenceValue);
 		setClassIRIs(classIRIs);
 		setGraphMaps(graphMaps);
 		setOwnTriplesMap(ownTriplesMap);

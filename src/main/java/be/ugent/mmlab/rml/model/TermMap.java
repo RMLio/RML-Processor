@@ -26,7 +26,7 @@
  ****************************************************************************/
 package be.ugent.mmlab.rml.model;
 
-import be.ugent.mmlab.rml.model.selector.SelectorIdentifier;
+import be.ugent.mmlab.rml.model.reference.ReferenceIdentifier;
 import java.io.UnsupportedEncodingException;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -48,9 +48,9 @@ public interface TermMap {
 		// A constant-valued term map is a term map that ignores the logical
 		// table row and always generates the same RDF term
 		CONSTANT_VALUED,
-		// A selector-valued term map is a term map that is represented by a
-		// resource that has exactly one rml:selector or rr:column property.
-		SELECTOR_VALUED,
+		// A reference-valued term map is a term map that is represented by a
+		// resource that has exactly one rml:reference or rr:column property.
+		REFERENCE_VALUED,
 		// A template-valued term map is a term map that is represented by a
 		// resource that has exactly one rr:template property
 		TEMPLATE_VALUED,
@@ -62,10 +62,10 @@ public interface TermMap {
 	public TermMapType getTermMapType();
 
 	/**
-	 * The referenced columns of a term map are the set of selectors
+	 * The referenced columns of a term map are the set of references
 	 * referenced in the term map and depend on the type of term map.
 	 */
-	public Set<SelectorIdentifier> getReferencedSelectors();
+	public Set<ReferenceIdentifier> getReferencedSelectors();
 
 	/**
 	 * The constant value of a constant-valued term map is the RDF term that is
@@ -75,9 +75,9 @@ public interface TermMap {
 
 	/**
 	 * The column value of the term map is the data value of that column in a
-	 * given logical table row. Only if SELECTOR_VALUED type.
+	 * given logical table row. Only if REFERENCE_VALUED type.
 	 */
-	public SelectorIdentifier getSelectorValue();
+	public ReferenceIdentifier getReferenceValue();
 
 	/**
 	 * The value of the rr:template property MUST be a valid string template. A

@@ -117,13 +117,13 @@ rr:logicalTable rdfs:subPropertyOf :logicalSource .
 
 ###  http://www.w3.org/ns/r2rml#column - extended in RML
 
-rr:column rdfs:subPropertyOf :selector .
+rr:column rdfs:subPropertyOf :reference .
 
 
-###  http://semweb.mmlab.be/rml#selector
+###  http://semweb.mmlab.be/rml#reference
 
-:selector rdf:type owl:DatatypeProperty ;
-    rdfs:comment "A valid expression that selects values from the source file. The selector should confront to the syntax rules of the logicalSource's type. "@en ;
+:reference rdf:type owl:DatatypeProperty ;
+    rdfs:comment "A valid expression that selects values from the source file. The reference should confront to the syntax rules of the logicalSource's type. "@en ;
     rdfs:domain rr:TermMap;
     rdfs:range xsd:string .
 

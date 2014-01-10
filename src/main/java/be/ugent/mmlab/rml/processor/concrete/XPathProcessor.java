@@ -30,7 +30,7 @@ public class XPathProcessor extends AbstractRMLProcessor {
     public void execute(final SesameDataSet dataset, final TriplesMap map, final RMLPerformer performer) {
         try {
 
-            String selector = getSelector(map.getLogicalSource());
+            String reference = getReference(map.getLogicalSource());
             String fileName = getIdentifier(map.getLogicalSource());
 
             //Inititalize the XMLDog for processing XPath
@@ -40,7 +40,7 @@ public class XPathProcessor extends AbstractRMLProcessor {
             XMLDog dog = new XMLDog(nsContext);
 
             //adding expression to the xpathprocessor
-            dog.addXPath(selector);
+            dog.addXPath(reference);
 
             jlibs.xml.sax.dog.sniff.Event event = dog.createEvent();
 

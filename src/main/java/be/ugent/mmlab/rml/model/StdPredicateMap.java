@@ -27,7 +27,7 @@
  ****************************************************************************/
 package be.ugent.mmlab.rml.model;
 
-import be.ugent.mmlab.rml.model.selector.SelectorIdentifier;
+import be.ugent.mmlab.rml.model.reference.ReferenceIdentifier;
 import java.util.HashSet;
 
 import net.antidot.semantic.rdf.model.tools.RDFDataValidator;
@@ -45,7 +45,7 @@ public class StdPredicateMap extends AbstractTermMap implements TermMap,
 
 	public StdPredicateMap(PredicateObjectMap predicateObjectMap,
 			Value constantValue, String stringTemplate,
-			String inverseExpression, SelectorIdentifier selectorValue, URI termType)
+			String inverseExpression, ReferenceIdentifier referenceValue, URI termType)
 			throws R2RMLDataError, InvalidR2RMLStructureException,
 			InvalidR2RMLSyntaxException {
 		// No Literal term type
@@ -53,7 +53,7 @@ public class StdPredicateMap extends AbstractTermMap implements TermMap,
 		// ==> No specified language tag
 		// No class IRI
 		super(constantValue, null, null, stringTemplate, termType,
-				inverseExpression, selectorValue);
+				inverseExpression, referenceValue);
 		setPredicateObjectMap(predicateObjectMap);
 	}
 
