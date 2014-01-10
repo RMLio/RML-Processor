@@ -923,7 +923,7 @@ public abstract class RMLMappingFactory {
                 blankLogicalSource, pName, null);
 
         URI pView = rmlMappingGraph.URIref(Vocab.RML_NAMESPACE
-                + Vocab.RMLTerm.QUERY);
+                + Vocab.RMLTerm.ITERATOR);
         List<Statement> statementsView = rmlMappingGraph.tuplePattern(
                 blankLogicalSource, pView, null);
 
@@ -953,14 +953,14 @@ public abstract class RMLMappingFactory {
             //Extract the file identifier
             String file = statementsName.get(0).getObject().stringValue();
 
-            //Extract the query to create the iterator. Some formats have null, like CSV or SQL
-            String query = null;
+            //Extract the iterator to create the iterator. Some formats have null, like CSV or SQL
+            String iterator = null;
             if (!statementsView.isEmpty()) {
-                query = statementsView.get(0).getObject().stringValue();
+                iterator = statementsView.get(0).getObject().stringValue();
             }
 
             //MVS: find a good way to distinct SQL and others
-            logicalSource = new StdLogicalSource(query, file, queryLanguage);
+            logicalSource = new StdLogicalSource(iterator, file, queryLanguage);
 
 
         } else {

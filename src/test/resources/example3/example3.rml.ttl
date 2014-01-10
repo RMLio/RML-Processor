@@ -55,7 +55,7 @@
 <#TransportMapping>
     rml:logicalSource[
       rml:sourceName "Transport.xml";
-      rml:query "/transport/bus";
+      rml:iterator "/transport/bus";
       rml:queryLanguage ql:XPath;
     ];
     
@@ -83,7 +83,7 @@
     rml:logicalSource [
       rml:sourceName "Venue.json";
       rml:queryLanguage ql:JSONPath;
-      rml:query "$.*"
+      rml:iterator "$.*"
     ];
     rr:subjectMap [
      rr:template "http://loc.example.com/city/{$.location.city}";
@@ -115,7 +115,7 @@ rr:predicateObjectMap [
   rml:logicalSource [
     rml:sourceName "Venue.json";
     rml:queryLanguage ql:JSONPath;
-    rml:query "$.*"
+    rml:iterator "$.*"
   ];
 
   rr:subjectMap [
