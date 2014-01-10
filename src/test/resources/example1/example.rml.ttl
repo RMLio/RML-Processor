@@ -1,6 +1,6 @@
 @prefix rr: <http://www.w3.org/ns/r2rml#>.
-@prefix  rml: <http://mmlab.be/rml#> .
-@prefix ql: <http://mmlab.be/ql#> .
+@prefix  rml: <http://semweb.mmlab.be/ns/rml#> .
+@prefix ql: <http://semweb.mmlab.be/ns/ql#> .
 @prefix mail: <http://example.com/mail#>.
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
 @prefix ex: <http://www.example.com/> .
