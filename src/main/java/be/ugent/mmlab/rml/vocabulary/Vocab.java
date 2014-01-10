@@ -40,7 +40,7 @@ public class Vocab {
         QUERY_LANGUAGE("queryLanguage"),
         LOGICAL_SOURCE("logicalSource"),
         REFERENCE("reference"),
-        QUERY("query"),
+        ITERATOR("iterator"),
         VERSION("version"),
         SOURCE_NAME("sourceName");
         

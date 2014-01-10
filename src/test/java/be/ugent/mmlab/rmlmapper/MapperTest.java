@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import static junit.framework.Assert.assertTrue;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -37,9 +38,10 @@ public class MapperTest
         
         RMLEngine.fileMap = new HashMap<String, String>();
         RMLEngine.fileMap.put("example.xml", getClass().getResource("/example1/example.xml").getFile());
-        RMLEngine.fileMap.put("Airport.csv", getClass().getResource("/example3/Airport.csv").getFile());
-        RMLEngine.fileMap.put("Venue.json", getClass().getResource("/example3/Venue.json").getFile());
-        RMLEngine.fileMap.put("Transport.xml", getClass().getResource("/example3/Transport.xml").getFile());
+        //RMLEngine.fileMap.put("Airport.csv", getClass().getResource("/example3/Airport.csv").getFile());
+        //RMLEngine.fileMap.put("Venue.json", getClass().getResource("/example3/Venue.json").getFile());
+        RMLEngine.fileMap.put("Venue.json", getClass().getResource("/example4/Venue.json").getFile());
+        //RMLEngine.fileMap.put("Transport.xml", getClass().getResource("/example3/Transport.xml").getFile());
     }
 
     /**
@@ -70,6 +72,13 @@ public class MapperTest
             URL fileToOutputFile = getClass().getResource("/example3/example3.output.ttl");
             assertTrue(assertMap(fileToRMLFile, fileToOutputFile));
     }*/
+    
+    public void testExample4() {
+        URL fileToRMLFile = getClass().getResource("/example4/example4_Venue.rml.ttl");
+            URL fileToOutputFile = getClass().getResource("/example4/example4_Venue.output.ttl");
+            assertTrue(assertMap(fileToRMLFile, fileToOutputFile));
+        
+    }
     
     private boolean assertMap(URL mappingURL, URL outputURL) {
         try {

@@ -9,7 +9,7 @@
 <#FromToMaps>
 rml:logicalSource [ 
 	rml:sourceName "example.xml";
-	rml:query "/notes/note";
+	rml:iterator "/notes/note";
 	rml:queryLanguage ql:XPath;
 ];
 rr:subjectMap [
@@ -58,7 +58,7 @@ rr:subjectMap [
 <#DateTime>
     rml:logicalSource [ 
 	rml:sourceName "example.xml";
-	rml:query "/notes/note";
+	rml:iterator "/notes/note";
 	rml:queryLanguage ql:XPath;
 	];
 	rr:subjectMap [
