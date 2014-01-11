@@ -156,7 +156,7 @@ public abstract class AbstractTermMap implements TermMap {
                         } else {
                                 // otherwise its term type is IRI
                                 this.termType = TermType.IRI;
-                                log.debug("[AbstractTermMap:setTermType] No term type specified : use IRI by default.");
+                                log.debug("[AbstractTermMap:setTermType] No term type specified : use IRI by default." + getReferenceValue());
                         }
 
                 } else {

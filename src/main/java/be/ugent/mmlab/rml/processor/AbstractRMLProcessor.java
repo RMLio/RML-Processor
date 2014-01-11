@@ -13,6 +13,7 @@ import be.ugent.mmlab.rml.model.TermMap;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.model.reference.ReferenceIdentifierImpl;
 import be.ugent.mmlab.rml.vocabulary.Vocab.QLTerm;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Set;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
@@ -109,7 +110,11 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                         //if the replacement value is null, the resulting uri would be the template. Return null instead.
                         return null;
                     }
-                    value = value.replaceAll("\\{" + expression + "\\}", replacement);
+                    if(expression.contains("[")){
+                        expression = expression.replaceAll("\\[", "").replaceAll("\\]","");
+                        value = value.replaceAll("\\[", "").replaceAll("\\]","");
+                    }
+                    value = value.replaceAll("\\{" + expression + "\\}", URLEncoder.encode(replacement));
                 }
 
                 break;
