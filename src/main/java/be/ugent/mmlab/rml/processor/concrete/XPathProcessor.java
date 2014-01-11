@@ -26,7 +26,7 @@ import org.xml.sax.InputSource;
  * @author mielvandersande
  */
 public class XPathProcessor extends AbstractRMLProcessor {
-
+    
     public void execute(final SesameDataSet dataset, final TriplesMap map, final RMLPerformer performer) {
         try {
 
@@ -88,7 +88,7 @@ public class XPathProcessor extends AbstractRMLProcessor {
         XPathEvaluator eval = new XPathEvaluatorImpl();
         Logger.getLogger(XPathProcessor.class.getName()).log(Level.INFO, null, "About to run: "+expression+ " over " + node);
         XPathResult result = (XPathResult) eval.evaluate(expression, node, null, XPathResult.STRING_TYPE, null);
-
+        
         return result.getStringValue();
     }
 

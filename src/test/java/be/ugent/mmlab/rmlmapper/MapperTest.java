@@ -42,6 +42,8 @@ public class MapperTest
         //RMLEngine.fileMap.put("Venue.json", getClass().getResource("/example3/Venue.json").getFile());
         RMLEngine.fileMap.put("Venue.json", getClass().getResource("/example4/Venue.json").getFile());
         //RMLEngine.fileMap.put("Transport.xml", getClass().getResource("/example3/Transport.xml").getFile());
+        RMLEngine.fileMap.put("museum.json", getClass().getResource("/example5/museum.json").getFile());
+        RMLEngine.fileMap.put("moon-walkers.csv", getClass().getResource("/example5/moon-walkers.csv").getFile());
     }
 
     /**
@@ -76,10 +78,16 @@ public class MapperTest
     public void testExample4() {
         URL fileToRMLFile = getClass().getResource("/example4/example4_Venue.rml.ttl");
             URL fileToOutputFile = getClass().getResource("/example4/example4_Venue.output.ttl");
-            assertTrue(assertMap(fileToRMLFile, fileToOutputFile));
-        
+            assertTrue(assertMap(fileToRMLFile, fileToOutputFile));   
     }
     
+    //paper's example test
+    public void testExample5() {
+        URL fileToRMLFile = getClass().getResource("/example5/museum-model.rml.ttl");
+            URL fileToOutputFile = getClass().getResource("/example5/museum.output.ttl");
+            assertTrue(assertMap(fileToRMLFile, fileToOutputFile));   
+    }
+         
     private boolean assertMap(URL mappingURL, URL outputURL) {
         try {
             RMLMapping mapping = RMLMappingFactory.extractRMLMapping(mappingURL.getFile());

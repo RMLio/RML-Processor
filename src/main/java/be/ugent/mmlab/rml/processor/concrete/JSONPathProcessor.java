@@ -4,6 +4,7 @@
  */
 package be.ugent.mmlab.rml.processor.concrete;
 
+import be.ugent.mmlab.rml.core.RMLMappingFactory;
 import be.ugent.mmlab.rml.core.RMLPerformer;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.AbstractRMLProcessor;
@@ -16,12 +17,16 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  *
  * @author mielvandersande
  */
 public class JSONPathProcessor extends AbstractRMLProcessor {
+    
+    private static Log log = LogFactory.getLog(RMLMappingFactory.class);
 
     public void execute(SesameDataSet dataset, TriplesMap map, RMLPerformer performer) {
         InputStream fis = null;
@@ -57,6 +62,7 @@ public class JSONPathProcessor extends AbstractRMLProcessor {
             return null;
         } catch (Exception ex){
             System.out.println("");
+            log.debug("[JSONPathProcessor:extractValueFromNode]. Error: " + ex);
             return null;
         }
     }
