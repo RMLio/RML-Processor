@@ -10,7 +10,7 @@
   rml:logicalSource [
     rml:sourceName "museum.json";
     rml:queryLanguage ql:JSONPath;
-    rml:iterator "$";
+    rml:iterator "$.[*]";
   ];
 
   rr:subjectMap [
@@ -54,7 +54,7 @@
   rml:logicalSource [
     rml:sourceName "museum.json";
     rml:queryLanguage ql:JSONPath;
-    rml:iterator "$";
+    rml:iterator "$.[*]";
   ];
 
   rr:subjectMap [
