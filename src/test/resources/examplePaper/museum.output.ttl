@@ -1,0 +1,8 @@
+<http://ex.com/NPG_70_36> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E22_Man-Made_Object> .
+<http://ex.com/NPG_70_36> <http://www.cidoc-crm.org/cidoc-crm/P102_has_title> "Apollo 11 Crew" .
+<http://ex.com/NPG_70_36> <http://www.cidoc-crm.org/cidoc-crm/P48_has_preferred_identifier> "NPG_70_36" .
+#<http://ex.com/NPG_70_36> <http://www.cidoc-crm.org/cidoc-crm/P62_depicts> <http://ex.com/Neil_Armstrong> .
+#<http://ex.com/NPG_70_36> <http://www.cidoc-crm.org/cidoc-crm/P62_depicts> <http://ex.com/Buzz_Aldrin> .
+#<http://ex.com/NPG_70_36> <http://www.cidoc-crm.org/cidoc-crm/P62_depicts> <http://ex.com/Michael_Collins> .
+
+

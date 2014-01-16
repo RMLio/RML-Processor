@@ -1,0 +1,32 @@
+ 
+<#MuseumMapping>
+  rml:logicalSource [
+    rml:sourceName "http://semweb.mmlab.be/rml/files/Museum.json";
+    rml:queryLanguage ql:JSONPath;
+    rml:iterator "$"
+  ];
+
+  rr:subjectMap [
+    rr:template "http://ex.com/{Ref}";
+    rr:class crm:E22_Man-Made_Object 
+  ];
+      
+  rr:predicateObjectMap 
+  [
+    rr:predicate crm:P102_has_title;
+    rr:objectMap 
+    [
+      rml:reference "Title" 
+    ]
+  ];
+  
+  rr:predicateObjectMap 
+  [
+    rr:predicate crm:P48_has_preferred_identifier;
+    rr:objectMap 
+    [
+      rml:reference "Ref" 
+    ]
+  ].
+ 
+    
