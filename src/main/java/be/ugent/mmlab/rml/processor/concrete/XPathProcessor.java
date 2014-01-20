@@ -1,9 +1,11 @@
 package be.ugent.mmlab.rml.processor.concrete;
 
+import be.ugent.mmlab.rml.core.JoinRMLPerformer;
 import be.ugent.mmlab.rml.core.RMLPerformer;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.AbstractRMLProcessor;
 import com.sun.org.apache.xpath.internal.domapi.XPathEvaluatorImpl;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.xpath.XPathException;
@@ -96,4 +98,7 @@ public class XPathProcessor extends AbstractRMLProcessor {
         return extractValueFromNode((Node) node, expression);
     }
 
+    public void executeRefObjMap(SesameDataSet dataset, TriplesMap parentTriplesMap, JoinRMLPerformer joinRMLPerformer, HashMap<String, String> joinMap) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }
