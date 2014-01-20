@@ -4,6 +4,7 @@
  */
 package be.ugent.mmlab.rml.processor.concrete;
 
+import be.ugent.mmlab.rml.core.JoinRMLPerformer;
 import be.ugent.mmlab.rml.core.RMLMappingFactory;
 import be.ugent.mmlab.rml.core.RMLPerformer;
 import be.ugent.mmlab.rml.model.TriplesMap;
@@ -13,6 +14,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,7 +24,7 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  *
- * @author mielvandersande
+ * @author mielvandersande, andimou
  */
 public class JSONPathProcessor extends AbstractRMLProcessor {
     
@@ -65,5 +67,9 @@ public class JSONPathProcessor extends AbstractRMLProcessor {
             log.debug("[JSONPathProcessor:extractValueFromNode]. Error: " + ex);
             return null;
         }
+    }
+
+    public void executeRefObjMap(SesameDataSet dataset, TriplesMap parentTriplesMap, JoinRMLPerformer joinRMLPerformer, HashMap<String, String> joinMap) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

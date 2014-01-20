@@ -29,10 +29,10 @@ import org.openrdf.model.vocabulary.RDF;
 /**
  * This class contains all generic functionality for executing an iteration and processing the mapping
  * 
- * @author mielvandersande
+ * @author mielvandersande, andimou
  */
 public abstract class AbstractRMLProcessor implements RMLProcessor {
-
+    
     /**
      * Gets the globally defined identifier-to-path map
      * @param ls the current LogicalSource
@@ -61,7 +61,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
      * @return the created subject
      */
     public Resource processSubjectMap(SesameDataSet dataset, SubjectMap subjectMap, Object node) {
-        //Get the uri
+        //Get the uri 
         String value = processTermMap(subjectMap, node);
 
         if (value == null){
@@ -142,10 +142,10 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
             URI predicate = processPredicateMap(predicateMap, node);
 
             //Process the joins first
-            Set<ReferencingObjectMap> referencingObjectMaps = pom.getReferencingObjectMaps();
+            Set<ReferencingObjectMap> referencingObjectMaps = pom.getReferencingObjectMaps();   
             for (ReferencingObjectMap referencingObjectMap : referencingObjectMaps) {
                 Set<JoinCondition> joinConditions = referencingObjectMap.getJoinConditions();
-
+                if(joinConditions.size() != 0){
                 //Build a join map where 
                 //  key: the parent expression 
                 //  value: the value extracted from the child
@@ -165,7 +165,19 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
 
                 //Execute the join with candidate s, p
                 //Create a join performer to make the processor execute joins (Strategy pattern & composition)
-                processor.execute(dataset, parentTriplesMap, new JoinRMLPerformer(processor, joinMap, subject, predicate));
+                processor.executeRefObjMap(dataset, parentTriplesMap, new JoinRMLPerformer(processor, subject, predicate),joinMap);
+                }
+                else
+                {
+                    TriplesMap parentTriplesMap = referencingObjectMap.getParentTriplesMap();
+                    //Create the processor based on the parent triples map to perform the join
+                    RMLProcessorFactory factory = new ConcreteRMLProcessorFactory();
+                    QLTerm queryLanguage = parentTriplesMap.getLogicalSource().getQueryLanguage();
+                    RMLProcessor processor = factory.create(queryLanguage);
+                    JoinRMLPerformer performer = new JoinRMLPerformer(processor, subject, predicate);
+                    performer.perform(node, dataset, parentTriplesMap);
+                    //processor.RefObjMap(dataset, parentTriplesMap, new JoinRMLPerformer(processor, subject, predicate), node);
+                }
             }
 
             //process the objectmaps without joins

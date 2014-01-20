@@ -37,13 +37,16 @@ public class MapperTest
         super(testName);
         
         RMLEngine.fileMap = new HashMap<String, String>();
-        RMLEngine.fileMap.put("example.xml", getClass().getResource("/example1/example.xml").getFile());
+        //RMLEngine.fileMap.put("example.xml", getClass().getResource("/example1/example.xml").getFile());
         //RMLEngine.fileMap.put("Airport.csv", getClass().getResource("/example3/Airport.csv").getFile());
         //RMLEngine.fileMap.put("Venue.json", getClass().getResource("/example3/Venue.json").getFile());
-        RMLEngine.fileMap.put("Venue.json", getClass().getResource("/example4/Venue.json").getFile());
+        //RMLEngine.fileMap.put("Venue.json", getClass().getResource("/example4/Venue.json").getFile());
         //RMLEngine.fileMap.put("Transport.xml", getClass().getResource("/example3/Transport.xml").getFile());
-        RMLEngine.fileMap.put("museum.json", getClass().getResource("/example5/museum.json").getFile());
-        RMLEngine.fileMap.put("moon-walkers.csv", getClass().getResource("/example5/moon-walkers.csv").getFile());
+        //RMLEngine.fileMap.put("museum.json", getClass().getResource("/example5/museum.json").getFile());
+        //RMLEngine.fileMap.put("moon-walkers.csv", getClass().getResource("/example5/moon-walkers.csv").getFile());
+        RMLEngine.fileMap.put("ProjectsPartners.csv", getClass().getResource("/iMinds/ProjectsPartners.csv").getFile());
+        RMLEngine.fileMap.put("ProjectsTimesheets.csv", getClass().getResource("/iMinds/ProjectsTimesheets.csv").getFile());
+        RMLEngine.fileMap.put("ResearchGroups.csv", getClass().getResource("/iMinds/ResearchGroups.csv").getFile());
     }
 
     /**
@@ -85,6 +88,13 @@ public class MapperTest
     public void testExample5() {
         URL fileToRMLFile = getClass().getResource("/example5/museum-model_short.rml.ttl");
             URL fileToOutputFile = getClass().getResource("/example5/museum_short.output.ttl");
+            assertTrue(assertMap(fileToRMLFile, fileToOutputFile));   
+    }
+    
+    //iMinds mappings
+    public void testiMinds() {
+        URL fileToRMLFile = getClass().getResource("/iMinds/iMinds.rml.ttl");
+            URL fileToOutputFile = getClass().getResource("/iMinds/iMinds.output.ttl");
             assertTrue(assertMap(fileToRMLFile, fileToOutputFile));   
     }
          

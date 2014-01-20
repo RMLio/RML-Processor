@@ -1,0 +1,178 @@
+@prefix rr:     <http://www.w3.org/ns/r2rml#>.
+@prefix rml:    <http://semweb.mmlab.be/ns/rml#> .
+@prefix ql:     <http://semweb.mmlab.be/ns/ql#> .
+@prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix ex:     <http://example.com/>.
+@prefix xsd:    <http://www.w3.org/2001/XMLSchema#>.
+@prefix iminds: <http://iminds.be/> .
+@prefix im:     <http://semweb.mmlab.be/ns/im#> .
+@prefix cerif:  <http://spi-fm.uca.es/neologism/cerif#>.
+@prefix xsd:    <http://www.w3.org/2001/XMLSchema#>.
+
+<#ProjectMapping>
+  rml:logicalSource [
+    rml:sourceName "ProjectsPartners.csv";
+    rml:queryLanguage ql:CSV
+  ];
+
+  rr:subjectMap [
+    rr:template "http://iMinds.be/Project/{Project code}";
+    rr:class cerif:Project 
+  ];
+      
+  rr:predicateObjectMap 
+  [
+    rr:predicate cerif:acronym;
+    rr:objectMap 
+    [
+      rml:reference "Project acronym" 
+    ]
+  ];
+
+  rr:predicateObjectMap 
+  [
+    rr:predicate ex:mastertype;
+    rr:objectMap 
+    [
+      rml:reference "Mastertype" 
+    ]
+  ]; 
+
+  rr:predicateObjectMap 
+  [
+    rr:predicate ex:full_mastertype;
+    rr:objectMap 
+    [
+      rml:reference "Mastertype(T)" 
+    ]
+  ];
+
+  rr:predicateObjectMap 
+  [
+    rr:predicate ex:segment;
+    rr:objectMap 
+    [
+      rml:reference "Segment(T)" 
+    ]
+  ];
+
+  rr:predicateObjectMap 
+  [
+    rr:predicate ex:project_status;
+    rr:objectMap 
+    [
+      rml:reference "Project Status" 
+    ]
+  ];
+
+  rr:predicateObjectMap 
+  [
+    rr:predicate cerif:startDate;
+    rr:objectMap 
+    [
+      rml:reference "Start date" ;
+      rr:datatype xsd:date;
+    ]
+  ];
+
+  rr:predicateObjectMap 
+  [
+    rr:predicate cerif:endDate;
+    rr:objectMap 
+    [
+      rml:reference "End date" ;
+      rr:datatype xsd:date;
+    ]
+  ];
+
+  rr:predicateObjectMap 
+  [
+    rr:predicate ex:full_project_status;
+    rr:objectMap 
+    [
+      rml:reference "Project Status(T)" 
+    ]
+  ];
+      
+  rr:predicateObjectMap 
+  [
+    rr:predicate ex:partner;
+    rr:objectMap [
+        rr:parentTriplesMap <#PartnerMapping> ;
+    ]
+  ].
+
+
+ 
+    
+<#PartnerMapping>
+  rml:logicalSource [
+    rml:sourceName "ProjectsPartners.csv";
+    rml:queryLanguage ql:CSV
+  ];
+
+  rr:subjectMap [
+    rr:template "http://iMinds.be/Partner/{Partner CRM ID}";
+    rr:class ex:Partner
+  ];
+      
+  rr:predicateObjectMap 
+  [
+    rr:predicate cerif:name;
+    rr:objectMap 
+    [
+      rml:reference "Partner CRM ID(T)" 
+    ]
+  ];
+
+  rr:predicateObjectMap 
+  [
+    rr:predicate ex:type;
+    rr:objectMap 
+    [
+      rml:reference "Partner type" 
+    ]
+  ]; 
+
+  rr:predicateObjectMap 
+  [
+    rr:predicate ex:role;
+    rr:objectMap 
+    [
+      rml:reference "Partner role" 
+    ]
+  ].
+
+
+
+<#ResearcherMapping>
+  rml:logicalSource [
+    rml:sourceName "ProjectsTimesheets.csv";
+    rml:queryLanguage ql:CSV
+  ];
+
+  rr:subjectMap [
+    rr:template "http://iMinds.be/Researcher/{Resource ID}";
+    rr:class cerif:Person 
+  ];
+      
+  rr:predicateObjectMap 
+  [
+    rr:predicate cerif:name;
+    rr:objectMap 
+    [
+      rml:reference "Resource Contact ID(T)" 
+    ]
+  ];
+      
+  rr:predicateObjectMap 
+  [
+    rr:predicate ex:worksforResearchGroup;
+    rr:objectMap [
+        rr:parentTriplesMap <#PartnerMapping> ;
+        rr:joinCondition [
+            rr:child "KPL Contact ID";
+            rr:parent "Partner CRM ID";
+        ];
+   ]
+  ].
