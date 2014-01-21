@@ -1,13 +1,15 @@
-@prefix rr:     <http://www.w3.org/ns/r2rml#>.
-@prefix rml:    <http://semweb.mmlab.be/ns/rml#> .
-@prefix ql:     <http://semweb.mmlab.be/ns/ql#> .
-@prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix ex:     <http://example.com/>.
-@prefix xsd:    <http://www.w3.org/2001/XMLSchema#>.
-@prefix iminds: <http://iminds.be/> .
-@prefix im:     <http://semweb.mmlab.be/ns/im#> .
-@prefix cerif:  <http://spi-fm.uca.es/neologism/cerif#>.
-@prefix xsd:    <http://www.w3.org/2001/XMLSchema#>.
+@prefix rr:      <http://www.w3.org/ns/r2rml#>.
+@prefix rml:     <http://semweb.mmlab.be/ns/rml#> .
+@prefix ql:      <http://semweb.mmlab.be/ns/ql#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix ex:      <http://example.com/>.
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#>.
+@prefix iminds:  <http://iminds.be/> .
+@prefix im:      <http://semweb.mmlab.be/ns/im#> .
+@prefix cerif:   <http://spi-fm.uca.es/neologism/cerif#>.
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#>.
+@prefix dcterms: <http://purl.org/dc/terms/>.
+@prefix owl:      <http://www.w3.org/2002/07/owl#>.
 
 <#ProjectMapping>
   rml:logicalSource [
@@ -16,8 +18,18 @@
   ];
 
   rr:subjectMap [
-    rr:template "http://iMinds.be/Project/{Project code}";
+    rr:template "http://iminds.be/project/{Project code}";
     rr:class cerif:Project 
+  ];
+
+  rr:predicateObjectMap 
+  [
+    rr:predicate cerif:internalidentifier;
+    rr:objectMap 
+    [
+      rml:reference "Project code" ;
+      rr:datatype xsd:positiveInteger ;
+    ]
   ];
       
   rr:predicateObjectMap 
@@ -31,37 +43,36 @@
 
   rr:predicateObjectMap 
   [
-    rr:predicate ex:mastertype;
+    rr:predicate cerif:isClassifiedBy;
+    rr:objectMap [
+        rr:parentTriplesMap <#ProjectTypeMapping> 
+     ]
+  ];
+
+  rr:predicateObjectMap 
+  [
+    rr:predicate im:mastertype;
     rr:objectMap 
     [
-      rml:reference "Mastertype" 
+        rr:parentTriplesMap <#MasterTypeMapping> 
     ]
   ]; 
 
   rr:predicateObjectMap 
   [
-    rr:predicate ex:full_mastertype;
+    rr:predicate im:segment;
     rr:objectMap 
     [
-      rml:reference "Mastertype(T)" 
+      rr:parentTriplesMap <#SegmentMapping>
     ]
   ];
 
   rr:predicateObjectMap 
   [
-    rr:predicate ex:segment;
+    rr:predicate im:project_status;
     rr:objectMap 
     [
-      rml:reference "Segment(T)" 
-    ]
-  ];
-
-  rr:predicateObjectMap 
-  [
-    rr:predicate ex:project_status;
-    rr:objectMap 
-    [
-      rml:reference "Project Status" 
+      rr:parentTriplesMap <#ProjectStatusMapping>
     ]
   ];
 
@@ -84,25 +95,14 @@
       rr:datatype xsd:date;
     ]
   ];
-
-  rr:predicateObjectMap 
-  [
-    rr:predicate ex:full_project_status;
-    rr:objectMap 
-    [
-      rml:reference "Project Status(T)" 
-    ]
-  ];
       
   rr:predicateObjectMap 
   [
-    rr:predicate ex:partner;
+    rr:predicate im:partner;
     rr:objectMap [
         rr:parentTriplesMap <#PartnerMapping> ;
     ]
   ].
-
-
  
     
 <#PartnerMapping>
@@ -112,13 +112,22 @@
   ];
 
   rr:subjectMap [
-    rr:template "http://iMinds.be/Partner/{Partner CRM ID}";
-    rr:class ex:Partner
+    rr:template "http://iMinds.be/partner/{Partner CRM ID}";
+    rr:class im:Partner
+  ];
+
+  rr:predicateObjectMap 
+  [
+    rr:predicate dcterms:identifier;
+    rr:objectMap 
+    [
+      rml:reference "Partner CRM ID" 
+    ]
   ];
       
   rr:predicateObjectMap 
   [
-    rr:predicate cerif:name;
+    rr:predicate rdfs:label;
     rr:objectMap 
     [
       rml:reference "Partner CRM ID(T)" 
@@ -127,22 +136,21 @@
 
   rr:predicateObjectMap 
   [
-    rr:predicate ex:type;
+    rr:predicate im:type;
     rr:objectMap 
     [
-      rml:reference "Partner type" 
+      rr:template "http://iminds.be/partner/type/{Partner type}" 
     ]
   ]; 
 
   rr:predicateObjectMap 
   [
-    rr:predicate ex:role;
+    rr:predicate im:role;
     rr:objectMap 
     [
-      rml:reference "Partner role" 
+      rr:template "http://iminds.be/partner/role/{Partner role}" 
     ]
   ].
-
 
 
 <#ResearcherMapping>
@@ -152,8 +160,26 @@
   ];
 
   rr:subjectMap [
-    rr:template "http://iMinds.be/Researcher/{Resource ID}";
+    rr:template "http://iMinds.be/researcher/{Resource ID}";
     rr:class cerif:Person 
+  ];
+
+  rr:predicateObjectMap 
+  [
+    rr:predicate cerif:internalidentifier;
+    rr:objectMap 
+    [
+      rml:reference "Resource ID" 
+    ]
+  ];
+
+  rr:predicateObjectMap 
+  [
+    rr:predicate dcterms:identifier;
+    rr:objectMap 
+    [
+      rml:reference "Resource Contact ID" 
+    ]
   ];
       
   rr:predicateObjectMap 
@@ -164,10 +190,10 @@
       rml:reference "Resource Contact ID(T)" 
     ]
   ];
-      
+     
   rr:predicateObjectMap 
   [
-    rr:predicate ex:worksforResearchGroup;
+    rr:predicate ex:worksforPartner;
     rr:objectMap [
         rr:parentTriplesMap <#PartnerMapping> ;
         rr:joinCondition [
@@ -175,4 +201,188 @@
             rr:parent "Partner CRM ID";
         ];
    ]
+  ];
+
+ # rr:predicateObjectMap 
+ # [
+ #   rr:predicate ex:worksforResearchGroup;
+ #   rr:objectMap [
+ #       rr:parentTriplesMap <#ResearchGroupMapping> ;
+ #       rr:joinCondition [
+ #           rr:child "KPL Contact ID";
+ #           rr:parent "CRM id";
+ #       ];
+ #  ]
+ # ];
+
+  rr:predicateObjectMap 
+  [
+    rr:predicate im:worksAtProject;
+    rr:objectMap [
+        rr:parentTriplesMap <#ProjectWorkMapping> ;
+        rr:joinCondition [
+            rr:child "Project";
+            rr:parent "Project code";
+        ];
+   ]
+  ].
+
+  <#ProjectWorkMapping>
+  rml:logicalSource [
+    rml:sourceName "ProjectsTimesheets.csv";
+    rml:queryLanguage ql:CSV
+  ];
+
+  rr:subjectMap [
+    rr:template "http://iMinds.be/project_work/{Project}_{Year}";
+    rr:class cerif:OrganizationalUnit 
+  ];
+
+  rr:predicateObjectMap 
+  [
+    rr:predicate im:project;
+    rr:objectMap [
+        rr:parentTriplesMap <#ProjectMapping> ;
+        rr:joinCondition [
+            rr:child "Project";
+            rr:parent "Project code";
+        ];
+   ]
+  ];
+
+  rr:predicateObjectMap 
+  [
+    rr:predicate im:workYear;
+    rr:objectMap 
+    [
+      rml:reference "Year" 
+    ]
+  ];
+
+  rr:predicateObjectMap 
+  [
+    rr:predicate im:workHoursYear;
+    rr:objectMap 
+    [
+      rml:reference "Hours" 
+    ]
+  ].
+
+
+
+
+ <#ProjectTypeMapping>
+    rml:logicalSource [
+    rml:sourceName "ProjectsPartners.csv";
+    rml:queryLanguage ql:CSV
+  ];
+
+  rr:subjectMap [
+    rr:template "http://iMinds.be/project_type/{Projectype}";
+    rr:class cerif:Classification 
+  ];
+
+  rr:predicateObjectMap 
+  [
+    rr:predicate dcterms:identnifier;
+    rr:objectMap 
+    [
+      rml:reference "Projectype" 
+    ]
+  ];
+      
+  rr:predicateObjectMap 
+  [
+    rr:predicate rdfs:label;
+    rr:objectMap 
+    [
+      rml:reference "Projectype(T)" 
+    ]
+  ].
+
+ <#MasterTypeMapping>
+    rml:logicalSource [
+    rml:sourceName "ProjectsPartners.csv";
+    rml:queryLanguage ql:CSV
+  ];
+
+  rr:subjectMap [
+    rr:template "http://iMinds.be/project/type/{Mastertype}";
+    rr:class cerif:Classification 
+  ];
+
+  rr:predicateObjectMap 
+  [
+    rr:predicate dcterms:identnifier;
+    rr:objectMap 
+    [
+      rml:reference "Mastertype" 
+    ]
+  ];
+      
+  rr:predicateObjectMap 
+  [
+    rr:predicate rdfs:label;
+    rr:objectMap 
+    [
+      rml:reference "Mastertype(T)" 
+    ]
+  ].
+
+  <#SegmentMapping>
+    rml:logicalSource [
+    rml:sourceName "ProjectsPartners.csv";
+    rml:queryLanguage ql:CSV
+  ];
+
+  rr:subjectMap [
+    rr:template "http://iMinds.be/project/segment/{Segment}";
+    rr:class cerif:Classification 
+  ];
+
+  rr:predicateObjectMap 
+  [
+    rr:predicate dcterms:identnifier;
+    rr:objectMap 
+    [
+      rml:reference "Segment" 
+    ]
+  ];
+      
+  rr:predicateObjectMap 
+  [
+    rr:predicate rdfs:label;
+    rr:objectMap 
+    [
+      rml:reference "Segment(T)" 
+    ]
+  ].
+
+  <#ProjectStatusMapping>
+    rml:logicalSource [
+    rml:sourceName "ProjectsPartners.csv";
+    rml:queryLanguage ql:CSV
+  ];
+
+  rr:subjectMap [
+    rr:template "http://iMinds.be/project/status/{Project Status}";
+    rr:class im:Status 
+  ];
+
+  rr:predicateObjectMap 
+  [
+    rr:predicate dcterms:identnifier;
+    rr:objectMap 
+    [
+      rml:reference "Status" 
+    ]
+  ];
+      
+  rr:predicateObjectMap 
+  [
+    rr:predicate rdfs:label;
+    rr:objectMap 
+    [
+      rml:reference "Project Status(T)" 
+    ]
   ].

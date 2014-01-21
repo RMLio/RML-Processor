@@ -17,7 +17,10 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Set;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
+import net.antidot.semantic.rdf.rdb2rdf.r2rml.core.R2RMLEngine;
 import net.antidot.semantic.rdf.rdb2rdf.r2rml.tools.R2RMLToolkit;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openrdf.model.Resource;
 import org.openrdf.model.URI;
 import org.openrdf.model.Value;
@@ -38,6 +41,10 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
      * @param ls the current LogicalSource
      * @return the location of the file or table
      */
+    
+    // Log
+    private static Log log = LogFactory.getLog(R2RMLEngine.class);
+    
     protected String getIdentifier(LogicalSource ls) {
         //TODO Change this to a more general, configurable resource management
         return RMLEngine.fileMap.get(ls.getIdentifier());
@@ -184,8 +191,8 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
             Set<ObjectMap> objectMaps = pom.getObjectMaps();
             for (ObjectMap objectMap : objectMaps) {
                 Value object = processObjectMap(objectMap, node);
-
-                dataset.add(subject, predicate, object);
+                if(object != null)
+                    dataset.add(subject, predicate, object);
             }
 
         }
@@ -222,9 +229,12 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                 } else if (objectMap.getDataType() != null) {
                     URI datatype = new URIImpl(objectMap.getDataType().getAbsoluteStringURI());
                     return new LiteralImpl(value, datatype);
-                } else {
+                } else if(value != null){
+                    log.debug("[AbstractRMLProcessor:literal] Literal value " + value);
                     return new LiteralImpl(value);
-                }
+                } else
+                    return null;
+               
         }
 
         return new URIImpl(value);
