@@ -287,6 +287,70 @@
         rr:child "CRM id";
         rr:parent "Partner CRM ID"]
     ]
+  ];
+
+  rr:predicateObjectMap 
+  [
+    rr:predicate im:department;
+    rr:objectMap 
+    [
+      rml:reference "PublicationResearchGroup_DepartmentName" 
+    ]
+  ];
+
+  rr:predicateObjectMap 
+  [
+    rr:predicate im:publication_code;
+    rr:objectMap 
+    [
+      rml:reference "PublicationResearchGroup_Code" 
+    ]
+  ];
+
+  rr:predicateObjectMap 
+  [
+    rr:predicate im:publicationGroup_id;
+    rr:objectMap 
+    [
+      rml:reference "PublicationResearchGroup_Id" 
+    ]
+  ];
+
+  rr:predicateObjectMap 
+  [
+    rr:predicate im:publication_year;
+    rr:objectMap 
+    [
+      rml:reference "PublicationResearchGroup_PublicationYear" ;
+      rr:datatype xsd:gYear
+    ]
+  ];
+
+  rr:predicateObjectMap 
+  [
+    rr:predicate im:evi;
+    rr:objectMap 
+    [
+      rr:parentTriplesMap <#EVIMapping> 
+    ]
+  ];
+
+  rr:predicateObjectMap 
+  [
+    rr:predicate dcterms:identifier;
+    rr:objectMap 
+    [
+      rml:reference "CRM id" 
+    ]
+  ];
+
+  rr:predicateObjectMap 
+  [
+    rr:predicate im:university;
+    rr:objectMap 
+    [
+      rml:reference "University" 
+    ]
   ].
 
 
@@ -403,5 +467,34 @@
     rr:objectMap 
     [
       rml:reference "Project Status(T)" 
+    ]
+  ].
+
+  <#EVIMapping>
+    rml:logicalSource [
+    rml:sourceName "ResearchGroups.csv";
+    rml:queryLanguage ql:CSV
+  ];
+
+  rr:subjectMap [
+    rr:template "http://iMinds.be/evi/{EVI code}";
+    rr:class im:Status 
+  ];
+
+  rr:predicateObjectMap 
+  [
+    rr:predicate dcterms:identifier;
+    rr:objectMap 
+    [
+      rml:reference "EVI code" 
+    ]
+  ];
+      
+  rr:predicateObjectMap 
+  [
+    rr:predicate rdfs:label;
+    rr:objectMap 
+    [
+      rml:reference "EVI description" 
     ]
   ].
