@@ -203,27 +203,23 @@
    ]
   ];
 
- # rr:predicateObjectMap 
- # [
- #   rr:predicate ex:worksforResearchGroup;
- #   rr:objectMap [
- #       rr:parentTriplesMap <#ResearchGroupMapping> ;
- #       rr:joinCondition [
- #           rr:child "KPL Contact ID";
- #           rr:parent "CRM id";
- #       ];
- #  ]
- # ];
+  rr:predicateObjectMap 
+  [
+    rr:predicate ex:worksforResearchGroup;
+    rr:objectMap [
+        rr:parentTriplesMap <#ResearchGroupMapping> ;
+        rr:joinCondition [
+            rr:child "KPL Contact ID";
+            rr:parent "CRM id";
+        ];
+   ]
+  ];
 
   rr:predicateObjectMap 
   [
     rr:predicate im:worksAtProject;
     rr:objectMap [
         rr:parentTriplesMap <#ProjectWorkMapping> ;
-        rr:joinCondition [
-            rr:child "Project";
-            rr:parent "Project code";
-        ];
    ]
   ].
 
@@ -235,7 +231,7 @@
 
   rr:subjectMap [
     rr:template "http://iMinds.be/project_work/{Project}_{Year}";
-    rr:class cerif:OrganizationalUnit 
+    rr:class im:ProjectWork 
   ];
 
   rr:predicateObjectMap 
@@ -255,7 +251,8 @@
     rr:predicate im:workYear;
     rr:objectMap 
     [
-      rml:reference "Year" 
+      rml:reference "Year" ;
+      rr:datatype xsd:gYear
     ]
   ];
 
@@ -264,11 +261,33 @@
     rr:predicate im:workHoursYear;
     rr:objectMap 
     [
-      rml:reference "Hours" 
+      rml:reference "Hours" ;
+      rr:datatype xsd:float
     ]
   ].
 
+<#ResearchGroupMapping>
+  rml:logicalSource [
+    rml:sourceName "ResearchGroups.csv";
+    rml:queryLanguage ql:CSV
+  ];
 
+  rr:subjectMap [
+    rr:template "http://iMinds.be/research_group/{PublicationResearchGroup_Code}";
+    rr:class cerif:OrganizationalUnit 
+  ];
+
+  rr:predicateObjectMap 
+  [
+    rr:predicate owl:sameAs;
+    rr:objectMap 
+    [
+      rr:parentTriplesMap <#PartnerMapping> ;
+      rr:joinCondition [
+        rr:child "CRM id";
+        rr:parent "Partner CRM ID"]
+    ]
+  ].
 
 
  <#ProjectTypeMapping>
@@ -284,7 +303,7 @@
 
   rr:predicateObjectMap 
   [
-    rr:predicate dcterms:identnifier;
+    rr:predicate dcterms:identifier;
     rr:objectMap 
     [
       rml:reference "Projectype" 
@@ -307,13 +326,13 @@
   ];
 
   rr:subjectMap [
-    rr:template "http://iMinds.be/project/type/{Mastertype}";
+    rr:template "http://iMinds.be/project/mastertype/{Mastertype}";
     rr:class cerif:Classification 
   ];
 
   rr:predicateObjectMap 
   [
-    rr:predicate dcterms:identnifier;
+    rr:predicate dcterms:identifier;
     rr:objectMap 
     [
       rml:reference "Mastertype" 
@@ -342,7 +361,7 @@
 
   rr:predicateObjectMap 
   [
-    rr:predicate dcterms:identnifier;
+    rr:predicate dcterms:identifier;
     rr:objectMap 
     [
       rml:reference "Segment" 
@@ -371,7 +390,7 @@
 
   rr:predicateObjectMap 
   [
-    rr:predicate dcterms:identnifier;
+    rr:predicate dcterms:identifier;
     rr:objectMap 
     [
       rml:reference "Status" 
