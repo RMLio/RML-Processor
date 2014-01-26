@@ -160,7 +160,9 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
 
                 for (JoinCondition joinCondition : joinConditions) {
                     String childValue = extractValueFromNode(node, joinCondition.getChild());
-
+log.debug("[AbstractRMLProcessorProcessor:processPredicateObjectMap]. joinCondition child: " + joinCondition.getChild());
+log.debug("[AbstractRMLProcessorProcessor:processPredicateObjectMap]. joinCondition parent: " + joinCondition.getParent());
+log.debug("[AbstractRMLProcessorProcessor:processPredicateObjectMap]. childValue: " + childValue);
                     joinMap.put(joinCondition.getParent(), childValue);
                 }
                 TriplesMap parentTriplesMap = referencingObjectMap.getParentTriplesMap();
@@ -182,7 +184,8 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                     QLTerm queryLanguage = parentTriplesMap.getLogicalSource().getQueryLanguage();
                     RMLProcessor processor = factory.create(queryLanguage);
                     JoinRMLPerformer performer = new JoinRMLPerformer(processor, subject, predicate);
-                    performer.perform(node, dataset, parentTriplesMap);
+                    processor.execute(dataset, parentTriplesMap, new JoinRMLPerformer(processor, subject, predicate));
+                    //performer.perform(node, dataset, parentTriplesMap);
                     //processor.RefObjMap(dataset, parentTriplesMap, new JoinRMLPerformer(processor, subject, predicate), node);
                 }
             }
