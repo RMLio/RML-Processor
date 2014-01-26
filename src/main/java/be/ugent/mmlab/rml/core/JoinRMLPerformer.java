@@ -44,6 +44,7 @@ public class JoinRMLPerformer extends NodeRMLPerformer{
      */
     @Override
     public void perform(Object node, SesameDataSet dataset, TriplesMap map) {
+        log.debug("[JoinRMLPerformer:object] " + "node " + node.toString());
         Value object = processor.processSubjectMap(dataset, map.getSubjectMap(), node);
         log.debug("[JoinRMLPerformer:object] " + "Object " + object.toString());
         
