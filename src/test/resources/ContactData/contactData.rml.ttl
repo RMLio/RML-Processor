@@ -1,0 +1,653 @@
+@prefix rr:     <http://www.w3.org/ns/r2rml#>.
+@prefix rml:    <http://semweb.mmlab.be/ns/rml#> .
+@prefix ql:     <http://semweb.mmlab.be/ns/ql#> .
+@prefix mail:   <http://example.com/mail#>.
+@prefix xsd:    <http://www.w3.org/2001/XMLSchema#>.
+@prefix adms:   <http://www.w3.org/ns/adms#> .
+@prefix dcterms:<http://purl.org/dc/terms/> .
+@prefix schema: <http://schema.org/> .
+@prefix oslo:   <http://purl.org/oslo/ns/localgov#> .
+@prefix person: <http://www.w3.org/ns/person/> .
+@prefix ecd:    <http://ewi.mmlab.be/cd> .
+@prefix skos:   <http://www.w3.org/2004/02/skos/core#> .
+@prefix rov:    <http://www.w3.org/ns/regorg#> .
+@prefix prov:   <http://www.w3.org/ns/prov#> .
+@prefix locn:   <http://www.w3.org/ns/locn#> .
+@prefix org:    <http://www.w3.org/ns/org#> .
+@base           <http://ewi.mmlab.be/cd> .
+
+<#PersonMapping>
+    rml:logicalSource [ 
+            rml:sourceName "HelloWorldPerson.csv";
+            rml:queryLanguage ql:CSV
+    ];
+    #should be identifier
+    rr:subjectMap [
+        rr:template "http://ewi.mmlab.be/cd/Person/{Naam}+{Voornaam}"; 
+        rr:class person:Person;
+    ];
+    rr:predicateObjectMap [
+        rr:predicate person:familyName;
+        rr:objectMap [ 
+            rml:reference "Naam";
+	];
+    ];
+        
+    rr:predicateObjectMap [
+        rr:predicate person:givenName;
+        rr:objectMap [ 
+            rml:reference "Voornaam";
+        ];
+    ];
+        
+    rr:predicateObjectMap [
+        rr:predicate person:patronymicName;
+        rr:objectMap [ 
+            rml:reference "Andere voornamen" 
+        ];
+    ];
+        
+    rr:predicateObjectMap [
+        rr:predicate schema:gender;
+        rr:objectMap [ 
+            rml:reference "Geslacht" 
+        ];
+    ];
+        
+    rr:predicateObjectMap [
+        rr:predicate oslo:nobelityTitle;
+        rr:objectMap [ 
+            rml:reference "Adellijke titel" 
+        ];
+    ];
+        
+    rr:predicateObjectMap [
+        #weird values for birth dates on the file
+        rr:predicate schema:birthDate;
+        rr:objectMap [ 
+            rml:reference "Geboortedatum" 
+        ];
+    ];
+        
+    rr:predicateObjectMap [
+        rr:predicate person:placeOfBirth;
+        rr:objectMap [ 
+            rml:reference "Geboorteplaats" 
+        ];
+    ];
+        
+    rr:predicateObjectMap [
+        rr:predicate schema:deathDate;
+        rr:objectMap [ 
+            rml:reference "Datum overlijden" 
+        ];
+    ];
+        
+    rr:predicateObjectMap [
+        rr:predicate person:placeOfDeath;
+        rr:objectMap [ 
+            rml:reference "Plaats overlijden" 
+        ];
+    ];
+        
+    rr:predicateObjectMap [
+        rr:predicate schema:nationality;
+        rr:objectMap [ 
+            rml:reference "Nationaliteit" 
+        ];
+    ];
+        
+    rr:predicateObjectMap [
+        rr:predicate oslo:legalCohabetation;
+        rr:objectMap [ 
+            rml:reference "Wettelijk samenwonend" 
+        ];
+    ];
+        
+    rr:predicateObjectMap [
+        rr:predicate oslo:civilClass;
+        rr:objectMap [ 
+            rml:reference "Burgerlijke staat" 
+        ];
+    ];
+        
+    rr:predicateObjectMap [
+        rr:predicate oslo:legalIncompetence;
+        rr:objectMap [ 
+            rml:reference "Juridische onbewkwaamheid" 
+        ];
+    ];
+        
+    rr:predicateObjectMap [
+        rr:predicate oslo:domicile;
+        rr:objectMap [ 
+            rml:reference "Is gedomicilieerd op" 
+        ];
+    ];
+        
+    rr:predicateObjectMap [
+        rr:predicate oslo:residence;
+        rr:objectMap [ 
+            rml:reference "Verblijft" 
+        ];
+    ].
+   
+#what's the link with the person?     
+<#IdentificationMapping>
+    rml:logicalSource [ 
+            rml:sourceName "HelloWorldPerson.csv";
+            rml:queryLanguage ql:CSV
+    ];
+
+    rr:subjectMap [
+        rr:template "http://ewi.mmlab.be/cd/Identification/{Identifier}"; 
+        #Which is the correct class?
+        rr:class oslo:Identification;
+    ];
+    rr:predicateObjectMap [
+        rr:predicate skos:notation;
+        rr:objectMap [ 
+            rml:reference "Identifier";
+	];
+    ];
+        
+    rr:predicateObjectMap [
+        rr:predicate dcterms:type;
+        rr:objectMap [ 
+            rml:reference "IdentifierType";
+        ];
+    ];
+
+    rr:predicateObjectMap [
+        rr:predicate dcterms:created;
+        rr:objectMap [ 
+            rml:reference "IssueDate";
+        ];
+    ];
+
+    rr:predicateObjectMap [
+        rr:predicate adms:schemeAgency;
+        rr:objectMap [ 
+            rml:reference "IssuingAuthority";
+        ];
+    ];
+
+    rr:predicateObjectMap [
+        rr:predicate dcterms:creator;
+        rr:objectMap [ 
+            rml:reference "IssuingAuthorityID";
+        ];
+    ].
+
+
+#what's the link with the rest?     
+<#EntityMapping_1>
+    rml:logicalSource [ 
+            rml:sourceName "HelloWorldPerson.csv";
+            rml:queryLanguage ql:CSV
+    ];
+
+    rr:subjectMap [
+        rr:template "http://{source}"; 
+        #is this class ok?
+        rr:class prov:Entity;
+    ];
+    rr:predicateObjectMap [
+        rr:predicate oslo:reliability;
+        rr:objectMap [ 
+            rml:reference "reliability";
+	];
+    ].
+
+<#OrganisationMapping>
+    rml:logicalSource [ 
+            rml:sourceName "HelloWorldOrganisation.csv";
+            rml:queryLanguage ql:CSV
+    ];
+    rr:subjectMap [
+        rr:template "http://ewi.mmlab.be/cd/Organisation/{Identifier}"; 
+        #Is this class ok?
+        rr:class oslo:Organisation;
+    ];
+    rr:predicateObjectMap [
+        #is this ok?
+        rr:predicate skos:notation;
+        rr:objectMap [ 
+            rml:reference "Identifier";
+	];
+    ];
+
+    rr:predicateObjectMap [
+        rr:predicate rov:legalName;
+        rr:objectMap [ 
+            rml:reference "Maatschappelijke naam";
+	];
+    ];
+
+    rr:predicateObjectMap [
+        rr:predicate dcterms:alternative;
+        rr:objectMap [ 
+            rml:reference "Commerciële naam";
+	];
+    ];
+
+    rr:predicateObjectMap [
+        rr:predicate dcterms:alternative;
+        rr:objectMap [ 
+            rml:reference "Afgekorte naam";
+	];
+    ];
+
+    rr:predicateObjectMap [
+        rr:predicate rov:companyType;
+        rr:objectMap [ 
+            rml:reference "Type";
+	];
+    ];
+
+    rr:predicateObjectMap [
+        rr:predicate oslo:isBranch;
+        rr:objectMap [ 
+            rml:reference "Vestiging";
+	];
+    ];
+
+    rr:predicateObjectMap [
+        rr:predicate oslo:establishmentDate;
+        rr:objectMap [ 
+            rml:reference "Oprichtingsdatum";
+	];
+    ];
+
+    rr:predicateObjectMap [
+        rr:predicate oslo:shutDownDate;
+        rr:objectMap [ 
+            rml:reference "Datum stopzetting";
+	];
+    ];
+
+    rr:predicateObjectMap [
+        #need to check this property!
+        rr:predicate oslo:kind;
+        rr:objectMap [ 
+            rml:reference "KBO soort";
+	];
+    ];
+
+    rr:predicateObjectMap [
+        rr:predicate oslo:legalFormCode;
+        rr:objectMap [ 
+            rml:reference "KBO rechtsvorm";
+	];
+    ];
+
+    rr:predicateObjectMap [
+        rr:predicate rov:companyStatus;
+        rr:objectMap [ 
+            rml:reference "KBO rechtstoestand";
+	];
+    ];
+
+    rr:predicateObjectMap [
+        rr:predicate oslo:reasonShutDown;
+        rr:objectMap [ 
+            rml:reference "KBO reden stopzetting";
+	];
+    ];
+
+    rr:predicateObjectMap [
+        rr:predicate oslo:functionPhase;
+        rr:objectMap [ 
+            rml:reference "KBO Hoedanigheidsfase";
+	];
+    ];
+
+    rr:predicateObjectMap [
+        rr:predicate oslo:function;
+        rr:objectMap [ 
+            rml:reference "KBO Hoedanigheid";
+	];
+    ];
+
+    rr:predicateObjectMap [
+        rr:predicate oslo:companyStatus;
+        rr:objectMap [ 
+            rml:reference "KBO Status";
+	];
+    ];
+
+    rr:predicateObjectMap [
+        rr:predicate rov:companyActivity;
+        rr:objectMap [ 
+            rml:reference "activiteit";
+	];
+    ];
+
+    #is this correct?
+    rr:predicateObjectMap [
+        rr:predicate rov:invoiceLocation;
+        rr:objectMap [
+            rr:parentTriplesMap <#InvoiceLocationMapping> 
+	];
+    ];
+    
+    #is this correct?
+    rr:predicateObjectMap [
+        rr:predicate rov:registration;
+        rr:objectMap [
+            rr:parentTriplesMap <#RegistrationMapping>
+	];
+    ];
+    
+    #is this correct?
+    rr:predicateObjectMap [
+        rr:predicate oslo:deliveryLocation;
+        rr:objectMap [
+            rr:parentTriplesMap <#DeliveryLocationMapping> 
+	];
+    ];
+    
+    #is this correct?
+    rr:predicateObjectMap [
+        rr:predicate oslo:mailingLocation;
+        rr:objectMap [
+            rr:parentTriplesMap <#MailingLocationMapping> 
+	];
+    ].
+
+<#InvoiceLocationMapping>
+    rml:logicalSource [ 
+            rml:sourceName "HelloWorldOrganisation.csv";
+            rml:queryLanguage ql:CSV
+    ];
+    rr:subjectMap [
+        #that's not a good choice of subject 
+        rr:template "http://ewi.mmlab.be/cd/Address/{Invoice_address}+{Invoice_designator}"; 
+        rr:class oslo:ResidenceObject;
+    ];
+    rr:predicateObjectMap [
+        #is this property correct?
+        rr:predicate locn:address;
+        rr:objectMap [ 
+            rml:reference "Invoice_address";
+	];
+    ];
+    rr:predicateObjectMap [
+        rr:predicate oslo:locatorDesignator;
+        rr:objectMap [ 
+            rml:reference "Invoice_designator";
+	];
+    ];
+    rr:predicateObjectMap [
+        rr:predicate locn:postCode;
+        rr:objectMap [ 
+            rml:reference "Invoice_post";
+	];
+    ];
+    rr:predicateObjectMap [
+        rr:predicate locn:postName;
+        rr:objectMap [ 
+            rml:reference "Invoice_city";
+	];
+    ].
+
+<#RegistrationMapping>
+    rml:logicalSource [ 
+            rml:sourceName "HelloWorldOrganisation.csv";
+            rml:queryLanguage ql:CSV
+    ];
+    rr:subjectMap [
+        #that's not a good choice of subject 
+        rr:template "http://ewi.mmlab.be/cd/Address/{KBO_address}+{KBO_designator}"; 
+        rr:class oslo:ResidenceObject;
+    ];
+    rr:predicateObjectMap [
+        #is this property correct?
+        rr:predicate locn:address;
+        rr:objectMap [ 
+            rml:reference "KBO_address";
+	];
+    ];
+    rr:predicateObjectMap [
+        rr:predicate oslo:locatorDesignator;
+        rr:objectMap [ 
+            rml:reference "KBO_designator";
+	];
+    ];
+    rr:predicateObjectMap [
+        rr:predicate locn:postCode;
+        rr:objectMap [ 
+            rml:reference "KBO_post";
+	];
+    ];
+    rr:predicateObjectMap [
+        rr:predicate locn:postName;
+        rr:objectMap [ 
+            rml:reference "KBO_city";
+	];
+    ].
+
+<#DeliveryLocationMapping>
+    rml:logicalSource [ 
+            rml:sourceName "HelloWorldOrganisation.csv";
+            rml:queryLanguage ql:CSV
+    ];
+    rr:subjectMap [
+        #that's not a good choice of subject 
+        rr:template "http://ewi.mmlab.be/cd/Address/{leveringslocatie_address}+{leveringslocatie_designator}"; 
+        rr:class oslo:ResidenceObject;
+    ];
+    rr:predicateObjectMap [
+        #is this property correct?
+        rr:predicate locn:address;
+        rr:objectMap [ 
+            rml:reference "leveringslocatie_designator";
+	];
+    ];
+    rr:predicateObjectMap [
+        rr:predicate oslo:locatorDesignator;
+        rr:objectMap [ 
+            rml:reference "leveringslocatie_designator";
+	];
+    ];
+    rr:predicateObjectMap [
+        rr:predicate locn:postCode;
+        rr:objectMap [ 
+            rml:reference "leveringslocatie_post";
+	];
+    ];
+    rr:predicateObjectMap [
+        rr:predicate locn:postName;
+        rr:objectMap [ 
+            rml:reference "leveringslocatie_city";
+	];
+    ].
+
+<#MailingLocationMapping>
+    rml:logicalSource [ 
+            rml:sourceName "HelloWorldOrganisation.csv";
+            rml:queryLanguage ql:CSV
+    ];
+    rr:subjectMap [
+        #that's not a good choice of subject 
+        rr:template "http://ewi.mmlab.be/cd/Address/{postlocatie_address}+{postlocatie_designator}"; 
+        rr:class oslo:ResidenceObject;
+    ];
+    rr:predicateObjectMap [
+        #is this property correct?
+        rr:predicate locn:address;
+        rr:objectMap [ 
+            rml:reference "postlocatie_address";
+	];
+    ];
+    rr:predicateObjectMap [
+        rr:predicate oslo:locatorDesignator;
+        rr:objectMap [ 
+            rml:reference "postlocatie_designator";
+	];
+    ];
+    rr:predicateObjectMap [
+        rr:predicate locn:postCode;
+        rr:objectMap [ 
+            rml:reference "postlocatie_post";
+	];
+    ];
+    rr:predicateObjectMap [
+        rr:predicate locn:postName;
+        rr:objectMap [ 
+            rml:reference "postlocatie_city";
+	];
+    ].
+
+
+
+#what's the link with the rest?     
+<#EntityMapping_2>
+    rml:logicalSource [ 
+            rml:sourceName "HelloWorldOrganisation.csv";
+            rml:queryLanguage ql:CSV
+    ];
+
+    rr:subjectMap [
+        rr:template "http://{source}"; 
+        #is this class ok?
+        rr:class prov:Entity;
+    ];
+    rr:predicateObjectMap [
+        rr:predicate oslo:reliability;
+        rr:objectMap [ 
+            rml:reference "reliability";
+	];
+    ].
+
+<#OrganisationRelationMapping>
+    rml:logicalSource [ 
+            rml:sourceName "HelloWorldOrganisationRelation.csv";
+            rml:queryLanguage ql:CSV
+    ];
+    #should be identifier
+    rr:subjectMap [
+        rr:template "http://ewi.mmlab.be/cd/OrganisationRelation/{functie}"; 
+        rr:class oslo:OrganizationRelation;
+    ];
+
+    rr:predicateObjectMap [
+        rr:predicate oslo:membershipFunction;
+        rr:objectMap [ 
+            rml:reference "functie";
+	];
+    ];
+
+    rr:predicateObjectMap [
+        rr:predicate org:memberDuring;
+        rr:objectMap [ 
+            rml:reference "geldigheidsperiode";
+	];
+    ];
+
+    rr:predicateObjectMap [
+        rr:predicate oslo:membershipType;
+        rr:objectMap [ 
+            rml:reference "type";
+	];
+    ];
+
+    rr:predicateObjectMap [
+        rr:predicate oslo:mailingLocation;
+        rr:objectMap [ 
+            rml:reference "ontvangt post op";
+	];
+    ];
+
+    rr:predicateObjectMap [
+        rr:predicate org:member;
+        rr:objectMap [ 
+            rml:reference "persoon";
+	];
+    ];
+
+    rr:predicateObjectMap [
+        rr:predicate org:organization;
+        rr:objectMap [ 
+            rml:reference "organisatie";
+	];
+    ];
+
+    rr:predicateObjectMap [
+        rr:predicate oslo:availableAt;
+        rr:objectMap [ 
+            rml:reference "beschikbaar op";
+	];
+    ].
+
+
+#what's the link with the rest?     
+<#EntityMapping_3>
+    rml:logicalSource [ 
+            rml:sourceName "HelloWorldOrganisationRelation.csv";
+            rml:queryLanguage ql:CSV
+    ];
+
+    rr:subjectMap [
+        rr:template "http://{source}"; 
+        #is this class ok?
+        rr:class prov:Entity;
+    ];
+    rr:predicateObjectMap [
+        rr:predicate oslo:reliability;
+        rr:objectMap [ 
+            rml:reference "reliability";
+	];
+    ].
+
+#what's the link with the person?     
+<#IdentificationMapping_2>
+    rml:logicalSource [ 
+            rml:sourceName "HelloWorldOrganisationRelation.csv";
+            rml:queryLanguage ql:CSV
+    ];
+
+    rr:subjectMap [
+        rr:template "http://ewi.mmlab.be/cd/Identification/{Identifier}"; 
+        #Which is the correct class?
+        rr:class oslo:Identification;
+    ];
+    rr:predicateObjectMap [
+        rr:predicate skos:notation;
+        rr:objectMap [ 
+            rml:reference "Identifier";
+	];
+    ];
+        
+    rr:predicateObjectMap [
+        rr:predicate dcterms:type;
+        rr:objectMap [ 
+            rml:reference "IdentifierType";
+        ];
+    ];
+
+    rr:predicateObjectMap [
+        rr:predicate dcterms:created;
+        rr:objectMap [ 
+            rml:reference "IssueDate";
+        ];
+    ];
+
+    rr:predicateObjectMap [
+        rr:predicate adms:schemeAgency;
+        rr:objectMap [ 
+            rml:reference "IssuingAuthority";
+        ];
+    ];
+
+    rr:predicateObjectMap [
+        rr:predicate dcterms:creator;
+        rr:objectMap [ 
+            rml:reference "IssuingAuthorityID";
+        ];
+    ].
+
+
+#I am not mapping facturatielocatie HelloWorldOrganisation column S
+
+    

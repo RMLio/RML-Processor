@@ -122,6 +122,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                         value = value.replaceAll("\\[", "").replaceAll("\\]","");
                     }
                     value = value.replaceAll("\\{" + expression + "\\}", URLEncoder.encode(replacement));
+                    log.debug("[AbstractRMLProcessorProcessor:processTermMap]. value: " + value);
                 }
 
                 break;

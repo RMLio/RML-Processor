@@ -21,7 +21,7 @@ public class JoinRMLPerformer extends NodeRMLPerformer{
     private HashMap<String, String> conditions;
     private Resource subject;
     private URI predicate;
-
+    
     public JoinRMLPerformer(RMLProcessor processor, HashMap<String, String> conditions, Resource subject, URI predicate) {
         super(processor);
         this.conditions = conditions;

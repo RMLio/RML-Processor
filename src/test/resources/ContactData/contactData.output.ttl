@@ -7,14 +7,15 @@
 @base <http://example.com/base> .
 
 note:M17 a mail:note;
-	mail:when dt:20080110;
+	mail:when "2008-01-10"^^xsd:date;
         mail:from "Jani";
         mail:to "Tove";
         mail:heading "Reminder";
         mail:body "Don't forget me this weekend!".
 
+
 note:M18 a mail:note;
-	mail:when dt:20080210;
+	mail:when "2008-02-10"^^xsd:date;
         mail:from "Rick";
         mail:to "Chris";
         mail:heading "Update";
