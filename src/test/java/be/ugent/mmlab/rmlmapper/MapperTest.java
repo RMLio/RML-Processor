@@ -42,12 +42,15 @@ public class MapperTest
         //RMLEngine.fileMap.put("Venue.json", getClass().getResource("/example3/Venue.json").getFile());
         //RMLEngine.fileMap.put("Venue.json", getClass().getResource("/example4/Venue.json").getFile());
         //RMLEngine.fileMap.put("Transport.xml", getClass().getResource("/example3/Transport.xml").getFile());
-        RMLEngine.fileMap.put("museum.json", getClass().getResource("/examplePaper2/museum.json").getFile());
-        RMLEngine.fileMap.put("artist.xml", getClass().getResource("/examplePaper2/artist.xml").getFile());
+        //RMLEngine.fileMap.put("museum.json", getClass().getResource("/examplePaper2/museum.json").getFile());
+        //RMLEngine.fileMap.put("artist.xml", getClass().getResource("/examplePaper2/artist.xml").getFile());
         //RMLEngine.fileMap.put("moon-walkers.csv", getClass().getResource("/example5/moon-walkers.csv").getFile());
         //RMLEngine.fileMap.put("ProjectsPartners.csv", getClass().getResource("/iMinds/ProjectsPartners.csv").getFile());
         //RMLEngine.fileMap.put("ProjectsTimesheets.csv", getClass().getResource("/iMinds/ProjectsTimesheets.csv").getFile());
         //RMLEngine.fileMap.put("ResearchGroups.csv", getClass().getResource("/iMinds/ResearchGroups.csv").getFile());
+        RMLEngine.fileMap.put("HelloWorldPerson.csv", getClass().getResource("/ContactData/HelloWorldPerson.csv").getFile());
+        RMLEngine.fileMap.put("HelloWorldOrganisation.csv", getClass().getResource("/ContactData/HelloWorldOrganisation2.csv").getFile());
+        RMLEngine.fileMap.put("HelloWorldOrganisationRelation.csv", getClass().getResource("/ContactData/HelloWorldOrganisationRelation.csv").getFile());
     }
 
     /**
@@ -66,12 +69,12 @@ public class MapperTest
             assertTrue(assertMap(fileToRMLFile, fileToOutputFile));
     }*/
     
-    /*public void testExample2() {
+   /* public void testExample2() {
         URL fileToRMLFile = getClass().getResource("/example2/example.rml.ttl");
             URL fileToOutputFile = getClass().getResource("/example2/example.output.ttl");
             assertTrue(assertMap(fileToRMLFile, fileToOutputFile));
-        
     }*/
+   
     
     /*public void testExample3() {
             URL fileToRMLFile = getClass().getResource("/example3/example3.rml.ttl");
@@ -94,30 +97,48 @@ public class MapperTest
         assertTrue(assertMap(fileToRMLFile, fileToOutputFile));   
     }*/
     
-    public void testExamplePaper2() {
-        URL fileToRMLFile = getClass().getResource("/examplePaper2/museum-model.rml_1.ttl");
+    public void testEWI_ContactData() {
+        URL fileToRMLFile = getClass().getResource("/ContactData/contactData.rml.ttl");
+            URL fileToOutputFile = getClass().getResource("/ContactData/contactData.output.ttl");
+            assertTrue(assertMap(fileToRMLFile, fileToOutputFile));   
+    }
+    
+    /*public void testExamplePaper2() {
+        URL fileToRMLFile = getClass().getResource("/examplePaper2/museum-model.rml_2.ttl");
         URL fileToOutputFile = getClass().getResource("/examplePaper2/museum.output.ttl");
         //URL fileToRMLFile = getClass().getResource("/example5/museum-model.rml.ttl");
         //URL fileToOutputFile = getClass().getResource("/example5/museum.output.ttl");
         assertTrue(assertMap(fileToRMLFile, fileToOutputFile));   
-    }
+    }*/
     //iMinds mappings
     /*public void testiMinds() {
         URL fileToRMLFile = getClass().getResource("/iMinds/iMinds.rml.ttl");
             URL fileToOutputFile = getClass().getResource("/iMinds/iMinds.output.ttl");
             assertTrue(assertMap(fileToRMLFile, fileToOutputFile));   
     }*/
+    
+    /*public void testiMinds_Projects() {
+        URL fileToRMLFile = getClass().getResource("/iMinds/iMinds_Project.rml.ttl");
+            URL fileToOutputFile = getClass().getResource("/iMinds/iMinds_Project.output.ttl");
+            assertTrue(assertMap(fileToRMLFile, fileToOutputFile));   
+    }*/
+    
+    
          
     private boolean assertMap(URL mappingURL, URL outputURL) {
         try {
             RMLMapping mapping = RMLMappingFactory.extractRMLMapping(mappingURL.getFile());
 
             RMLEngine engine = new RMLEngine();
-            SesameDataSet output = engine.runRMLMapping(mapping, "http://example.com");
+            //SesameDataSet output = engine.runRMLMapping(mapping, "http://iminds.be/");
+            SesameDataSet output = engine.runRMLMapping(mapping, "http://ewi.mmlab.be/ecd/");
 
             output.dumpRDF(System.out, RDFFormat.TURTLE);
-            output.dumpRDF("/home/andimou/Documents/RML/andimou/RMLProcessor3/RMLProcessor/src/test/resources/examplePaper2/outputPaper2.ttl", RDFFormat.TURTLE);
-          
+            //output.dumpRDF("/home/andimou/Documents/RML/andimou/RMLProcessor3/RMLProcessor/src/test/resources/examplePaper2/outputPaper2.ttl", RDFFormat.TURTLE);
+            //output.dumpRDF("/home/andimou/Documents/RML/andimou/RMLProcessor3/RMLProcessor/src/test/resources/iMinds/output.rdf", RDFFormat.RDFXML);
+            //output.dumpRDF("/home/andimou/Documents/RML/andimou/RMLProcessor3/RMLProcessor/src/test/resources/iMinds/output.ttl", RDFFormat.TURTLE);
+            output.dumpRDF("/home/andimou/Documents/RML/andimou/RMLProcessor3/RMLProcessor/src/test/resources/ContactData/EWI_ContactData.ttl", RDFFormat.TURTLE);
+            
             SesameDataSet desiredOutput = new SesameDataSet();
             desiredOutput.addFile(outputURL.getFile(), RDFFormat.TURTLE);
             

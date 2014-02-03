@@ -111,7 +111,13 @@ public class RMLEngine {
         for (TriplesMap triplesMap : r2rmlMapping.getTriplesMaps()) {
             
             RMLProcessor processor = factory.create(triplesMap.getLogicalSource().getQueryLanguage());
-            
+            //log.debug("[R2RMLEngine:name] name " + triplesMap.getName());
+            //String name = triplesMap.getName();
+            //String myname = "file:/home/andimou/Documents/RML/andimou/RMLProcessor3/RMLProcessor/target/test-classes/iMinds/iMinds_Project.rml.ttl#ProjectPartnerMapping";
+            //log.debug("[R2RMLEngine:name] name " + name);
+            //String myname2 = "file:/home/andimou/Documents/RML/andimou/RMLProcessor3/RMLProcessor/target/test-classes/iMinds/iMinds_Project.rml.ttl#ProjectMapping";
+            //triplesMap.getName().equals(myname) || 
+            //if(triplesMap.getName().equals(myname2))
             processor.execute(sesameDataSet, triplesMap, new NodeRMLPerformer(processor));
 
             log.info("[R2RMLEngine:generateRDFTriples] "
