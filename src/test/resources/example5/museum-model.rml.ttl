@@ -10,7 +10,7 @@
   rml:logicalSource [
     rml:sourceName "museum.json";
     rml:queryLanguage ql:JSONPath;
-    rml:iterator "$";
+    rml:iterator "$.[*]";
   ];
 
   rr:subjectMap [
@@ -31,10 +31,10 @@
     rr:predicate crm:P14_carried_out_by;
 	rr:objectMap [ 
             rr:parentTriplesMap <#ArtistMapping> ;
-            rr:joinCondition [
-                rr:child "Ref";
-                rr:parent "Ref";
-            ];
+#            rr:joinCondition [
+#                rr:child "Ref";
+#                rr:parent "Ref";
+#            ];
         ];
     ];
 
@@ -43,10 +43,10 @@
     rr:predicate crm:P108_has_produced;
 	rr:objectMap [
         rr:parentTriplesMap <#ArtworkMapping>;
-        rr:joinCondition [
-            rr:child "Ref";
-            rr:parent "Ref";
-        ];
+#        rr:joinCondition [
+#            rr:child "Ref";
+#            rr:parent "Ref";
+#        ];
     ];
   ].
 
@@ -54,7 +54,7 @@
   rml:logicalSource [
     rml:sourceName "museum.json";
     rml:queryLanguage ql:JSONPath;
-    rml:iterator "$";
+    rml:iterator "$.[*]";
   ];
 
   rr:subjectMap [
@@ -85,10 +85,10 @@
     rr:predicate crm:P62_depicts;
     rr:objectMap [ 
             rr:parentTriplesMap <#SitterMapping> ;
-            rr:joinCondition [
-                rr:child "Ref";
-                rr:parent "Ref";
-            ];
+#            rr:joinCondition [
+#                rr:child "Ref";
+#                rr:parent "Ref";
+#            ];
         ];
   ].
  

@@ -1,9 +1,11 @@
 package be.ugent.mmlab.rml.processor;
 
+import be.ugent.mmlab.rml.core.JoinRMLPerformer;
 import be.ugent.mmlab.rml.core.RMLPerformer;
 import be.ugent.mmlab.rml.model.PredicateObjectMap;
 import be.ugent.mmlab.rml.model.SubjectMap;
 import be.ugent.mmlab.rml.model.TriplesMap;
+import java.util.HashMap;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
 import org.openrdf.model.Resource;
 
@@ -11,7 +13,7 @@ import org.openrdf.model.Resource;
 
 /**
  * Interface for processing a certain term map
- * @author mielvandersande
+ * @author mielvandersande, andimou
  */
 public interface RMLProcessor {
     
@@ -45,4 +47,6 @@ public interface RMLProcessor {
      * @param node 
      */
     public void processPredicateObjectMap(SesameDataSet dataset, Resource subject, PredicateObjectMap pom, Object node);
+
+    public void executeRefObjMap(SesameDataSet dataset, TriplesMap parentTriplesMap, JoinRMLPerformer joinRMLPerformer, HashMap<String, String> joinMap);
 }

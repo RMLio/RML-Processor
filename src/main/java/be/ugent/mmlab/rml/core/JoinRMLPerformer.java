@@ -4,6 +4,8 @@ import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.RMLProcessor;
 import java.util.HashMap;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openrdf.model.Resource;
 import org.openrdf.model.URI;
 import org.openrdf.model.Value;
@@ -11,10 +13,11 @@ import org.openrdf.model.Value;
 /**
  * Performer to do joins
  *
- * @author mielvandersande
+ * @author mielvandersande, andimou
  */
 public class JoinRMLPerformer extends NodeRMLPerformer{
     
+    private static Log log = LogFactory.getLog(RMLMappingFactory.class);
     private HashMap<String, String> conditions;
     private Resource subject;
     private URI predicate;
@@ -22,6 +25,12 @@ public class JoinRMLPerformer extends NodeRMLPerformer{
     public JoinRMLPerformer(RMLProcessor processor, HashMap<String, String> conditions, Resource subject, URI predicate) {
         super(processor);
         this.conditions = conditions;
+        this.subject = subject;
+        this.predicate = predicate;
+    }
+    
+    public JoinRMLPerformer(RMLProcessor processor, Resource subject, URI predicate) {
+        super(processor);
         this.subject = subject;
         this.predicate = predicate;
     }
@@ -35,18 +44,25 @@ public class JoinRMLPerformer extends NodeRMLPerformer{
      */
     @Override
     public void perform(Object node, SesameDataSet dataset, TriplesMap map) {
+        log.debug("[JoinRMLPerformer:object] " + "node " + node.toString());
         Value object = processor.processSubjectMap(dataset, map.getSubjectMap(), node);
+        log.debug("[JoinRMLPerformer:object] " + "Object " + object.toString());
         
         if (object == null){
             return;
-        }
+        }        
         //iterate the conditions, execute the expressions and compare both values
-        for (String expr : conditions.keySet()) {
-            //if a value doesn't match, stop right here
-            if (!conditions.get(expr).equals(processor.extractValueFromNode(node, expr))) {
-                return;
+        if(conditions != null){
+            for (String expr : conditions.keySet()) {
+                log.debug("[JoinRMLPerformer:condition] " + "Condition " + conditions.get(expr));
+                //if a value doesn't match, stop right here
+                if (!conditions.get(expr).equals(processor.extractValueFromNode(node, expr))) {
+                    return;
+                }
             }
         }
+        log.debug("[JoinRMLPerformer:addTriples] Subject "
+                    + subject + " Predicate " + predicate + "Object " + object.toString());
         //add the join triple
         dataset.add(subject, predicate, object);
     }
