@@ -51,6 +51,7 @@ public class MapperTest
         RMLEngine.fileMap.put("HelloWorldPerson.csv", getClass().getResource("/ContactData/HelloWorldPerson.csv").getFile());
         RMLEngine.fileMap.put("HelloWorldOrganisation.csv", getClass().getResource("/ContactData/HelloWorldOrganisation2.csv").getFile());
         RMLEngine.fileMap.put("HelloWorldOrganisationRelation.csv", getClass().getResource("/ContactData/HelloWorldOrganisationRelation.csv").getFile());
+        RMLEngine.fileMap.put("contactDataFullEx.csv", getClass().getResource("/ContactData/contactDataFullEx.csv").getFile());
     }
 
     /**
@@ -98,9 +99,11 @@ public class MapperTest
     }*/
     
     public void testEWI_ContactData() {
-        URL fileToRMLFile = getClass().getResource("/ContactData/contactData.rml.ttl");
-            URL fileToOutputFile = getClass().getResource("/ContactData/contactData.output.ttl");
-            assertTrue(assertMap(fileToRMLFile, fileToOutputFile));   
+        //URL fileToRMLFile = getClass().getResource("/ContactData/contactData.rml.ttl");
+        //URL fileToOutputFile = getClass().getResource("/ContactData/contactData.output.ttl");
+        URL fileToRMLFile = getClass().getResource("/ContactData/contactDataFullEx.rml.ttl");
+        URL fileToOutputFile = getClass().getResource("/ContactData/contactDataFullEx.output.ttl");
+        assertTrue(assertMap(fileToRMLFile, fileToOutputFile));   
     }
     
     /*public void testExamplePaper2() {
@@ -137,7 +140,7 @@ public class MapperTest
             //output.dumpRDF("/home/andimou/Documents/RML/andimou/RMLProcessor3/RMLProcessor/src/test/resources/examplePaper2/outputPaper2.ttl", RDFFormat.TURTLE);
             //output.dumpRDF("/home/andimou/Documents/RML/andimou/RMLProcessor3/RMLProcessor/src/test/resources/iMinds/output.rdf", RDFFormat.RDFXML);
             //output.dumpRDF("/home/andimou/Documents/RML/andimou/RMLProcessor3/RMLProcessor/src/test/resources/iMinds/output.ttl", RDFFormat.TURTLE);
-            output.dumpRDF("/home/andimou/Documents/RML/andimou/RMLProcessor3/RMLProcessor/src/test/resources/ContactData/EWI_ContactData.ttl", RDFFormat.TURTLE);
+            output.dumpRDF("/home/andimou/Documents/RML/andimou/RMLProcessor3/RMLProcessor/src/test/resources/ContactData/contactDataFullEx.ttl", RDFFormat.TURTLE);
             
             SesameDataSet desiredOutput = new SesameDataSet();
             desiredOutput.addFile(outputURL.getFile(), RDFFormat.TURTLE);
