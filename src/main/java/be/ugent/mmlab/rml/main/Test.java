@@ -37,8 +37,11 @@ public class Test {
             //RMLEngine.fileMap.put("ProjectsTimesheets.csv", "/home/andimou/Documents/RML/andimou/RMLProcessor3/RMLProcessor/src/test/resources/iMinds/ProjectsTimesheets.csv");
             //RMLEngine.fileMap.put("ResearchGroups.csv", "/home/andimou/Documents/RML/andimou/RMLProcessor3/RMLProcessor/src/test/resources/iMinds/ResearchGroups.csv");
             //RMLEngine.fileMap.put("ResearchGroupsUniversities.csv", "/home/andimou/Documents/RML/andimou/RMLProcessor3/RMLProcessor/src/test/resources/iMinds/ResearchGroupsUniversities.csv");
-            RMLEngine.fileMap.put("ResearchGroupsUniversities.csv", "/home/andimou/Documents/RML/andimou/RMLProcessor3/RMLProcessor/src/test/resources/ContactData/HelloWorldPerson.csv");
-
+            //RMLEngine.fileMap.put("ResearchGroupsUniversities.csv", "/home/andimou/Documents/RML/andimou/RMLProcessor3/RMLProcessor/src/test/resources/ContactData/HelloWorldPerson.csv");
+            RMLEngine.fileMap.put("HelloWorldPerson.csv", "/home/andimou/Documents/RML/andimou/RMLProcessor3/RMLProcessor/src/test/resources/ContactData/HelloWorldPerson.csv");
+            RMLEngine.fileMap.put("HelloWorldOrganisation.csv", "/home/andimou/Documents/RML/andimou/RMLProcessor3/RMLProcessor/src/test/resources/ContactData/HelloWorldPerson.csv");
+            RMLEngine.fileMap.put("HelloWorldOrganisationRelation.csv", "/home/andimou/Documents/RML/andimou/RMLProcessor3/RMLProcessor/src/test/resources/ContactData/HelloWorldPerson.csv");
+            
             RMLMapping mapping = RMLMappingFactory.extractRMLMapping(fileToR2RMLFile);
 
             RMLEngine engine = new RMLEngine();
