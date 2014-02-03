@@ -4,7 +4,7 @@
  */
 package be.ugent.mmlab.rml.processor.concrete;
 
-import be.ugent.mmlab.rml.core.JoinRMLPerformer;
+import be.ugent.mmlab.rml.core.ConditionalJoinRMLPerformer;
 import be.ugent.mmlab.rml.core.RMLMappingFactory;
 import be.ugent.mmlab.rml.core.RMLPerformer;
 import be.ugent.mmlab.rml.model.TriplesMap;
@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
+import net.minidev.json.JSONArray;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -58,9 +59,16 @@ public class JSONPathProcessor extends AbstractRMLProcessor {
         }
     }
 
-    public String extractValueFromNode(Object node, String expression) {
+    public String[] extractValueFromNode(Object node, String expression) {
         try {
-            return JsonPath.read(node, expression);
+           Object val = JsonPath.read(node, expression);
+           
+           if (val instanceof JSONArray){
+               JSONArray arr = (JSONArray) val;
+               return arr.toArray(new String[0]);
+             }
+
+            return new String[]{(String) val};
         } catch (com.jayway.jsonpath.InvalidPathException ex){
             return null;
         } catch (Exception ex){
@@ -70,7 +78,7 @@ public class JSONPathProcessor extends AbstractRMLProcessor {
         }
     }
 
-    public void executeRefObjMap(SesameDataSet dataset, TriplesMap map, JoinRMLPerformer performer, HashMap<String, String> joinMap) {
+    public void executeRefObjMap(SesameDataSet dataset, TriplesMap map, ConditionalJoinRMLPerformer performer, HashMap<String, String> joinMap) {
         InputStream fis = null;
         try {
             String identifier = getIdentifier(map.getLogicalSource());

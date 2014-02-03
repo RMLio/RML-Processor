@@ -1,6 +1,6 @@
 package be.ugent.mmlab.rml.processor;
 
-import be.ugent.mmlab.rml.core.JoinRMLPerformer;
+import be.ugent.mmlab.rml.core.ConditionalJoinRMLPerformer;
 import be.ugent.mmlab.rml.core.RMLPerformer;
 import be.ugent.mmlab.rml.model.PredicateObjectMap;
 import be.ugent.mmlab.rml.model.SubjectMap;
@@ -30,7 +30,7 @@ public interface RMLProcessor {
      * @param expression reference to value
      * @return extracted value
      */
-    public String extractValueFromNode(Object node, String expression);
+    public String[] extractValueFromNode(Object node, String expression);
     /**
      * process a subject map
      * @param dataset
@@ -48,5 +48,5 @@ public interface RMLProcessor {
      */
     public void processPredicateObjectMap(SesameDataSet dataset, Resource subject, PredicateObjectMap pom, Object node);
 
-    public void executeRefObjMap(SesameDataSet dataset, TriplesMap parentTriplesMap, JoinRMLPerformer joinRMLPerformer, HashMap<String, String> joinMap);
+    //public void executeRefObjMap(SesameDataSet dataset, TriplesMap parentTriplesMap, ConditionalJoinRMLPerformer joinRMLPerformer, HashMap<String, String> joinMap);
 }
