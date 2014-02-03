@@ -195,8 +195,8 @@ log.debug("[AbstractRMLProcessorProcessor:processPredicateObjectMap]. childValue
             Set<ObjectMap> objectMaps = pom.getObjectMaps();
             for (ObjectMap objectMap : objectMaps) {
                 Value object = processObjectMap(objectMap, node);
-                if(object != null)
-                    dataset.add(subject, predicate, object);
+                if((object != null) && !(object.toString() != ""))
+                    dataset.add(subject, predicate, object);         
             }
 
         }
