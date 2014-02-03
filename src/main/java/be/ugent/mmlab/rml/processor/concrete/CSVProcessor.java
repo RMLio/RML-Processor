@@ -1,6 +1,6 @@
 package be.ugent.mmlab.rml.processor.concrete;
 
-import be.ugent.mmlab.rml.core.JoinRMLPerformer;
+import be.ugent.mmlab.rml.core.ConditionalJoinRMLPerformer;
 import be.ugent.mmlab.rml.core.RMLMappingFactory;
 import be.ugent.mmlab.rml.core.RMLPerformer;
 import be.ugent.mmlab.rml.model.TriplesMap;
@@ -57,7 +57,7 @@ public class CSVProcessor extends AbstractRMLProcessor {
         }
     }
     
-    public void executeRefObjMap(SesameDataSet dataset, TriplesMap map, JoinRMLPerformer performer, HashMap<String, String> joinMap) {
+    /*public void executeRefObjMap(SesameDataSet dataset, TriplesMap map, ConditionalJoinRMLPerformer performer, HashMap<String, String> joinMap) {
         InputStream fis = null;
         try {
             String identifier = getIdentifier(map.getLogicalSource());
@@ -71,9 +71,10 @@ public class CSVProcessor extends AbstractRMLProcessor {
             //Iterate the rows
             while (reader.readRecord()) {
                 HashMap<String, String> row = new HashMap<String, String>();
-                    for (String header : reader.getHeaders()) {
+                
+                for (String header : reader.getHeaders()) {
                         row.put(header, reader.get(header));
-                    }
+                }
                 //let the performer handle the rows              
                 for (Entry<String, String> entry : joinMap.entrySet()) {
                     if(row.get(entry.getKey().toString()).equals(entry.getValue())){
@@ -89,11 +90,11 @@ public class CSVProcessor extends AbstractRMLProcessor {
         } catch (IOException ex) {
             Logger.getLogger(CSVProcessor.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
+    }*/
     
-    public String extractValueFromNode(Object node, String expression) {
+    public String[] extractValueFromNode(Object node, String expression) {
         HashMap<String, String> row = (HashMap<String, String>) node;
         //call the right header in the row
-        return row.get(expression);
+        return new String[]{row.get(expression)};
     }
 }
