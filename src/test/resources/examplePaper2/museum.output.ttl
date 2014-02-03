@@ -1,0 +1,38 @@
+
+<http://ex.com/Robert+Theodore+McCall> a <http://www.cidoc-crm.org/cidoc-crm/E21_Person> ;
+    <http://www.w3.org/2000/01/rdf-schema#label> "Robert Theodore McCall" ;
+    <http://example.com/birth_date> "1919-12-23"^^<http://www.w3.org/2001/XMLSchema#date> .
+
+<http://ex.com/Ronald+Anderson> a <http://www.cidoc-crm.org/cidoc-crm/E21_Person> ;
+    <http://www.w3.org/2000/01/rdf-schema#label> "Ronald Anderson" ;
+    <http://example.com/birth_date> "1929-12-06"^^<http://www.w3.org/2001/XMLSchema#date> .
+
+<http://ex.com/NPG_70_36> a <http://www.cidoc-crm.org/cidoc-crm/E22_Man-Made_Object> ;
+    <http://www.cidoc-crm.org/cidoc-crm/P62_depicts> <http://ex.com/Neil+Armstrong> , <http://ex.com/Buzz+Aldrin> , <http://ex.com/Michael+Collins> ;
+    <http://www.cidoc-crm.org/cidoc-crm/P48_has_preferred_identifier> "NPG_70_36" ;
+    <http://www.cidoc-crm.org/cidoc-crm/P102_has_title> "Apollo 11 Crew" ;
+    <http://www.cidoc-crm.org/cidoc-crm/P14_carried_out_by> <http://ex.com/Ronald+Anderson> .
+
+<http://ex.com/S_NPG_2010_51> a <http://www.cidoc-crm.org/cidoc-crm/E22_Man-Made_Object> ;
+    <http://www.cidoc-crm.org/cidoc-crm/P62_depicts> <http://ex.com/Neil+Armstrong> ;
+    <http://www.cidoc-crm.org/cidoc-crm/P48_has_preferred_identifier> "S_NPG_2010_51" ;
+    <http://www.cidoc-crm.org/cidoc-crm/P102_has_title> "Neil Armstrong" ;
+    <http://www.cidoc-crm.org/cidoc-crm/P14_carried_out_by> <http://ex.com/Robert+Theodore+McCall> .
+
+<http://ex.com/NPG_92_127> a <http://www.cidoc-crm.org/cidoc-crm/E22_Man-Made_Object> ;
+    <http://www.cidoc-crm.org/cidoc-crm/P62_depicts> <http://ex.com/Henry+Larcom+Abbot> ;
+    <http://www.cidoc-crm.org/cidoc-crm/P48_has_preferred_identifier> "NPG_92_127" ;
+    <http://www.cidoc-crm.org/cidoc-crm/P102_has_title> "Henry Larcom Abbot" .
+#   <http://www.cidoc-crm.org/cidoc-crm/P14_carried_out_by> <http://ex.com/Nahum+Ball+Onthank> .
+
+<http://ex.com/Neil+Armstrong> a <http://www.cidoc-crm.org/cidoc-crm/E21_Person> ;
+    <http://www.w3.org/2000/01/rdf-schema#label> "Neil Armstrong" .
+
+<http://ex.com/Buzz+Aldrin> a <http://www.cidoc-crm.org/cidoc-crm/E21_Person> ;
+    <http://www.w3.org/2000/01/rdf-schema#label> "Buzz Aldrin" .
+
+<http://ex.com/Michael+Collins> a <http://www.cidoc-crm.org/cidoc-crm/E21_Person> ;
+    <http://www.w3.org/2000/01/rdf-schema#label> "Michael Collins" .
+
+<http://ex.com/Henry+Larcom+Abbot> a <http://www.cidoc-crm.org/cidoc-crm/E21_Person> ;
+    <http://www.w3.org/2000/01/rdf-schema#label> "Henry Larcom Abbot" .
