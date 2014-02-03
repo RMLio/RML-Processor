@@ -94,7 +94,8 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
      */
     private String processTermMap(TermMap map, Object node) {
         String value = null;
-
+        int count = 0;
+        Set<String> tokens = null;
         switch (map.getTermMapType()) {
             case REFERENCE_VALUED:
                 //Get the expression and extract the value
@@ -110,11 +111,12 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
             case TEMPLATE_VALUED:
                 //Resolve the template
                 value = map.getStringTemplate();
-                Set<String> tokens = R2RMLToolkit.extractColumnNamesFromStringTemplate(value);
+                tokens = R2RMLToolkit.extractColumnNamesFromStringTemplate(value);
                 for (String expression : tokens) {
                     String replacement = extractValueFromNode(node, expression);
-                    if (replacement == null){
+                    if (replacement == null || replacement == ""){
                         //if the replacement value is null, the resulting uri would be the template. Return null instead.
+                        count++;
                         return null;
                     }
                     if(expression.contains("[")){
@@ -128,10 +130,15 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                 break;
         }
         if (value == null) {
+            return null;
             //Catch error? or are null values propagated to result in a triple not created
         }
-
-        return value;
+        if(tokens == null)
+            return value;
+        if (!(count == tokens.size()))
+            return value;
+        else
+            return null; 
     }
     /**
      * Process a predicate object map
@@ -223,6 +230,7 @@ log.debug("[AbstractRMLProcessorProcessor:processPredicateObjectMap]. childValue
      */
     private Value processObjectMap(ObjectMap objectMap, Object node) {
         String value = processTermMap(objectMap, node);
+        log.debug("[AbstractRMLProcessor:literal] value " + value);
         switch (objectMap.getTermType()) {
             case BLANK_NODE:
                 return new BNodeImpl(value);
@@ -237,10 +245,8 @@ log.debug("[AbstractRMLProcessorProcessor:processPredicateObjectMap]. childValue
                     log.debug("[AbstractRMLProcessor:literal] Literal value " + value);
                     return new LiteralImpl(value);
                 } else
-                    return null;
-               
+                    return null;   
         }
-
         return new URIImpl(value);
     }
 }
