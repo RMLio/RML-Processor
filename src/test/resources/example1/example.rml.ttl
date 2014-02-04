@@ -74,5 +74,3 @@ rr:subjectMap [
 			rr:datatype xsd:gYear
 		]
 	].
-
-

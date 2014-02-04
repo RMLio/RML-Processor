@@ -15,7 +15,7 @@ note:M17 a mail:note;
 
 note:M18 a mail:note;
 	mail:when "2008-02-10"^^xsd:date;
-        mail:from "Rick"
+        mail:from "Rick";
         mail:to "Chris";
         mail:heading "Update";
         mail:body "We now leave at six".
