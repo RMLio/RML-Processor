@@ -12,7 +12,6 @@ public class StdLogicalSource implements LogicalSource {
     private String reference;
     private QLTerm queryLanguage = QLTerm.SQL_CLASS;
     private String identifier;
-    private String name;
 
     public StdLogicalSource(String reference, String identifier) {
         this.reference = reference;
@@ -29,8 +28,6 @@ public class StdLogicalSource implements LogicalSource {
         this.queryLanguage = queryLanguage;
     }
     
-    
-
     public String getReference() {
         return reference;
     }
@@ -47,9 +44,5 @@ public class StdLogicalSource implements LogicalSource {
     public String toString() {
         return "[StdLogicalSource : reference = " + reference
                 + "; identifier" + identifier + "; queryLanguage = " + queryLanguage + "]";
-    }
-
-    public String getName() {
-        return identifier;
     }
 }
