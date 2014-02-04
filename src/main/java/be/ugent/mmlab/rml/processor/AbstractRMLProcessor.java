@@ -148,6 +148,11 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                             temp = temp.replaceAll("\\[", "").replaceAll("\\]", "");
                         }
                         
+                        if (expression.contains("$")) {
+                            expression = expression.replaceAll("\\$", "");
+                            temp = temp.replaceAll("\\$", "");
+                        }
+                        
                         temp = temp.replaceAll("\\{" + expression + "\\}", URLEncoder.encode(replacement));
                         
                         value.set(i,temp); 
@@ -201,7 +206,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                     for (JoinCondition joinCondition : joinConditions) {
                         String[] childValues = extractValueFromNode(node, joinCondition.getChild());
                         
-                        //MVS: Only allow one string value here?
+                        //MVS: Allow multiple values?
                         String childValue = childValues[0];
                         
                         

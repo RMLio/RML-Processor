@@ -23,7 +23,7 @@
 
 <#VenueMapping>
     rml:logicalSource [
-      rml:sourceName "Venue.json";
+      rml:sourceName "Venue4.json";
       rml:queryLanguage ql:JSONPath;
       rml:iterator "$";
     ];
