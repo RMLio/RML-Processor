@@ -144,8 +144,9 @@ public class MapperTest
 
             RMLEngine engine = new RMLEngine();
             //SesameDataSet output = engine.runRMLMapping(mapping, "http://iminds.be/");
-            SesameDataSet output = engine.runRMLMapping(mapping, "http://ewi.mmlab.be/ecd/");
-
+            //SesameDataSet output = engine.runRMLMapping(mapping, "http://ewi.mmlab.be/ecd/");
+            SesameDataSet output = engine.runRMLMapping(mapping, "http://example.com");
+            
             output.dumpRDF(System.out, RDFFormat.TURTLE);
 
             //output.dumpRDF("/home/andimou/Documents/RML/andimou/RMLProcessor3/RMLProcessor/src/test/resources/examplePaper2/outputPaper2.ttl", RDFFormat.TURTLE);
