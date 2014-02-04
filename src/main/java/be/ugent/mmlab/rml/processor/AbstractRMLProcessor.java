@@ -244,7 +244,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                 for (ObjectMap objectMap : objectMaps) {
                     List<Value> objects = processObjectMap(objectMap, node);
                     for (Value object : objects) {
-                        if (object != null && object.toString().isEmpty()) {
+                        if (object != null && !object.toString().isEmpty()) {
                             dataset.add(subject, predicate, object);
                         }
                     }
