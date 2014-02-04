@@ -1,0 +1,6 @@
+
+<http://ex.com/Robert+Theodore+McCall> a <http://www.cidoc-crm.org/cidoc-crm/E21_Person> ;
+	<http://example.com/status> <http://example.com/artist> .
+
+<http://ex.com/Ronald+Anderson> a <http://www.cidoc-crm.org/cidoc-crm/E21_Person> ;
+	<http://example.com/status> <http://example.com/artist> .

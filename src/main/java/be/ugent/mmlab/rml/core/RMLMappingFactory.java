@@ -651,7 +651,6 @@ public abstract class RMLMappingFactory {
 
         //MVS: Decide on ReferenceIdentifier
         ReferenceIdentifier referenceValue = extractReferenceIdentifier(r2rmlMappingGraph, subjectMap);
-        
         Set<URI> classIRIs = extractURIsFromTermMap(r2rmlMappingGraph,
                 subjectMap, R2RMLTerm.CLASS);
         Set<Value> graphMapValues = extractValuesFromResource(

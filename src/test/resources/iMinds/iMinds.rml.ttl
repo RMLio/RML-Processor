@@ -11,6 +11,122 @@
 @prefix dcterms: <http://purl.org/dc/terms/>.
 @prefix owl:      <http://www.w3.org/2002/07/owl#>.
 
+
+<#ResearcherMapping>
+  rml:logicalSource [
+    rml:sourceName "ProjectsTimesheets.csv";
+    rml:queryLanguage ql:CSV
+  ];
+
+  rr:subjectMap [
+    rr:template "http://iMinds.be/researcher/{Resource ID}";
+    rr:class cerif:Person 
+  ];
+
+  rr:predicateObjectMap 
+  [
+    rr:predicate cerif:internalidentifier;
+    rr:objectMap 
+    [
+      rml:reference "Resource ID" 
+    ]
+  ];
+
+  rr:predicateObjectMap 
+  [
+    rr:predicate dcterms:identifier;
+    rr:objectMap 
+    [
+      rml:reference "Resource Contact ID" 
+    ]
+  ];
+      
+  rr:predicateObjectMap 
+  [
+    rr:predicate cerif:name;
+    rr:objectMap 
+    [
+      rml:reference "Resource Contact ID(T)" 
+    ]
+  ];
+     
+# rr:predicateObjectMap 
+#  [
+#    rr:predicate im:worksforPartner;
+#    rr:objectMap [
+#        rr:parentTriplesMap <#PartnerMapping> ;
+#        rr:joinCondition [
+#            rr:child "KPL Contact ID";
+#            rr:parent "Partner CRM ID";
+#        ];
+#   ]
+#  ];
+
+  rr:predicateObjectMap 
+  [
+    rr:predicate im:worksforResearchGroup;
+    rr:objectMap [
+        rr:parentTriplesMap <#ResearchGroupMapping> ;
+        rr:joinCondition [
+            rr:child "KPL Contact ID";
+            rr:parent "CRM id";
+        ];
+   ]
+  ];
+
+  rr:predicateObjectMap 
+  [
+    rr:predicate im:worksAtProject;
+    rr:objectMap [
+        rr:parentTriplesMap <#ProjectWorkMapping> ;
+   ]
+  ].
+
+<#ProjectWorkMapping>
+  rml:logicalSource [
+    rml:sourceName "ProjectsTimesheets.csv";
+    rml:queryLanguage ql:CSV
+  ];
+
+  rr:subjectMap [
+    rr:template "http://iMinds.be/project_work/{Project}_{Year}";
+    rr:class im:ProjectWork 
+  ];
+
+  rr:predicateObjectMap 
+  [
+    rr:predicate im:project;
+    rr:objectMap [
+#        rr:parentTriplesMap <#ProjectMapping> ;
+#        rr:joinCondition [
+#            rr:child "Project";
+#            rr:parent "Project code";
+#        ];
+         rr:template "http://iminds.be/project/{Project}";
+   ]
+  ];
+
+  rr:predicateObjectMap 
+  [
+    rr:predicate im:workYear;
+    rr:objectMap 
+    [
+      rml:reference "Year" ;
+      rr:datatype xsd:gYear
+    ]
+  ];
+
+  rr:predicateObjectMap 
+  [
+    rr:predicate im:workHoursYear;
+    rr:objectMap 
+    [
+      rml:reference "Hours" ;
+      rr:datatype xsd:float
+    ]
+  ].
+
+
 <#ProjectMapping>
   rml:logicalSource [
     rml:sourceName "ProjectsPartners.csv";
@@ -78,6 +194,19 @@
 
   rr:predicateObjectMap 
   [
+    rr:predicate im:project_partner;
+    rr:objectMap 
+    [
+      rr:parentTriplesMap <#ProjectPartnerMapping>;
+      rr:joinCondition [
+            rr:child "Partner CRM ID";
+            rr:parent "Partner CRM ID";
+        ];
+    ]
+  ];
+
+  rr:predicateObjectMap 
+  [
     rr:predicate cerif:startDate;
     rr:objectMap 
     [
@@ -94,16 +223,42 @@
       rml:reference "End date" ;
       rr:datatype xsd:date;
     ]
+  ].
+ 
+<#ProjectPartnerMapping>
+  rml:logicalSource [
+    rml:sourceName "ProjectsPartners.csv";
+    rml:queryLanguage ql:CSV
   ];
-      
+
+  rr:subjectMap [
+    rr:template "http://iMinds.be/project_partner/{Project code}/{Partner CRM ID}";
+    rr:class im:ProjectPartner
+  ];
+
   rr:predicateObjectMap 
   [
     rr:predicate im:partner;
-    rr:objectMap [
-        rr:parentTriplesMap <#PartnerMapping> ;
+    rr:objectMap 
+    [
+#      rr:parentTriplesMap <#PartnerMapping> ;
+#      rr:joinCondition [
+#            rr:child "Partner CRM ID";
+#            rr:parent "Partner CRM ID";
+#        ];
+    rr:template "http://iMinds.be/partner/{Partner CRM ID}"
+    ]
+  ]; 
+
+  rr:predicateObjectMap 
+  [
+    rr:predicate im:role;
+    rr:objectMap 
+    [
+      rr:template "http://iminds.be/project_partner/role/{Partner role}" 
     ]
   ].
- 
+
     
 <#PartnerMapping>
   rml:logicalSource [
@@ -141,128 +296,17 @@
     [
       rr:template "http://iminds.be/partner/type/{Partner type}" 
     ]
-  ]; 
+  ];
 
-  rr:predicateObjectMap 
+    rr:predicateObjectMap 
   [
-    rr:predicate im:role;
+    rr:predicate owl:sameAs;
     rr:objectMap 
     [
-      rr:template "http://iminds.be/partner/role/{Partner role}" 
-    ]
-  ].
-
-
-<#ResearcherMapping>
-  rml:logicalSource [
-    rml:sourceName "ProjectsTimesheets.csv";
-    rml:queryLanguage ql:CSV
-  ];
-
-  rr:subjectMap [
-    rr:template "http://iMinds.be/researcher/{Resource ID}";
-    rr:class cerif:Person 
-  ];
-
-  rr:predicateObjectMap 
-  [
-    rr:predicate cerif:internalidentifier;
-    rr:objectMap 
-    [
-      rml:reference "Resource ID" 
-    ]
-  ];
-
-  rr:predicateObjectMap 
-  [
-    rr:predicate dcterms:identifier;
-    rr:objectMap 
-    [
-      rml:reference "Resource Contact ID" 
-    ]
-  ];
-      
-  rr:predicateObjectMap 
-  [
-    rr:predicate cerif:name;
-    rr:objectMap 
-    [
-      rml:reference "Resource Contact ID(T)" 
-    ]
-  ];
-     
-  rr:predicateObjectMap 
-  [
-    rr:predicate ex:worksforPartner;
-    rr:objectMap [
-        rr:parentTriplesMap <#PartnerMapping> ;
-        rr:joinCondition [
-            rr:child "KPL Contact ID";
-            rr:parent "Partner CRM ID";
-        ];
-   ]
-  ];
-
-  rr:predicateObjectMap 
-  [
-    rr:predicate ex:worksforResearchGroup;
-    rr:objectMap [
-        rr:parentTriplesMap <#ResearchGroupMapping> ;
-        rr:joinCondition [
-            rr:child "KPL Contact ID";
-            rr:parent "CRM id";
-        ];
-   ]
-  ];
-
-  rr:predicateObjectMap 
-  [
-    rr:predicate im:worksAtProject;
-    rr:objectMap [
-        rr:parentTriplesMap <#ProjectWorkMapping> ;
-   ]
-  ].
-
-  <#ProjectWorkMapping>
-  rml:logicalSource [
-    rml:sourceName "ProjectsTimesheets.csv";
-    rml:queryLanguage ql:CSV
-  ];
-
-  rr:subjectMap [
-    rr:template "http://iMinds.be/project_work/{Project}_{Year}";
-    rr:class im:ProjectWork 
-  ];
-
-  rr:predicateObjectMap 
-  [
-    rr:predicate im:project;
-    rr:objectMap [
-        rr:parentTriplesMap <#ProjectMapping> ;
-        rr:joinCondition [
-            rr:child "Project";
-            rr:parent "Project code";
-        ];
-   ]
-  ];
-
-  rr:predicateObjectMap 
-  [
-    rr:predicate im:workYear;
-    rr:objectMap 
-    [
-      rml:reference "Year" ;
-      rr:datatype xsd:gYear
-    ]
-  ];
-
-  rr:predicateObjectMap 
-  [
-    rr:predicate im:workHoursYear;
-    rr:objectMap 
-    [
-      rml:reference "Hours" ;
-      rr:datatype xsd:float
+      rr:parentTriplesMap <#ResearchGroupMapping> ;
+      rr:joinCondition [
+        rr:child "Partner CRM ID";
+        rr:parent "CRM id"]
     ]
   ].
 
@@ -277,17 +321,18 @@
     rr:class cerif:OrganizationalUnit 
   ];
 
-  rr:predicateObjectMap 
-  [
-    rr:predicate owl:sameAs;
-    rr:objectMap 
-    [
-      rr:parentTriplesMap <#PartnerMapping> ;
-      rr:joinCondition [
-        rr:child "CRM id";
-        rr:parent "Partner CRM ID"]
-    ]
-  ];
+#added it to the PartnerMapping
+#  rr:predicateObjectMap 
+#  [
+#    rr:predicate owl:sameAs;
+#    rr:objectMap 
+#    [
+#      rr:parentTriplesMap <#PartnerMapping> ;
+#      rr:joinCondition [
+#        rr:child "CRM id";
+#        rr:parent "Partner CRM ID"]
+#    ]
+#  ];
 
   rr:predicateObjectMap 
   [
@@ -420,7 +465,8 @@
 
   rr:subjectMap [
     rr:template "http://iMinds.be/project/segment/{Segment}";
-    rr:class cerif:Classification 
+    rr:class cerif:Classification ;
+    rr:class im:Segment ;
   ];
 
   rr:predicateObjectMap 

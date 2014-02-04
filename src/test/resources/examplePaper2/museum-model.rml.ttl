@@ -60,6 +60,6 @@
      rr:objectMap [
        rml:reference "Birth_Date";
        rr:datatype xsd:date; ]]. #;
-#   rr:predicateObjectMap [
-#     rr:predicate ex:status;
-#     rr:constant ex:artist ].
+   rr:predicateObjectMap [
+     rr:predicate ex:status;
+     rr:objectMap [rr:constant ex:artist ] ].

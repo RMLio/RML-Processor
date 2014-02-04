@@ -21,7 +21,7 @@ public class JoinRMLPerformer extends NodeRMLPerformer{
     private HashMap<String, String> conditions;
     private Resource subject;
     private URI predicate;
-
+    
     public JoinRMLPerformer(RMLProcessor processor, HashMap<String, String> conditions, Resource subject, URI predicate) {
         super(processor);
         this.conditions = conditions;
@@ -46,7 +46,6 @@ public class JoinRMLPerformer extends NodeRMLPerformer{
     public void perform(Object node, SesameDataSet dataset, TriplesMap map) {
         log.debug("[JoinRMLPerformer:object] " + "node " + node.toString());
         Value object = processor.processSubjectMap(dataset, map.getSubjectMap(), node);
-        log.debug("[JoinRMLPerformer:object] " + "Object " + object.toString());
         
         if (object == null){
             return;
