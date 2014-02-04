@@ -13,7 +13,6 @@ note:M17 a mail:note;
         mail:heading "Reminder";
         mail:body "Don't forget me this weekend!".
 
-
 note:M18 a mail:note;
 	mail:when dt:20080210;
         mail:from "Rick";
