@@ -102,7 +102,11 @@ public class XPathProcessor extends AbstractRMLProcessor {
 
         switch (result.getResultType()) {
             case XPathResult.STRING_TYPE:
-                return new String[]{result.getStringValue()};
+                String value = result.getStringValue();
+                if (value.isEmpty()){
+                    return new String[0];
+                }
+                return new String[]{value};
 
             case XPathResult.ORDERED_NODE_ITERATOR_TYPE:
             case XPathResult.UNORDERED_NODE_ITERATOR_TYPE:
@@ -115,8 +119,6 @@ public class XPathProcessor extends AbstractRMLProcessor {
             default:
                 return new String[0];
         }
-
-
     }
 
     public String[] extractValueFromNode(Object node, String expression) {
