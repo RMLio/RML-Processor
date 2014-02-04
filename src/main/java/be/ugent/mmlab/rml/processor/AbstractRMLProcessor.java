@@ -138,7 +138,8 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
 
                         String replacement = replacements[i];
 
-                        if (replacement == null || replacement.isEmpty()) {
+                        //if (replacement == null || replacement.isEmpty()) {
+                        if (replacement == null) {
                             //if the replacement value is null or empty, the reulting uri would be invalid, skip this.
                             //The placeholders remain which removes them in the end.
                             continue;
