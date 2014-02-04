@@ -2,7 +2,6 @@ package be.ugent.mmlab.rml.core;
 
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.RMLProcessor;
-import java.util.HashMap;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

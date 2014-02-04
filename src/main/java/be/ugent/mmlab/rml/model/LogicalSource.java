@@ -25,4 +25,6 @@ public interface LogicalSource {
      * interpreted
      */
     public Vocab.QLTerm getQueryLanguage();
+    
+    public String getName();
 }

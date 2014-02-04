@@ -22,8 +22,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
 import net.antidot.semantic.rdf.rdb2rdf.r2rml.core.R2RMLEngine;
 import net.antidot.semantic.rdf.rdb2rdf.r2rml.tools.R2RMLToolkit;
@@ -110,6 +108,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
      * @param node current node in iteration
      * @return the resulting value
      */
+
     private List<String> processTermMap(TermMap map, Object node) {
         List<String> value = new ArrayList<String>();
 
@@ -139,9 +138,10 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
 
                         String replacement = replacements[i];
 
-                        if (replacement == null) {
-                            //if the replacement value is null, the resulting uri would be the template. Return null instead.
-                            return null;
+                        if (replacement == null || replacement.isEmpty()) {
+                            //if the replacement value is null or empty, the reulting uri would be invalid, skip this.
+                            //The placeholders remain which removes them in the end.
+                            continue;
                         }
 
                         String temp = value.get(i);
@@ -167,7 +167,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                     }
                 }
                 
-                //Check if there are any placeholders left in the templates
+                //Check if there are any placeholders left in the templates and remove uris that are not
                 List<String> validValues = new ArrayList<String>();
                 for (String uri : value){
                     if (R2RMLToolkit.extractColumnNamesFromStringTemplate(uri).isEmpty()){
@@ -177,6 +177,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
 
                 return validValues;
         }
+
         return value;
     }
 
@@ -239,9 +240,10 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                     processor.execute(dataset, parentTriplesMap, performer);
                 }
 
-                //process the objectmaps without joins
+                //process the objectmaps
                 Set<ObjectMap> objectMaps = pom.getObjectMaps();
                 for (ObjectMap objectMap : objectMaps) {
+                    //Get the one or more objects returned by the object map
                     List<Value> objects = processObjectMap(objectMap, node);
                     for (Value object : objects) {
                         if (object != null && object.toString().isEmpty()) {
@@ -281,6 +283,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
      * @return
      */
     private List<Value> processObjectMap(ObjectMap objectMap, Object node) {
+        //A Term map returns one or more values (in case expression matches more)
         List<String> values = processTermMap(objectMap, node);
 
         List<Value> valueList = new ArrayList<Value>();
@@ -300,6 +303,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                         log.debug("[AbstractRMLProcessor:literal] Literal value " + value);
                         valueList.add(new LiteralImpl(value));
                     }
+                    //No reason to return null, is replaced by empty list.
             }
 
         }

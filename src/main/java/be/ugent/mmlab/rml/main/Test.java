@@ -29,20 +29,26 @@ public class Test {
     public static void main(String[] args) {
         try {
             //String fileToR2RMLFile = "/Users/mielvandersande/Desktop/Projects/USC-ISI/Karma/R2RML/Example/documents-export-2013-10-14/example.rml.ttl";
-            String fileToR2RMLFile = "/home/andimou/Documents/RML/andimou/RMLProcessor3/RMLProcessor/src/test/resources/iMinds/iMinds.rml.ttl";
+            //String fileToR2RMLFile = "/home/andimou/Documents/RML/andimou/RMLProcessor3/RMLProcessor/src/test/resources/iMinds/iMinds_Project.rml.ttl";
+           String fileToR2RMLFile = "/home/andimou/Documents/RML/andimou/RMLProcessor3/RMLProcessor/src/test/resources/ContactData/contactData.rml.ttl";
 
             RMLEngine.fileMap = new HashMap<String, String>();
-            RMLEngine.fileMap.put("ProjectsPartners.csv", "/home/andimou/Documents/RML/andimou/RMLProcessor3/RMLProcessor/src/test/resources/iMinds/ProjectsPartners.csv");
-            RMLEngine.fileMap.put("ProjectsTimesheets.csv", "/home/andimou/Documents/RML/andimou/RMLProcessor3/RMLProcessor/src/test/resources/iMinds/ProjectsTimesheets.csv");
-            RMLEngine.fileMap.put("ResearchGroups.csv", "/home/andimou/Documents/RML/andimou/RMLProcessor3/RMLProcessor/src/test/resources/iMinds/ResearchGroups.csv");
-            RMLEngine.fileMap.put("ResearchGroupsUniversities.csv", "/home/andimou/Documents/RML/andimou/RMLProcessor3/RMLProcessor/src/test/resources/iMinds/ResearchGroupsUniversities.csv");
-
+            //RMLEngine.fileMap.put("ProjectsPartners.csv", "/home/andimou/Documents/RML/andimou/RMLProcessor3/RMLProcessor/src/test/resources/iMinds/ProjectsPartners.csv");
+            //RMLEngine.fileMap.put("ProjectsTimesheets.csv", "/home/andimou/Documents/RML/andimou/RMLProcessor3/RMLProcessor/src/test/resources/iMinds/ProjectsTimesheets.csv");
+            //RMLEngine.fileMap.put("ResearchGroups.csv", "/home/andimou/Documents/RML/andimou/RMLProcessor3/RMLProcessor/src/test/resources/iMinds/ResearchGroups.csv");
+            //RMLEngine.fileMap.put("ResearchGroupsUniversities.csv", "/home/andimou/Documents/RML/andimou/RMLProcessor3/RMLProcessor/src/test/resources/iMinds/ResearchGroupsUniversities.csv");
+            //RMLEngine.fileMap.put("ResearchGroupsUniversities.csv", "/home/andimou/Documents/RML/andimou/RMLProcessor3/RMLProcessor/src/test/resources/ContactData/HelloWorldPerson.csv");
+            RMLEngine.fileMap.put("HelloWorldPerson.csv", "/home/andimou/Documents/RML/andimou/RMLProcessor3/RMLProcessor/src/test/resources/ContactData/HelloWorldPerson.csv");
+            RMLEngine.fileMap.put("HelloWorldOrganisation.csv", "/home/andimou/Documents/RML/andimou/RMLProcessor3/RMLProcessor/src/test/resources/ContactData/HelloWorldPerson.csv");
+            RMLEngine.fileMap.put("HelloWorldOrganisationRelation.csv", "/home/andimou/Documents/RML/andimou/RMLProcessor3/RMLProcessor/src/test/resources/ContactData/HelloWorldPerson.csv");
+            
             RMLMapping mapping = RMLMappingFactory.extractRMLMapping(fileToR2RMLFile);
 
             RMLEngine engine = new RMLEngine();
             SesameDataSet output = engine.runRMLMapping(mapping, "http://iminds.be/");
-            output.dumpRDF("/home/andimou/Documents/RML/andimou/RMLProcessor3/RMLProcessor/src/test/resources/iMinds/output.rdf", RDFFormat.RDFXML);
-            output.dumpRDF("/home/andimou/Documents/RML/andimou/RMLProcessor3/RMLProcessor/src/test/resources/iMinds/output.ttl", RDFFormat.TURTLE);
+            //output.dumpRDF("/home/andimou/Documents/RML/andimou/RMLProcessor3/RMLProcessor/src/test/resources/iMinds/output_Project.rdf", RDFFormat.RDFXML);
+            //output.dumpRDF("/home/andimou/Documents/RML/andimou/RMLProcessor3/RMLProcessor/src/test/resources/iMinds/output_Project.ttl", RDFFormat.TURTLE);
+            output.dumpRDF("/home/andimou/Documents/RML/andimou/RMLProcessor3/RMLProcessor/src/test/resources/ContactData/contactData.ttl", RDFFormat.TURTLE);
             //output.dumpRDF(System.out, RDFFormat.TURTLE);
         } catch (SQLException ex) {
             Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
