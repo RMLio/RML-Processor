@@ -11,7 +11,7 @@ import org.openrdf.model.URI;
 import org.openrdf.model.Value;
 
 /**
- * Performer to do joins
+ * Performer to do joins with rr:joinCondition
  *
  * @author mielvandersande, andimou
  */
@@ -46,11 +46,13 @@ public class ConditionalJoinRMLPerformer extends NodeRMLPerformer{
     public void perform(Object node, SesameDataSet dataset, TriplesMap map) {
         log.debug("[JoinRMLPerformer:object] " + "node " + node.toString());
         Value object = processor.processSubjectMap(dataset, map.getSubjectMap(), node);
-        log.debug("[JoinRMLPerformer:object] " + "Object " + object.toString());
         
         if (object == null){
+            log.debug("[JoinRMLPerformer:object] " + "No object found.");
             return;
         }        
+        log.debug("[JoinRMLPerformer:object] " + "Object " + object.toString());
+        
         //iterate the conditions, execute the expressions and compare both values
         if(conditions != null){
             for (String expr : conditions.keySet()) {
@@ -58,13 +60,11 @@ public class ConditionalJoinRMLPerformer extends NodeRMLPerformer{
                 
                 log.debug("[JoinRMLPerformer:condition] " + "Condition " + cond);
 
-                
-                
                 String[] values = processor.extractValueFromNode(node, expr);
                 
                 //MVS: Only allow one value with joins?
                 //if a value doesn't match, stop right here
-                if (cond == null || !cond.equals(values[0])) {
+                if (cond == null || values.length == 0 || !cond.equals(values[0])) {
                     return;
                 }
             }

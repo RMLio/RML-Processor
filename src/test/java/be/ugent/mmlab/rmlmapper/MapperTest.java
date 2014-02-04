@@ -39,8 +39,8 @@ public class MapperTest
         RMLEngine.fileMap = new HashMap<String, String>();
         RMLEngine.fileMap.put("example.xml", getClass().getResource("/example1/example.xml").getFile());
         RMLEngine.fileMap.put("Airport.csv", getClass().getResource("/example3/Airport.csv").getFile());
-        //RMLEngine.fileMap.put("Venue.json", getClass().getResource("/example3/Venue.json").getFile());
-        //RMLEngine.fileMap.put("Venue.json", getClass().getResource("/example4/Venue.json").getFile());
+        RMLEngine.fileMap.put("Venue.json", getClass().getResource("/example3/Venue.json").getFile());
+        RMLEngine.fileMap.put("Venue4.json", getClass().getResource("/example4/Venue.json").getFile());
         RMLEngine.fileMap.put("Transport.xml", getClass().getResource("/example3/Transport.xml").getFile());
         RMLEngine.fileMap.put("museum.json", getClass().getResource("/examplePaper2/museum.json").getFile());
         //RMLEngine.fileMap.put("artist.xml", getClass().getResource("/examplePaper2/artist.xml").getFile());
@@ -73,20 +73,18 @@ public class MapperTest
 
     }
 
-    /*public void testExample3() {
+    public void testExample3() {
      URL fileToRMLFile = getClass().getResource("/example3/example3.rml.ttl");
      URL fileToOutputFile = getClass().getResource("/example3/example3.output.ttl");
      assertTrue(assertMap(fileToRMLFile, fileToOutputFile));
-     }*/
-    /*public void testExample4() {
+     }
+    public void testExample4() {
      URL fileToRMLFile = getClass().getResource("/example4/example4_Venue.rml.ttl");
      URL fileToOutputFile = getClass().getResource("/example4/example4_Venue.output.ttl");
      assertTrue(assertMap(fileToRMLFile, fileToOutputFile));   
-     }*/
+     }
     //ESWC14 paper's example test
     public void testExample5() {
-        //URL fileToRMLFile = getClass().getResource("/example5/museum-model_short.rml_1.ttl");
-        //URL fileToOutputFile = getClass().getResource("/example5/museum_short.output.ttl");
         URL fileToRMLFile = getClass().getResource("/example5/museum-model.rml.ttl");
         URL fileToOutputFile = getClass().getResource("/example5/museum.output.ttl");
         assertTrue(assertMap(fileToRMLFile, fileToOutputFile));
