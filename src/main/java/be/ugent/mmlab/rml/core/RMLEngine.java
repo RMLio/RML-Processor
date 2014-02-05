@@ -8,6 +8,7 @@ import be.ugent.mmlab.rml.processor.RMLProcessorFactory;
 import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.Properties;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
 import net.antidot.semantic.rdf.rdb2rdf.r2rml.core.R2RMLEngine;
 import net.antidot.semantic.rdf.rdb2rdf.r2rml.exception.R2RMLDataError;
@@ -28,7 +29,7 @@ public class RMLEngine {
     
     //Hashmap containing the identifiers for files
     //There are probably better ways to do this than a static variable
-    public static HashMap<String,String> fileMap = new HashMap<String, String>();
+    public static Properties fileMap = new Properties();
 
     /**
      * Generate RDF based on a RML mapping

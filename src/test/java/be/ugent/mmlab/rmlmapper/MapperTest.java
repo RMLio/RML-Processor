@@ -36,8 +36,6 @@ public class MapperTest
     public MapperTest(String testName) {
         super(testName);
 
-        RMLEngine.fileMap = new HashMap<String, String>();
-
         RMLEngine.fileMap.put("example.xml", getClass().getResource("/example1/example.xml").getFile());
         RMLEngine.fileMap.put("Airport.csv", getClass().getResource("/example3/Airport.csv").getFile());
         RMLEngine.fileMap.put("Venue.json", getClass().getResource("/example3/Venue.json").getFile());
