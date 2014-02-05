@@ -54,7 +54,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
 
     protected String getIdentifier(LogicalSource ls) {
         //TODO Change this to a more general, configurable resource management
-        return RMLEngine.fileMap.getProperty(ls.getIdentifier());
+        return RMLEngine.getFileMap().getProperty(ls.getIdentifier());
     }
 
     /**

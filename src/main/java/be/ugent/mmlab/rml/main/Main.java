@@ -27,7 +27,7 @@ public class Main {
                 case 3:
                     FileInputStream input = new FileInputStream(args[0]);
                     //load the properties
-                    RMLEngine.fileMap.load(input);
+                    RMLEngine.getFileMap().load(input);
                     
                     RMLMapping mapping = RMLMappingFactory.extractRMLMapping(args[1]);
                     RMLEngine engine = new RMLEngine();

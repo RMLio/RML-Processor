@@ -7,7 +7,6 @@ import be.ugent.mmlab.rml.processor.RMLProcessor;
 import be.ugent.mmlab.rml.processor.RMLProcessorFactory;
 import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.Properties;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
 import net.antidot.semantic.rdf.rdb2rdf.r2rml.core.R2RMLEngine;
@@ -27,10 +26,13 @@ public class RMLEngine {
     // A base IRI used in resolving relative IRIs produced by the R2RML mapping.
     private String baseIRI;
     
-    //Hashmap containing the identifiers for files
+    //Properties containing the identifiers for files
     //There are probably better ways to do this than a static variable
-    public static Properties fileMap = new Properties();
+    private static Properties fileMap = new Properties();
 
+    public static Properties getFileMap(){
+        return fileMap;
+    }
     /**
      * Generate RDF based on a RML mapping
      * 

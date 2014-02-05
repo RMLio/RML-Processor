@@ -36,22 +36,22 @@ public class MapperTest
     public MapperTest(String testName) {
         super(testName);
 
-        RMLEngine.fileMap.put("example.xml", getClass().getResource("/example1/example.xml").getFile());
-        RMLEngine.fileMap.put("Airport.csv", getClass().getResource("/example3/Airport.csv").getFile());
-        RMLEngine.fileMap.put("Venue.json", getClass().getResource("/example3/Venue.json").getFile());
-        RMLEngine.fileMap.put("Venue4.json", getClass().getResource("/example4/Venue.json").getFile());
-        RMLEngine.fileMap.put("Transport.xml", getClass().getResource("/example3/Transport.xml").getFile());
-        RMLEngine.fileMap.put("museum.json", getClass().getResource("/examplePaper2/museum.json").getFile());
-        //RMLEngine.fileMap.put("artist.xml", getClass().getResource("/examplePaper2/artist.xml").getFile());
-        RMLEngine.fileMap.put("moon-walkers.csv", getClass().getResource("/example5/moon-walkers.csv").getFile());
+        RMLEngine.getFileMap().put("example.xml", getClass().getResource("/example1/example.xml").getFile());
+        RMLEngine.getFileMap().put("Airport.csv", getClass().getResource("/example3/Airport.csv").getFile());
+        RMLEngine.getFileMap().put("Venue.json", getClass().getResource("/example3/Venue.json").getFile());
+        RMLEngine.getFileMap().put("Venue4.json", getClass().getResource("/example4/Venue.json").getFile());
+        RMLEngine.getFileMap().put("Transport.xml", getClass().getResource("/example3/Transport.xml").getFile());
+        RMLEngine.getFileMap().put("museum.json", getClass().getResource("/examplePaper2/museum.json").getFile());
+        //RMLEngine.getFileMap().put("artist.xml", getClass().getResource("/examplePaper2/artist.xml").getFile());
+        RMLEngine.getFileMap().put("moon-walkers.csv", getClass().getResource("/example5/moon-walkers.csv").getFile());
 
-        //RMLEngine.fileMap.put("ProjectsPartners.csv", getClass().getResource("/iMinds/ProjectsPartners.csv").getFile());
-        //RMLEngine.fileMap.put("ProjectsTimesheets.csv", getClass().getResource("/iMinds/ProjectsTimesheets.csv").getFile());
-        //RMLEngine.fileMap.put("ResearchGroups.csv", getClass().getResource("/iMinds/ResearchGroups.csv").getFile());
-        //RMLEngine.fileMap.put("HelloWorldPerson.csv", getClass().getResource("/ContactData/HelloWorldPerson.csv").getFile());
-        //RMLEngine.fileMap.put("HelloWorldOrganisation.csv", getClass().getResource("/ContactData/HelloWorldOrganisation2.csv").getFile());
-        //RMLEngine.fileMap.put("HelloWorldOrganisationRelation.csv", getClass().getResource("/ContactData/HelloWorldOrganisationRelation.csv").getFile());
-        //RMLEngine.fileMap.put("contactDataFullEx.csv", getClass().getResource("/ContactData/contactDataFullEx.csv").getFile());
+        //RMLEngine.getFileMap().put("ProjectsPartners.csv", getClass().getResource("/iMinds/ProjectsPartners.csv").getFile());
+        //RMLEngine.getFileMap().put("ProjectsTimesheets.csv", getClass().getResource("/iMinds/ProjectsTimesheets.csv").getFile());
+        //RMLEngine.getFileMap().put("ResearchGroups.csv", getClass().getResource("/iMinds/ResearchGroups.csv").getFile());
+        //RMLEngine.getFileMap().put("HelloWorldPerson.csv", getClass().getResource("/ContactData/HelloWorldPerson.csv").getFile());
+        //RMLEngine.getFileMap().put("HelloWorldOrganisation.csv", getClass().getResource("/ContactData/HelloWorldOrganisation2.csv").getFile());
+        //RMLEngine.getFileMap().put("HelloWorldOrganisationRelation.csv", getClass().getResource("/ContactData/HelloWorldOrganisationRelation.csv").getFile());
+        //RMLEngine.getFileMap().put("contactDataFullEx.csv", getClass().getResource("/ContactData/contactDataFullEx.csv").getFile());
     }
 
     /**
