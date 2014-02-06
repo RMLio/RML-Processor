@@ -33,10 +33,10 @@ public class CSVProcessor extends AbstractRMLProcessor {
             String identifier = getIdentifier(map.getLogicalSource());
 
             fis = new FileInputStream(identifier);
-
+            
             //TODO: add character guessing
             CsvReader reader = new CsvReader(fis, Charset.defaultCharset());
-
+            reader.setDelimiter(';');
             reader.readHeaders();
             //Iterate the rows
             while (reader.readRecord()) {

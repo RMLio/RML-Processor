@@ -53,7 +53,6 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
     private static Log log = LogFactory.getLog(R2RMLEngine.class);
 
     protected String getIdentifier(LogicalSource ls) {
-        //TODO Change this to a more general, configurable resource management
         return RMLEngine.getFileMap().getProperty(ls.getIdentifier());
     }
 
@@ -298,8 +297,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                     if (objectMap.getLanguageTag() != null) {
                         valueList.add(new LiteralImpl(value, objectMap.getLanguageTag()));
                     } else if (objectMap.getDataType() != null) {
-                        URI datatype = new URIImpl(objectMap.getDataType().getAbsoluteStringURI());
-                        valueList.add(new LiteralImpl(value, datatype));
+                        valueList.add(new LiteralImpl(value, objectMap.getDataType()));
                     } else if (value != null) {
                         log.debug("[AbstractRMLProcessor:literal] Literal value " + value);
                         valueList.add(new LiteralImpl(value));

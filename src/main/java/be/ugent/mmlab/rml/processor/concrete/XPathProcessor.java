@@ -46,8 +46,12 @@ public class XPathProcessor extends AbstractRMLProcessor {
             //Inititalize the XMLDog for processing XPath
             DefaultNamespaceContext nsContext = new DefaultNamespaceContext(); // an implementation of javax.xml.namespace.NamespaceContext
             nsContext.declarePrefix("xsd", Namespaces.URI_XSD);
+            
+            //Get the namespaces from xml file?
+            nsContext.declarePrefix("gml","http://www.opengis.net/gml");
 
             XMLDog dog = new XMLDog(nsContext);
+            
 
             //adding expression to the xpathprocessor
             dog.addXPath(reference);

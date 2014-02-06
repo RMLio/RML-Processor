@@ -30,6 +30,7 @@ package be.ugent.mmlab.rml.model;
 
 import be.ugent.mmlab.rml.model.reference.ReferenceIdentifier;
 import be.ugent.mmlab.rml.model.reference.ReferenceIdentifierImpl;
+import be.ugent.mmlab.rml.tools.CustomRDFDataValidator;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -45,6 +46,7 @@ import net.antidot.semantic.xmls.xsd.XSDType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openrdf.model.Literal;
+import org.openrdf.model.Resource;
 import org.openrdf.model.URI;
 import org.openrdf.model.Value;
 
@@ -53,9 +55,9 @@ public abstract class AbstractTermMap implements TermMap {
         // Log
         private static Log log = LogFactory.getLog(AbstractTermMap.class);
         private Value constantValue;
-        private XSDType dataType;
+        private URI dataType; //MVS: Changed to resource, since XSD is to limited
         private TermType termType;
-        private XSDType implicitDataType;
+        private URI implicitDataType; //MVS: Changed to resource, since XSD is to limited
         private String languageTag;
         private String stringTemplate;
         private ReferenceIdentifier referenceValue;
@@ -266,7 +268,9 @@ public abstract class AbstractTermMap implements TermMap {
          */
         public void checkDataType(URI dataType) throws R2RMLDataError {
                 // Its value MUST be an IRI
-                if (!RDFDataValidator.isValidDatatype(dataType.stringValue())) {
+                //MVS: class below prevents datatypes other than XSD
+                //if (!RDFDataValidator.isValidDatatype(dataType.stringValue())) {
+                if (!CustomRDFDataValidator.isValidDatatype(dataType.stringValue())) {
                         throw new R2RMLDataError(
                                 "[AbstractTermMap:checkDataType] Not a valid URI : "
                                 + dataType);
@@ -284,7 +288,8 @@ public abstract class AbstractTermMap implements TermMap {
                 if (dataType != null) {
                         // Check if datatype is valid
                         checkDataType(dataType);
-                        this.dataType = XSDType.toXSDType(dataType.stringValue());
+                        //this.dataType = new dataType.stringValue();
+                        this.dataType = dataType;
                 }
         }
 
@@ -292,11 +297,11 @@ public abstract class AbstractTermMap implements TermMap {
                 return constantValue;
         }
 
-        public XSDType getDataType() {
+        public URI getDataType() {
                 return dataType;
         }
 
-        public XSDType getImplicitDataType() {
+        public URI getImplicitDataType() {
                 return implicitDataType;
         }
 
@@ -305,7 +310,7 @@ public abstract class AbstractTermMap implements TermMap {
                         return null;
                 } else {
                         return XSDLexicalTransformation
-                                .getLexicalTransformation(implicitDataType);
+                                .getLexicalTransformation(XSDType.toXSDType(implicitDataType.stringValue()));
                 }
         }
 
@@ -388,7 +393,7 @@ public abstract class AbstractTermMap implements TermMap {
                 return (termType == TermType.LITERAL) && (languageTag == null);
         }
 
-        public void setImplicitDataType(XSDType implicitDataType) {
+        public void setImplicitDataType(URI implicitDataType) {
                 this.implicitDataType = implicitDataType;
         }
 

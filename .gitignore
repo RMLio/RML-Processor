@@ -8,3 +8,5 @@
 target/
 .DS_Store
 nb-configuration.xml
+nbactions.xml
+gc.log
