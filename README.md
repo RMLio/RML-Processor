@@ -17,6 +17,8 @@ You can run a mapping process by executing the following command.
 With
     
     <sources_properties> = Java properties file containing key-value pairs which configure the data sources used in the mapping file. 
+    <mapping_file> = The RML mapping file conform with the [RML specification](http://semweb.mmlab.be/ns/rml)
+    <output_file> = The file where the output RDF triples are stored; default in [Turtle](http://www.w3.org/TR/turtle/) syntax.
         
 An example file `sources.properties` could contain:
     
@@ -24,9 +26,3 @@ An example file `sources.properties` could contain:
     file1=/path/to/file1.csv
     file2=/path/to/file2.json
     file3=/path/to/file3.xml
-
-
-    <mapping_file> = The RML mapping file conform with the [RML specification](http://semweb.mmlab.be/ns/rml)
-
-
-    <output_file> = The file where the output RDF triples are stored; default in [Turtle](http://www.w3.org/TR/turtle/) syntax.
