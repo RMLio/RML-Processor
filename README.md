@@ -18,7 +18,7 @@ With
     
     <sources_properties> = Java properties file containing key-value pairs which configure the data sources used in the mapping file. 
         
-An example file `sources.properties` contains:
+An example file `sources.properties` could contain:
     
     #File: sources.properties
     file1=/path/to/file1.csv
