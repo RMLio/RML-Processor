@@ -11,8 +11,11 @@ Usage
 -----
 The processor can be run using Maven, so make sure you have installed it first: http://maven.apache.org/download.cgi
 You can run a mapping process by executing the following command.
+    
     mvn exec:exec <sources_properties> <mapping_file> <output_file> [<graph>]
-with
+
+With
+    
     <sources_properties> = Java properties file containing key-value pairs which configure the data sources used in the mapping file. 
         
 An example file `sources.properties` contains:
