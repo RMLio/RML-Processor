@@ -5,7 +5,7 @@ Streaming processor for RML (R2RML extension) in Java
 
 Class diagram
 -------------
-![alt text](https://github.com/mielvds/RMLProcessor/blob/master/docs/class-diagram.jpg)
+![alt text](https://raw.github.com/mielvds/RMLProcessor/master/docs/class-diagram.jpg)
 
 Usage
 -----
