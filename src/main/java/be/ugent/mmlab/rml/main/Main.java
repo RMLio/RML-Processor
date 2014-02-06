@@ -48,7 +48,7 @@ public class Main {
                     System.out.println("RML Processor");
                     System.out.println("--------------------------------------------------------------------------------");
                     System.out.println("");
-                    System.out.println("Usage: mvn exec:exec <sources_properties> <mapping_file> <output_file> [<graph>]");
+                    System.out.println("Usage: mvn exec:java -Dexec.args=\"<sources_properties> <mapping_file> <output_file> [<graph>]\"");
                     System.out.println("");
                     System.out.println("With");
                     System.out.println("    <sources_properties> = Java properties file containing key-value pairs which configure the data sources used in the mapping file.");

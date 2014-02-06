@@ -28,18 +28,7 @@
                 <version>1.2.1</version>
                 <artifactId>exec-maven-plugin</artifactId>
                 <configuration>
-                    <executable>java</executable>
-                    <arguments>
-                        <argument>-Xms512m</argument>
-                        <argument>-Xmx512m</argument>
-                        <argument>-XX:NewRatio=3</argument>
-                        <argument>-XX:+PrintGCTimeStamps</argument>
-                        <argument>-XX:+PrintGCDetails</argument>
-                        <argument>-Xloggc:gc.log</argument>
-                        <argument>-classpath</argument>
-                        <classpath/>
-                        <argument>be.ugent.mmlab.rml.main.Main</argument>
-                    </arguments>
+                    <mainClass>be.ugent.mmlab.rml.main.Main</mainClass>
                 </configuration>
             </plugin>
         </plugins>
