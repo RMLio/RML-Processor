@@ -19,8 +19,9 @@ With
     <sources_properties> = Java properties file containing key-value pairs which configure the data sources used in the mapping file. 
     <mapping_file> = The RML mapping file conform with the [RML specification](http://semweb.mmlab.be/ns/rml)
     <output_file> = The file where the output RDF triples are stored; default in [Turtle](http://www.w3.org/TR/turtle/) syntax.
+    <graph> (optional) = The named graph in which the output RDF triples are stored.
         
-An example file `sources.properties` could contain:
+An example `<sources_properties>` file `sources.properties` could contain:
     
     #File: sources.properties
     file1=/path/to/file1.csv
