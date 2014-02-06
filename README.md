@@ -12,7 +12,7 @@ Usage
 The processor can be run using Maven, so make sure you have installed it first: http://maven.apache.org/download.cgi
 You can run a mapping process by executing the following command.
     
-    mvn exec:exec <sources_properties> <mapping_file> <output_file> [<graph>]
+    mvn exec:java -Dexec.args="<sources_properties> <mapping_file> <output_file> [<graph>]"
 
 With
     
