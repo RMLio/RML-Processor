@@ -15,8 +15,8 @@ public class Vocab {
 
     // In this document, examples assume the following namespace 
     // prefix bindings unless otherwise stated:
-    public static String RML_NAMESPACE = "http://mmlab.be/rml#";
-    public static String QL_NAMESPACE = "http://mmlab.be/ql#";
+    public static String RML_NAMESPACE = "http://semweb.mmlab.be/ns/rml#";
+    public static String QL_NAMESPACE = "http://semweb.mmlab.be/ns/ql#";
     public static String R2RML_NAMESPACE = "http://www.w3.org/ns/r2rml#";
     public static String RDF_NAMESPACE = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
     public static String RDFS_NAMESPACE = "http://www.w3.org/2000/01/rdf-schema#";
@@ -39,8 +39,8 @@ public class Vocab {
         // RPROPERTIES
         QUERY_LANGUAGE("queryLanguage"),
         LOGICAL_SOURCE("logicalSource"),
-        SELECTOR("selector"),
-        QUERY("query"),
+        REFERENCE("reference"),
+        ITERATOR("iterator"),
         VERSION("version"),
         SOURCE_NAME("sourceName");
         

@@ -28,11 +28,10 @@
  */
 package be.ugent.mmlab.rml.model;
 
-import be.ugent.mmlab.rml.model.selector.SelectorIdentifier;
-import be.ugent.mmlab.rml.model.selector.SelectorIdentifierImpl;
-import be.ugent.mmlab.rml.processor.RMLProcessor;
+import be.ugent.mmlab.rml.model.reference.ReferenceIdentifier;
+import be.ugent.mmlab.rml.model.reference.ReferenceIdentifierImpl;
+import be.ugent.mmlab.rml.tools.CustomRDFDataValidator;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import net.antidot.semantic.rdf.model.tools.RDFDataValidator;
@@ -47,6 +46,7 @@ import net.antidot.semantic.xmls.xsd.XSDType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openrdf.model.Literal;
+import org.openrdf.model.Resource;
 import org.openrdf.model.URI;
 import org.openrdf.model.Value;
 
@@ -55,22 +55,22 @@ public abstract class AbstractTermMap implements TermMap {
         // Log
         private static Log log = LogFactory.getLog(AbstractTermMap.class);
         private Value constantValue;
-        private XSDType dataType;
+        private URI dataType; //MVS: Changed to resource, since XSD is to limited
         private TermType termType;
-        private XSDType implicitDataType;
+        private URI implicitDataType; //MVS: Changed to resource, since XSD is to limited
         private String languageTag;
         private String stringTemplate;
-        private SelectorIdentifier selectorValue;
+        private ReferenceIdentifier referenceValue;
         private String inverseExpression;
 
         protected AbstractTermMap(Value constantValue, URI dataType,
                 String languageTag, String stringTemplate, URI termType,
-                String inverseExpression, SelectorIdentifier selectorValue)
+                String inverseExpression, ReferenceIdentifier referenceValue)
                 throws R2RMLDataError, InvalidR2RMLStructureException,
                 InvalidR2RMLSyntaxException {
 
                 setConstantValue(constantValue);
-                setSelectorValue(selectorValue);
+                setReferenceValue(referenceValue);
                 setLanguageTag(languageTag);
                 setStringTemplate(stringTemplate);
                 setTermType(termType, dataType);
@@ -128,12 +128,12 @@ public abstract class AbstractTermMap implements TermMap {
 
         }
 
-        private void setSelectorValue(SelectorIdentifier selectorValue)
+        private void setReferenceValue(ReferenceIdentifier referenceValue)
                 throws InvalidR2RMLSyntaxException, InvalidR2RMLStructureException {
-                // The value of the rr:selector property MUST be a valid selector for this queryLanguage.
+                // The value of the rml:reference property MUST be a valid reference for this queryLanguage.
 //		if (columnValue != null)
 //			checkColumnValue(columnValue);
-                this.selectorValue = selectorValue;
+                this.referenceValue = referenceValue;
         }
 
 //	private void checkColumnValue(String columnValue)
@@ -151,14 +151,14 @@ public abstract class AbstractTermMap implements TermMap {
                         // rr:Literal by default, if it is an object map and at
                         // least one of the following conditions is true
                         if ((this instanceof StdObjectMap)
-                                && (getSelectorValue() != null || dataType != null
+                                && (getReferenceValue() != null || dataType != null
                                 || getLanguageTag() != null || constantValue instanceof Literal)) {
                                 this.termType = TermType.LITERAL;
                                 log.debug("[AbstractTermMap:setTermType] No term type specified : use Literal by default.");
                         } else {
                                 // otherwise its term type is IRI
                                 this.termType = TermType.IRI;
-                                log.debug("[AbstractTermMap:setTermType] No term type specified : use IRI by default.");
+                                log.debug("[AbstractTermMap:setTermType] No term type specified : use IRI by default." + getReferenceValue());
                         }
 
                 } else {
@@ -268,7 +268,9 @@ public abstract class AbstractTermMap implements TermMap {
          */
         public void checkDataType(URI dataType) throws R2RMLDataError {
                 // Its value MUST be an IRI
-                if (!RDFDataValidator.isValidDatatype(dataType.stringValue())) {
+                //MVS: class below prevents datatypes other than XSD
+                //if (!RDFDataValidator.isValidDatatype(dataType.stringValue())) {
+                if (!CustomRDFDataValidator.isValidDatatype(dataType.stringValue())) {
                         throw new R2RMLDataError(
                                 "[AbstractTermMap:checkDataType] Not a valid URI : "
                                 + dataType);
@@ -286,7 +288,8 @@ public abstract class AbstractTermMap implements TermMap {
                 if (dataType != null) {
                         // Check if datatype is valid
                         checkDataType(dataType);
-                        this.dataType = XSDType.toXSDType(dataType.stringValue());
+                        //this.dataType = new dataType.stringValue();
+                        this.dataType = dataType;
                 }
         }
 
@@ -294,11 +297,11 @@ public abstract class AbstractTermMap implements TermMap {
                 return constantValue;
         }
 
-        public XSDType getDataType() {
+        public URI getDataType() {
                 return dataType;
         }
 
-        public XSDType getImplicitDataType() {
+        public URI getImplicitDataType() {
                 return implicitDataType;
         }
 
@@ -307,7 +310,7 @@ public abstract class AbstractTermMap implements TermMap {
                         return null;
                 } else {
                         return XSDLexicalTransformation
-                                .getLexicalTransformation(implicitDataType);
+                                .getLexicalTransformation(XSDType.toXSDType(implicitDataType.stringValue()));
                 }
         }
 
@@ -319,19 +322,19 @@ public abstract class AbstractTermMap implements TermMap {
                 return languageTag;
         }
 
-        public Set<SelectorIdentifier> getReferencedSelectors() {
-                Set<SelectorIdentifier> referencedColumns = new HashSet<SelectorIdentifier>();
+        public Set<ReferenceIdentifier> getReferencedSelectors() {
+                Set<ReferenceIdentifier> referencedColumns = new HashSet<ReferenceIdentifier>();
                 switch (getTermMapType()) {
                         case CONSTANT_VALUED:
                                 // The referenced columns of a constant-valued term map is the
                                 // empty set.
                                 break;
 
-                        case SELECTOR_VALUED:
+                        case REFERENCE_VALUED:
                                 // The referenced columns of a column-valued term map is
                                 // the singleton set containing the value of rr:column.
                                 // referencedColumns.add(R2RMLToolkit.deleteBackSlash(columnValue));
-                                referencedColumns.add(selectorValue);
+                                referencedColumns.add(referenceValue);
                                 break;
 
                         case TEMPLATE_VALUED:
@@ -340,7 +343,7 @@ public abstract class AbstractTermMap implements TermMap {
                                 // in the template string.
                                 for (String colName : R2RMLToolkit
                                         .extractColumnNamesFromStringTemplate(stringTemplate)) {
-                                        referencedColumns.add(SelectorIdentifierImpl.buildFromR2RMLConfigFile(colName));
+                                        referencedColumns.add(ReferenceIdentifierImpl.buildFromR2RMLConfigFile(colName));
                                 }
                                 break;
 
@@ -359,8 +362,8 @@ public abstract class AbstractTermMap implements TermMap {
         public TermMapType getTermMapType() {
                 if (constantValue != null) {
                         return TermMapType.CONSTANT_VALUED;
-                } else if (selectorValue != null) {
-                        return TermMapType.SELECTOR_VALUED;
+                } else if (referenceValue != null) {
+                        return TermMapType.REFERENCE_VALUED;
                 } else if (stringTemplate != null) {
                         return TermMapType.TEMPLATE_VALUED;
                 } else if (termType == TermType.BLANK_NODE) {
@@ -373,8 +376,8 @@ public abstract class AbstractTermMap implements TermMap {
                 return termType;
         }
 
-        public SelectorIdentifier getSelectorValue() {
-                return selectorValue;
+        public ReferenceIdentifier getReferenceValue() {
+                return referenceValue;
         }
 
         public boolean isOveridden() {
@@ -390,7 +393,7 @@ public abstract class AbstractTermMap implements TermMap {
                 return (termType == TermType.LITERAL) && (languageTag == null);
         }
 
-        public void setImplicitDataType(XSDType implicitDataType) {
+        public void setImplicitDataType(URI implicitDataType) {
                 this.implicitDataType = implicitDataType;
         }
 
@@ -404,16 +407,16 @@ public abstract class AbstractTermMap implements TermMap {
 //		case CONSTANT_VALUED:
 //			return constantValue.stringValue();
 //
-//		case SELECTOR_VALUED:
+//		case REFERENCE_VALUED:
 //			if (dbValues.keySet().isEmpty())
 //				throw new IllegalStateException(
 //						"[AbstractTermMap:getValue] impossible to extract from an empty database value set.");
-//			byte[] bytesResult = dbValues.get(selectorValue);
+//			byte[] bytesResult = dbValues.get(referenceValue);
 //			/* Extract the SQLType in dbValues from the key which is
 //			 * equals to "columnValue" */
 //			SQLType sqlType = null;			
 //			for(ColumnIdentifier colId : dbValues.keySet()) {
-//			    if(colId.equals(selectorValue)) {
+//			    if(colId.equals(referenceValue)) {
 //				sqlType = colId.getSqlType();
 //				break;
 //			    }

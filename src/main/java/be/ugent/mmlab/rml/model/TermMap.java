@@ -26,17 +26,11 @@
  ****************************************************************************/
 package be.ugent.mmlab.rml.model;
 
-import be.ugent.mmlab.rml.model.selector.SelectorIdentifier;
-import java.io.UnsupportedEncodingException;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.util.Map;
+import be.ugent.mmlab.rml.model.reference.ReferenceIdentifier;
 import java.util.Set;
-import net.antidot.semantic.rdf.rdb2rdf.r2rml.exception.R2RMLDataError;
 
 import net.antidot.semantic.xmls.xsd.XSDLexicalTransformation;
-import net.antidot.semantic.xmls.xsd.XSDType;
-import net.antidot.sql.model.db.ColumnIdentifier;
+import org.openrdf.model.URI;
 import org.openrdf.model.Value;
 
 public interface TermMap {
@@ -48,9 +42,9 @@ public interface TermMap {
 		// A constant-valued term map is a term map that ignores the logical
 		// table row and always generates the same RDF term
 		CONSTANT_VALUED,
-		// A selector-valued term map is a term map that is represented by a
-		// resource that has exactly one rml:selector or rr:column property.
-		SELECTOR_VALUED,
+		// A reference-valued term map is a term map that is represented by a
+		// resource that has exactly one rml:reference or rr:column property.
+		REFERENCE_VALUED,
 		// A template-valued term map is a term map that is represented by a
 		// resource that has exactly one rr:template property
 		TEMPLATE_VALUED,
@@ -62,10 +56,10 @@ public interface TermMap {
 	public TermMapType getTermMapType();
 
 	/**
-	 * The referenced columns of a term map are the set of selectors
+	 * The referenced columns of a term map are the set of references
 	 * referenced in the term map and depend on the type of term map.
 	 */
-	public Set<SelectorIdentifier> getReferencedSelectors();
+	public Set<ReferenceIdentifier> getReferencedSelectors();
 
 	/**
 	 * The constant value of a constant-valued term map is the RDF term that is
@@ -75,9 +69,9 @@ public interface TermMap {
 
 	/**
 	 * The column value of the term map is the data value of that column in a
-	 * given logical table row. Only if SELECTOR_VALUED type.
+	 * given logical table row. Only if REFERENCE_VALUED type.
 	 */
-	public SelectorIdentifier getSelectorValue();
+	public ReferenceIdentifier getReferenceValue();
 
 	/**
 	 * The value of the rr:template property MUST be a valid string template. A
@@ -109,7 +103,7 @@ public interface TermMap {
 	 * Typeable term maps may generate typed literals. The datatype of these
 	 * literals can be explicitly specified using rr:datatype.
 	 */
-	public XSDType getDataType();
+	public URI getDataType();
 
 	/**
 	 * A typeable term map has an implicit datatype. If the term map is a
@@ -118,7 +112,7 @@ public interface TermMap {
 	 * Otherwise, the term map must be a template-valued term map and its
 	 * implicit datatype is empty
 	 */
-	public XSDType getImplicitDataType();
+	public URI getImplicitDataType();
 
 	/**
 	 * A datatype override is in effect on a typeable term map if it has a

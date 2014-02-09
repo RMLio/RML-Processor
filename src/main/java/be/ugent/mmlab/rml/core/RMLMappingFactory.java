@@ -30,8 +30,8 @@ import be.ugent.mmlab.rml.model.StdSubjectMap;
 import be.ugent.mmlab.rml.model.StdTriplesMap;
 import be.ugent.mmlab.rml.model.SubjectMap;
 import be.ugent.mmlab.rml.model.TriplesMap;
-import be.ugent.mmlab.rml.model.selector.SelectorIdentifier;
-import be.ugent.mmlab.rml.model.selector.SelectorIdentifierImpl;
+import be.ugent.mmlab.rml.model.reference.ReferenceIdentifier;
+import be.ugent.mmlab.rml.model.reference.ReferenceIdentifierImpl;
 import be.ugent.mmlab.rml.vocabulary.Vocab;
 import be.ugent.mmlab.rml.vocabulary.Vocab.R2RMLTerm;
 import be.ugent.mmlab.rml.vocabulary.Vocab.RMLTerm;
@@ -546,34 +546,34 @@ public abstract class RMLMappingFactory {
         String inverseExpression = extractLiteralFromTermMap(r2rmlMappingGraph,
                 object, R2RMLTerm.INVERSE_EXPRESSION);
 
-        //MVS: Decide on SelectorIdentifier
-        SelectorIdentifier selectorValue = extractSelectorIdentifier(r2rmlMappingGraph, object);
+        //MVS: Decide on ReferenceIdentifier
+        ReferenceIdentifier referenceValue = extractReferenceIdentifier(r2rmlMappingGraph, object);
 
         StdObjectMap result = new StdObjectMap(null, constantValue, dataType,
                 languageTag, stringTemplate, termType, inverseExpression,
-                selectorValue);
+                referenceValue);
         log.debug("[RMLMappingFactory:extractObjectMap] Extract object map done.");
         return result;
     }
 
-    private static SelectorIdentifier extractSelectorIdentifier(SesameDataSet r2rmlMappingGraph, Resource resource) throws InvalidR2RMLStructureException {
-        //MVS: look for a selector or column, prefer rr:column
+    private static ReferenceIdentifier extractReferenceIdentifier(SesameDataSet r2rmlMappingGraph, Resource resource) throws InvalidR2RMLStructureException {
+        //MVS: look for a reference or column, prefer rr:column
         String columnValueStr = extractLiteralFromTermMap(r2rmlMappingGraph, resource, R2RMLTerm.COLUMN);
-        String selectorValueStr = extractLiteralFromTermMap(r2rmlMappingGraph, resource, RMLTerm.SELECTOR);
+        String referenceValueStr = extractLiteralFromTermMap(r2rmlMappingGraph, resource, RMLTerm.REFERENCE);
 
-        if (columnValueStr != null && selectorValueStr != null) {
+        if (columnValueStr != null && referenceValueStr != null) {
             throw new InvalidR2RMLStructureException(
-                    "[RMLMappingFactory:extractSelectorIdentifier] "
+                    "[RMLMappingFactory:extractReferenceIdentifier] "
                     + resource
-                    + " has a selector and column defined.");
+                    + " has a reference and column defined.");
         }
 
-        //MVS: use the generic SelectorIdentifier to represent rr:column or rml:selector
+        //MVS: use the generic ReferenceIdentifier to represent rr:column or rml:reference
         if (columnValueStr != null) {
-            return SelectorIdentifierImpl.buildFromR2RMLConfigFile(columnValueStr);
+            return ReferenceIdentifierImpl.buildFromR2RMLConfigFile(columnValueStr);
         }
 
-        return SelectorIdentifierImpl.buildFromR2RMLConfigFile(selectorValueStr);
+        return ReferenceIdentifierImpl.buildFromR2RMLConfigFile(referenceValueStr);
     }
 
     private static PredicateMap extractPredicateMap(
@@ -592,11 +592,11 @@ public abstract class RMLMappingFactory {
         String inverseExpression = extractLiteralFromTermMap(r2rmlMappingGraph,
                 object, R2RMLTerm.INVERSE_EXPRESSION);
 
-        //MVS: Decide on SelectorIdentifier
-        SelectorIdentifier selectorValue = extractSelectorIdentifier(r2rmlMappingGraph, object);
+        //MVS: Decide on ReferenceIdentifier
+        ReferenceIdentifier referenceValue = extractReferenceIdentifier(r2rmlMappingGraph, object);
 
         PredicateMap result = new StdPredicateMap(null, constantValue,
-                stringTemplate, inverseExpression, selectorValue, termType);
+                stringTemplate, inverseExpression, referenceValue, termType);
         log.debug("[RMLMappingFactory:extractPredicateMap] Extract predicate map done.");
         return result;
     }
@@ -649,9 +649,8 @@ public abstract class RMLMappingFactory {
         String inverseExpression = extractLiteralFromTermMap(r2rmlMappingGraph,
                 subjectMap, R2RMLTerm.INVERSE_EXPRESSION);
 
-        //MVS: Decide on SelectorIdentifier
-        SelectorIdentifier selectorValue = extractSelectorIdentifier(r2rmlMappingGraph, subjectMap);
-
+        //MVS: Decide on ReferenceIdentifier
+        ReferenceIdentifier referenceValue = extractReferenceIdentifier(r2rmlMappingGraph, subjectMap);
         Set<URI> classIRIs = extractURIsFromTermMap(r2rmlMappingGraph,
                 subjectMap, R2RMLTerm.CLASS);
         Set<Value> graphMapValues = extractValuesFromResource(
@@ -678,7 +677,7 @@ public abstract class RMLMappingFactory {
             }
         }
         SubjectMap result = new StdSubjectMap(ownTriplesMap, constantValue,
-                stringTemplate, termType, inverseExpression, selectorValue,
+                stringTemplate, termType, inverseExpression, referenceValue,
                 classIRIs, graphMaps);
         log.debug("[RMLMappingFactory:extractSubjectMap] Subject map extracted.");
         return result;
@@ -699,14 +698,14 @@ public abstract class RMLMappingFactory {
         String inverseExpression = extractLiteralFromTermMap(r2rmlMappingGraph,
                 graphMap, R2RMLTerm.INVERSE_EXPRESSION);
 
-        //MVS: Decide on SelectorIdentifier
-        SelectorIdentifier selectorValue = extractSelectorIdentifier(r2rmlMappingGraph, graphMap);
+        //MVS: Decide on ReferenceIdentifier
+        ReferenceIdentifier referenceValue = extractReferenceIdentifier(r2rmlMappingGraph, graphMap);
 
         URI termType = (URI) extractValueFromTermMap(r2rmlMappingGraph,
                 graphMap, R2RMLTerm.TERM_TYPE);
 
         GraphMap result = new StdGraphMap(constantValue, stringTemplate,
-                inverseExpression, selectorValue, termType);
+                inverseExpression, referenceValue, termType);
         log.debug("[RMLMappingFactory:extractPredicateObjectMaps] Graph map extracted.");
         return result;
     }
@@ -923,7 +922,7 @@ public abstract class RMLMappingFactory {
                 blankLogicalSource, pName, null);
 
         URI pView = rmlMappingGraph.URIref(Vocab.RML_NAMESPACE
-                + Vocab.RMLTerm.QUERY);
+                + Vocab.RMLTerm.ITERATOR);
         List<Statement> statementsView = rmlMappingGraph.tuplePattern(
                 blankLogicalSource, pView, null);
 
@@ -953,14 +952,14 @@ public abstract class RMLMappingFactory {
             //Extract the file identifier
             String file = statementsName.get(0).getObject().stringValue();
 
-            //Extract the query to create the iterator. Some formats have null, like CSV or SQL
-            String query = null;
+            //Extract the iterator to create the iterator. Some formats have null, like CSV or SQL
+            String iterator = null;
             if (!statementsView.isEmpty()) {
-                query = statementsView.get(0).getObject().stringValue();
+                iterator = statementsView.get(0).getObject().stringValue();
             }
 
             //MVS: find a good way to distinct SQL and others
-            logicalSource = new StdLogicalSource(query, file, queryLanguage);
+            logicalSource = new StdLogicalSource(iterator, file, queryLanguage);
 
 
         } else {

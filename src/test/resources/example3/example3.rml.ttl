@@ -1,15 +1,15 @@
 #Mappings for Airport.csv: 
-#<#AirportMapping> plus the references to <#TransportMapping> in conjuction with the #Transport.xml file and the references to <#VenueMapping> in conjuction with the Venue.json #file.
+#<#AirportMapping> plus the references to <#BusMapping> in conjuction with the #Transport.xml file and the references to <#VenueMapping> in conjuction with the Venue.json #file.
 #
 #Mappings for Transport.xml: 
-#only <#TransportMapping> 
+#<#BusMapping> & <#BusStopMapping>
 #
 #Mappings for Venue.json: 
 #<#VenueMapping> and <#LocationMapping>.
 
 @prefix rr: <http://www.w3.org/ns/r2rml#>.
-@prefix  rml: <http://mmlab.be/rml#> .
-@prefix ql: <http://mmlab.be/ql#> .
+@prefix rml: <http://semweb.mmlab.be/ns/rml#> .
+@prefix ql: <http://semweb.mmlab.be/ns/ql#> .
 @prefix mail: <http://example.com/mail#>.
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
 @prefix ex: <http://www.example.com/> .
@@ -31,12 +31,12 @@
 	 rr:class transit:Stop 
     ];
     rr:predicateObjectMap [
-	rr:predicate transit:route;
+	rr:predicate transit:service;
 	rr:objectMap [
-	    rr:parentTriplesMap <#TransportMapping>;
+	    rr:parentTriplesMap <#BusMapping>;
 	    rr:joinCondition [
 		rr:child "bus";
-		rr:parent "bus/@id";
+		rr:parent "@id";
 	    ]
         ]
     ];  
@@ -46,44 +46,58 @@
 	    rr:parentTriplesMap <#VenueMapping>;
 	    rr:joinCondition [
 		rr:child "city";
-		rr:parent "$.city";
+		rr:parent "$.location.city";
 	    ]
 	]
     ].
 
 
-<#TransportMapping>
+<#BusMapping>
     rml:logicalSource[
       rml:sourceName "Transport.xml";
-      rml:query "/transport/bus";
+      rml:iterator "/transport/bus";
       rml:queryLanguage ql:XPath;
     ];
     
     rr:subjectMap [
-      rr:template "http://trans.example.com/{@id}";
-      rr:class transit:Stop 
-    ];
-
-    rr:predicateObjectMap [
-        rr:predicate transit:stop;
-        rr:objectMap [
-            rml:selector "/route/stop/@id";
-            rr:datatype xsd:int 
-        ] 
+      rr:template "http://trans.example.com/busses/{@id}";
+      rr:class transit:Service 
     ];
   
     rr:predicateObjectMap [
-        rr:predicate rdfs:label;
+        rr:predicate transit:stop;
         rr:objectMap [
-            rml:selector "stop" 
+            rr:parentTriplesMap <#BusStopMapping>;
+#            rr:joinCondition [
+#		rr:child "route/stop/@id";
+#		rr:parent "@id";
+#	    ]
         ] 
     ] .
+
+<#BusStopMapping>
+    rml:logicalSource [
+      rml:sourceName "Transport.xml";
+      rml:iterator "/transport/bus/route/stop";
+      rml:queryLanguage ql:XPath;
+    ];
+    rr:subjectMap [
+      rr:template "http://trans.example.com/stops/{@id}";
+      rr:class transit:Stop 
+    ];
+    rr:predicateObjectMap [
+        rr:predicate rdfs:label;
+        rr:objectMap [
+            rml:reference "." 
+        ] 
+    ] .
+
 
 <#VenueMapping>
     rml:logicalSource [
       rml:sourceName "Venue.json";
       rml:queryLanguage ql:JSONPath;
-      rml:query "$.*"
+      rml:iterator "$"
     ];
     rr:subjectMap [
      rr:template "http://loc.example.com/city/{$.location.city}";
@@ -95,19 +109,18 @@
       rr:objectMap [
         rr:parentTriplesMap <#LocationMapping>;
         rr:joinCondition [
-		rr:child "$.city";
-		rr:parent "$.city";
+		rr:child "$.location.city";
+		rr:parent "$.location.city";
 	    ]
-
         ]
     ];
-rr:predicateObjectMap [
+    rr:predicateObjectMap [
       rr:predicate geosp:onContinent;
-      rr:objectMap [ rml:selector "$.location.continent" ]
+      rr:objectMap [ rml:reference "$.location.continent" ]
      ];
     rr:predicateObjectMap [
       rr:predicate gn:countryCode;
-      rr:objectMap [ rml:selector "$.location.country" ]
+      rr:objectMap [ rml:reference "$.location.country" ]
      ].
 
 
@@ -115,22 +128,19 @@ rr:predicateObjectMap [
   rml:logicalSource [
     rml:sourceName "Venue.json";
     rml:queryLanguage ql:JSONPath;
-    rml:query "$.*"
+    rml:iterator "$"
   ];
 
   rr:subjectMap [
-    rr:template "http://loc.example.com/latlong/{$.latitude},{$.longitude}"
+    rr:template "http://loc.example.com/latlong/{$.venue.latitude},{$.venue.longitude}"
   ];
 
   rr:predicateObjectMap [
     rr:predicate wgs84_pos:lat;
-    rr:objectMap [ rml:selector "$.latitude" ]
+    rr:objectMap [ rml:reference "$.venue.latitude" ]
   ];
     
   rr:predicateObjectMap [
     rr:predicate wgs84_pos:long;
-    rr:objectMap [rml:selector "$.longitude"]
+    rr:objectMap [rml:reference "$.venue.longitude"]
   ].
-
-
-

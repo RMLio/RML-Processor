@@ -5,6 +5,8 @@ import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.RMLProcessor;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
 import org.openrdf.model.Resource;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Performs the normal handling of an object in the iteration.
@@ -12,6 +14,8 @@ import org.openrdf.model.Resource;
  * @author mielvandersande
  */
 public class NodeRMLPerformer implements RMLPerformer{
+    
+    private static Log log = LogFactory.getLog(RMLMappingFactory.class);
     
     protected RMLProcessor processor;
 
@@ -32,8 +36,9 @@ public class NodeRMLPerformer implements RMLPerformer{
      */
     public void perform(Object node, SesameDataSet dataset, TriplesMap map) {
         Resource subject = processor.processSubjectMap(dataset, map.getSubjectMap(), node);
-        
         if (subject == null){
+            log.debug("[NodeRMLPerformer:processSubjectMap] Extracted "
+                    + subject + " for node " + node.toString());
             return;
         }
 

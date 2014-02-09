@@ -12,8 +12,8 @@
 	  xmlns:rml="http://mmlab.be/ns/rml#"
 	  xmlns:ql="http://mmlab.be/ql#">
 	  
-    <head about="http://mmlab.be/users/andimou/rml_dev.html">
-		<base href="http://mmlab.be/users/andimou/rml"/>
+    <head about="http://semweb.mmlab.be/ns/rml/rml.html">
+		<base href="http://semweb.mmlab.be/ns/rml/"/>
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
 	    <title>RML: A generic Mapping Language Schema for RDF</title>
 	    <link type="text/css" rel="stylesheet" href="http://www.w3.org/StyleSheets/TR/base.css"/>
@@ -62,14 +62,14 @@
 		<h2>Usage</h2>
 		<dl>
 		 	<dt>The namespace URI is:</dt>
-		 	<dd>http://mmlab.be/ns/rml#</dd>
+		 	<dd>http://semweb.mmlab.be/ns/rml#</dd>
 		 	<dt>The preferred prefix is:</dt>
 		 	<dd>rml</dd>
 		</dl>
 	
 		<h2>Comments</h2>
 		<p>
-			This wok is a first definition of RML.
+			This is a first definition of RML.
 		</p>
 
     	<h2 id="index">Index of RML Vocabulary Terms</h2>
@@ -97,7 +97,7 @@
 	      		<span class="menu"> </span> 
 	  		</h3>
 	  
-	        <p class="description">Denotes any resource. Currently limited to structured data formats: a database table, an XML file, a CSV file, a JSON file or an RML view</p>
+	        <p class="description">Denotes any possible resource. Currently it is limited to structured data formats: a database table, an XML file, a CSV file, a JSON file or an RML view</p>
 	    
 		    <div>
 		    	<div> 
@@ -127,7 +127,7 @@
 				<span rel="rdf:type" href="http://www.w3.org/2002/07/owl#Class">(OWL Class)</span>  
 	  		</h3>
 	  
-	        <p class="description">Represents a Logical Source.</p>
+	        <p class="description">Represents a <a href="#logicalSource">Logical Source</a>.</p>
 	    	<div>
 			    <div> 
 			  		<h4>Definition</h4> 
@@ -165,7 +165,7 @@
 	        	In this phase, there is a limited list of supported languages (
 	        	<span rel="owl:oneOf" href="http://www.w3.org/ns/r2rml#SQL2008">SQL2008</span>, 
 	        	<span rel="owl:oneOf"href="http://mmlab.be/ql#XQuery">XQuery</span> and 
-	        	<span rel="owl:oneOf" href="http://mmlab.be/ql#JSONPath">JSONPath</span>). RML cab be extended to support other languages, too.
+	        	<span rel="owl:oneOf" href="http://mmlab.be/ql#JSONPath">JSONPath</span>). RML can be extended with other languages, by adding another element to the list of the supported languages. 
 	        </p>
 
 	    	<div>
@@ -196,7 +196,7 @@
 	<div class="details classes">
 		<div class="term" about="http://mmlab/ns/rml#RMLView">
 			<h3> 
-				<a id="R2RMLView"></a>
+				<a id="RMLView"></a>
 				<span>RML View</span>
 				<span rel="rdf:type" href="http://www.w3.org/2002/07/owl#Class">(OWL Class)</span> 
 	  		</h3>
@@ -331,8 +331,8 @@
 	          		<tr>
 	      				<td>The domain of this property is</td>
 	      				<td>
-	      					<span rel="rdfs:domain" href="http://www.w3.org/ns/r2rml#TriplesMap">          
-	      						<a href="#TermMap">Term Map</a>   
+	      					<span rel="rdfs:domain" href="http://www.w3.org/ns/r2rml#LogicalSource">          
+	      						<a href="#LogicalSource">Logical Source</a>   
 	      					</span>
 	      				</td>
 	      			</tr>
@@ -358,7 +358,7 @@
 				<span rel="rdf:type" href="http://www.w3.org/2002/07/owl#ObjectProperty"></span>
 				<span class="menu"></span>   
 			</h3>
-			<p class="description">A valid expression that refers to the values from the source file. The reference should confront to the syntax rules of the logicalSource’s type.</p>
+			<p class="description">A valid expression that refers to the values from the source file. The reference should conform to the syntax rules of the query language defined at the logical Source.</p>
 
 			<div> 
 	  			<h4>Definition</h4> 
@@ -427,7 +427,7 @@
 	<!-- version -->
 
     <div class="details properties">
-		<div class="term" id="" about="http://mmlab/ns/rml#version">
+		<div class="term" id="#version" about="http://mmlab/ns/rml#version">
 			<h3> 
 				<a id="termType"></a>
 				<span>version</span> (Property)
@@ -594,7 +594,7 @@
 				<div> 
 		  			<h4>Extension</h4> 
 					<p>
-						The <a href="http://www.w3.org/ns/r2rml#TriplesMap">triples map</a> is extended to any resource of a logical source.
+						The <a href="http://www.w3.org/ns/r2rml#TriplesMap">triples map</a> is extended to support any resource of a logical source (e.g. a CSv record, an XML element or a JSON object).
 					</p>
 				</div>
 	    	</div>

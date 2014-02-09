@@ -1,6 +1,6 @@
 @prefix rr: <http://www.w3.org/ns/r2rml#>.
-@prefix  rml: <http://mmlab.be/rml#> .
-@prefix ql: <http://mmlab.be/ql#> .
+@prefix  rml: <http://semweb.mmlab.be/ns/rml#> .
+@prefix ql: <http://semweb.mmlab.be/ns/ql#> .
 @prefix mail: <http://example.com/mail#>.
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
 @prefix ex: <http://www.example.com/> .
@@ -9,8 +9,8 @@
 <#FromToMaps>
 rml:logicalSource [ 
 	rml:sourceName "example.xml";
-	rml:query "/notes/note";
-	rml:queryLanguage ql:XPath;
+        rml:queryLanguage ql:XPath;
+	rml:iterator "/notes/note";
 ];
 rr:subjectMap [
         rr:template "http://www.example.com/note/{@id}"; 
@@ -27,28 +27,28 @@ rr:subjectMap [
         
     rr:predicateObjectMap [
         rr:predicate mail:from;
-        rr:objectMap [ rml:selector "from" ];
+        rr:objectMap [ rml:reference "from" ];
     ];
         
         rr:predicateObjectMap [
         rr:predicate mail:to;
-        rr:objectMap [ rml:selector "to" ];
+        rr:objectMap [ rml:reference "to" ];
     ];
         
         rr:predicateObjectMap [
         rr:predicate mail:heading;
-        rr:objectMap [ rml:selector "heading" ];
+        rr:objectMap [ rml:reference "heading" ];
     ];
         
     rr:predicateObjectMap [
         rr:predicate mail:body;
-        rr:objectMap [ rml:selector "body" ];
+        rr:objectMap [ rml:reference "body" ];
     ].
         
 <#DateTime>
     rml:logicalSource [ 
 	rml:sourceName "example.xml";
-	rml:query "/notes/note";
+	rml:iterator "/notes/note";
 	rml:queryLanguage ql:XPath;
 	];
 	rr:subjectMap [
@@ -58,21 +58,19 @@ rr:subjectMap [
         rr:predicateObjectMap [
 		rr:predicate ex:day;
 		rr:objectMap [
-			rml:selector "@day";
+			rml:reference "@day";
 			rr:datatype xsd:gDay
 		]
 	],[
                 rr:predicate ex:month;
                 rr:objectMap [
-			rml:selector "@month";
+			rml:reference "@month";
 			rr:datatype xsd:gMonth
 		]
 	],[
                 rr:predicate ex:year;        
                 rr:objectMap [
-			rml:selector "@year";
+			rml:reference "@year";
 			rr:datatype xsd:gYear
 		]
 	].
-
-

@@ -12,7 +12,7 @@ public interface LogicalSource {
      * Every logical source has an expression resulting in a list of iterating
      * values.
      */
-    public String getSelector();
+    public String getReference();
 
     /**
      * Every logical source has an identifier, which is a schema-qualified name
