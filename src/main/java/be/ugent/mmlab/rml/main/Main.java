@@ -38,9 +38,10 @@ public class Main {
                     RMLMapping mapping = RMLMappingFactory.extractRMLMapping(args[1]);
                     RMLEngine engine = new RMLEngine();
 
-                    SesameDataSet output = engine.runRMLMapping(mapping, graphName);
+                   engine.runRMLMapping(mapping, graphName, args[2], true);
+                    //SesameDataSet output = engine.runRMLMapping(mapping, graphName);
 
-                    output.dumpRDF(args[2], RDFFormat.TURTLE);
+                    //output.dumpRDF(args[2], RDFFormat.TURTLE);
 
                     break;
                 default:

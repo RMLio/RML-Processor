@@ -3,6 +3,7 @@ package be.ugent.mmlab.rml.core;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.RMLProcessor;
 import java.util.HashMap;
+import java.util.List;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -53,6 +54,7 @@ public class ConditionalJoinRMLPerformer extends NodeRMLPerformer{
         }        
         log.debug("[ConditionalJoinRMLPerformer:object] " + "Object " + object.toString());
         
+        
         //iterate the conditions, execute the expressions and compare both values
         if(conditions != null){
             for (String expr : conditions.keySet()) {
@@ -60,11 +62,11 @@ public class ConditionalJoinRMLPerformer extends NodeRMLPerformer{
                 
                 log.debug("[ConditionalJoinRMLPerformer:condition] " + "Condition " + cond);
 
-                String[] values = processor.extractValueFromNode(node, expr);
+                List<String> values = processor.extractValueFromNode(node, expr);
                 
                 //MVS: Only allow one value with joins?
                 //if a value doesn't match, stop right here
-                if (cond == null || values.length == 0 || !cond.equals(values[0])) {
+                if (cond == null || values.isEmpty() || !cond.equals(values.get(0)) ){
                     return;
                 }
             }

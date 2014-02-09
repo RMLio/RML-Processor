@@ -115,7 +115,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
             case REFERENCE_VALUED:
                 //Get the expression and extract the value
                 ReferenceIdentifierImpl identifier = (ReferenceIdentifierImpl) map.getReferenceValue();
-                return Arrays.asList(extractValueFromNode(node, identifier.toString()));
+                return extractValueFromNode(node, identifier.toString());
             case CONSTANT_VALUED:
                 //Extract the value directly from the mapping
                 value.add(map.getConstantValue().stringValue());
@@ -128,14 +128,14 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
 
 
                 for (String expression : tokens) {
-                    String[] replacements = extractValueFromNode(node, expression);
+                    List<String> replacements = extractValueFromNode(node, expression);
 
-                    for (int i = 0; i < replacements.length; i++) {
+                    for (int i = 0; i < replacements.size(); i++) {
                         if (value.size() < (i + 1)) {
                             value.add(template);
                         }
 
-                        String replacement = replacements[i];
+                        String replacement = replacements.get(i);
 
                         //if (replacement == null || replacement.isEmpty()) {
                         if (replacement == null) {
@@ -221,10 +221,10 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                         HashMap<String, String> joinMap = new HashMap<String, String>();
 
                         for (JoinCondition joinCondition : joinConditions) {
-                            String[] childValues = extractValueFromNode(node, joinCondition.getChild());
+                            List<String> childValues = extractValueFromNode(node, joinCondition.getChild());
 
                             //MVS: Allow multiple values?
-                            String childValue = childValues[0];
+                            String childValue = childValues.get(0);
 
                             log.debug("[AbstractRMLProcessorProcessor:processPredicateObjectMap]. joinCondition child: " + joinCondition.getChild());
                             log.debug("[AbstractRMLProcessorProcessor:processPredicateObjectMap]. joinCondition parent: " + joinCondition.getParent());
@@ -269,6 +269,10 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
 
         List<URI> uris = new ArrayList<URI>();
         for (String value : values) {
+            
+            if (value.contains("asGML")) 
+                System.out.println("here!");;
+            
             uris.add(new URIImpl(value));
         }
         //return the uri
@@ -290,6 +294,9 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
         for (String value : values) {
             log.debug("[AbstractRMLProcessor:literal] value " + value);
             switch (objectMap.getTermType()) {
+                case IRI:
+                    valueList.add(new URIImpl(value));
+                    break;
                 case BLANK_NODE:
                     valueList.add(new BNodeImpl(value));
                     break;

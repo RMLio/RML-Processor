@@ -6,6 +6,7 @@ import be.ugent.mmlab.rml.model.PredicateObjectMap;
 import be.ugent.mmlab.rml.model.SubjectMap;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import java.util.HashMap;
+import java.util.List;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
 import org.openrdf.model.Resource;
 
@@ -30,7 +31,7 @@ public interface RMLProcessor {
      * @param expression reference to value
      * @return extracted value
      */
-    public String[] extractValueFromNode(Object node, String expression);
+    public List<String> extractValueFromNode(Object node, String expression);
     /**
      * process a subject map
      * @param dataset

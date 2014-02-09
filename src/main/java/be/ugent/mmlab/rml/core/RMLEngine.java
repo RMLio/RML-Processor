@@ -5,14 +5,19 @@ import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.ConcreteRMLProcessorFactory;
 import be.ugent.mmlab.rml.processor.RMLProcessor;
 import be.ugent.mmlab.rml.processor.RMLProcessorFactory;
+import be.ugent.mmlab.rml.dataset.FileSesameDataset;
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
 import net.antidot.semantic.rdf.rdb2rdf.r2rml.core.R2RMLEngine;
 import net.antidot.semantic.rdf.rdb2rdf.r2rml.exception.R2RMLDataError;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openrdf.repository.RepositoryException;
 
 /**
  * Engine that will perform the mapping starting from the TermMaps
@@ -46,7 +51,7 @@ public class RMLEngine {
     public SesameDataSet runRMLMapping(RMLMapping rmlMapping,
             String baseIRI) throws SQLException,
             R2RMLDataError, UnsupportedEncodingException {
-        return runRMLMapping(rmlMapping, baseIRI, null);
+        return runRMLMapping(rmlMapping, baseIRI, null, false);
     }
 
     /**
@@ -60,7 +65,7 @@ public class RMLEngine {
      * @throws UnsupportedEncodingException 
      */
     public SesameDataSet runRMLMapping(RMLMapping rmlMapping,
-            String baseIRI, String pathToNativeStore) throws SQLException,
+            String baseIRI, String pathToNativeStore, boolean filebased) throws SQLException,
             R2RMLDataError, UnsupportedEncodingException {
         log.debug("[R2RMLEngine:runR2RMLMapping] Run R2RML mapping... ");
         if (rmlMapping == null) {
@@ -75,8 +80,13 @@ public class RMLEngine {
         SesameDataSet sesameDataSet = null;
         // Update baseIRI
         this.baseIRI = baseIRI;
-        // Check if use of native store is required
-        if (pathToNativeStore != null) {
+        
+        //MVS: Check if output goes directly to file
+        if (filebased) {
+            log.debug("[R2RMLEngine:runR2RMLMapping] Use direct file "
+                    + pathToNativeStore);
+            sesameDataSet = new FileSesameDataset(pathToNativeStore);
+        } else if (pathToNativeStore != null) { // Check if use of native store is required
             log.debug("[R2RMLEngine:runR2RMLMapping] Use native store "
                     + pathToNativeStore);
             sesameDataSet = new SesameDataSet(pathToNativeStore, false);
@@ -91,6 +101,11 @@ public class RMLEngine {
         log.debug("[R2RMLEngine:runR2RMLMapping] R2RML mapping done. ");
         return sesameDataSet;
     }
+    
+    
+    
+    
+    
     /**
      * This process adds RDF triples to the output dataset. Each generated
      * triple is placed into one or more graphs of the output dataset. The
@@ -106,7 +121,7 @@ public class RMLEngine {
             RMLMapping r2rmlMapping) throws SQLException, R2RMLDataError,
             UnsupportedEncodingException {
         
-        log.debug("[R2RMLEngine:generateRDFTriples] Generate RDF triples... ");
+        log.debug("[RMLEngine:generateRDFTriples] Generate RDF triples... ");
         int delta = 0;
         
         RMLProcessorFactory factory = new ConcreteRMLProcessorFactory();
@@ -123,10 +138,15 @@ public class RMLEngine {
             //if(triplesMap.getName().equals(myname2))
             processor.execute(sesameDataSet, triplesMap, new NodeRMLPerformer(processor));
 
-            log.info("[R2RMLEngine:generateRDFTriples] "
+            log.info("[RMLEngine:generateRDFTriples] "
                     + (sesameDataSet.getSize() - delta)
                     + " triples generated for " + triplesMap.getName());
             delta = sesameDataSet.getSize();
         }
+//        try {
+//            sesameDataSet.closeRepository();
+//        } catch (RepositoryException ex) {
+//            log.error("[RMLEngine:generateRDFTriples] Cannot close output repository", ex);
+//        }
     }
 }
