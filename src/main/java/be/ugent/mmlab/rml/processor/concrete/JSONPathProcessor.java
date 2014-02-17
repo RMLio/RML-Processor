@@ -4,7 +4,6 @@
  */
 package be.ugent.mmlab.rml.processor.concrete;
 
-import be.ugent.mmlab.rml.core.ConditionalJoinRMLPerformer;
 import be.ugent.mmlab.rml.core.RMLMappingFactory;
 import be.ugent.mmlab.rml.core.RMLPerformer;
 import be.ugent.mmlab.rml.model.TriplesMap;
@@ -16,9 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
@@ -35,6 +32,7 @@ public class JSONPathProcessor extends AbstractRMLProcessor {
 
     private static Log log = LogFactory.getLog(RMLMappingFactory.class);
 
+    @Override
     public void execute(SesameDataSet dataset, TriplesMap map, RMLPerformer performer) {
         InputStream fis = null;
         try {

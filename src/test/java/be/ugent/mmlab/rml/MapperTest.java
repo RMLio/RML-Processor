@@ -1,4 +1,4 @@
-package be.ugent.mmlab.rmlmapper;
+package be.ugent.mmlab.rml;
 
 import be.ugent.mmlab.rml.core.RMLEngine;
 import be.ugent.mmlab.rml.core.RMLMappingFactory;
@@ -9,7 +9,6 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import static junit.framework.Assert.assertTrue;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -38,10 +37,8 @@ public class MapperTest
         RMLEngine.getFileMap().put("example.xml", getClass().getResource("/example1/example.xml").getFile());
         RMLEngine.getFileMap().put("Airport.csv", getClass().getResource("/example3/Airport.csv").getFile());
         RMLEngine.getFileMap().put("Venue.json", getClass().getResource("/example3/Venue.json").getFile());
-        RMLEngine.getFileMap().put("Venue4.json", getClass().getResource("/example4/Venue.json").getFile());
         RMLEngine.getFileMap().put("Transport.xml", getClass().getResource("/example3/Transport.xml").getFile());
-        RMLEngine.getFileMap().put("museum.json", getClass().getResource("/examplePaper2/museum.json").getFile());
-
+        RMLEngine.getFileMap().put("Venue4.json", getClass().getResource("/example4/Venue.json").getFile());
         RMLEngine.getFileMap().put("moon-walkers.csv", getClass().getResource("/example5/moon-walkers.csv").getFile());
     }
 

@@ -6,12 +6,10 @@ import be.ugent.mmlab.rml.model.RMLMapping;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.SQLException;
-import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
 import net.antidot.semantic.rdf.rdb2rdf.r2rml.exception.InvalidR2RMLStructureException;
 import net.antidot.semantic.rdf.rdb2rdf.r2rml.exception.InvalidR2RMLSyntaxException;
 import net.antidot.semantic.rdf.rdb2rdf.r2rml.exception.R2RMLDataError;
 import org.openrdf.repository.RepositoryException;
-import org.openrdf.rio.RDFFormat;
 import org.openrdf.rio.RDFParseException;
 
 /**
@@ -38,7 +36,7 @@ public class Main {
                     RMLMapping mapping = RMLMappingFactory.extractRMLMapping(args[1]);
                     RMLEngine engine = new RMLEngine();
 
-                   engine.runRMLMapping(mapping, graphName, args[2], true);
+                    engine.runRMLMapping(mapping, graphName, args[2], true);
                     //SesameDataSet output = engine.runRMLMapping(mapping, graphName);
 
                     //output.dumpRDF(args[2], RDFFormat.TURTLE);

@@ -1,23 +1,19 @@
 package be.ugent.mmlab.rml.core;
 
+import be.ugent.mmlab.rml.dataset.FileSesameDataset;
 import be.ugent.mmlab.rml.model.RMLMapping;
 import be.ugent.mmlab.rml.model.TriplesMap;
-import be.ugent.mmlab.rml.processor.ConcreteRMLProcessorFactory;
 import be.ugent.mmlab.rml.processor.RMLProcessor;
 import be.ugent.mmlab.rml.processor.RMLProcessorFactory;
-import be.ugent.mmlab.rml.dataset.FileSesameDataset;
-import java.io.File;
+import be.ugent.mmlab.rml.processor.concrete.ConcreteRMLProcessorFactory;
 import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
 import net.antidot.semantic.rdf.rdb2rdf.r2rml.core.R2RMLEngine;
 import net.antidot.semantic.rdf.rdb2rdf.r2rml.exception.R2RMLDataError;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openrdf.repository.RepositoryException;
 
 /**
  * Engine that will perform the mapping starting from the TermMaps
@@ -129,13 +125,7 @@ public class RMLEngine {
         for (TriplesMap triplesMap : r2rmlMapping.getTriplesMaps()) {
             
             RMLProcessor processor = factory.create(triplesMap.getLogicalSource().getQueryLanguage());
-            //log.debug("[R2RMLEngine:name] name " + triplesMap.getName());
-            //String name = triplesMap.getName();
-            //String myname = "file:/home/andimou/Documents/RML/andimou/RMLProcessor3/RMLProcessor/target/test-classes/iMinds/iMinds_Project.rml.ttl#ProjectPartnerMapping";
-            //log.debug("[R2RMLEngine:name] name " + name);
-            //String myname2 = "file:/home/andimou/Documents/RML/andimou/RMLProcessor3/RMLProcessor/target/test-classes/iMinds/iMinds_Project.rml.ttl#ProjectMapping";
-            //triplesMap.getName().equals(myname) || 
-            //if(triplesMap.getName().equals(myname2))
+
             processor.execute(sesameDataSet, triplesMap, new NodeRMLPerformer(processor));
 
             log.info("[RMLEngine:generateRDFTriples] "

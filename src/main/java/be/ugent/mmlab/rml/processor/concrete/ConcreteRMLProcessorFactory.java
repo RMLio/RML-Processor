@@ -1,8 +1,7 @@
-package be.ugent.mmlab.rml.processor;
+package be.ugent.mmlab.rml.processor.concrete;
 
-import be.ugent.mmlab.rml.processor.concrete.CSVProcessor;
-import be.ugent.mmlab.rml.processor.concrete.JSONPathProcessor;
-import be.ugent.mmlab.rml.processor.concrete.XPathProcessor;
+import be.ugent.mmlab.rml.processor.RMLProcessor;
+import be.ugent.mmlab.rml.processor.RMLProcessorFactory;
 import be.ugent.mmlab.rml.vocabulary.Vocab.QLTerm;
 
 /**
@@ -17,6 +16,7 @@ public class ConcreteRMLProcessorFactory implements RMLProcessorFactory{
      * @param term Expression language
      * @return processor able to process the specified language
      */
+    @Override
     public RMLProcessor create(QLTerm term) {
         switch (term){
             case XPATH_CLASS:

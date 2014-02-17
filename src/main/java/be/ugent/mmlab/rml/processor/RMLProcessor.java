@@ -1,11 +1,9 @@
 package be.ugent.mmlab.rml.processor;
 
-import be.ugent.mmlab.rml.core.ConditionalJoinRMLPerformer;
 import be.ugent.mmlab.rml.core.RMLPerformer;
 import be.ugent.mmlab.rml.model.PredicateObjectMap;
 import be.ugent.mmlab.rml.model.SubjectMap;
 import be.ugent.mmlab.rml.model.TriplesMap;
-import java.util.HashMap;
 import java.util.List;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
 import org.openrdf.model.Resource;
@@ -48,6 +46,4 @@ public interface RMLProcessor {
      * @param node 
      */
     public void processPredicateObjectMap(SesameDataSet dataset, Resource subject, PredicateObjectMap pom, Object node);
-
-    //public void executeRefObjMap(SesameDataSet dataset, TriplesMap parentTriplesMap, ConditionalJoinRMLPerformer joinRMLPerformer, HashMap<String, String> joinMap);
 }

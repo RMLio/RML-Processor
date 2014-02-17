@@ -5,7 +5,6 @@
 package be.ugent.mmlab.rml.tools;
 
 import net.antidot.semantic.rdf.model.tools.RDFDataValidator;
-import net.antidot.semantic.xmls.xsd.XSDType;
 
 /**
  *
