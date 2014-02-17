@@ -40,6 +40,7 @@ public class MapperTest
         RMLEngine.getFileMap().put("Transport.xml", getClass().getResource("/example3/Transport.xml").getFile());
         RMLEngine.getFileMap().put("Venue4.json", getClass().getResource("/example4/Venue.json").getFile());
         RMLEngine.getFileMap().put("moon-walkers.csv", getClass().getResource("/example5/moon-walkers.csv").getFile());
+        RMLEngine.getFileMap().put("museum.json", getClass().getResource("/example5/museum.json").getFile());
     }
 
     /**
