@@ -63,14 +63,16 @@ public class RMLEngine {
     public SesameDataSet runRMLMapping(RMLMapping rmlMapping,
             String baseIRI, String pathToNativeStore, boolean filebased) throws SQLException,
             R2RMLDataError, UnsupportedEncodingException {
-        log.debug("[R2RMLEngine:runR2RMLMapping] Run R2RML mapping... ");
+        long startTime = System.nanoTime();
+        
+        log.debug("[RMLEngine:runRMLMapping] Run RML mapping... ");
         if (rmlMapping == null) {
             throw new IllegalArgumentException(
-                    "[R2RMLEngine:runR2RMLMapping] No R2RML Mapping object found.");
+                    "[RMLEngine:runRMLMapping] No RML Mapping object found.");
         }
         if (baseIRI == null) {
             throw new IllegalArgumentException(
-                    "[R2RMLEngine:runR2RMLMapping] No base IRI found.");
+                    "[RMLEngine:runRMLMapping] No base IRI found.");
         }
 
         SesameDataSet sesameDataSet = null;
@@ -79,11 +81,11 @@ public class RMLEngine {
         
         //MVS: Check if output goes directly to file
         if (filebased) {
-            log.debug("[R2RMLEngine:runR2RMLMapping] Use direct file "
+            log.debug("[RMLEngine:runRMLMapping] Use direct file "
                     + pathToNativeStore);
             sesameDataSet = new FileSesameDataset(pathToNativeStore);
         } else if (pathToNativeStore != null) { // Check if use of native store is required
-            log.debug("[R2RMLEngine:runR2RMLMapping] Use native store "
+            log.debug("[RMLEngine:runRMLMapping] Use native store "
                     + pathToNativeStore);
             sesameDataSet = new SesameDataSet(pathToNativeStore, false);
         } else {
@@ -93,8 +95,10 @@ public class RMLEngine {
         // Explore RML Mapping TriplesMap objects  
         generateRDFTriples(sesameDataSet, rmlMapping);
 
-
-        log.debug("[R2RMLEngine:runR2RMLMapping] R2RML mapping done. ");
+        long endTime = System.nanoTime();
+        long duration = endTime - startTime;
+        
+        log.debug("[RMLEngine:runRMLMapping] RML mapping done in " + duration +"ns . ");
         return sesameDataSet;
     }
     
