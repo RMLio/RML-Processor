@@ -27,3 +27,7 @@ An example `<sources_properties>` file `sources.properties` could contain:
     file1=/path/to/file1.csv
     file2=/path/to/file2.json
     file3=/path/to/file3.xml
+
+
+This application is developed by Multimedia Lab http://www.mmlab.be
+Copyright 2014, Multimedia Lab - Ghent University - iMinds
