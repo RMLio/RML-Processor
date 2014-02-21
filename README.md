@@ -1,7 +1,7 @@
 RMLProcessor
 ============
 
-Streaming processor for RML (R2RML extension) in Java
+Processor for RML (R2RML extension) in Java based on [DB2Triples](https://github.com/antidot/db2triples/)
 
 Class diagram
 -------------
