@@ -98,7 +98,7 @@ public class RMLEngine {
         long endTime = System.nanoTime();
         long duration = endTime - startTime;
         
-        log.debug("[RMLEngine:runRMLMapping] RML mapping done in " + ((double) duration)/1000000000 +"s . ");
+        log.debug("[RMLEngine:runRMLMapping] RML mapping done! Generated " + sesameDataSet.getSize() +" in " + ((double) duration)/1000000000 +"s . ");
         return sesameDataSet;
     }
     

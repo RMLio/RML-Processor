@@ -225,7 +225,6 @@ public class FileSesameDataset extends SesameDataSet {
     public void addURI(String urlstring, RDFFormat format) {
         InputStream instream = null;
 
-
         try {
             URL url = new URL(urlstring);
             URLConnection uricon = (URLConnection) url.openConnection();

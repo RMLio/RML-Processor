@@ -269,10 +269,6 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
 
         List<URI> uris = new ArrayList<URI>();
         for (String value : values) {
-            
-            if (value.contains("asGML")) 
-                System.out.println("here!");;
-            
             uris.add(new URIImpl(value));
         }
         //return the uri
