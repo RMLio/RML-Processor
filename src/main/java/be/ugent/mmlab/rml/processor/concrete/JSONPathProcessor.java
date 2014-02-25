@@ -42,7 +42,6 @@ public class JSONPathProcessor extends AbstractRMLProcessor {
             JsonPath path = JsonPath.compile(reference);
 
             fis = new FileInputStream(identifier);
-
             Object val = path.read(fis);
 
             if (val instanceof JSONObject) {
