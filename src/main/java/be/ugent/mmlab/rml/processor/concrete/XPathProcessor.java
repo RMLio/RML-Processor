@@ -41,13 +41,10 @@ public class XPathProcessor extends AbstractRMLProcessor {
     private XPathContext nsContext = new XPathContext();
 
     @Override
-    public void execute(final SesameDataSet dataset, final TriplesMap map, final RMLPerformer performer) {
+    public void execute(final SesameDataSet dataset, final TriplesMap map, final RMLPerformer performer, String fileName) {
         try {
             System.out.println("XPath Processor execute " );
             String reference = getReference(map.getLogicalSource());
-            //String fileName = getIdentifier(map.getLogicalSource());
-            //String fileName = map.getLogicalSource().getIdentifier().toString();
-            String fileName = getClass().getResource(map.getLogicalSource().getIdentifier()).getFile();
             System.out.println("XPath Processor filename " + fileName);
             //Inititalize the XMLDog for processing XPath
             // an implementation of javax.xml.namespace.NamespaceContext
