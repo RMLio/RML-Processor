@@ -8,14 +8,14 @@
 
 <#FromToMaps>
 rml:logicalSource [ 
-	rml:sourceName "example.xml";
+	rml:sourceName "/example6/example6.xml";
         rml:queryLanguage ql:XPath;
 	rml:iterator "/notes/note";
 ];
 rr:subjectMap [
         rr:template "http://www.example.com/note/{@id}"; 
         rr:class mail:note;
-        rr:graphMap [ rr:constant "http://www.example.com/testgraph" ];
+        # rr:graphMap [ rr:constant "http://www.example.com/testgraph" ];
             ];
 	rr:predicateObjectMap [
                      rr:predicate mail:when;
@@ -48,7 +48,7 @@ rr:subjectMap [
         
 <#DateTime>
     rml:logicalSource [ 
-	rml:sourceName "example.xml";
+	rml:sourceName "/example6/example6.xml";
 	rml:iterator "/notes/note";
 	rml:queryLanguage ql:XPath;
 	];

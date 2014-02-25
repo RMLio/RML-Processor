@@ -8,7 +8,7 @@
 
 <#ProductionMapping>
   rml:logicalSource [
-    rml:sourceName "museum.json";
+    rml:sourceName "/example5/museum.json";
     rml:queryLanguage ql:JSONPath;
     rml:iterator "$.[*]";
   ];
@@ -52,7 +52,7 @@
 
 <#ArtworkMapping>
   rml:logicalSource [
-    rml:sourceName "museum.json";
+    rml:sourceName "/example5/museum.json";
     rml:queryLanguage ql:JSONPath;
     rml:iterator "$.[*]";
   ];
@@ -94,7 +94,7 @@
  
 <#ArtistMapping>
   rml:logicalSource [
-    rml:sourceName "museum.json";
+    rml:sourceName "/example5/museum.json";
     rml:queryLanguage ql:JSONPath;
     rml:iterator "$";
   ];
@@ -128,7 +128,7 @@
 
 <#SitterMapping>
   rml:logicalSource [
-    rml:sourceName "museum.json";
+    rml:sourceName "/example5/museum.json";
     rml:queryLanguage ql:JSONPath;
     rml:iterator "$";
   ];
@@ -148,7 +148,7 @@
 
 <#WikipediaExportMapping>
   rml:logicalSource [
-    rml:sourceName "moon-walkers.csv";
+    rml:sourceName "/example5/moon-walkers.csv";
     rml:queryLanguage ql:CSV;
   ];
   rr:subjectMap [

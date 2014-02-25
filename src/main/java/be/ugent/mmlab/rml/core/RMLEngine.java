@@ -91,7 +91,7 @@ public class RMLEngine {
         } else {
             sesameDataSet = new SesameDataSet();
         }
-
+        
         // Explore RML Mapping TriplesMap objects  
         generateRDFTriples(sesameDataSet, rmlMapping);
 
@@ -127,9 +127,11 @@ public class RMLEngine {
         RMLProcessorFactory factory = new ConcreteRMLProcessorFactory();
         
         for (TriplesMap triplesMap : r2rmlMapping.getTriplesMaps()) {
-            
+            System.out.println("XPath Processor triplesMap ");
             RMLProcessor processor = factory.create(triplesMap.getLogicalSource().getQueryLanguage());
-
+            System.out.println("XPath Processor filename " + (triplesMap.getLogicalSource().getIdentifier().toString()));
+            RMLEngine.getFileMap().put(triplesMap.getLogicalSource().getIdentifier(), getClass().getResource(triplesMap.getLogicalSource().getIdentifier()).getFile());
+            System.out.println("[RMLEngine:FileMap] " + RMLEngine.getFileMap());
             processor.execute(sesameDataSet, triplesMap, new NodeRMLPerformer(processor));
 
             log.info("[RMLEngine:generateRDFTriples] "
