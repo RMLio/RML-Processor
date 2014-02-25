@@ -208,6 +208,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                     //Create the processor based on the parent triples map to perform the join
                     RMLProcessorFactory factory = new ConcreteRMLProcessorFactory();
                     QLTerm queryLanguage = parentTriplesMap.getLogicalSource().getQueryLanguage();
+                    String fileName = getClass().getResource(parentTriplesMap.getLogicalSource().getIdentifier()).getFile();
                     RMLProcessor processor = factory.create(queryLanguage);
 
                     RMLPerformer performer;
@@ -237,7 +238,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                         //Create a join performer to make the processor execute joins (Strategy pattern & composition)
                         performer = new ConditionalJoinRMLPerformer(processor, joinMap, subject, predicate);
                     }
-                    processor.execute(dataset, parentTriplesMap, performer);
+                    processor.execute(dataset, parentTriplesMap, performer, fileName);
                 }
 
                 //process the objectmaps

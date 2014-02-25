@@ -132,7 +132,7 @@ public class RMLEngine {
             System.out.println("XPath Processor filename " + (triplesMap.getLogicalSource().getIdentifier().toString()));
             //RMLEngine.getFileMap().put(triplesMap.getLogicalSource().getIdentifier(), getClass().getResource(triplesMap.getLogicalSource().getIdentifier()).getFile());
             System.out.println("[RMLEngine:FileMap] " + RMLEngine.getFileMap());
-            String fileName = getClass().getResource(map.getLogicalSource().getIdentifier()).getFile();
+            String fileName = getClass().getResource(triplesMap.getLogicalSource().getIdentifier()).getFile();
             processor.execute(sesameDataSet, triplesMap, new NodeRMLPerformer(processor), fileName);
 
             log.info("[RMLEngine:generateRDFTriples] "
