@@ -54,6 +54,8 @@ public class FileSesameDataset extends SesameDataSet {
     private RDFWriter writer;
     private RDFFormat format = RDFFormat.NTRIPLES;
     private int bnodeid = 0;
+    
+    private int size = 0;
 
     public FileSesameDataset(String target) {
 
@@ -83,8 +85,6 @@ public class FileSesameDataset extends SesameDataSet {
     public void loadDataFromFile(String filePath, RDFFormat format,
             Resource... contexts) throws RepositoryException,
             RDFParseException, IOException {
-
-
 
         // upload a file
         File f = new File(filePath);
@@ -320,7 +320,8 @@ public class FileSesameDataset extends SesameDataSet {
 
     @Override
     public int getSize() {
-        FileInputStream fis = null;
+        
+        /*FileInputStream fis = null;
         try {
             StatementCounter counter = new StatementCounter();
             fis = new FileInputStream(target);
@@ -341,7 +342,7 @@ public class FileSesameDataset extends SesameDataSet {
             } catch (IOException ex) {
                 log.error(ex);
             }
-        }
+        }*/
         return 0;
     }
     
@@ -404,9 +405,13 @@ public class FileSesameDataset extends SesameDataSet {
     public void closeRepository() throws RepositoryException {
         log.debug("[FileSesameDataSet:add] Closing file.");
         try {
+            fw.flush();
             writer.endRDF();
+            fw.close();
         } catch (RDFHandlerException ex) {
             log.error(ex);
+        } catch (IOException ex) {
+            Logger.getLogger(FileSesameDataset.class.getName()).log(Level.SEVERE, null, ex);
         } 
     }
 

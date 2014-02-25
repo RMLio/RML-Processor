@@ -132,9 +132,9 @@ public class RMLEngine {
 
             processor.execute(sesameDataSet, triplesMap, new NodeRMLPerformer(processor));
 
-            log.info("[RMLEngine:generateRDFTriples] "
-                    + (sesameDataSet.getSize() - delta)
-                    + " triples generated for " + triplesMap.getName());
+//            log.info("[RMLEngine:generateRDFTriples] "
+//                    + (sesameDataSet.getSize() - delta)
+//                    + " triples generated for " + triplesMap.getName());
             delta = sesameDataSet.getSize();
         }
 //        try {
