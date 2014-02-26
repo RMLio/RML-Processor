@@ -6,10 +6,13 @@ import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.RMLProcessor;
 import be.ugent.mmlab.rml.processor.RMLProcessorFactory;
 import be.ugent.mmlab.rml.processor.concrete.ConcreteRMLProcessorFactory;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.URL;
 import java.sql.SQLException;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
 import net.antidot.semantic.rdf.rdb2rdf.r2rml.core.R2RMLEngine;
 import net.antidot.semantic.rdf.rdb2rdf.r2rml.exception.R2RMLDataError;
@@ -20,7 +23,7 @@ import org.openrdf.repository.RepositoryException;
 /**
  * Engine that will perform the mapping starting from the TermMaps
  * 
- * @author mielvandersande
+ * @author mielvandersande, andimou
  */
 public class RMLEngine {
 
@@ -80,8 +83,8 @@ public class RMLEngine {
         SesameDataSet sesameDataSet = null;
         // Update baseIRI
         this.baseIRI = baseIRI;
+        log.info("RMLEngine base IRI " + baseIRI);
         
-        //MVS: Check if output goes directly to file
         if (filebased) {
             log.debug("[RMLEngine:runRMLMapping] Use direct file "
                     + pathToNativeStore);
@@ -91,12 +94,14 @@ public class RMLEngine {
                     + pathToNativeStore);
             sesameDataSet = new SesameDataSet(pathToNativeStore, false);
         } else {
+            log.debug("[RMLEngine:runRMLMapping] Use default store (memory) ");
             sesameDataSet = new SesameDataSet();
         }
         
         // Explore RML Mapping TriplesMap objects  
-        generateRDFTriples(sesameDataSet, rmlMapping);
-
+        generateRDFTriples(sesameDataSet, rmlMapping, filebased);
+        log.info("[RMLEngine:generateRDFTriples] All triples were generated ");
+        log.info("Sesame dataset " + sesameDataSet);
         long endTime = System.nanoTime();
         long duration = endTime - startTime;
         
@@ -120,21 +125,32 @@ public class RMLEngine {
      * @throws UnsupportedEncodingException
      */
     private void generateRDFTriples(SesameDataSet sesameDataSet,
-            RMLMapping r2rmlMapping) throws SQLException, R2RMLDataError,
+            RMLMapping r2rmlMapping, boolean filebased) throws SQLException, R2RMLDataError,
             UnsupportedEncodingException {
         
         log.debug("[RMLEngine:generateRDFTriples] Generate RDF triples... ");
         int delta = 0;
         
         RMLProcessorFactory factory = new ConcreteRMLProcessorFactory();
-        
+        FileInputStream input;
         for (TriplesMap triplesMap : r2rmlMapping.getTriplesMaps()) {
-            System.out.println("XPath Processor triplesMap ");
             RMLProcessor processor = factory.create(triplesMap.getLogicalSource().getQueryLanguage());
-            URL filePath = getClass().getProtectionDomain().getCodeSource().getLocation();
-            System.out.println("XPath Processor filePath " + filePath);
-            String fileName = getClass().getResource(triplesMap.getLogicalSource().getIdentifier()).getFile();
-            System.out.println("XPath Processor filename " + fileName);
+            //URL filePath = getClass().getProtectionDomain().getCodeSource().getLocation();
+            //System.out.println("XPath Processor filePath " + filePath);
+            String fileName;
+            if(filebased)
+                fileName = triplesMap.getLogicalSource().getIdentifier();
+            else
+                fileName = getClass().getResource(triplesMap.getLogicalSource().getIdentifier()).getFile();
+
+            try {
+                getFileMap().put(fileName, fileName);
+                input = new FileInputStream(fileName);
+                getFileMap().load(input);
+           } catch (IOException ex) {
+                Logger.getLogger(RMLEngine.class.getName()).log(Level.SEVERE, null, ex);
+           }
+
             processor.execute(sesameDataSet, triplesMap, new NodeRMLPerformer(processor), fileName);
 
             log.info("[RMLEngine:generateRDFTriples] "
@@ -142,10 +158,11 @@ public class RMLEngine {
                     + " triples generated for " + triplesMap.getName());
             delta = sesameDataSet.getSize();
         }
-        try {
-            sesameDataSet.closeRepository();
-        } catch (RepositoryException ex) {
-            log.error("[RMLEngine:generateRDFTriples] Cannot close output repository", ex);
-        }
+        if(filebased)
+            try {
+                sesameDataSet.closeRepository();
+            } catch (RepositoryException ex) {
+                log.error("[RMLEngine:generateRDFTriples] Cannot close output repository", ex);
+            }
     }
 }
