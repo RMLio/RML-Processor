@@ -7,7 +7,6 @@ import be.ugent.mmlab.rml.processor.AbstractRMLProcessor;
 import be.ugent.mmlab.rml.xml.XOMBuilder;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -43,9 +42,7 @@ public class XPathProcessor extends AbstractRMLProcessor {
     @Override
     public void execute(final SesameDataSet dataset, final TriplesMap map, final RMLPerformer performer, String fileName) {
         try {
-            System.out.println("XPath Processor execute " );
             String reference = getReference(map.getLogicalSource());
-            System.out.println("XPath Processor filename " + fileName);
             //Inititalize the XMLDog for processing XPath
             // an implementation of javax.xml.namespace.NamespaceContext
             DefaultNamespaceContext dnc = new DefaultNamespaceContext();

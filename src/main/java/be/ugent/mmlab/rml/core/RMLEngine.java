@@ -7,6 +7,7 @@ import be.ugent.mmlab.rml.processor.RMLProcessor;
 import be.ugent.mmlab.rml.processor.RMLProcessorFactory;
 import be.ugent.mmlab.rml.processor.concrete.ConcreteRMLProcessorFactory;
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.sql.SQLException;
 import java.util.Properties;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
@@ -129,10 +130,10 @@ public class RMLEngine {
         for (TriplesMap triplesMap : r2rmlMapping.getTriplesMaps()) {
             System.out.println("XPath Processor triplesMap ");
             RMLProcessor processor = factory.create(triplesMap.getLogicalSource().getQueryLanguage());
-            System.out.println("XPath Processor filename " + (triplesMap.getLogicalSource().getIdentifier().toString()));
-            //RMLEngine.getFileMap().put(triplesMap.getLogicalSource().getIdentifier(), getClass().getResource(triplesMap.getLogicalSource().getIdentifier()).getFile());
-            System.out.println("[RMLEngine:FileMap] " + RMLEngine.getFileMap());
+            URL filePath = getClass().getProtectionDomain().getCodeSource().getLocation();
+            System.out.println("XPath Processor filePath " + filePath);
             String fileName = getClass().getResource(triplesMap.getLogicalSource().getIdentifier()).getFile();
+            System.out.println("XPath Processor filename " + fileName);
             processor.execute(sesameDataSet, triplesMap, new NodeRMLPerformer(processor), fileName);
 
             log.info("[RMLEngine:generateRDFTriples] "
