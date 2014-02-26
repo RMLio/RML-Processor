@@ -14,6 +14,7 @@ import net.antidot.semantic.rdf.rdb2rdf.r2rml.core.R2RMLEngine;
 import net.antidot.semantic.rdf.rdb2rdf.r2rml.exception.R2RMLDataError;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openrdf.repository.RepositoryException;
 
 /**
  * Engine that will perform the mapping starting from the TermMaps
@@ -132,15 +133,15 @@ public class RMLEngine {
 
             processor.execute(sesameDataSet, triplesMap, new NodeRMLPerformer(processor));
 
-//            log.info("[RMLEngine:generateRDFTriples] "
-//                    + (sesameDataSet.getSize() - delta)
-//                    + " triples generated for " + triplesMap.getName());
+            log.info("[RMLEngine:generateRDFTriples] "
+                    + (sesameDataSet.getSize() - delta)
+                    + " triples generated for " + triplesMap.getName());
             delta = sesameDataSet.getSize();
         }
-//        try {
-//            sesameDataSet.closeRepository();
-//        } catch (RepositoryException ex) {
-//            log.error("[RMLEngine:generateRDFTriples] Cannot close output repository", ex);
-//        }
+        try {
+            sesameDataSet.closeRepository();
+        } catch (RepositoryException ex) {
+            log.error("[RMLEngine:generateRDFTriples] Cannot close output repository", ex);
+        }
     }
 }

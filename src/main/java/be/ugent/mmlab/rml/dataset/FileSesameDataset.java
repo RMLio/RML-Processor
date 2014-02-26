@@ -175,6 +175,7 @@ public class FileSesameDataset extends SesameDataSet {
         Statement st = new StatementImpl(s, p, o);
         try {
             writer.handleStatement(st);
+            size++;
         } catch (RDFHandlerException ex) {
             log.fatal(o);
         }
@@ -343,7 +344,7 @@ public class FileSesameDataset extends SesameDataSet {
                 log.error(ex);
             }
         }*/
-        return 0;
+        return size;
     }
     
     
