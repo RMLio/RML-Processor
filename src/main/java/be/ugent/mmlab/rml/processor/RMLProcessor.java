@@ -22,7 +22,7 @@ public interface RMLProcessor {
      * @param map the triplemap
      * @param performer the performer handling the action done on the triplemap
      */
-    public void execute(SesameDataSet dataset, TriplesMap map, RMLPerformer performer);
+    public void execute(SesameDataSet dataset, TriplesMap map, RMLPerformer performer, String fileName);
     /**
      * Resolve an expression and extract a single string value from a node
      * @param node current object

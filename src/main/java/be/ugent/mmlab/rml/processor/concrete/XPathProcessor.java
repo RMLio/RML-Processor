@@ -5,6 +5,8 @@ import be.ugent.mmlab.rml.core.RMLPerformer;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.AbstractRMLProcessor;
 import be.ugent.mmlab.rml.xml.XOMBuilder;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -38,12 +40,9 @@ public class XPathProcessor extends AbstractRMLProcessor {
     private XPathContext nsContext = new XPathContext();
 
     @Override
-    public void execute(final SesameDataSet dataset, final TriplesMap map, final RMLPerformer performer) {
+    public void execute(final SesameDataSet dataset, final TriplesMap map, final RMLPerformer performer, String fileName) {
         try {
-
             String reference = getReference(map.getLogicalSource());
-            String fileName = getIdentifier(map.getLogicalSource());
-
             //Inititalize the XMLDog for processing XPath
             // an implementation of javax.xml.namespace.NamespaceContext
             DefaultNamespaceContext dnc = new DefaultNamespaceContext();
@@ -93,12 +92,14 @@ public class XPathProcessor extends AbstractRMLProcessor {
                 }
             });
             //Execute the streaming
-            dog.sniff(event, new InputSource(fileName));
+            dog.sniff(event, new InputSource(new FileInputStream(fileName)));
         } catch (SAXPathException ex) {
             Logger.getLogger(XPathProcessor.class.getName()).log(Level.SEVERE, null, ex);
         } catch (XPathException ex) {
             Logger.getLogger(XPathProcessor.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(XPathProcessor.class.getName()).log(Level.SEVERE, null, ex);
+        } 
 
     }
 

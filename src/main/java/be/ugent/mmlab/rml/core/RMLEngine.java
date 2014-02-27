@@ -6,9 +6,13 @@ import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.RMLProcessor;
 import be.ugent.mmlab.rml.processor.RMLProcessorFactory;
 import be.ugent.mmlab.rml.processor.concrete.ConcreteRMLProcessorFactory;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
 import net.antidot.semantic.rdf.rdb2rdf.r2rml.core.R2RMLEngine;
 import net.antidot.semantic.rdf.rdb2rdf.r2rml.exception.R2RMLDataError;
@@ -18,8 +22,8 @@ import org.openrdf.repository.RepositoryException;
 
 /**
  * Engine that will perform the mapping starting from the TermMaps
- *
- * @author mielvandersande
+ * 
+ * @author mielvandersande, andimou
  */
 public class RMLEngine {
 
@@ -81,8 +85,7 @@ public class RMLEngine {
         SesameDataSet sesameDataSet = null;
         // Update baseIRI
         this.baseIRI = baseIRI;
-
-        //MVS: Check if output goes directly to file
+        log.info("RMLEngine base IRI " + baseIRI);
         if (filebased) {
             log.debug("[RMLEngine:runRMLMapping] Use direct file "
                     + pathToNativeStore);
@@ -92,13 +95,17 @@ public class RMLEngine {
                     + pathToNativeStore);
             sesameDataSet = new SesameDataSet(pathToNativeStore, false);
         } else {
+            log.debug("[RMLEngine:runRMLMapping] Use default store (memory) ");
             sesameDataSet = new SesameDataSet();
         }
-
+        
         // Explore RML Mapping TriplesMap objects  
         generateRDFTriples(sesameDataSet, rmlMapping, filebased);
-
-        long endTime = System.nanoTime();
+        
+	log.info("[RMLEngine:generateRDFTriples] All triples were generated ");
+        log.info("Sesame dataset " + sesameDataSet);
+        
+	long endTime = System.nanoTime();
         long duration = endTime - startTime;
 
         log.debug("[RMLEngine:runRMLMapping] RML mapping done! Generated " + sesameDataSet.getSize() + " in " + ((double) duration) / 1000000000 + "s . ");
@@ -126,22 +133,38 @@ public class RMLEngine {
         RMLProcessorFactory factory = new ConcreteRMLProcessorFactory();
 
         for (TriplesMap triplesMap : r2rmlMapping.getTriplesMaps()) {
-
+        
+	FileInputStream input;
+        for (TriplesMap triplesMap : r2rmlMapping.getTriplesMaps()) {
             RMLProcessor processor = factory.create(triplesMap.getLogicalSource().getQueryLanguage());
+            //URL filePath = getClass().getProtectionDomain().getCodeSource().getLocation();
+            //System.out.println("XPath Processor filePath " + filePath);
+            String fileName;
+            if(filebased)
+                fileName = triplesMap.getLogicalSource().getIdentifier();
+            else
+                fileName = getClass().getResource(triplesMap.getLogicalSource().getIdentifier()).getFile();
 
-            processor.execute(sesameDataSet, triplesMap, new NodeRMLPerformer(processor));
+            try {
+                getFileMap().put(fileName, fileName);
+                input = new FileInputStream(fileName);
+                getFileMap().load(input);
+           } catch (IOException ex) {
+                Logger.getLogger(RMLEngine.class.getName()).log(Level.SEVERE, null, ex);
+           }
+
+            processor.execute(sesameDataSet, triplesMap, new NodeRMLPerformer(processor), fileName);
 
             log.info("[RMLEngine:generateRDFTriples] "
                     + (sesameDataSet.getSize() - delta)
                     + " triples generated for " + triplesMap.getName());
             delta = sesameDataSet.getSize();
         }
-        if (filebased) {
+        if(filebased)
             try {
                 sesameDataSet.closeRepository();
             } catch (RepositoryException ex) {
                 log.error("[RMLEngine:generateRDFTriples] Cannot close output repository", ex);
             }
-        }
     }
 }
