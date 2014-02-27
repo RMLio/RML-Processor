@@ -39,10 +39,7 @@ public class CSVProcessor extends AbstractRMLProcessor {
     public void execute(SesameDataSet dataset, TriplesMap map, RMLPerformer performer, String filename) {
         //InputStream fis = null;
         try {
-            String identifier = getIdentifier(map.getLogicalSource());
             char delimiter = getDelimiter(map.getLogicalSource());
-
-            //fis = new FileInputStream(identifier);
 
             //TODO: add character guessing
             //CsvReader reader = new CsvReader(fis, Charset.defaultCharset());

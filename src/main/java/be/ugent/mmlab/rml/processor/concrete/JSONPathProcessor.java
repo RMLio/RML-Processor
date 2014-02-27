@@ -36,13 +36,10 @@ public class JSONPathProcessor extends AbstractRMLProcessor {
     public void execute(SesameDataSet dataset, TriplesMap map, RMLPerformer performer, String fileName) {
         //InputStream fis = null;
         try {
-            String identifier = getIdentifier(map.getLogicalSource());
             String reference = getReference(map.getLogicalSource());
             //This is a none streaming solution. A streaming parser requires own implementation, possibly based on https://code.google.com/p/json-simple/wiki/DecodingExamples
             JsonPath path = JsonPath.compile(reference);
 
-            //fis = new FileInputStream(identifier);
-            //Object val = path.read(fis);
             Object val = path.read(new FileInputStream(fileName));
             if (val instanceof JSONObject) {
                 performer.perform(val, dataset, map);
