@@ -126,7 +126,6 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                 String template = map.getStringTemplate();
                 Set<String> tokens = R2RMLToolkit.extractColumnNamesFromStringTemplate(template);
 
-
                 for (String expression : tokens) {
                     List<String> replacements = extractValueFromNode(node, expression);
 
@@ -289,7 +288,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
 
         List<Value> valueList = new ArrayList<Value>();
         for (String value : values) {
-            log.debug("[AbstractRMLProcessor:literal] value " + value);
+            //log.debug("[AbstractRMLProcessor:literal] value " + value);
             switch (objectMap.getTermType()) {
                 case IRI:
                     valueList.add(new URIImpl(value));
@@ -303,7 +302,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                     } else if (objectMap.getDataType() != null) {
                         valueList.add(new LiteralImpl(value, objectMap.getDataType()));
                     } else if (value != null) {
-                        log.debug("[AbstractRMLProcessor:literal] Literal value " + value);
+                        //log.debug("[AbstractRMLProcessor:literal] Literal value " + value);
                         valueList.add(new LiteralImpl(value));
                     }
                     //No reason to return null, is replaced by empty list.
