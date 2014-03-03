@@ -8,13 +8,22 @@
 
 <#MoonWalkersMapping>
   rml:logicalSource [
-    rml:sourceName "moon-walkers.csv";
+    rml:sourceName "moon-walkers7.csv";
     rml:queryLanguage ql:CSV;
   ];
   rr:subjectMap [
     rr:template "http://ex.com/{Name}";
     rr:class crm:E21_Person ;
   ];
+
+ # rr:predicateObjectMap 
+ # [
+ #   rr:predicate rdfs:label;
+ #   rr:objectMap 
+ #   [
+ #     rml:reference "Name";
+ #   ]
+ # ];
 
   rr:predicateObjectMap 
   [

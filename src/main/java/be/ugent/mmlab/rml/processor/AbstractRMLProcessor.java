@@ -297,11 +297,11 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                     valueList.add(new BNodeImpl(value));
                     break;
                 case LITERAL:
-                    if (objectMap.getLanguageTag() != null) {
+                    if (objectMap.getLanguageTag() != null && value!="") {
                         valueList.add(new LiteralImpl(value, objectMap.getLanguageTag()));
-                    } else if (objectMap.getDataType() != null) {
+                    } else if (objectMap.getDataType() != null && value!="") {
                         valueList.add(new LiteralImpl(value, objectMap.getDataType()));
-                    } else if (value != null) {
+                    } else if (value != null && value!="") {
                         log.debug("[AbstractRMLProcessor:literal] Literal value " + value);
                         valueList.add(new LiteralImpl(value));
                     }
