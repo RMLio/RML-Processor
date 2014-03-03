@@ -94,7 +94,7 @@ public class RMLEngine {
         }
 
         // Explore RML Mapping TriplesMap objects  
-        generateRDFTriples(sesameDataSet, rmlMapping);
+        generateRDFTriples(sesameDataSet, rmlMapping, filebased);
 
         long endTime = System.nanoTime();
         long duration = endTime - startTime;
@@ -119,7 +119,7 @@ public class RMLEngine {
      * @throws UnsupportedEncodingException
      */
     private void generateRDFTriples(SesameDataSet sesameDataSet,
-            RMLMapping r2rmlMapping) throws SQLException, R2RMLDataError,
+            RMLMapping r2rmlMapping, boolean filebased) throws SQLException, R2RMLDataError,
             UnsupportedEncodingException {
         
         log.debug("[RMLEngine:generateRDFTriples] Generate RDF triples... ");
@@ -138,6 +138,7 @@ public class RMLEngine {
                     + " triples generated for " + triplesMap.getName());
             delta = sesameDataSet.getSize();
         }
+        if(filebased)
         try {
             sesameDataSet.closeRepository();
         } catch (RepositoryException ex) {
