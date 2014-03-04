@@ -16,6 +16,7 @@ import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.model.reference.ReferenceIdentifierImpl;
 import be.ugent.mmlab.rml.processor.concrete.ConcreteRMLProcessorFactory;
 import be.ugent.mmlab.rml.vocabulary.Vocab.QLTerm;
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -207,7 +208,13 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                     //Create the processor based on the parent triples map to perform the join
                     RMLProcessorFactory factory = new ConcreteRMLProcessorFactory();
                     QLTerm queryLanguage = parentTriplesMap.getLogicalSource().getQueryLanguage();
-                    String fileName = getClass().getResource(parentTriplesMap.getLogicalSource().getIdentifier()).getFile();
+                    String fileName = null;
+                    File file = new File(parentTriplesMap.getLogicalSource().getIdentifier());
+                    if(!file.exists())
+                        fileName = getClass().getResource(parentTriplesMap.getLogicalSource().getIdentifier()).getFile();
+                    else
+                        fileName = parentTriplesMap.getLogicalSource().getIdentifier();
+                    //log.info("Abstract RMLProcessor fileName " + fileName);
                     RMLProcessor processor = factory.create(queryLanguage);
 
                     RMLPerformer performer;
