@@ -6,6 +6,27 @@
 @prefix ex: <http://example.com/>.
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
 
+
+ <#SitterMapping>
+  rml:logicalSource [
+    rml:sourceName "museum.json";
+    rml:queryLanguage ql:JSONPath;
+    rml:iterator "$.Sitter";
+  ];
+  rr:subjectMap [
+    rr:template "http://ex.com/{Name}";
+    rr:class crm:E21_Person ;
+  ];
+
+  rr:predicateObjectMap 
+  [
+    rr:predicate rdfs:label;
+    rr:objectMap 
+    [
+      rml:reference "Name" 
+    ]
+  ].
+
 <#ProductionMapping>
   rml:logicalSource [
     rml:sourceName "museum.json";
@@ -31,10 +52,6 @@
     rr:predicate crm:P14_carried_out_by;
 	rr:objectMap [ 
             rr:parentTriplesMap <#ArtistMapping> ;
-#            rr:joinCondition [
-#                rr:child "Ref";
-#                rr:parent "Ref";
-#            ];
         ];
     ];
 
@@ -43,12 +60,9 @@
     rr:predicate crm:P108_has_produced;
 	rr:objectMap [
         rr:parentTriplesMap <#ArtworkMapping>;
-#        rr:joinCondition [
-#            rr:child "Ref";
-#            rr:parent "Ref";
-#        ];
     ];
   ].
+
 
 <#ArtworkMapping>
   rml:logicalSource [
@@ -85,13 +99,10 @@
     rr:predicate crm:P62_depicts;
     rr:objectMap [ 
             rr:parentTriplesMap <#SitterMapping> ;
-#            rr:joinCondition [
-#                rr:child "Ref";
-#                rr:parent "Ref";
-#            ];
         ];
   ].
- 
+
+
 <#ArtistMapping>
   rml:logicalSource [
     rml:sourceName "museum.json";
@@ -117,7 +128,7 @@
   [
     rr:predicate crm:P14_carried_out_by;
 	rr:objectMap [ 
-            rr:parentTriplesMap <#WikipediaExportMapping> ;
+            rr:parentTriplesMap <#MoonWalkersMapping> ;
             rr:joinCondition [
                 rr:child "Artist";
                 rr:parent "Name";
@@ -126,27 +137,8 @@
     ].    
 
 
-<#SitterMapping>
-  rml:logicalSource [
-    rml:sourceName "museum.json";
-    rml:queryLanguage ql:JSONPath;
-    rml:iterator "$";
-  ];
-  rr:subjectMap [
-    rr:template "http://ex.com/{Sitter[0].Name}";
-    rr:class crm:E21_Person ;
-  ];
 
-  rr:predicateObjectMap 
-  [
-    rr:predicate rdfs:label;
-    rr:objectMap 
-    [
-      rml:reference "$.Sitter[0].Name" 
-    ]
-  ].
-
-<#WikipediaExportMapping>
+<#MoonWalkersMapping>
   rml:logicalSource [
     rml:sourceName "moon-walkers.csv";
     rml:queryLanguage ql:CSV;
