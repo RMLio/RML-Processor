@@ -671,7 +671,7 @@ public abstract class RMLMappingFactory {
         Set<GraphMap> graphMaps = new HashSet<GraphMap>();
         Set<Value> graphMapValues = extractValuesFromResource(
                 r2rmlMappingGraph, subjectMap, R2RMLTerm.GRAPH_MAP);
-        log.info("[RMLMappingFactory] graphMapValues size " + graphMapValues.size());
+       
         if (graphMapValues != null) {
             graphMaps = extractGraphMapValues(r2rmlMappingGraph, graphMapValues, savedGraphMaps);
             log.info("[RMLMappingFactory] graph Maps returned " + graphMaps);

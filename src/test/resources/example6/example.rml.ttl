@@ -15,15 +15,16 @@ rml:logicalSource [
 rr:subjectMap [
         rr:template "http://www.example.com/note/{@id}"; 
         rr:class mail:note;
-        rr:graphMap [ rr:constant <http://www.example.com/testgraph1> ];
+        #rr:graphMap [ rr:constant <http://www.example.com/testgraph1> ];
 ];
 rr:predicateObjectMap [
-                     rr:predicate mail:when;
-                     rr:objectMap [ 
-			rr:template "{@year}-{@month}-{@day}";
-			rr:datatype xsd:date;
-			rr:termType rr:Literal;
-		];
+        rr:predicate mail:when;
+        rr:objectMap [ 
+            rr:template "{@year}-{@month}-{@day}";
+            rr:datatype xsd:date;
+            rr:termType rr:Literal;
+	];
+        rr:graphMap [ rr:constant <http://www.example.com/testgraph3> ];
     ];
         
     rr:predicateObjectMap [

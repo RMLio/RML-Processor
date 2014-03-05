@@ -4,6 +4,7 @@ import be.ugent.mmlab.rml.core.ConditionalJoinRMLPerformer;
 import be.ugent.mmlab.rml.core.JoinRMLPerformer;
 import be.ugent.mmlab.rml.core.RMLEngine;
 import be.ugent.mmlab.rml.core.RMLPerformer;
+import be.ugent.mmlab.rml.model.GraphMap;
 import be.ugent.mmlab.rml.model.JoinCondition;
 import be.ugent.mmlab.rml.model.LogicalSource;
 import be.ugent.mmlab.rml.model.ObjectMap;
@@ -79,7 +80,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
     public Resource processSubjectMap(SesameDataSet dataset, SubjectMap subjectMap, Object node) {
         //Get the uri
         List<String> values = processTermMap(subjectMap, node);
-
+        log.info("Abstract RML Processor Graph Map" + subjectMap.getGraphMaps().toString());
         if (values.isEmpty()) {
             return null;
         }
@@ -254,7 +255,21 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                     List<Value> objects = processObjectMap(objectMap, node);
                     for (Value object : objects) {
                         if (object != null && !object.toString().isEmpty()) {
-                            dataset.add(subject, predicate, object);
+                            Set<GraphMap> graphs = pom.getGraphMaps();
+                            log.info("[Abstract RML Processor] graphs " + graphs);
+                            
+                            if(graphs.isEmpty())
+                                dataset.add(subject, predicate, object);
+                            else
+                                for (GraphMap graph : graphs) {
+                                log.info("[Abstract RML Processor] graph " + graph);
+                                Resource graphResource = new URIImpl(graph.getConstantValue().toString());
+                                //Value smth = graph.getConstantValue();
+                                log.info("[Abstract RML Processor] value " + graphResource);
+                                log.info("[Abstract RML Processor] triple added " + subject + " " + predicate + " " + object + " " + (Resource) graphResource);
+                                dataset.add(subject, predicate, object, graphResource);
+                                }
+                                
                         }
                     }
                 }
