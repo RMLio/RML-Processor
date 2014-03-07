@@ -4,6 +4,7 @@ import be.ugent.mmlab.rml.core.ConditionalJoinRMLPerformer;
 import be.ugent.mmlab.rml.core.JoinRMLPerformer;
 import be.ugent.mmlab.rml.core.RMLEngine;
 import be.ugent.mmlab.rml.core.RMLPerformer;
+import be.ugent.mmlab.rml.model.GraphMap;
 import be.ugent.mmlab.rml.model.JoinCondition;
 import be.ugent.mmlab.rml.model.LogicalSource;
 import be.ugent.mmlab.rml.model.ObjectMap;
@@ -16,6 +17,7 @@ import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.model.reference.ReferenceIdentifierImpl;
 import be.ugent.mmlab.rml.processor.concrete.ConcreteRMLProcessorFactory;
 import be.ugent.mmlab.rml.vocabulary.Vocab.QLTerm;
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -78,7 +80,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
     public Resource processSubjectMap(SesameDataSet dataset, SubjectMap subjectMap, Object node) {
         //Get the uri
         List<String> values = processTermMap(subjectMap, node);
-
+        log.info("Abstract RML Processor Graph Map" + subjectMap.getGraphMaps().toString());
         if (values.isEmpty()) {
             return null;
         }
@@ -125,7 +127,6 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                 //Resolve the template
                 String template = map.getStringTemplate();
                 Set<String> tokens = R2RMLToolkit.extractColumnNamesFromStringTemplate(template);
-
 
                 for (String expression : tokens) {
                     List<String> replacements = extractValueFromNode(node, expression);
@@ -208,7 +209,13 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                     //Create the processor based on the parent triples map to perform the join
                     RMLProcessorFactory factory = new ConcreteRMLProcessorFactory();
                     QLTerm queryLanguage = parentTriplesMap.getLogicalSource().getQueryLanguage();
-                    String fileName = getClass().getResource(parentTriplesMap.getLogicalSource().getIdentifier()).getFile();
+                    String fileName = null;
+                    File file = new File(parentTriplesMap.getLogicalSource().getIdentifier());
+                    if(!file.exists())
+                        fileName = getClass().getResource(parentTriplesMap.getLogicalSource().getIdentifier()).getFile();
+                    else
+                        fileName = parentTriplesMap.getLogicalSource().getIdentifier();
+                    //log.info("Abstract RMLProcessor fileName " + fileName);
                     RMLProcessor processor = factory.create(queryLanguage);
 
                     RMLPerformer performer;
@@ -248,7 +255,21 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                     List<Value> objects = processObjectMap(objectMap, node);
                     for (Value object : objects) {
                         if (object != null && !object.toString().isEmpty()) {
-                            dataset.add(subject, predicate, object);
+                            Set<GraphMap> graphs = pom.getGraphMaps();
+                            log.info("[Abstract RML Processor] graphs " + graphs);
+                            
+                            if(graphs.isEmpty())
+                                dataset.add(subject, predicate, object);
+                            else
+                                for (GraphMap graph : graphs) {
+                                log.info("[Abstract RML Processor] graph " + graph);
+                                Resource graphResource = new URIImpl(graph.getConstantValue().toString());
+                                //Value smth = graph.getConstantValue();
+                                log.info("[Abstract RML Processor] value " + graphResource);
+                                log.info("[Abstract RML Processor] triple added " + subject + " " + predicate + " " + object + " " + (Resource) graphResource);
+                                dataset.add(subject, predicate, object, graphResource);
+                                }
+                                
                         }
                     }
                 }
@@ -289,7 +310,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
 
         List<Value> valueList = new ArrayList<Value>();
         for (String value : values) {
-            log.debug("[AbstractRMLProcessor:literal] value " + value);
+            //log.debug("[AbstractRMLProcessor:literal] value " + value);
             switch (objectMap.getTermType()) {
                 case IRI:
                     valueList.add(new URIImpl(value));
@@ -303,7 +324,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                     } else if (objectMap.getDataType() != null) {
                         valueList.add(new LiteralImpl(value, objectMap.getDataType()));
                     } else if (value != null) {
-                        log.debug("[AbstractRMLProcessor:literal] Literal value " + value);
+                        //log.debug("[AbstractRMLProcessor:literal] Literal value " + value);
                         valueList.add(new LiteralImpl(value));
                     }
                     //No reason to return null, is replaced by empty list.

@@ -101,7 +101,6 @@ public class RMLEngine {
         // Explore RML Mapping TriplesMap objects  
         generateRDFTriples(sesameDataSet, rmlMapping, filebased);
         log.info("[RMLEngine:generateRDFTriples] All triples were generated ");
-        log.info("Sesame dataset " + sesameDataSet);
         long endTime = System.nanoTime();
         long duration = endTime - startTime;
         
@@ -132,8 +131,8 @@ public class RMLEngine {
         int delta = 0;
         
         RMLProcessorFactory factory = new ConcreteRMLProcessorFactory();
-        FileInputStream input;
         for (TriplesMap triplesMap : r2rmlMapping.getTriplesMaps()) {
+            FileInputStream input = null;
             RMLProcessor processor = factory.create(triplesMap.getLogicalSource().getQueryLanguage());
             //URL filePath = getClass().getProtectionDomain().getCodeSource().getLocation();
             //System.out.println("XPath Processor filePath " + filePath);
@@ -157,6 +156,11 @@ public class RMLEngine {
                     + (sesameDataSet.getSize() - delta)
                     + " triples generated for " + triplesMap.getName());
             delta = sesameDataSet.getSize();
+            try {
+                input.close();
+            } catch (IOException ex) {
+                Logger.getLogger(RMLEngine.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
         if(filebased)
             try {

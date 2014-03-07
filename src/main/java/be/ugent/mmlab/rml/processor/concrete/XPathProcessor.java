@@ -16,6 +16,7 @@ import jlibs.xml.DefaultNamespaceContext;
 import jlibs.xml.Namespaces;
 import jlibs.xml.sax.dog.NodeItem;
 import jlibs.xml.sax.dog.XMLDog;
+import jlibs.xml.sax.dog.XPathResults;
 import jlibs.xml.sax.dog.expr.Expression;
 import jlibs.xml.sax.dog.expr.InstantEvaluationListener;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
@@ -31,7 +32,7 @@ import org.xml.sax.InputSource;
 
 /**
  *
- * @author mielvandersande
+ * @author mielvandersande, andimou
  */
 public class XPathProcessor extends AbstractRMLProcessor {
 
@@ -54,10 +55,22 @@ public class XPathProcessor extends AbstractRMLProcessor {
             dnc.declarePrefix("gml", "http://www.opengis.net/gml");
             this.nsContext.addNamespace("agiv", "http://www.agiv.be/agiv");
             dnc.declarePrefix("agiv", "http://www.agiv.be/agiv");
+            
+            this.nsContext.addNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
+            dnc.declarePrefix("xsi", "http://www.w3.org/2001/XMLSchema-instance");
+            this.nsContext.addNamespace("simcore", "http://www.lbl.gov/namespaces/Sim/SimModelCore");
+            dnc.declarePrefix("simcore", "http://www.lbl.gov/namespaces/Sim/SimModelCore");
+            this.nsContext.addNamespace("simres", "http://www.lbl.gov/namespaces/Sim/ResourcesGeneral");
+            dnc.declarePrefix("simres", "http://www.lbl.gov/namespaces/Sim/ResourcesGeneral");
+            this.nsContext.addNamespace("simgeom", "http://www.lbl.gov/namespaces/Sim/ResourcesGeometry");
+            dnc.declarePrefix("simgeom", "http://www.lbl.gov/namespaces/Sim/ResourcesGeometry");
+            this.nsContext.addNamespace("simbldg", "http://www.lbl.gov/namespaces/Sim/BuildingModel");
+            dnc.declarePrefix("simbldg", "http://www.lbl.gov/namespaces/Sim/BuildingModel");
+            this.nsContext.addNamespace("simmep", "http://www.lbl.gov/namespaces/Sim/MepModel");
+            dnc.declarePrefix("simmep", "http://www.lbl.gov/namespaces/Sim/MepModel");
 
            
             XMLDog dog = new XMLDog(dnc);
-
             //adding expression to the xpathprocessor
             dog.addXPath(reference);
 
@@ -73,7 +86,10 @@ public class XPathProcessor extends AbstractRMLProcessor {
                 @Override
                 public void onNodeHit(Expression expression, NodeItem nodeItem) {
                     Node node = (Node) nodeItem.xml;
-
+                    //if(!nodeItem.namespaceURI.isEmpty())
+                        //log.info("namespace? " + nodeItem.namespaceURI);
+                    //else
+                        //log.info("no namespace.");
                     //Let the performer do its thing
                     performer.perform(node, dataset, map);
                     //System.out.println("XPath: " + expression.getXPath() + " has hit: " + node.getTextContent());
@@ -92,6 +108,9 @@ public class XPathProcessor extends AbstractRMLProcessor {
                 }
             });
             //Execute the streaming
+            XPathResults results = dog.sniff(new InputSource(fileName));
+            log.info("XPath Processor results namespaces " + results.getNamespaceContext());
+            
             dog.sniff(event, new InputSource(new FileInputStream(fileName)));
         } catch (SAXPathException ex) {
             Logger.getLogger(XPathProcessor.class.getName()).log(Level.SEVERE, null, ex);
@@ -116,14 +135,16 @@ public class XPathProcessor extends AbstractRMLProcessor {
         
         for (int i = 0; i < nodes.size(); i++) {
             Node n = nodes.get(i);
-            
-             if (!(n instanceof Attribute) && n.getChild(0) instanceof Element) {
-                list.add(n.toXML());
-            }
-            else {
-                list.add(n.getValue());
-            }
-            //list.add(n.toXML());
+
+            //checks if the node has a value or children
+            if(!n.getValue().isEmpty() || (n.getChildCount()!=0))
+                 if (!(n instanceof Attribute) && n.getChild(0) instanceof Element) {
+                    list.add(n.toXML());
+                } 
+                else {
+                    list.add(n.getValue());
+                }
+                //list.add(n.toXML());
         }
         
         return list;
