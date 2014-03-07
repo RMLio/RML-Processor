@@ -224,14 +224,14 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                         for (JoinCondition joinCondition : joinConditions) {
                             List<String> childValues = extractValueFromNode(node, joinCondition.getChild());
 
-                            //MVS: Allow multiple values?
-                            String childValue = childValues.get(0);
+                            //Allow multiple values as child - fits with RML's definition of multiple Object Maps
+                            for(String childValue : childValues){
+                                log.debug("[AbstractRMLProcessorProcessor:processPredicateObjectMap]. joinCondition child: " + joinCondition.getChild());
+                                log.debug("[AbstractRMLProcessorProcessor:processPredicateObjectMap]. joinCondition parent: " + joinCondition.getParent());
+                                log.debug("[AbstractRMLProcessorProcessor:processPredicateObjectMap]. childValue: " + childValue);
 
-                            log.debug("[AbstractRMLProcessorProcessor:processPredicateObjectMap]. joinCondition child: " + joinCondition.getChild());
-                            log.debug("[AbstractRMLProcessorProcessor:processPredicateObjectMap]. joinCondition parent: " + joinCondition.getParent());
-                            log.debug("[AbstractRMLProcessorProcessor:processPredicateObjectMap]. childValue: " + childValue);
-
-                            joinMap.put(joinCondition.getParent(), childValue);
+                                joinMap.put(joinCondition.getParent(), childValue);
+                            }
                         }
 
                         //Execute the join with candidate s, p
