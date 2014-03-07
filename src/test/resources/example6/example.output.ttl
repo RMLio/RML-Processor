@@ -13,7 +13,7 @@ note:M17 a mail:note;
         mail:heading "Reminder";
         mail:body "Don't forget me this weekend!".
 
-note:M17 mail:when "2008-01-10"^^xsd:date [ <http://www.example.com/testgraph3> ].
+note:M17 mail:when "2008-01-10"^^xsd:date .
 
 note:M18 a mail:note;
 	mail:when "2008-02-10"^^xsd:date;
