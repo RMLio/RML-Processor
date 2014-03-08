@@ -68,7 +68,18 @@ public class XPathProcessor extends AbstractRMLProcessor {
             dnc.declarePrefix("simbldg", "http://www.lbl.gov/namespaces/Sim/BuildingModel");
             this.nsContext.addNamespace("simmep", "http://www.lbl.gov/namespaces/Sim/MepModel");
             dnc.declarePrefix("simmep", "http://www.lbl.gov/namespaces/Sim/MepModel");
-
+            this.nsContext.addNamespace("simmodel", "http://www.lbl.gov/namespaces/Sim/Model");
+            dnc.declarePrefix("simmodel", "http://www.lbl.gov/namespaces/Sim/Model");
+            
+            //spc
+            this.nsContext.addNamespace("mml","http://www.w3.org/1998/Math/MathML");
+            dnc.declarePrefix("mml", "http://www.w3.org/1998/Math/MathML");
+            this.nsContext.addNamespace("xlink", "http://www.w3.org/1999/xlink");
+            dnc.declarePrefix("xlink", "http://www.w3.org/1999/xlink");
+            this.nsContext.addNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
+            dnc.declarePrefix("xsi", "http://www.w3.org/2001/XMLSchema-instance");
+            this.nsContext.addNamespace("tp", "http://www.plazi.org/taxpub");
+            dnc.declarePrefix("tp", "http://www.plazi.org/taxpub");
            
             XMLDog dog = new XMLDog(dnc);
             //adding expression to the xpathprocessor

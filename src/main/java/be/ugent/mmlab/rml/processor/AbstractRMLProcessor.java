@@ -117,10 +117,10 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
             case REFERENCE_VALUED:
                 //Get the expression and extract the value
                 ReferenceIdentifierImpl identifier = (ReferenceIdentifierImpl) map.getReferenceValue();
-                return extractValueFromNode(node, identifier.toString());
+                return extractValueFromNode(node, identifier.toString().trim());
             case CONSTANT_VALUED:
                 //Extract the value directly from the mapping
-                value.add(map.getConstantValue().stringValue());
+                value.add(map.getConstantValue().stringValue().trim());
                 return value;
 
             case TEMPLATE_VALUED:
@@ -136,7 +136,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                             value.add(template);
                         }
 
-                        String replacement = replacements.get(i);
+                        String replacement = replacements.get(i).trim();
 
                         //if (replacement == null || replacement.isEmpty()) {
                         if (replacement == null) {
@@ -145,7 +145,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                             continue;
                         }
 
-                        String temp = value.get(i);
+                        String temp = value.get(i).trim();
 
                         if (expression.contains("[")) {
                             expression = expression.replaceAll("\\[", "").replaceAll("\\]", "");
@@ -325,7 +325,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                         valueList.add(new LiteralImpl(value, objectMap.getDataType()));
                     } else if (value != null) {
                         //log.debug("[AbstractRMLProcessor:literal] Literal value " + value);
-                        valueList.add(new LiteralImpl(value));
+                        valueList.add(new LiteralImpl(value.trim()));
                     }
                     //No reason to return null, is replaced by empty list.
             }
