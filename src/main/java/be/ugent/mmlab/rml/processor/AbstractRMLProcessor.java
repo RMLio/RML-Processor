@@ -4,6 +4,7 @@ import be.ugent.mmlab.rml.core.ConditionalJoinRMLPerformer;
 import be.ugent.mmlab.rml.core.JoinRMLPerformer;
 import be.ugent.mmlab.rml.core.RMLEngine;
 import be.ugent.mmlab.rml.core.RMLPerformer;
+import be.ugent.mmlab.rml.core.SimpleReferencePerformer;
 import be.ugent.mmlab.rml.model.GraphMap;
 import be.ugent.mmlab.rml.model.JoinCondition;
 import be.ugent.mmlab.rml.model.LogicalSource;
@@ -190,7 +191,8 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
      * @param pom       the predicate object map
      * @param node      the current node
      */
-    public void processPredicateObjectMap(SesameDataSet dataset, Resource subject, PredicateObjectMap pom, Object node) {
+    @Override
+    public void processPredicateObjectMap(SesameDataSet dataset, Resource subject, PredicateObjectMap pom, Object node, TriplesMap map) {
 
         Set<PredicateMap> predicateMaps = pom.getPredicateMaps();
         //Go over each predicate map
@@ -220,9 +222,21 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
 
                     RMLPerformer performer;
 
-                    if (joinConditions.isEmpty()) {
+                    if (joinConditions.isEmpty() & !parentTriplesMap.getLogicalSource().getIdentifier().equals(map.getLogicalSource().getIdentifier())) {
+                        log.info("[AbstractRMLProcessorProcessor:processPredicateObjectMap] JoinRMLPerformer");
                         performer = new JoinRMLPerformer(processor, subject, predicate);
-                    } else {
+                        processor.execute(dataset, parentTriplesMap, performer, fileName);
+                    } 
+                    else if (joinConditions.isEmpty() & parentTriplesMap.getLogicalSource().getIdentifier().equals(map.getLogicalSource().getIdentifier())){
+                        log.info("[AbstractRMLProcessorProcessor:processPredicateObjectMap] SimpleReferencePerformer");
+                        performer = new SimpleReferencePerformer(processor, subject, predicate);
+                        
+                        if((parentTriplesMap.getLogicalSource().getReference()).equals(map.getLogicalSource().getReference()))
+                            performer.perform(node, dataset, parentTriplesMap);
+                        else
+                            processor.execute_node(dataset, map, parentTriplesMap, performer, node);
+                    }
+                    else {
                         //Build a join map where
                         //  key: the parent expression
                         //  value: the value extracted from the child
@@ -237,15 +251,18 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                                 log.debug("[AbstractRMLProcessorProcessor:processPredicateObjectMap]. joinCondition parent: " + joinCondition.getParent());
                                 log.debug("[AbstractRMLProcessorProcessor:processPredicateObjectMap]. childValue: " + childValue);
 
-                                joinMap.put(joinCondition.getParent(), childValue);
+                                joinMap.put(joinCondition.getParent(), childValue);                                
+                                performer = new ConditionalJoinRMLPerformer(processor, joinMap, subject, predicate);
+                                processor.execute(dataset, parentTriplesMap, performer, fileName);
                             }
                         }
 
                         //Execute the join with candidate s, p
                         //Create a join performer to make the processor execute joins (Strategy pattern & composition)
-                        performer = new ConditionalJoinRMLPerformer(processor, joinMap, subject, predicate);
+                        //performer = new ConditionalJoinRMLPerformer(processor, joinMap, subject, predicate);
+                        //processor.execute(dataset, parentTriplesMap, performer, fileName);
                     }
-                    processor.execute(dataset, parentTriplesMap, performer, fileName);
+                    //processor.execute(dataset, parentTriplesMap, performer, fileName);
                 }
 
                 //process the objectmaps
