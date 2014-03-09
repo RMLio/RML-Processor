@@ -665,6 +665,8 @@ public abstract class RMLMappingFactory {
 
         //MVS: Decide on ReferenceIdentifier
         ReferenceIdentifier referenceValue = extractReferenceIdentifier(r2rmlMappingGraph, subjectMap);
+        //AD: The values of the rr:class property must be IRIs. 
+        //AD: Would that mean that it can not be a reference to an extract of the input or a template?
         Set<URI> classIRIs = extractURIsFromTermMap(r2rmlMappingGraph,
                 subjectMap, R2RMLTerm.CLASS);
         
