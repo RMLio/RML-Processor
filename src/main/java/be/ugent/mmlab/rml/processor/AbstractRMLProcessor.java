@@ -231,7 +231,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
 
                     RMLProcessor processor = factory.create(queryLanguage);
 
-                    RMLPerformer performer;
+                    RMLPerformer performer = null;
 
                     if (joinConditions.isEmpty() & !parentTriplesMap.getLogicalSource().getIdentifier().equals(map.getLogicalSource().getIdentifier())) {
                         log.info("[AbstractRMLProcessorProcessor:processPredicateObjectMap] JoinRMLPerformer");
