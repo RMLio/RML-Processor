@@ -11,6 +11,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import junit.framework.Test;
 import junit.framework.TestCase;
+import static junit.framework.TestCase.assertTrue;
 import junit.framework.TestSuite;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
 import net.antidot.semantic.rdf.rdb2rdf.r2rml.exception.InvalidR2RMLStructureException;
@@ -89,7 +90,19 @@ public class MapperTest
         URL fileToOutputFile = getClass().getResource("/example6/example.output.ttl");
         assertTrue(assertMap(fileToRMLFile, fileToOutputFile));
     }
-
+    
+    /*public void testExample7() {
+        URL fileToRMLFile = getClass().getResource("/example7/mapping_document.rml.ttl");
+        URL fileToOutputFile = getClass().getResource("/example7/example.output.ttl");
+        assertTrue(assertMap(fileToRMLFile, fileToOutputFile));
+    }*/
+    
+    public void testExample8() {
+        URL fileToRMLFile = getClass().getResource("/example8/simergy.rml.ttl");
+        URL fileToOutputFile = getClass().getResource("/example8/simergy.output.ttl");
+        assertTrue(assertMap(fileToRMLFile, fileToOutputFile));
+    }
+    
     private boolean assertMap(URL mappingURL, URL outputURL) {
         try {
             RMLMapping mapping = RMLMappingFactory.extractRMLMapping(mappingURL.getFile());

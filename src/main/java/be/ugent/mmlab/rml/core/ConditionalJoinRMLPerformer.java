@@ -47,7 +47,7 @@ public class ConditionalJoinRMLPerformer extends NodeRMLPerformer{
     public void perform(Object node, SesameDataSet dataset, TriplesMap map) {
         log.debug("[ConditionalJoinRMLPerformer:object] " + "node " + node.toString());
         Value object = processor.processSubjectMap(dataset, map.getSubjectMap(), node);
-        
+
         if (object == null){
             log.debug("[ConditionalJoinRMLPerformer:object] " + "No object found.");
             return;

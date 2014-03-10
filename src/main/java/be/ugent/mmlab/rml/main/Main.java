@@ -3,7 +3,6 @@ package be.ugent.mmlab.rml.main;
 import be.ugent.mmlab.rml.core.RMLEngine;
 import be.ugent.mmlab.rml.core.RMLMappingFactory;
 import be.ugent.mmlab.rml.model.RMLMapping;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.SQLException;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;

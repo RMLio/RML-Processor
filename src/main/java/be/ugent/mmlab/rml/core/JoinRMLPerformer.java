@@ -37,7 +37,7 @@ public class JoinRMLPerformer extends NodeRMLPerformer{
     public void perform(Object node, SesameDataSet dataset, TriplesMap map) {
         log.debug("[JoinRMLPerformer:object] " + "node " + node.toString());
         Value object = processor.processSubjectMap(dataset, map.getSubjectMap(), node);
-        
+
         if (object == null){
             log.debug("[JoinRMLPerformer:object] " + "No object found.");
             return;

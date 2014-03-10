@@ -20,18 +20,18 @@ rr:subjectMap [
 		rr:predicate mail:when;
                      rr:objectMap [ 
 			rr:parentTriplesMap <#DateTime>;
-                        rr:joinCondition [
-                            rr:child "@day";
-                            rr:parent "@day";
-                        ];
-                        rr:joinCondition [
-                            rr:child "@month";
-                            rr:parent "@month";
-                        ];
-                        rr:joinCondition [
-                            rr:child "@year";
-                            rr:parent "@year";
-                        ]
+                        #rr:joinCondition [
+                        #    rr:child "@day";
+                        #    rr:parent "@day";
+                        #];
+                        #rr:joinCondition [
+                        #    rr:child "@month";
+                        #    rr:parent "@month";
+                        #];
+                        #rr:joinCondition [
+                        #    rr:child "@year";
+                        #    rr:parent "@year";
+                        #]
 		];
     ];
         

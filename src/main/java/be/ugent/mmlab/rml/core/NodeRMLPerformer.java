@@ -1,8 +1,10 @@
 package be.ugent.mmlab.rml.core;
 
+import be.ugent.mmlab.rml.model.GraphMap;
 import be.ugent.mmlab.rml.model.PredicateObjectMap;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.RMLProcessor;
+import java.util.Set;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
 import org.openrdf.model.Resource;
 import org.apache.commons.logging.Log;
@@ -36,14 +38,16 @@ public class NodeRMLPerformer implements RMLPerformer{
      */
     public void perform(Object node, SesameDataSet dataset, TriplesMap map) {
         Resource subject = processor.processSubjectMap(dataset, map.getSubjectMap(), node);
+        processor.processSubjectTypeMap(dataset, subject, map.getSubjectMap(), node);
         if (subject == null){
-            log.debug("[NodeRMLPerformer:processSubjectMap] Extracted "
+            log.debug("[NodeRMLPerformer:perform] Extracted "
                     + subject + " for node " + node.toString());
             return;
         }
+        Set<GraphMap> graph = map.getSubjectMap().getGraphMaps();
 
         for (PredicateObjectMap pom : map.getPredicateObjectMaps()) {
-            processor.processPredicateObjectMap(dataset, subject, pom, node);
+            processor.processPredicateObjectMap(dataset, subject, pom, node, map);
         }
     }
     

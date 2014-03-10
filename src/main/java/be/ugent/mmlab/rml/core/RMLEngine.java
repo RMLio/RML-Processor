@@ -86,6 +86,7 @@ public class RMLEngine {
         // Update baseIRI
         this.baseIRI = baseIRI;
         log.info("RMLEngine base IRI " + baseIRI);
+
         if (filebased) {
             log.debug("[RMLEngine:runRMLMapping] Use direct file "
                     + pathToNativeStore);
@@ -133,9 +134,8 @@ public class RMLEngine {
         RMLProcessorFactory factory = new ConcreteRMLProcessorFactory();
 
         for (TriplesMap triplesMap : r2rmlMapping.getTriplesMaps()) {
-        
-	FileInputStream input;
-        for (TriplesMap triplesMap : r2rmlMapping.getTriplesMaps()) {
+            FileInputStream input = null;
+
             RMLProcessor processor = factory.create(triplesMap.getLogicalSource().getQueryLanguage());
             //URL filePath = getClass().getProtectionDomain().getCodeSource().getLocation();
             //System.out.println("XPath Processor filePath " + filePath);
@@ -159,6 +159,11 @@ public class RMLEngine {
                     + (sesameDataSet.getSize() - delta)
                     + " triples generated for " + triplesMap.getName());
             delta = sesameDataSet.getSize();
+            try {
+                input.close();
+            } catch (IOException ex) {
+                Logger.getLogger(RMLEngine.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
         if(filebased)
             try {
