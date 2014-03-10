@@ -184,9 +184,12 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                 }
 
                 return validValues;
+
+            default:
+                return value;
         }
 
-        return value;
+        //return value;
     }
 
     /**
