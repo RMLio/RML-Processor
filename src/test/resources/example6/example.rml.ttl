@@ -24,7 +24,7 @@ rr:predicateObjectMap [
             rr:datatype xsd:date;
             rr:termType rr:Literal;
 	];
-        # rr:graphMap [ rr:constant <http://www.example.com/testgraph3> ];git
+        # rr:graphMap [ rr:constant <http://www.example.com/testgraph3> ];
     ];
         
     rr:predicateObjectMap [
