@@ -3,6 +3,7 @@ package be.ugent.mmlab.rml.processor.concrete;
 import be.ugent.mmlab.rml.core.RMLMappingFactory;
 import be.ugent.mmlab.rml.core.RMLPerformer;
 import be.ugent.mmlab.rml.model.TriplesMap;
+import be.ugent.mmlab.rml.model.reference.ReferenceIdentifierImpl;
 import be.ugent.mmlab.rml.processor.AbstractRMLProcessor;
 import be.ugent.mmlab.rml.xml.XOMBuilder;
 import java.io.FileInputStream;
@@ -140,17 +141,31 @@ public class XPathProcessor extends AbstractRMLProcessor {
 
     }
     
+    @Override
     public void execute_node(SesameDataSet dataset, TriplesMap map, TriplesMap parentTriplesMap, RMLPerformer performer, Object node) {
-    //spc
-    log.debug("[AbstractRMLProcessorProcessor] default namespace " + this.nsContext.toString());
-    DefaultNamespaceContext dnc = get_namespaces();
-            
-    int end = map.getLogicalSource().getReference().length()+1;
-    String expression = parentTriplesMap.getLogicalSource().getReference().toString().substring(end);
-    Node node2 = (Node) node;
-    Nodes nodes = node2.query(expression, nsContext);
-    log.debug("[AbstractRMLProcessorProcessor:node] " + "new node " + nodes.get(0).toXML().toString());
-    performer.perform(nodes.get(0), dataset, parentTriplesMap);
+        //still need to make it work with more nore-results 
+        //currently it handles only one
+        
+        DefaultNamespaceContext dnc = get_namespaces();     
+        int end = map.getLogicalSource().getReference().length();
+        log.debug("[AbstractRMLProcessorProcessor] initial expression " + map.getLogicalSource().getReference());
+        log.debug("[AbstractRMLProcessorProcessor] next expression " + parentTriplesMap.getLogicalSource().getReference());
+        String expression = parentTriplesMap.getLogicalSource().getReference().toString().substring(end);
+        if(expression.startsWith("/"))
+            expression = expression.substring(1);
+        log.debug("[AbstractRMLProcessorProcessor] expression " + expression);
+        
+        //for(String childValue : childValues)
+            //performer.perform(nodes.get(0), dataset, parentTriplesMap);
+
+        
+        Node node2 = (Node) node;
+        Nodes nodes = node2.query(expression, nsContext);
+        log.debug("[AbstractRMLProcessorProcessor:node] " + "nodes " + nodes);
+        
+        
+        log.debug("[AbstractRMLProcessorProcessor:node] " + "new node " + nodes.get(0).toXML().toString());
+        performer.perform(nodes.get(0), dataset, parentTriplesMap);
     }
 
     /**

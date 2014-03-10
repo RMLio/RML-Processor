@@ -78,6 +78,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
      * @param node
      * @return the created subject
      */
+    @Override
     public Resource processSubjectMap(SesameDataSet dataset, SubjectMap subjectMap, Object node) {
         //Get the uri
         List<String> values = processTermMap(subjectMap, node);
@@ -94,13 +95,17 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
         }
 
         Resource subject = new URIImpl(value);
+
+        return subject;
+    }
+    
+    public void processSubjectTypeMap(SesameDataSet dataset, Resource subject, SubjectMap subjectMap, Object node) {
+
         //Add the type triples
         Set<org.openrdf.model.URI> classIRIs = subjectMap.getClassIRIs();
         for (org.openrdf.model.URI classIRI : classIRIs) {
             dataset.add(subject, RDF.TYPE, classIRI);
         }
-
-        return subject;
     }
 
     /**
@@ -111,8 +116,9 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
      * @return the resulting value
      */
 
-    private List<String> processTermMap(TermMap map, Object node) {
-        List<String> value = new ArrayList<String>();
+    @Override
+    public List<String> processTermMap(TermMap map, Object node) {
+        List<String> value = new ArrayList<>();
 
         switch (map.getTermMapType()) {
             case REFERENCE_VALUED:
@@ -231,10 +237,14 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                         log.info("[AbstractRMLProcessorProcessor:processPredicateObjectMap] SimpleReferencePerformer");
                         performer = new SimpleReferencePerformer(processor, subject, predicate);
                         
-                        if((parentTriplesMap.getLogicalSource().getReference()).equals(map.getLogicalSource().getReference()))
+                        if((parentTriplesMap.getLogicalSource().getReference()).equals(map.getLogicalSource().getReference())){
+                            log.info("[AbstractRMLProcessorProcessor:processPredicateObjectMap] SimpleReferencePerformer - same referenece");
                             performer.perform(node, dataset, parentTriplesMap);
-                        else
+                        }
+                        else{
+                            log.info("[AbstractRMLProcessorProcessor:processPredicateObjectMap] SimpleReferencePerformer - different referenece");
                             processor.execute_node(dataset, map, parentTriplesMap, performer, node);
+                        }
                     }
                     else {
                         //Build a join map where
@@ -321,7 +331,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
      * @param node
      * @return
      */
-    private List<Value> processObjectMap(ObjectMap objectMap, Object node) {
+    public List<Value> processObjectMap(ObjectMap objectMap, Object node) {
         //A Term map returns one or more values (in case expression matches more)
         List<String> values = processTermMap(objectMap, node);
 
