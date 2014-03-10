@@ -4,7 +4,6 @@ import be.ugent.mmlab.rml.core.RMLEngine;
 import be.ugent.mmlab.rml.core.RMLMappingFactory;
 import be.ugent.mmlab.rml.core.RMLPerformer;
 import be.ugent.mmlab.rml.model.LogicalSource;
-import be.ugent.mmlab.rml.model.SubjectMap;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.AbstractRMLProcessor;
 import com.csvreader.CsvReader;
@@ -18,7 +17,6 @@ import java.util.List;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openrdf.model.Resource;
 
 /**
  *
@@ -28,6 +26,8 @@ public class CSVProcessor extends AbstractRMLProcessor {
 
     private static Log log = LogFactory.getLog(RMLMappingFactory.class);
     
+    
+    //AD:That should not be on the core of RML processing..
     private char getDelimiter(LogicalSource ls) {
         String d = RMLEngine.getFileMap().getProperty(ls.getIdentifier() + ".delimiter");
         if (d == null) {
