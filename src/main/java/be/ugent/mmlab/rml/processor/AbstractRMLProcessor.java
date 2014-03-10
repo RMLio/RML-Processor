@@ -243,11 +243,11 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                         performer = new SimpleReferencePerformer(processor, subject, predicate);
                         
                         if((parentTriplesMap.getLogicalSource().getReference()).equals(map.getLogicalSource().getReference())){
-                            log.info("[AbstractRMLProcessorProcessor:processPredicateObjectMap] SimpleReferencePerformer - same referenece");
+                            log.info("[AbstractRMLProcessorProcessor:processPredicateObjectMap] SimpleReferencePerformer - same reference");
                             performer.perform(node, dataset, parentTriplesMap);
                         }
                         else{
-                            log.info("[AbstractRMLProcessorProcessor:processPredicateObjectMap] SimpleReferencePerformer - different referenece");
+                            log.info("[AbstractRMLProcessorProcessor:processPredicateObjectMap] SimpleReferencePerformer - different reference");
                             processor.execute_node(dataset, map, parentTriplesMap, performer, node);
                         }
                     }
@@ -277,9 +277,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                         //performer = new ConditionalJoinRMLPerformer(processor, joinMap, subject, predicate);
                         //processor.execute(dataset, parentTriplesMap, performer, fileName);
                     }
-
-                    processor.execute(dataset, parentTriplesMap, performer, fileName);
-
+                    
                     //processor.execute(dataset, parentTriplesMap, performer, fileName);
 
                 }
