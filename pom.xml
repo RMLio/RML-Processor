@@ -79,7 +79,7 @@
         <dependency>
             <groupId>net.antidot</groupId>
             <artifactId>db2triples</artifactId>
-            <version>1.0.2-SNAPSHOT</version>
+            <version>1.0.2</version>
         </dependency>
         <dependency>
             <groupId>com.sun.org.apache</groupId>
