@@ -37,11 +37,10 @@ public class NodeRMLPerformer implements RMLPerformer{
      * @param map current triple map that is being processed
      */
     public void perform(Object node, SesameDataSet dataset, TriplesMap map) {
-        log.info("NodeRMLPerformer SubjectMap Graph Maps " + map.getSubjectMap().getGraphMaps());
         Resource subject = processor.processSubjectMap(dataset, map.getSubjectMap(), node);
         processor.processSubjectTypeMap(dataset, subject, map.getSubjectMap(), node);
         if (subject == null){
-            log.debug("[NodeRMLPerformer:processSubjectMap] Extracted "
+            log.debug("[NodeRMLPerformer:perform] Extracted "
                     + subject + " for node " + node.toString());
             return;
         }

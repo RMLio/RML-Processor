@@ -127,9 +127,7 @@ public class XPathProcessor extends AbstractRMLProcessor {
                 }
             });
             //Execute the streaming
-            XPathResults results = dog.sniff(new InputSource(fileName));
-            log.info("XPath Processor results namespaces " + results.getNamespaceContext());
-            
+
             dog.sniff(event, new InputSource(new FileInputStream(fileName)));
         } catch (SAXPathException ex) {
             Logger.getLogger(XPathProcessor.class.getName()).log(Level.SEVERE, null, ex);
@@ -155,17 +153,16 @@ public class XPathProcessor extends AbstractRMLProcessor {
             expression = expression.substring(1);
         log.debug("[AbstractRMLProcessorProcessor] expression " + expression);
         
-        //for(String childValue : childValues)
-            //performer.perform(nodes.get(0), dataset, parentTriplesMap);
-
-        
         Node node2 = (Node) node;
         Nodes nodes = node2.query(expression, nsContext);
         log.debug("[AbstractRMLProcessorProcessor:node] " + "nodes " + nodes);
         
-        
-        log.debug("[AbstractRMLProcessorProcessor:node] " + "new node " + nodes.get(0).toXML().toString());
-        performer.perform(nodes.get(0), dataset, parentTriplesMap);
+        for (int i = 0; i < nodes.size(); i++) {
+            Node n = nodes.get(i);
+            log.debug("[AbstractRMLProcessorProcessor:node] " + "new node " + n.toXML().toString());
+            performer.perform(n, dataset, parentTriplesMap);
+        }
+
     }
 
     /**
