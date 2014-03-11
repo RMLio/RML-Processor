@@ -37,9 +37,6 @@ import org.openrdf.model.impl.BNodeImpl;
 import org.openrdf.model.impl.LiteralImpl;
 import org.openrdf.model.impl.URIImpl;
 import org.openrdf.model.vocabulary.RDF;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetEncoder;
-import org.apache.commons.lang.StringUtils;
 
 /**
  * This class contains all generic functionality for executing an iteration and
@@ -223,7 +220,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                     //Create the processor based on the parent triples map to perform the join
                     RMLProcessorFactory factory = new ConcreteRMLProcessorFactory();
                     QLTerm queryLanguage = parentTriplesMap.getLogicalSource().getQueryLanguage();
-                    String fileName = null;
+                    String fileName;
                     File file = new File(parentTriplesMap.getLogicalSource().getIdentifier());
                     if(!file.exists())
                         fileName = getClass().getResource(parentTriplesMap.getLogicalSource().getIdentifier()).getFile();

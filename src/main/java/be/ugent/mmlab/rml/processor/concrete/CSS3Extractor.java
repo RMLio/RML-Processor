@@ -7,6 +7,7 @@ import be.ugent.mmlab.rml.processor.AbstractRMLProcessor;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -62,10 +63,37 @@ public class CSS3Extractor extends AbstractRMLProcessor{
 
     @Override
     public void execute_node(SesameDataSet dataset, TriplesMap map, TriplesMap parentTriplesMap, RMLPerformer performer, Object node) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        int end = map.getLogicalSource().getReference().length();
+        log.debug("[AbstractRMLProcessorProcessor] initial expression " + map.getLogicalSource().getReference());
+        log.debug("[AbstractRMLProcessorProcessor] next expression " + parentTriplesMap.getLogicalSource().getReference());
+        String expression = parentTriplesMap.getLogicalSource().getReference().toString().substring(end);
+        log.debug("[AbstractRMLProcessorProcessor] expression " + expression);
+        
+        Jerry doc = Jerry.jerry(node.toString());
+        NodeSelector nodeSelector = new NodeSelector(doc.get(0));
+        
+        //List<String> list = new ArrayList();
+        List<Node> selectedNodes = nodeSelector.select(expression.trim());
+        for(Node selectNode : selectedNodes){
+            log.info("[CSS3Extractor:extractValueFromNode] selectNode " + selectNode.getHtml());
+            //list.add(StringEscapeUtils.unescapeHtml(selectNode.getTextContent()));
+            performer.perform(selectNode.getHtml(), dataset, parentTriplesMap);
+        }
     }
 
     @Override
+    /*public List<String> extractValueFromNode(Object node, String expression) {
+        Jerry doc = Jerry.jerry(node.toString());
+        NodeSelector nodeSelector = new NodeSelector(doc.get(0));
+        
+        log.info("[CSS3Extractor:extractValueFromNode] expression " + expression);
+        List<String> list = new ArrayList();
+        List<Node> selectedNodes = nodeSelector.select(expression);
+        for(Node selectNode : selectedNodes)
+            list.add(StringEscapeUtils.unescapeHtml(selectNode.getTextContent()));
+        return list;
+    }*/
+    
     public List<String> extractValueFromNode(Object node, String expression) {
         Jerry doc = Jerry.jerry(node.toString());
         log.info("[CSS3Extractor:extractValueFromNode] expression " + expression);
