@@ -13,6 +13,9 @@ import java.util.logging.Logger;
 import jodd.io.FileUtil;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
 import jodd.jerry.Jerry;
+import jodd.lagarto.dom.Node;
+import jodd.lagarto.dom.NodeSelector;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -29,22 +32,32 @@ public class CSS3Extractor extends AbstractRMLProcessor{
     public void execute(SesameDataSet dataset, TriplesMap map, RMLPerformer performer, String fileName) {
         log.info("[CSS3 Extractor] CSS3 Extractor");
         
+        //this should not be needed to be defined within the extractor
+        String reference = getReference(map.getLogicalSource());
+        log.info("[CSS3 Extractor] reference " + reference);
         // more configuration...
         Jerry doc = null;
-        
         File file = new File(fileName);
         try {
             doc = Jerry.jerry(FileUtil.readString(file));
         } catch (IOException ex) {
             Logger.getLogger(CSS3Extractor.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+        NodeSelector nodeSelector = null;
         //working examples
         //log.info("[CSS3 Extractor] year " + doc.$("span.CEURPUBYEAR").html());
         //log.info("[CSS3 Extractor] title " + doc.$("span.CEURFULLTITLE").html());
         
-        performer.perform(doc, dataset, map);
-        
+        log.info("[CSS3 Extractor] href " + doc.$("[href]").html()); 
+         
+        nodeSelector = new NodeSelector(doc.get(0));
+
+        List<Node> selectedNodes = nodeSelector.select(reference);
+        for (int i = 0; i < selectedNodes.size(); i++) {
+            Node n = selectedNodes.get(i);
+            performer.perform(n.getHtml(), dataset, map);
+        }
+               
     }
 
     @Override
@@ -54,14 +67,12 @@ public class CSS3Extractor extends AbstractRMLProcessor{
 
     @Override
     public List<String> extractValueFromNode(Object node, String expression) {
-        Jerry doc = (Jerry) node;
-        
-        log.info("[CSS3 Extractor] year " + doc.$(expression).html());
-        
+        Jerry doc = Jerry.jerry(node.toString());
+        log.info("[CSS3Extractor:extractValueFromNode] expression " + expression);
         List<String> list = new ArrayList();
-        list.add(doc.$(expression).html());
+        String value = StringEscapeUtils.unescapeHtml(doc.$(expression).html());
+        list.add(value);
         return list;
-
     }
     
 }

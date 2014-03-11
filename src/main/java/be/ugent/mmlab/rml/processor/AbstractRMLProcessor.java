@@ -37,6 +37,9 @@ import org.openrdf.model.impl.BNodeImpl;
 import org.openrdf.model.impl.LiteralImpl;
 import org.openrdf.model.impl.URIImpl;
 import org.openrdf.model.vocabulary.RDF;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetEncoder;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * This class contains all generic functionality for executing an iteration and
@@ -166,7 +169,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                         
                         try {
                             //Use encoding UTF-8 explicit URL encode; other one is deprecated
-                            temp = temp.replaceAll("\\{" + expression + "\\}", URLEncoder.encode(replacement,"UTF-8"));
+                           temp = temp.replaceAll("\\{" + expression + "\\}", URLEncoder.encode(replacement,"UTF-8"));
                         } catch (UnsupportedEncodingException ex) {
                             log.error(ex);
                         }
@@ -174,7 +177,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                         value.set(i, temp);
                     }
                 }
-                
+                                
                 //Check if there are any placeholders left in the templates and remove uris that are not
                 List<String> validValues = new ArrayList<String>();
                 for (String uri : value){
