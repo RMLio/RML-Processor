@@ -7,7 +7,6 @@ import be.ugent.mmlab.rml.processor.AbstractRMLProcessor;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -48,15 +47,13 @@ public class CSS3Extractor extends AbstractRMLProcessor{
         //working examples
         //log.info("[CSS3 Extractor] year " + doc.$("span.CEURPUBYEAR").html());
         //log.info("[CSS3 Extractor] title " + doc.$("span.CEURFULLTITLE").html());
-        
-        log.info("[CSS3 Extractor] href " + doc.$("[href]").html()); 
+        //log.info("[CSS3Extractor] href " + doc.$("[href]").html()); 
          
         nodeSelector = new NodeSelector(doc.get(0));
-
+        
         List<Node> selectedNodes = nodeSelector.select(reference);
         for (int i = 0; i < selectedNodes.size(); i++) {
-            Node n = selectedNodes.get(i);
-            performer.perform(n.getHtml(), dataset, map);
+            performer.perform(selectedNodes.get(i).getHtml(), dataset, map);
         }
                
     }
@@ -74,8 +71,8 @@ public class CSS3Extractor extends AbstractRMLProcessor{
         
         //List<String> list = new ArrayList();
         List<Node> selectedNodes = nodeSelector.select(expression.trim());
+        log.info("[CSS3Extractor:execute_node] selectedNodes " + selectedNodes);
         for(Node selectNode : selectedNodes){
-            log.info("[CSS3Extractor:extractValueFromNode] selectNode " + selectNode.getHtml());
             //list.add(StringEscapeUtils.unescapeHtml(selectNode.getTextContent()));
             performer.perform(selectNode.getHtml(), dataset, parentTriplesMap);
         }
@@ -98,7 +95,7 @@ public class CSS3Extractor extends AbstractRMLProcessor{
         Jerry doc = Jerry.jerry(node.toString());
         log.info("[CSS3Extractor:extractValueFromNode] expression " + expression);
         List<String> list = new ArrayList();
-        String value = StringEscapeUtils.unescapeHtml(doc.$(expression).html());
+        String value = StringEscapeUtils.unescapeHtml(doc.$(expression).text().trim().replaceAll("[\\t\\n\\r]", " "));
         list.add(value);
         return list;
     }
