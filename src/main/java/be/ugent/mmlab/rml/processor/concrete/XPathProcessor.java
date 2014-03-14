@@ -189,8 +189,11 @@ public class XPathProcessor extends AbstractRMLProcessor {
                     list.add(n.getValue());
                 }
             */
-                //String value = StringEscapeUtils.unescapeHtml(doc.$(expression).text().trim().replaceAll("[\\t\\n\\r]", " "));
-                list.add(n.getValue().trim().replaceAll("[\\t\\n\\r]", " ").replaceAll(" +", " ").replaceAll("\\( ", "\\(").replaceAll(" \\)", "\\)").replaceAll(" :", ":").replaceAll(" ,", ","));
+                //checks if the node has children, then cleans up new lines and extra spaces
+                if (!(n instanceof Attribute) && n.getChildCount()>1)
+                    list.add(n.getValue().trim().replaceAll("[\\t\\n\\r]", " ").replaceAll(" +", " ").replaceAll("\\( ", "\\(").replaceAll(" \\)", "\\)").replaceAll(" :", ":").replaceAll(" ,", ","));
+                else
+                    list.add(n.getValue());
         }
         
         return list;
