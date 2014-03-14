@@ -31,23 +31,24 @@ public class RMLEngine {
     private static Log log = LogFactory.getLog(R2RMLEngine.class);
     // A base IRI used in resolving relative IRIs produced by the R2RML mapping.
     private String baseIRI;
-    
+
     //Properties containing the identifiers for files
     //There are probably better ways to do this than a static variable
     private static Properties fileMap = new Properties();
 
-    public static Properties getFileMap(){
+    public static Properties getFileMap() {
         return fileMap;
     }
+
     /**
      * Generate RDF based on a RML mapping
-     * 
+     *
      * @param rmlMapping Parsed RML mapping
      * @param baseIRI base URI of the resulting RDF
      * @return dataset containing the triples
      * @throws SQLException
      * @throws R2RMLDataError
-     * @throws UnsupportedEncodingException 
+     * @throws UnsupportedEncodingException
      */
     public SesameDataSet runRMLMapping(RMLMapping rmlMapping,
             String baseIRI) throws SQLException,
@@ -56,20 +57,21 @@ public class RMLEngine {
     }
 
     /**
-     * 
+     *
      * @param rmlMapping Parsed RML mapping
      * @param baseIRI base URI of the resulting RDF
-     * @param pathToNativeStore path if triples have to be stored in sesame triple store instead of memory
+     * @param pathToNativeStore path if triples have to be stored in sesame
+     * triple store instead of memory
      * @return
      * @throws SQLException
      * @throws R2RMLDataError
-     * @throws UnsupportedEncodingException 
+     * @throws UnsupportedEncodingException
      */
     public SesameDataSet runRMLMapping(RMLMapping rmlMapping,
             String baseIRI, String pathToNativeStore, boolean filebased) throws SQLException,
             R2RMLDataError, UnsupportedEncodingException {
         long startTime = System.nanoTime();
-        
+
         log.debug("[RMLEngine:runRMLMapping] Run RML mapping... ");
         if (rmlMapping == null) {
             throw new IllegalArgumentException(
@@ -84,7 +86,7 @@ public class RMLEngine {
         // Update baseIRI
         this.baseIRI = baseIRI;
         log.info("RMLEngine base IRI " + baseIRI);
-        
+
         if (filebased) {
             log.debug("[RMLEngine:runRMLMapping] Use direct file "
                     + pathToNativeStore);
@@ -100,18 +102,17 @@ public class RMLEngine {
         
         // Explore RML Mapping TriplesMap objects  
         generateRDFTriples(sesameDataSet, rmlMapping, filebased);
-        log.info("[RMLEngine:generateRDFTriples] All triples were generated ");
-        long endTime = System.nanoTime();
-        long duration = endTime - startTime;
         
-        log.debug("[RMLEngine:runRMLMapping] RML mapping done! Generated " + sesameDataSet.getSize() +" in " + ((double) duration)/1000000000 +"s . ");
+	log.info("[RMLEngine:generateRDFTriples] All triples were generated ");
+        log.info("Sesame dataset " + sesameDataSet);
+        
+	long endTime = System.nanoTime();
+        long duration = endTime - startTime;
+
+        log.debug("[RMLEngine:runRMLMapping] RML mapping done! Generated " + sesameDataSet.getSize() + " in " + ((double) duration) / 1000000000 + "s . ");
         return sesameDataSet;
     }
-    
-    
-    
-    
-    
+
     /**
      * This process adds RDF triples to the output dataset. Each generated
      * triple is placed into one or more graphs of the output dataset. The
@@ -126,13 +127,15 @@ public class RMLEngine {
     private void generateRDFTriples(SesameDataSet sesameDataSet,
             RMLMapping r2rmlMapping, boolean filebased) throws SQLException, R2RMLDataError,
             UnsupportedEncodingException {
-        
+
         log.debug("[RMLEngine:generateRDFTriples] Generate RDF triples... ");
         int delta = 0;
-        
+
         RMLProcessorFactory factory = new ConcreteRMLProcessorFactory();
+
         for (TriplesMap triplesMap : r2rmlMapping.getTriplesMaps()) {
             FileInputStream input = null;
+
             RMLProcessor processor = factory.create(triplesMap.getLogicalSource().getQueryLanguage());
             //URL filePath = getClass().getProtectionDomain().getCodeSource().getLocation();
             //System.out.println("XPath Processor filePath " + filePath);

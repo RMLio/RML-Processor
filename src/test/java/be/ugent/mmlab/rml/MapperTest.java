@@ -116,7 +116,6 @@ public class MapperTest
             SesameDataSet desiredOutput = new SesameDataSet();
             desiredOutput.addFile(outputURL.getFile(), RDFFormat.TURTLE);
 
-
             return desiredOutput.isEqualTo(output);
         } catch (SQLException | InvalidR2RMLStructureException | InvalidR2RMLSyntaxException | R2RMLDataError | RepositoryException | RDFParseException ex) {
             Logger.getLogger(MapperTest.class.getName()).log(Level.SEVERE, null, ex);

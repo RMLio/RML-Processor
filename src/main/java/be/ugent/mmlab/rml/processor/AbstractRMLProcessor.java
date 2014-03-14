@@ -220,6 +220,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                     //Create the processor based on the parent triples map to perform the join
                     RMLProcessorFactory factory = new ConcreteRMLProcessorFactory();
                     QLTerm queryLanguage = parentTriplesMap.getLogicalSource().getQueryLanguage();
+
                     String fileName = null;
                     File file = new File(parentTriplesMap.getLogicalSource().getIdentifier());
                     if(!file.exists())
@@ -227,9 +228,10 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                     else
                         fileName = parentTriplesMap.getLogicalSource().getIdentifier();
                     //log.info("Abstract RMLProcessor fileName " + fileName);
+
                     RMLProcessor processor = factory.create(queryLanguage);
 
-                    RMLPerformer performer;
+                    RMLPerformer performer = null;
 
                     if (joinConditions.isEmpty() & !parentTriplesMap.getLogicalSource().getIdentifier().equals(map.getLogicalSource().getIdentifier())) {
                         log.info("[AbstractRMLProcessorProcessor:processPredicateObjectMap] JoinRMLPerformer");
@@ -275,7 +277,11 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                         //performer = new ConditionalJoinRMLPerformer(processor, joinMap, subject, predicate);
                         //processor.execute(dataset, parentTriplesMap, performer, fileName);
                     }
+
+                    processor.execute(dataset, parentTriplesMap, performer, fileName);
+
                     //processor.execute(dataset, parentTriplesMap, performer, fileName);
+
                 }
 
                 //process the objectmaps

@@ -26,7 +26,7 @@ public interface RMLProcessor {
     public void execute(SesameDataSet dataset, TriplesMap map, RMLPerformer performer, String fileName);
     
     public void execute_node(SesameDataSet dataset, TriplesMap map, TriplesMap parentTriplesMap, RMLPerformer performer, Object node);
-    
+
     /**
      * Resolve an expression and extract a single string value from a node
      * @param node current object
