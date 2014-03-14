@@ -3,7 +3,6 @@ package be.ugent.mmlab.rml.processor.concrete;
 import be.ugent.mmlab.rml.core.RMLMappingFactory;
 import be.ugent.mmlab.rml.core.RMLPerformer;
 import be.ugent.mmlab.rml.model.TriplesMap;
-import be.ugent.mmlab.rml.model.reference.ReferenceIdentifierImpl;
 import be.ugent.mmlab.rml.processor.AbstractRMLProcessor;
 import be.ugent.mmlab.rml.xml.XOMBuilder;
 import java.io.FileInputStream;
@@ -17,12 +16,10 @@ import jlibs.xml.DefaultNamespaceContext;
 import jlibs.xml.Namespaces;
 import jlibs.xml.sax.dog.NodeItem;
 import jlibs.xml.sax.dog.XMLDog;
-import jlibs.xml.sax.dog.XPathResults;
 import jlibs.xml.sax.dog.expr.Expression;
 import jlibs.xml.sax.dog.expr.InstantEvaluationListener;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
 import nu.xom.Attribute;
-import nu.xom.Element;
 import nu.xom.Node;
 import nu.xom.Nodes;
 import nu.xom.XPathContext;
@@ -140,21 +137,19 @@ public class XPathProcessor extends AbstractRMLProcessor {
     }
     
     @Override
-    public void execute_node(SesameDataSet dataset, TriplesMap map, TriplesMap parentTriplesMap, RMLPerformer performer, Object node) {
+    public void execute_node(SesameDataSet dataset, String expression, TriplesMap parentTriplesMap, RMLPerformer performer, Object node) {
         //still need to make it work with more nore-results 
         //currently it handles only one
         
         DefaultNamespaceContext dnc = get_namespaces();     
-        int end = map.getLogicalSource().getReference().length();
-        log.debug("[AbstractRMLProcessorProcessor] initial expression " + map.getLogicalSource().getReference());
-        log.debug("[AbstractRMLProcessorProcessor] next expression " + parentTriplesMap.getLogicalSource().getReference());
-        String expression = parentTriplesMap.getLogicalSource().getReference().toString().substring(end);
         if(expression.startsWith("/"))
             expression = expression.substring(1);
         log.debug("[AbstractRMLProcessorProcessor] expression " + expression);
         
         Node node2 = (Node) node;
+        log.info("[AbstractRMLProcessorProcessor:node] " + "\n \n node2 " + node2.toXML() + "\n \n");
         Nodes nodes = node2.query(expression, nsContext);
+        log.debug("[AbstractRMLProcessorProcessor:node] " + "nodes' size " + nodes.size());
         log.debug("[AbstractRMLProcessorProcessor:node] " + "nodes " + nodes);
         
         for (int i = 0; i < nodes.size(); i++) {

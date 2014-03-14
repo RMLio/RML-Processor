@@ -247,8 +247,12 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                             performer.perform(node, dataset, parentTriplesMap);
                         }
                         else{
+                            int end = map.getLogicalSource().getReference().length();
+                            log.debug("[AbstractRMLProcessorProcessor] initial expression " + map.getLogicalSource().getReference());
+                            log.debug("[AbstractRMLProcessorProcessor] next expression " + parentTriplesMap.getLogicalSource().getReference());
+                            String expression = parentTriplesMap.getLogicalSource().getReference().toString().substring(end);
                             log.info("[AbstractRMLProcessorProcessor:processPredicateObjectMap] SimpleReferencePerformer - different referenece");
-                            processor.execute_node(dataset, map, parentTriplesMap, performer, node);
+                            processor.execute_node(dataset, expression, parentTriplesMap, performer, node);
                         }
                     }
                     else {
