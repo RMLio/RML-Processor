@@ -140,17 +140,14 @@ public class XPathProcessor extends AbstractRMLProcessor {
     public void execute_node(SesameDataSet dataset, String expression, TriplesMap parentTriplesMap, RMLPerformer performer, Object node) {
         //still need to make it work with more nore-results 
         //currently it handles only one
-        
-        DefaultNamespaceContext dnc = get_namespaces();     
+    
         if(expression.startsWith("/"))
             expression = expression.substring(1);
         log.debug("[AbstractRMLProcessorProcessor] expression " + expression);
         
-        Node node2 = (Node) node;
-        log.info("[AbstractRMLProcessorProcessor:node] " + "\n \n node2 " + node2.toXML() + "\n \n");
+        Node node2 = (Node) node; 
         Nodes nodes = node2.query(expression, nsContext);
         log.debug("[AbstractRMLProcessorProcessor:node] " + "nodes' size " + nodes.size());
-        log.debug("[AbstractRMLProcessorProcessor:node] " + "nodes " + nodes);
         
         for (int i = 0; i < nodes.size(); i++) {
             Node n = nodes.get(i);
@@ -169,14 +166,14 @@ public class XPathProcessor extends AbstractRMLProcessor {
      */
     private List<String> extractValueFromNode(Node node, String expression) {
         Nodes nodes = node.query(expression, nsContext);
-        List<String> list = new ArrayList<String>();
-        
+
+        List<String> list = new ArrayList<>();
         for (int i = 0; i < nodes.size(); i++) {
             Node n = nodes.get(i);
 
-            //MVS's for geo
             //checks if the node has a value or children
             if(!n.getValue().isEmpty() || (n.getChildCount()!=0))
+                //MVS's for extracting elements and not the string
                 /* if (!(n instanceof Attribute) && n.getChild(0) instanceof Element) {
                     list.add(n.toXML());
                 } 

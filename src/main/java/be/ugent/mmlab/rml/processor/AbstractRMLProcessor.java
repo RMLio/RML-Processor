@@ -99,6 +99,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
         return subject;
     }
     
+    @Override
     public void processSubjectTypeMap(SesameDataSet dataset, Resource subject, SubjectMap subjectMap, Object node) {
 
         //Add the type triples
@@ -176,7 +177,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                 }
                 
                 //Check if there are any placeholders left in the templates and remove uris that are not
-                List<String> validValues = new ArrayList<String>();
+                List<String> validValues = new ArrayList<>();
                 for (String uri : value){
                     if (R2RMLToolkit.extractColumnNamesFromStringTemplate(uri).isEmpty()){
                         validValues.add(uri);
@@ -259,7 +260,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                         //Build a join map where
                         //  key: the parent expression
                         //  value: the value extracted from the child
-                        HashMap<String, String> joinMap = new HashMap<String, String>();
+                        HashMap<String, String> joinMap = new HashMap<>();
 
                         for (JoinCondition joinCondition : joinConditions) {
                             List<String> childValues = extractValueFromNode(node, joinCondition.getChild());
@@ -282,7 +283,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                         //processor.execute(dataset, parentTriplesMap, performer, fileName);
                     }
 
-                    processor.execute(dataset, parentTriplesMap, performer, fileName);
+                    //processor.execute(dataset, parentTriplesMap, performer, fileName);
 
                     //processor.execute(dataset, parentTriplesMap, performer, fileName);
 
@@ -329,7 +330,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
         // Get the value
         List<String> values = processTermMap(predicateMap, node);
 
-        List<URI> uris = new ArrayList<URI>();
+        List<URI> uris = new ArrayList<>();
         for (String value : values) {
             uris.add(new URIImpl(value));
         }

@@ -36,6 +36,7 @@ public class NodeRMLPerformer implements RMLPerformer{
      * @param dataset dataset for endresult
      * @param map current triple map that is being processed
      */
+    @Override
     public void perform(Object node, SesameDataSet dataset, TriplesMap map) {
         Resource subject = processor.processSubjectMap(dataset, map.getSubjectMap(), node);
         processor.processSubjectTypeMap(dataset, subject, map.getSubjectMap(), node);

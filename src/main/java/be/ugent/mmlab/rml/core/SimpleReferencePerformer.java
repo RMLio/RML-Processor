@@ -2,7 +2,6 @@ package be.ugent.mmlab.rml.core;
 
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.RMLProcessor;
-import java.util.ArrayList;
 import java.util.List;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
 import nu.xom.Node;
@@ -18,7 +17,7 @@ import org.openrdf.model.impl.URIImpl;
  */
 public class SimpleReferencePerformer extends NodeRMLPerformer {
     
-    private static Log log = LogFactory.getLog(RMLMappingFactory.class);
+    private static Log log = LogFactory.getLog(NodeRMLPerformer.class);
     private Resource subject;
     private URI predicate;
     
