@@ -179,15 +179,17 @@ public class XPathProcessor extends AbstractRMLProcessor {
         for (int i = 0; i < nodes.size(); i++) {
             Node n = nodes.get(i);
 
+            //MVS's for geo
             //checks if the node has a value or children
             if(!n.getValue().isEmpty() || (n.getChildCount()!=0))
-                 if (!(n instanceof Attribute) && n.getChild(0) instanceof Element) {
+                /* if (!(n instanceof Attribute) && n.getChild(0) instanceof Element) {
                     list.add(n.toXML());
                 } 
                 else {
                     list.add(n.getValue());
                 }
-                //list.add(n.toXML());
+            */
+                list.add(n.getValue().trim());
         }
         
         return list;
