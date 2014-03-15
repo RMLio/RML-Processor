@@ -33,6 +33,7 @@ import org.xml.sax.InputSource;
  * @author mielvandersande, andimou
  */
 public class XPathProcessor extends AbstractRMLProcessor {
+    private int enumerator =0;
 
     private static Log log = LogFactory.getLog(RMLMappingFactory.class);
 
@@ -165,9 +166,15 @@ public class XPathProcessor extends AbstractRMLProcessor {
      * @return value that matches expression
      */
     private List<String> extractValueFromNode(Node node, String expression) {
+        DefaultNamespaceContext dnc = get_namespaces();
+        List<String> list = new ArrayList<>();
+        //if there's nothing to uniquelly identify, use # - temporary solution - challenge
+        if(expression.equals("#")){
+            list.add(Integer.toString(enumerator++));
+            return list;
+        }
         Nodes nodes = node.query(expression, nsContext);
 
-        List<String> list = new ArrayList<>();
         for (int i = 0; i < nodes.size(); i++) {
             Node n = nodes.get(i);
 

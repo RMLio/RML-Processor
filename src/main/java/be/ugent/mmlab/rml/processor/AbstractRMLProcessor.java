@@ -104,9 +104,10 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
 
         //Add the type triples
         Set<org.openrdf.model.URI> classIRIs = subjectMap.getClassIRIs();
-        for (org.openrdf.model.URI classIRI : classIRIs) {
-            dataset.add(subject, RDF.TYPE, classIRI);
-        }
+        if(subject != null)
+            for (org.openrdf.model.URI classIRI : classIRIs) {
+                dataset.add(subject, RDF.TYPE, classIRI);
+            }
     }
 
     /**
