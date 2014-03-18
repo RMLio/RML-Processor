@@ -144,7 +144,6 @@ public class RMLEngine {
                 fileName = triplesMap.getLogicalSource().getIdentifier();
             else
                 fileName = getClass().getResource(triplesMap.getLogicalSource().getIdentifier()).getFile();
-
             try {
                 getFileMap().put(fileName, fileName);
                 input = new FileInputStream(fileName);

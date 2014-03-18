@@ -79,11 +79,11 @@ public class MapperTest
         assertTrue(assertMap(fileToRMLFile, fileToOutputFile));
     }
 
-    public void testExample5() {
+    /*public void testExample5() {
         URL fileToRMLFile = getClass().getResource("/example5/museum-model.rml.ttl");
         URL fileToOutputFile = getClass().getResource("/example5/museum.output.ttl");
         assertTrue(assertMap(fileToRMLFile, fileToOutputFile));
-    }
+    }*/
     
     public void testExample6() {
         URL fileToRMLFile = getClass().getResource("/example6/example.rml.ttl");
@@ -96,6 +96,18 @@ public class MapperTest
         URL fileToOutputFile = getClass().getResource("/example7/example.output.ttl");
         assertTrue(assertMap(fileToRMLFile, fileToOutputFile));
     }
+    
+    /*public void testExample12() {
+        URL fileToRMLFile = getClass().getResource("/example12/jats_Adv_Virol.mapping.rml.ttl");
+        URL fileToOutputFile = getClass().getResource("/example12/Adv_Virol_2010_Jan_18_2010_407476.output.ttl");
+        assertTrue(assertMap(fileToRMLFile, fileToOutputFile));
+    }
+    
+    public void testExample13() {
+        URL fileToRMLFile = getClass().getResource("/example13/BMC_Pediatr_2013_Jan_15_13_8.rml.ttl");
+        URL fileToOutputFile = getClass().getResource("/example13/BMC_Pediatr_2013_Jan_15_13_8.output.ttl");
+        assertTrue(assertMap(fileToRMLFile, fileToOutputFile));
+    }*/
     
     /*public void testExample8() {
         URL fileToRMLFile = getClass().getResource("/example8/simergy.rml.ttl");
