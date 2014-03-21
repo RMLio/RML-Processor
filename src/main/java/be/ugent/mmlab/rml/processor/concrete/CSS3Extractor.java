@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import jodd.io.FileUtil;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
 import jodd.jerry.Jerry;
@@ -96,14 +98,70 @@ public class CSS3Extractor extends AbstractRMLProcessor{
         Jerry doc = Jerry.jerry(node.toString());
         log.info("[CSS3Extractor:extractValueFromNode] expression " + expression);
         List<String> list = new ArrayList();
-        
+               
         if(expression.equals("#")){
-                list.add(Integer.toString(enumerator++));
-                return list;
-            }
+            log.info("[CSS3Extractor:extractValueFromNode] enumeration.");
+            list.add(Integer.toString(enumerator++));
+            return list;
+        }
         
-        String value = StringEscapeUtils.unescapeHtml(doc.$(expression).text().trim().replaceAll("[\\t\\n\\r]", " "));
-        list.add(value);
+        if(expression.contains("{") && expression.contains("}")){
+            String replacement = null, valueNew;
+            String[] valueList ;
+            String regex = expression.split("\\{")[1];
+            regex = regex.split("\\}")[0];
+            log.info("[CSS3Extractor:extractValueFromNode] regex " + regex.toString());
+            if(regex.contains("#")){
+                replacement = regex.split("#")[1];
+                log.info("[CSS3Extractor:extractValueFromNode] replacement " + replacement.toString());
+            }
+            regex = regex.split("#")[0];
+            expression = expression.split("\\{")[0];
+            log.info("[CSS3Extractor:extractValueFromNode] expression " + expression.toString());
+            String value = StringEscapeUtils.unescapeHtml(doc.$(expression).text().trim().replaceAll("[\\t\\n\\r\\s]{2,}", " "));
+            log.info("[CSS3Extractor:extractValueFromNode] value " + value.toString());
+            if(replacement == null){
+                log.info("[CSS3Extractor:extractValueFromNode] rml:reference without replacement.");
+                valueList = value.split(regex);
+                for(String val : valueList){
+                    log.info("[CSS3Extractor:extractValueFromNode] val " + val.toString());
+                    list.add(val);
+                }
+            }
+            else
+            {
+                log.info("[CSS3Extractor:extractValueFromNode] rml:reference with replacement.");
+                Pattern replace = Pattern.compile(regex);
+                log.info("[CSS3Extractor:extractValueFromNode] replace " + replace.toString());
+                Matcher matcher = replace.matcher(value);
+                log.info("[CSS3Extractor:extractValueFromNode] matcher " + matcher.toString());
+                list.add(matcher.replaceAll(replacement));
+            }
+                //valueNew = value.replaceAll(expression, replacement);
+            //String[] valueList = value.split("(\\w\\s)*,");
+            
+        }
+        else 
+            if(expression.contains("&")){
+            log.info("[CSS3Extractor:extractValueFromNode] rr:template with regex.");    
+            String[] valueList ;
+            String regex = expression.split("&")[1];
+            log.info("[CSS3Extractor:extractValueFromNode] regex " + regex.toString());
+            expression = expression.split("&")[0];
+            log.info("[CSS3Extractor:extractValueFromNode] expression " + expression.toString());
+            String value = StringEscapeUtils.unescapeHtml(doc.$(expression).text().trim().replaceAll("[\\t\\n\\r\\s]{2,}", " "));
+            log.info("[CSS3Extractor:extractValueFromNode] value " + value.toString());
+                valueList = value.split(regex);
+                for(String val : valueList){
+                    log.info("[CSS3Extractor:extractValueFromNode] val " + val.toString());
+                    list.add(val);
+                }
+            return list;
+            }
+        else{
+            String value = StringEscapeUtils.unescapeHtml(doc.$(expression).text().trim().replaceAll("[\\t\\n\\r]", " "));
+            list.add(value);
+        }
         return list;
     }
     
