@@ -27,6 +27,7 @@ import org.apache.commons.logging.LogFactory;
 public class CSS3Extractor extends AbstractRMLProcessor{
     
     private static Log log = LogFactory.getLog(RMLMappingFactory.class);
+    private int enumerator;
 
     @Override
     public void execute(SesameDataSet dataset, TriplesMap map, RMLPerformer performer, String fileName) {
@@ -95,6 +96,12 @@ public class CSS3Extractor extends AbstractRMLProcessor{
         Jerry doc = Jerry.jerry(node.toString());
         log.info("[CSS3Extractor:extractValueFromNode] expression " + expression);
         List<String> list = new ArrayList();
+        
+        if(expression.equals("#")){
+                list.add(Integer.toString(enumerator++));
+                return list;
+            }
+        
         String value = StringEscapeUtils.unescapeHtml(doc.$(expression).text().trim().replaceAll("[\\t\\n\\r]", " "));
         list.add(value);
         return list;
