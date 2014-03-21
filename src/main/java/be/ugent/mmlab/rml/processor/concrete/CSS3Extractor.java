@@ -67,6 +67,8 @@ public class CSS3Extractor extends AbstractRMLProcessor{
         log.debug("[AbstractRMLProcessorProcessor] initial expression " + map.getLogicalSource().getReference());
         log.debug("[AbstractRMLProcessorProcessor] next expression " + parentTriplesMap.getLogicalSource().getReference());
         String expression = parentTriplesMap.getLogicalSource().getReference().toString().substring(end);
+        if(expression.startsWith("+"))
+            expression = expression.substring(1);
         log.debug("[AbstractRMLProcessorProcessor] expression " + expression);
         
         Jerry doc = Jerry.jerry(node.toString());
@@ -104,7 +106,9 @@ public class CSS3Extractor extends AbstractRMLProcessor{
             list.add(Integer.toString(enumerator++));
             return list;
         }
-        
+        //use the same syntax as expression in templates to define the regex to the rml:reference
+        //normally it provides a pattern and return as many matches as found
+        //if it contains # the part after the # is the replacement regex
         if(expression.contains("{") && expression.contains("}")){
             String replacement = null, valueNew;
             String[] valueList ;
@@ -125,7 +129,8 @@ public class CSS3Extractor extends AbstractRMLProcessor{
                 valueList = value.split(regex);
                 for(String val : valueList){
                     log.info("[CSS3Extractor:extractValueFromNode] val " + val.toString());
-                    list.add(val);
+                    if(val.isEmpty() || !val.equals(""))
+                        list.add(val);
                 }
             }
             else
@@ -135,7 +140,8 @@ public class CSS3Extractor extends AbstractRMLProcessor{
                 log.info("[CSS3Extractor:extractValueFromNode] replace " + replace.toString());
                 Matcher matcher = replace.matcher(value);
                 log.info("[CSS3Extractor:extractValueFromNode] matcher " + matcher.toString());
-                list.add(matcher.replaceAll(replacement));
+                if(!matcher.replaceAll(replacement).equals(""))
+                    list.add(matcher.replaceAll(replacement));
             }
                 //valueNew = value.replaceAll(expression, replacement);
             //String[] valueList = value.split("(\\w\\s)*,");
@@ -160,6 +166,7 @@ public class CSS3Extractor extends AbstractRMLProcessor{
             }
         else{
             String value = StringEscapeUtils.unescapeHtml(doc.$(expression).text().trim().replaceAll("[\\t\\n\\r]", " "));
+            if(!value.equals(""))
             list.add(value);
         }
         return list;
