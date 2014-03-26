@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
 import net.antidot.semantic.rdf.rdb2rdf.r2rml.core.R2RMLEngine;
 import net.antidot.semantic.rdf.rdb2rdf.r2rml.tools.R2RMLToolkit;
@@ -93,10 +94,12 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
         if (value == null) {
             return null;
         }
+        
+        if(value.startsWith("http") || value.startsWith("ftp"))
+                return new URIImpl(value);
+        else
+            return null;
 
-        Resource subject = new URIImpl(value);
-
-        return subject;
     }
     
     public void processSubjectTypeMap(SesameDataSet dataset, Resource subject, SubjectMap subjectMap, Object node) {
@@ -104,7 +107,8 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
         //Add the type triples
         Set<org.openrdf.model.URI> classIRIs = subjectMap.getClassIRIs();
         for (org.openrdf.model.URI classIRI : classIRIs) {
-            dataset.add(subject, RDF.TYPE, classIRI);
+            if(subject != null)
+                dataset.add(subject, RDF.TYPE, classIRI);
         }
     }
 
@@ -142,11 +146,9 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                         if (value.size() < (i + 1)) {
                             value.add(template);
                         }
-
                         String replacement = replacements.get(i).trim();
 
-                        //if (replacement == null || replacement.isEmpty()) {
-                        if (replacement == null) {
+                        if (replacement == null && !replacement.equals("")) {
                             //if the replacement value is null or empty, the reulting uri would be invalid, skip this.
                             //The placeholders remain which removes them in the end.
                             continue;
@@ -154,10 +156,6 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
 
                         String temp = value.get(i).trim();
 
-                        if (expression.contains("[")) {
-                            expression = expression.replaceAll("\\[", "").replaceAll("\\]", "");
-                            temp = temp.replaceAll("\\[", "").replaceAll("\\]", "");
-                        }
                         //JSONPath expression cause problems when replacing, remove the $ first
                         if (expression.contains("$")) {
                             expression = expression.replaceAll("\\$", "");
@@ -165,8 +163,10 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                         }
                         
                         try {
-                            //Use encoding UTF-8 explicit URL encode; other one is deprecated
-                           temp = temp.replaceAll("\\{" + expression + "\\}", URLEncoder.encode(replacement,"UTF-8"));
+                            //Use encoding UTF-8 explicit URL encode; other one is deprecated 
+                            //temp.replaceAll(expression, "body div.CEURTOC h2+ul li a&<a href=\\\"([\\\\w\\\\d]*.\\\\w*)\\\">([\\\\w\\\\d]*)</a>#$1");
+                            temp = temp.replaceAll("\\{" + Pattern.quote(expression) + "\\}", ((replacement.startsWith("http")||replacement.startsWith("ftp")) ? replacement.toString() : URLEncoder.encode(replacement,"UTF-8")));
+                            
                         } catch (UnsupportedEncodingException ex) {
                             log.error(ex);
                         }
@@ -182,7 +182,6 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                         validValues.add(uri);
                     }
                 }
-
                 return validValues;
 
             default:

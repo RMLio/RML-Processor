@@ -33,11 +33,14 @@ public class SimpleReferencePerformer extends NodeRMLPerformer {
         log.debug("[SimpleReferencePerformer:object] " + "values " + values);
 
         for(String value : values){
-            Resource object = new URIImpl(value);
+            Resource object;
+            if(value.startsWith("http") || value.startsWith("ftp")){
+            object = new URIImpl(value);
 
             dataset.add(subject, predicate, object);
             log.debug("[SimpleReferencePerformer:addTriples] Subject "
                     + subject + " Predicate " + predicate + "Object " + object.toString());
+            }
         }       
 
         
