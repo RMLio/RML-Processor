@@ -2,7 +2,6 @@ package be.ugent.mmlab.rml.processor;
 
 import be.ugent.mmlab.rml.core.ConditionalJoinRMLPerformer;
 import be.ugent.mmlab.rml.core.JoinRMLPerformer;
-import be.ugent.mmlab.rml.core.RMLEngine;
 import be.ugent.mmlab.rml.core.RMLPerformer;
 import be.ugent.mmlab.rml.core.SimpleReferencePerformer;
 import be.ugent.mmlab.rml.model.GraphMap;
@@ -55,9 +54,9 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
     // Log
     private static Log log = LogFactory.getLog(R2RMLEngine.class);
 
-    protected String getIdentifier(LogicalSource ls) {
+    /*protected String getIdentifier(LogicalSource ls) {
         return RMLEngine.getFileMap().getProperty(ls.getIdentifier());
-    }
+    }*/
 
     /**
      * gets the expression specified in the logical source
