@@ -115,17 +115,6 @@ public class MapperTest
         assertTrue(assertMap(fileToRMLFile, fileToOutputFile));
     }
     
-    /*public void testExample11() {
-        URL fileToRMLFile = getClass().getResource("/example11/nmbs_station.rml.ttl");
-        URL fileToOutputFile = getClass().getResource("/example11/nmbs_station.output.ttl");
-        assertTrue(assertMap(fileToRMLFile, fileToOutputFile));
-    }
-    
-    public void testExample12() {
-        URL fileToRMLFile = getClass().getResource("/example12/CEURWorkshopProceedings_test.rml.ttl");
-        URL fileToOutputFile = getClass().getResource("/example12/CEURWorkshopProceedings.output.ttl");
-        assertTrue(assertMap(fileToRMLFile, fileToOutputFile));
-    }*/
     
     private boolean assertMap(URL mappingURL, URL outputURL) {
         try {
