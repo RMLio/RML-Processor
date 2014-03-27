@@ -17,6 +17,7 @@ Master branch:
     mvn exec:java -Dexec.args="<sources_properties> <mapping_file> <output_file> [<graph>]"
 
 HTML branch:
+
     mvn exec:java -Dexec.args="<mapping_file> <output_file> [<graph>]"
 
 With
