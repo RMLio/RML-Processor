@@ -13,6 +13,7 @@ The processor can be run using Maven, so make sure you have installed it first: 
 You can run a mapping process by executing the following command.
 
 Master branch:    
+    
     mvn exec:java -Dexec.args="<sources_properties> <mapping_file> <output_file> [<graph>]"
 
 HTML branch:
