@@ -50,13 +50,12 @@ public class CSVProcessor extends AbstractRMLProcessor {
             reader.readHeaders();
             //Iterate the rows
             while (reader.readRecord()) {
-                HashMap<String, String> row = new HashMap<String, String>();
+                HashMap<String, String> row = new HashMap<>();
 
                 for (String header : reader.getHeaders()) {
                     row.put(header, reader.get(header));
                 }
                 //let the performer handle the rows
-                log.debug("[CSVProcessor:row] " + "row " + row.toString());
                 performer.perform(row, dataset, map);
             }
 

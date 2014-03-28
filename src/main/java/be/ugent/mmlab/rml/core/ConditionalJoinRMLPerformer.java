@@ -45,37 +45,30 @@ public class ConditionalJoinRMLPerformer extends NodeRMLPerformer{
      */
     @Override
     public void perform(Object node, SesameDataSet dataset, TriplesMap map) {
-        log.debug("[ConditionalJoinRMLPerformer:object] " + "node " + node.toString());
-        Value object = processor.processSubjectMap(dataset, map.getSubjectMap(), node);
-
-        if (object == null){
-            log.debug("[ConditionalJoinRMLPerformer:object] " + "No object found.");
-            return;
-        }        
-        log.debug("[ConditionalJoinRMLPerformer:object] " + "Object " + object.toString());
-        
+        Value object;
         
         //iterate the conditions, execute the expressions and compare both values
         if(conditions != null){
+            boolean flag = true;
             for (String expr : conditions.keySet()) {
                 String cond = conditions.get(expr);
-                
-                log.debug("[ConditionalJoinRMLPerformer:condition] " + "Condition " + cond);
 
                 List<String> values = processor.extractValueFromNode(node, expr);
-                
-                //MVS: Only allow one value with joins?
-                //if a value doesn't match, stop right here
-                if (cond == null || values.isEmpty() || !cond.equals(values.get(0)) ){
-                    return;
+                for(String value : values){
+                    if(value == null || !value.equals(cond))
+                            flag = false;
                 }
             }
-        }
-        log.debug("[ConditionalJoinRMLPerformer:addTriples] Subject "
-                    + subject + " Predicate " + predicate + "Object " + object.toString());
-        //add the join triple
-        dataset.add(subject, predicate, object);
+            if(flag){
+                object = processor.processSubjectMap(dataset, map.getSubjectMap(), node);
+                if (object == null)
+                    log.debug("[ConditionalJoinRMLPerformer:object] " + "No object found.");
+                else{
+                    dataset.add(subject, predicate, object);
+                    log.debug("[ConditionalJoinRMLPerformer:addTriples] Subject "
+                                + subject + " Predicate " + predicate + "Object " + object.toString());
+                } 
+            }
+        }       
     }
-
-
 }

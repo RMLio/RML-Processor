@@ -223,7 +223,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                     RMLProcessorFactory factory = new ConcreteRMLProcessorFactory();
                     QLTerm queryLanguage = parentTriplesMap.getLogicalSource().getQueryLanguage();
 
-                    String fileName = null;
+                    String fileName ;
                     File file = new File(parentTriplesMap.getLogicalSource().getIdentifier());
                     if(RMLEngine.getSourceProperties())
                         fileName = RMLEngine.getFileMap().getProperty(file.toString());
@@ -240,13 +240,14 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
 
                     RMLProcessor processor = factory.create(queryLanguage);
 
-                    RMLPerformer performer = null;
-
+                    RMLPerformer performer ;
+                    //different Logical Source and no Conditions
                     if (joinConditions.isEmpty() & !parentTriplesMap.getLogicalSource().getIdentifier().equals(map.getLogicalSource().getIdentifier())) {
                         log.info("[AbstractRMLProcessorProcessor:processPredicateObjectMap] JoinRMLPerformer");
                         performer = new JoinRMLPerformer(processor, subject, predicate);
                         processor.execute(dataset, parentTriplesMap, performer, fileName);
                     } 
+                    //same Logical Source and no Conditions
                     else if (joinConditions.isEmpty() & parentTriplesMap.getLogicalSource().getIdentifier().equals(map.getLogicalSource().getIdentifier())){
                         log.info("[AbstractRMLProcessorProcessor:processPredicateObjectMap] SimpleReferencePerformer");
                         performer = new SimpleReferencePerformer(processor, subject, predicate);
@@ -264,6 +265,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                             processor.execute_node(dataset, expression, parentTriplesMap, performer, node);
                         }
                     }
+                    //Conditions
                     else {
                         //Build a join map where
                         //  key: the parent expression
@@ -304,19 +306,17 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                     List<Value> objects = processObjectMap(objectMap, node);
                     for (Value object : objects) {
                         log.info("[Abstract RML Processor] object string value " + object.stringValue());
-                        if (object != null) {
-                        //if (object != null && !object.toString().isEmpty()) {
+                        if (object.stringValue() != null) {
                             Set<GraphMap> graphs = pom.getGraphMaps();
                             log.info("[Abstract RML Processor] graphs " + graphs);
                             
                             if(graphs.isEmpty())
-                                if(!object.toString().isEmpty())
                                 dataset.add(subject, predicate, object);
                             else
                                 for (GraphMap graph : graphs) {
                                 log.info("[Abstract RML Processor] graph " + graph);
                                 Resource graphResource = new URIImpl(graph.getConstantValue().toString());
-                                //Value smth = graph.getConstantValue();
+                                
                                 log.info("[Abstract RML Processor] graph value " + graphResource);
                                 log.info("[Abstract RML Processor] triple added " + subject + " " + predicate + " " + object + " " + (Resource) graphResource);
                                 dataset.add(subject, predicate, object, graphResource);
@@ -324,7 +324,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                                 
                         }
                         else
-                           log.info("[Abstract RML Processor] objects " + objects); 
+                           log.info("[Abstract RML Processor] object was null."); 
                     }
                 }
             }
