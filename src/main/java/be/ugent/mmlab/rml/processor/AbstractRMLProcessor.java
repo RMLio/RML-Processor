@@ -2,6 +2,7 @@ package be.ugent.mmlab.rml.processor;
 
 import be.ugent.mmlab.rml.core.ConditionalJoinRMLPerformer;
 import be.ugent.mmlab.rml.core.JoinRMLPerformer;
+import be.ugent.mmlab.rml.core.RMLEngine;
 import be.ugent.mmlab.rml.core.RMLPerformer;
 import be.ugent.mmlab.rml.core.SimpleReferencePerformer;
 import be.ugent.mmlab.rml.model.GraphMap;
@@ -224,10 +225,17 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
 
                     String fileName = null;
                     File file = new File(parentTriplesMap.getLogicalSource().getIdentifier());
-                    if(!file.exists())
+                    if(RMLEngine.getSourceProperties())
+                        fileName = RMLEngine.getFileMap().getProperty(file.toString());
+                    else if(!file.exists()){
+                        log.info("Abstract RMLProcessor child input file " + map.getLogicalSource().getIdentifier().toString());
+                        log.info("Abstract RMLProcessor parent input file " + parentTriplesMap.getLogicalSource().getIdentifier().toString());
                         fileName = getClass().getResource(parentTriplesMap.getLogicalSource().getIdentifier()).getFile();
-                    else
+                    }
+                    else{
                         fileName = parentTriplesMap.getLogicalSource().getIdentifier();
+                        log.info("Abstract RMLProcessor file from cmd " + fileName);
+                    }
                     //log.info("Abstract RMLProcessor fileName " + fileName);
 
                     RMLProcessor processor = factory.create(queryLanguage);
@@ -295,23 +303,28 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                     //Get the one or more objects returned by the object map
                     List<Value> objects = processObjectMap(objectMap, node);
                     for (Value object : objects) {
-                        if (object != null && !object.toString().isEmpty()) {
+                        log.info("[Abstract RML Processor] object string value " + object.stringValue());
+                        if (object != null) {
+                        //if (object != null && !object.toString().isEmpty()) {
                             Set<GraphMap> graphs = pom.getGraphMaps();
                             log.info("[Abstract RML Processor] graphs " + graphs);
                             
                             if(graphs.isEmpty())
+                                if(!object.toString().isEmpty())
                                 dataset.add(subject, predicate, object);
                             else
                                 for (GraphMap graph : graphs) {
                                 log.info("[Abstract RML Processor] graph " + graph);
                                 Resource graphResource = new URIImpl(graph.getConstantValue().toString());
                                 //Value smth = graph.getConstantValue();
-                                log.info("[Abstract RML Processor] value " + graphResource);
+                                log.info("[Abstract RML Processor] graph value " + graphResource);
                                 log.info("[Abstract RML Processor] triple added " + subject + " " + predicate + " " + object + " " + (Resource) graphResource);
                                 dataset.add(subject, predicate, object, graphResource);
                                 }
                                 
                         }
+                        else
+                           log.info("[Abstract RML Processor] objects " + objects); 
                     }
                 }
             }
@@ -351,7 +364,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
 
         List<Value> valueList = new ArrayList<Value>();
         for (String value : values) {
-            //log.debug("[AbstractRMLProcessor:literal] value " + value);
+            log.debug("[AbstractRMLProcessor:literal] value " + value);
             switch (objectMap.getTermType()) {
                 case IRI:
                     valueList.add(new URIImpl(value));

@@ -50,7 +50,6 @@ public class Main {
                 System.out.println("source properties parameter is equal to " + cmd.getOptionValue("sp"));
                 //load the properties
                 RMLEngine.getFileMap().load(source_properties);
-                System.out.println("input file is " + RMLEngine.getFileMap().getProperty("gemeentecodes.csv"));
                 engine.runRMLMapping(mapping, graphName, args[1], true, true);
             }
             else
