@@ -41,8 +41,6 @@ public class NodeRMLPerformer implements RMLPerformer{
         Resource subject = processor.processSubjectMap(dataset, map.getSubjectMap(), node);
         processor.processSubjectTypeMap(dataset, subject, map.getSubjectMap(), node);
         if (subject == null){
-            log.debug("[NodeRMLPerformer:perform] Extracted "
-                    + subject + " for node " + node.toString());
             return;
         }
         Set<GraphMap> graph = map.getSubjectMap().getGraphMaps();

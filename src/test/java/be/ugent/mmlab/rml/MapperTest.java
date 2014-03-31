@@ -91,6 +91,12 @@ public class MapperTest
         assertTrue(assertMap(fileToRMLFile, fileToOutputFile));
     }
     
+    public void testExample13() {
+        URL fileToRMLFile = getClass().getResource("/example13/gemeentes.rml.ttl");
+        URL fileToOutputFile = getClass().getResource("/example13/gemeentes.output.ttl");
+        assertTrue(assertMap(fileToRMLFile, fileToOutputFile));
+    }
+    
     /*public void testExample7() {
         URL fileToRMLFile = getClass().getResource("/example7/taxpub_dtd.rml.ttl");
         URL fileToOutputFile = getClass().getResource("/example7/example.output.ttl");

@@ -147,18 +147,14 @@ public class RMLEngine {
             System.out.println("[RMLEngine:generateRDFTriples] Generate RDF triples for " + triplesMap.getName());
             RMLProcessor processor = factory.create(triplesMap.getLogicalSource().getQueryLanguage());
             //URL filePath = getClass().getProtectionDomain().getCodeSource().getLocation();
-            //System.out.println("XPath Processor filePath " + filePath);
             String fileName;
             if(filebased)
                 if(source_properties){
-                    log.info("[RMLEngine:generateRDFTriples] with source properties " + triplesMap.getLogicalSource().getIdentifier());
                     String file = triplesMap.getLogicalSource().getIdentifier();
                     fileName = RMLEngine.getFileMap().getProperty(file.toString());
-                    log.info("[RMLEngine:generateRDFTriples] filename " + fileName);}
-                else{
-                    log.info("[RMLEngine:generateRDFTriples] without source properties and filename " + triplesMap.getLogicalSource().getIdentifier());
-                    fileName = triplesMap.getLogicalSource().getIdentifier();
                 }
+                else
+                    fileName = triplesMap.getLogicalSource().getIdentifier();
             else
                 fileName = getClass().getResource(triplesMap.getLogicalSource().getIdentifier()).getFile();
             try {
@@ -176,7 +172,6 @@ public class RMLEngine {
                     + " triples generated for " + triplesMap.getName());
             delta = sesameDataSet.getSize();
                         
-            System.out.println("[RMLEngine:runRMLMapping] RML mapping done! Generated "+ String.valueOf(sesameDataSet.getSize()) + " for " + triplesMap.getName());           
             try {
                 input.close();
             } catch (IOException ex) {

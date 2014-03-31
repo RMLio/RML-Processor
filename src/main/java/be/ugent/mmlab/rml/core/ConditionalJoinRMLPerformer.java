@@ -50,20 +50,21 @@ public class ConditionalJoinRMLPerformer extends NodeRMLPerformer{
         //iterate the conditions, execute the expressions and compare both values
         if(conditions != null){
             boolean flag = true;
-            for (String expr : conditions.keySet()) {
-                String cond = conditions.get(expr);
 
+            iter: for (String expr : conditions.keySet()) {
+                String cond = conditions.get(expr);
                 List<String> values = processor.extractValueFromNode(node, expr);
+                
                 for(String value : values){
-                    if(value == null || !value.equals(cond))
+                    if(value == null || !value.equals(cond)){
                             flag = false;
+                            break iter;
+                    }
                 }
             }
             if(flag){
                 object = processor.processSubjectMap(dataset, map.getSubjectMap(), node);
-                if (object == null)
-                    log.debug("[ConditionalJoinRMLPerformer:object] " + "No object found.");
-                else{
+                if (object != null){
                     dataset.add(subject, predicate, object);
                     log.debug("[ConditionalJoinRMLPerformer:addTriples] Subject "
                                 + subject + " Predicate " + predicate + "Object " + object.toString());

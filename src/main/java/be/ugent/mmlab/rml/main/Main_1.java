@@ -23,7 +23,7 @@ import org.openrdf.rio.RDFParseException;
  *
  * @author mielvandersande, andimou
  */
-public class Main {
+public class Main_1 {
 
     /**
      * @param args the command line arguments
@@ -39,20 +39,27 @@ public class Main {
             //should be new DefaultParser() but requires cli 1.3 instead of clli 1.2
             CommandLineParser parser = new BasicParser();
             CommandLine cmd = parser.parse( options, args);
-            RMLMapping mapping = RMLMappingFactory.extractRMLMapping(args[0]);
+            String args_0 = "/home/andimou/Documents/RML/mielvds/data/mappings_nata/gemeentes.rml.ttl";
+            String args_1 = "/home/andimou/Documents/RML/mielvds/data/mappings_nata/output/gemeentes5.n3";
+            //RMLMapping mapping = RMLMappingFactory.extractRMLMapping(args[0]);
+            RMLMapping mapping = RMLMappingFactory.extractRMLMapping(args_0);
+            //RMLMapping mapping = RMLMappingFactory.extractRMLMapping("/home/andimou/Documents/RML/mielvds/data/mappings_nata/gemeentes.rml.ttl");
             RMLEngine engine = new RMLEngine();
-            System.out.println("mapping document " + args[0]);
+            //System.out.println("mapping document " + args[0]);
             
             FileInputStream source_properties = null;    
-            if(cmd.hasOption("sp")) {
-                source_properties = new FileInputStream(cmd.getOptionValue("sp"));
+            //if(cmd.hasOption("sp")) {
+                //source_properties = new FileInputStream(cmd.getOptionValue("sp"));
+                source_properties = new FileInputStream("/home/andimou/Documents/RML/mielvds/data/mappings_nata/sources.properties");
                 System.out.println("source properties parameter is equal to " + cmd.getOptionValue("sp"));
                 //load the properties
                 RMLEngine.getFileMap().load(source_properties);
-                engine.runRMLMapping(mapping, graphName, args[1], true, true);
-            }
-            else
-                engine.runRMLMapping(mapping, graphName, args[1], true, false);
+                //engine.runRMLMapping(mapping, graphName, args[1], true, true);
+                engine.runRMLMapping(mapping, graphName, args_1, true, true);
+            //}
+            //else
+                //engine.runRMLMapping(mapping, graphName, args[1], true, false);
+                //engine.runRMLMapping(mapping, graphName, args_1, true, false);
             if(cmd.hasOption("g")) 
                     graphName = cmd.getOptionValue("g");           
             

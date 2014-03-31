@@ -4,7 +4,6 @@ import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.RMLProcessor;
 import java.util.List;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
-import nu.xom.Node;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openrdf.model.Resource;
@@ -30,10 +29,6 @@ public class SimpleReferencePerformer extends NodeRMLPerformer {
     @Override
     public void perform(Object node, SesameDataSet dataset, TriplesMap map) {
         List<String> values = processor.processTermMap(map.getSubjectMap(), node);
-        log.debug("[SimpleReferencePerformer:values] " + "values size " + values.size());
-        Node node2 = (Node) node;
-        log.debug("[SimpleReferencePerformer:node2] " + "\n node2 " + node2.toXML());
-
         for(String value : values){
             Resource object = new URIImpl(value);
 
