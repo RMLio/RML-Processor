@@ -103,25 +103,18 @@ public class XPathProcessor extends AbstractRMLProcessor {
                 @Override
                 public void onNodeHit(Expression expression, NodeItem nodeItem) {
                     Node node = (Node) nodeItem.xml;
-                    //if(!nodeItem.namespaceURI.isEmpty())
-                        //log.info("namespace? " + nodeItem.namespaceURI);
-                    //else
-                        //log.info("no namespace.");
                     //Let the performer do its thing
                     performer.perform(node, dataset, map);
-                    //System.out.println("XPath: " + expression.getXPath() + " has hit: " + node.getTextContent());
                 }
 
                 @Override
                 public void finishedNodeSet(Expression expression) {
-                    //System.out.println("Finished Nodeset: " + expression.getXPath());
                 }
 
                 @Override
                 public void onResult(Expression expression, Object result) {
                     // this method is called only for xpaths which returns primitive result
                     // i.e result will be one of String, Boolean, Double
-                    //System.out.println("XPath: " + expression.getXPath() + " result: " + result);
                 }
             });
             //Execute the streaming

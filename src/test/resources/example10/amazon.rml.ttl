@@ -5,49 +5,50 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
 @prefix dcterms: <http://purl.org/dc/terms/>.
-@prefix tio:     <http://purl.org/tio/ns#>.
+@prefix schema:     <http://schema.org/>.
 @prefix bibo:    <http://purl.org/ontology/bibo/>.
 @prefix skos:    <http://www.w3.org/2004/02/skos/core#>.
 @prefix opus:    <http://lsdis.cs.uga.edu/projects/semdis/opus#>.
 @prefix foaf:    <http://xmlns.com/foaf/>.
 @prefix swc:     <http://data.semanticweb.org/ns/swc/ontology#>.
 
-<#Results1Mapping>
+<#Results2Mapping>
   rml:logicalSource 
   [
-    rml:sourceName "/example10/amazon.html" ;
-    rml:iterator "div.fstRowGrid.prod.celwidget";
+    #rml:sourceName "/example10/amazon.html" ;
+    rml:sourceName "http://www.amazon.com/s/ref=nb_sb_ss_i_1_3?url=search-alias%3Daps&field-keywords=" ;
+    rml:iterator "div.result.product.celwidget";
     rml:queryLanguage ql:CSS3 ;
   ];
 
   rr:subjectMap 
   [ 
-    rr:template "http://example.com/html/result/{span.lrg.bold}";
-    #wrong class
-    rr:class ex:Result
+    rr:template "{div.data h3 a.title[href]&href}";
+    rr:class schema:Product
   ];
 
   rr:predicateObjectMap 
   [
     rr:predicate rdfs:label;
     rr:objectMap [
-      rml:reference "span.lrg.bold"; 
+      rml:reference "h3 a.title"; 
     ]
   ];
 
   rr:predicateObjectMap 
   [
-    rr:predicate ex:costs;
+    rr:predicate schema:cost;
     rr:objectMap [
-        rml:reference ".bld.lrg.red"
+        rml:reference "td.toeOurPrice a"
       ] 
   ].
 
 
-<#Results2Mapping>
+<#Results3Mapping>
   rml:logicalSource 
   [
-    rml:sourceName "/example10/amazon.html" ;
+    #rml:sourceName "/example10/amazon.html" ;
+    rml:sourceName "http://www.amazon.com/s/ref=nb_sb_ss_i_1_3?url=search-alias%3Daps&field-keywords=" ;
     rml:iterator "div.rsltGrid.prod.celwidget";
     rml:queryLanguage ql:CSS3 ;
   ];
@@ -55,8 +56,7 @@
   rr:subjectMap 
   [ 
     rr:template "http://example.com/html/result/{span.lrg.bold}";
-    #wrong class
-    rr:class ex:Result
+    rr:class schema:Product
   ];
 
   rr:predicateObjectMap 
@@ -69,10 +69,42 @@
 
   rr:predicateObjectMap 
   [
-    rr:predicate ex:costs;
+    rr:predicate schema:cost;
     rr:objectMap [
         rml:reference ".bld.lrg.red"
       ] 
   ].
-        
+     
+
+
+<#Results4Mapping>
+  rml:logicalSource 
+  [
+    #rml:sourceName "/example10/amazon.html" ;
+    rml:sourceName "http://www.amazon.com/s/ref=nb_sb_ss_i_1_3?url=search-alias%3Daps&field-keywords=" ;
+    rml:iterator ".prod.celwidget";
+    rml:queryLanguage ql:CSS3 ;
+  ];
+
+  rr:subjectMap 
+  [ 
+    rr:template "{h3 a[href]&href}";
+    rr:class schema:Product
+  ];
+
+  rr:predicateObjectMap 
+  [
+    rr:predicate rdfs:label;
+    rr:objectMap [
+      rml:reference "span.lrg.bold"; 
+    ]
+  ];
+
+  rr:predicateObjectMap 
+  [
+    rr:predicate schema:cost;
+    rr:objectMap [
+        rml:reference ".bld.lrg.red"
+      ] 
+  ].   
 

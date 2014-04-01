@@ -1,10 +1,8 @@
 package be.ugent.mmlab.rml.processor.concrete;
 
-import be.ugent.mmlab.rml.core.RMLMappingFactory;
 import be.ugent.mmlab.rml.core.RMLPerformer;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.AbstractRMLProcessor;
-import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -13,7 +11,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import jodd.io.FileUtil;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
 import jodd.jerry.Jerry;
 import jodd.lagarto.dom.Node;
@@ -21,6 +18,12 @@ import jodd.lagarto.dom.NodeSelector;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.HttpProtocolParams;
+import org.apache.http.util.EntityUtils;
 
 
 /**
@@ -29,30 +32,45 @@ import org.apache.commons.logging.LogFactory;
  */
 public class CSS3Extractor extends AbstractRMLProcessor{
     
-    private static Log log = LogFactory.getLog(RMLMappingFactory.class);
+    private static Log log = LogFactory.getLog(AbstractRMLProcessor.class);
     private int enumerator;
     
     @Override
     public void execute(SesameDataSet dataset, TriplesMap map, RMLPerformer performer, String fileName) {       
         //this should not be needed to be defined within the extractor
         String reference = getReference(map.getLogicalSource());
-        // more configuration...
-        Jerry doc = null;
-        File file = new File(fileName);
         try {
-            doc = Jerry.jerry(FileUtil.readString(file));
+            log.info("[CSS3Extractor] filename " + fileName);
+            String content = get(fileName);
+            
+            Jerry doc = Jerry.jerry(content.trim());
+            NodeSelector nodeSelector = new NodeSelector(doc.get(0));
+            List<Node> selectedNodes = nodeSelector.select(reference);
+            log.info("[CSS3Extractor] selectedNodes " +selectedNodes);
+            for (int i = 0; i < selectedNodes.size(); i++) 
+                performer.perform(selectedNodes.get(i).getHtml(), dataset, map);
         } catch (IOException ex) {
             Logger.getLogger(CSS3Extractor.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        NodeSelector nodeSelector = null;        
-        nodeSelector = new NodeSelector(doc.get(0));
-        
-        List<Node> selectedNodes = nodeSelector.select(reference);
-        for (int i = 0; i < selectedNodes.size(); i++) {
-            performer.perform(selectedNodes.get(i).getHtml(), dataset, map);
-        }
-               
+        }          
     }
+    
+    public static String get(String url) throws IOException {
+		DefaultHttpClient httpclient = new DefaultHttpClient();
+
+		HttpProtocolParams.setUserAgent(httpclient.getParams(), "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:9.0.1) Gecko/20100101 Firefox/9.0.1");
+
+		HttpGet httpget = new HttpGet(url);
+		HttpResponse response = httpclient.execute(httpget);
+
+		HttpEntity entity = response.getEntity();
+		if (entity == null) {
+			return null;
+		}
+
+		String content = EntityUtils.toString(entity);
+		httpclient.getConnectionManager().shutdown();
+		return content;
+	}
 
     @Override
     public void execute_node(SesameDataSet dataset, TriplesMap map, TriplesMap parentTriplesMap, RMLPerformer performer, Object node) {
@@ -76,12 +94,12 @@ public class CSS3Extractor extends AbstractRMLProcessor{
         List<String> list = new ArrayList();
         String replacement = null;
         
-        String months[] = {"January", "February", "March", "April",
+        /*String months[] = {"January", "February", "March", "April",
                      "May", "June", "July", "August", "September",
                      "October", "November", "December"};
         String shortMonths[] = {"Jan", "Feb", "Mar", "Apr",
                      "May", "June", "July", "Aug", "Sep",
-                     "Oct", "Nov", "Dec"};
+                     "Oct", "Nov", "Dec"};*/
        
         if(expression.equals("#")){
             list.add(Integer.toString(enumerator++));
@@ -154,13 +172,13 @@ public class CSS3Extractor extends AbstractRMLProcessor{
                         list.add(StringEscapeUtils.unescapeHtml(value));
                 }
             else{   
-                DecimalFormat formatter = new DecimalFormat("00");
+                //DecimalFormat formatter = new DecimalFormat("00");
                 Pattern replace = Pattern.compile(regex);
                 Matcher matcher = replace.matcher(value);
                 if(matcher.find()){
                     if(!matcher.replaceAll(replacement).equals("") && !matcher.replaceAll(replacement).equals(" ")){
                         String[] values = null;
-                        if(matcher.replaceAll(replacement).matches("\\d{1}")){
+                        /*if(matcher.replaceAll(replacement).matches("\\d{1}")){
                             int newInt = Integer.parseInt(matcher.replaceAll(replacement));                           
                             list.add(formatter.format(newInt).toString().trim());
                         }
@@ -178,7 +196,7 @@ public class CSS3Extractor extends AbstractRMLProcessor{
                             for(String val:values)
                                 list.add(StringEscapeUtils.unescapeHtml(val));
                         }
-                        else
+                        else*/
                             if(!matcher.replaceAll(replacement).equals(""))
                             list.add(StringEscapeUtils.unescapeHtml(matcher.replaceAll(replacement)));
                     }        
@@ -199,7 +217,8 @@ public class CSS3Extractor extends AbstractRMLProcessor{
                                     list.add(StringEscapeUtils.unescapeHtml(val));
                             }
                         else{
-                            finVal = checkforDate(StringEscapeUtils.unescapeHtml(snode.getInnerHtml().toString().trim().replaceAll("[\\t\\n\\r\\s]{2,}", " ")));
+                            //finVal = checkforDate(StringEscapeUtils.unescapeHtml(snode.getInnerHtml().toString().trim().replaceAll("[\\t\\n\\r\\s]{2,}", " ")));
+                            finVal = StringEscapeUtils.unescapeHtml(snode.getInnerHtml().toString().trim().replaceAll("[\\t\\n\\r\\s]{2,}", " "));
                             if(!finVal.equals(""))
                                 list.add(finVal);
                         }

@@ -127,6 +127,12 @@ public class MapperTest
         assertTrue(assertMap(fileToRMLFile, fileToOutputFile));
     }*/
     
+    public void testExample13() {
+        URL fileToRMLFile = getClass().getResource("/example13/ebay.rml.ttl");
+        URL fileToOutputFile = getClass().getResource("/example13/ebay.output.ttl");
+        assertTrue(assertMap(fileToRMLFile, fileToOutputFile));
+    }
+    
     private boolean assertMap(URL mappingURL, URL outputURL) {
         try {
             RMLMapping mapping = RMLMappingFactory.extractRMLMapping(mappingURL.getFile());
