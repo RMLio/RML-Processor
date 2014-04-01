@@ -1,0 +1,36 @@
+
+<http://www.ebay.com/itm/Samsonite-Luggage-Xion-Expandable-21-Inch-Spinner-Carryon-Wheels-Rolling-Black-/171212279882?pt=Luggage&hash=item27dd0c104a> a <http://schema.org/Product> ;
+	<http://www.w3.org/2000/01/rdf-schema#label> "Samsonite Luggage X'ion Expandable 21 Inch Spinner Carryon Wheels Rolling Black" ;
+	<http://schema.org/cost> "$39.99" .
+
+<http://www.ebay.com/itm/Samsonite-Hyperspace-Xlt-25-Expandable-Spinner-4-Wheeled-Luggage-Ivy-Green-/390667140303?pt=Luggage&hash=item5af5937ccf> a <http://schema.org/Product> ;
+	<http://www.w3.org/2000/01/rdf-schema#label> "Samsonite Hyperspace Xlt 25\" Expandable Spinner 4 Wheeled Luggage - Ivy Green" ;
+	<http://schema.org/cost> "$229.99" .
+
+<http://www.ebay.com/itm/Samsonite-Lift-25-Spinner-Luggage-Black-/310903919741?pt=LH_DefaultDomain_0&hash=item486351547d> a <http://schema.org/Product> ;
+	<http://www.w3.org/2000/01/rdf-schema#label> "Samsonite Lift 25 Spinner Luggage (Black)" ;
+	<http://schema.org/cost> "$119.00" .
+
+<http://www.ebay.com/itm/Samsonite-Hyperspace-Xlt-25-Expandable-Spinner-4-Wheeled-Luggage-Black-/400578654790?pt=Luggage&hash=item5d44593246> a <http://schema.org/Product> ;
+	<http://www.w3.org/2000/01/rdf-schema#label> "Samsonite Hyperspace Xlt 25\" Expandable Spinner 4 Wheeled Luggage - Black" ;
+	<http://schema.org/cost> "$229.99" .
+
+<http://www.ebay.com/itm/Samsonite-Hyperspace-Xlt-21-Expandable-Spinner-Carry-On-Wheeled-Luggage-Purple-/231061657082?pt=Luggage&hash=item35cc5915fa> a <http://schema.org/Product> ;
+	<http://www.w3.org/2000/01/rdf-schema#label> "Samsonite Hyperspace Xlt 21\" Expandable Spinner Carry On Wheeled Luggage Purple" ;
+	<http://schema.org/cost> "$189.99" .
+
+<http://www.ebay.com/itm/Samsonite-46561-Luggage-Aspire-Sport-Spinner-25-Expandable-Bag-Black-in-/191021675466?pt=Luggage&hash=item2c79c773ca> a <http://schema.org/Product> ;
+	<http://www.w3.org/2000/01/rdf-schema#label> "Samsonite 46561 Luggage Aspire Sport Spinner 25 Expandable Bag, Black, in" ;
+	<http://schema.org/cost> "$173.30" .
+
+<http://www.ebay.com/itm/Samsonite-HYPERspace-XLT-25-Expandable-Spinner-Luggage-Purple-57115-4149-/141074436162?pt=Luggage&hash=item20d8b11042> a <http://schema.org/Product> ;
+	<http://www.w3.org/2000/01/rdf-schema#label> "Samsonite HYPERspace XLT 25\" Expandable Spinner Luggage Purple 57115-4149" ;
+	<http://schema.org/cost> "$205.99" .
+
+<http://www.ebay.com/itm/Samsonite-Silhouette-Sphere-25-Expandable-Spinner-Upright-Luggage-Black-51118-/400412669420?pt=Luggage&hash=item5d3a7475ec> a <http://schema.org/Product> ;
+	<http://www.w3.org/2000/01/rdf-schema#label> "Samsonite Silhouette Sphere 25\" Expandable Spinner Upright Luggage Black 51118" ;
+	<http://schema.org/cost> "$279.99" .
+
+<http://www.ebay.com/itm/Samsonite-Silhouette-Sphere-25-Expandable-Spinner-Upright-Luggage-Indigo-Blue-/400412672161?pt=Luggage&hash=item5d3a7480a1> a <http://schema.org/Product> ;
+	<http://www.w3.org/2000/01/rdf-schema#label> "Samsonite Silhouette Sphere 25\" Expandable Spinner Upright Luggage Indigo Blue" ;
+	<http://schema.org/cost> "$279.99" .
