@@ -35,14 +35,11 @@ public class JoinRMLPerformer extends NodeRMLPerformer{
      */
     @Override
     public void perform(Object node, SesameDataSet dataset, TriplesMap map) {
-        log.debug("[JoinRMLPerformer:object] " + "node " + node.toString());
         Value object = processor.processSubjectMap(dataset, map.getSubjectMap(), node);
 
         if (object == null){
-            log.debug("[JoinRMLPerformer:object] " + "No object found.");
             return;
         }       
-        log.debug("[JoinRMLPerformer:object] " + "Object " + object.toString());
         log.debug("[JoinRMLPerformer:addTriples] Subject "
                     + subject + " Predicate " + predicate + "Object " + object.toString());
         //add the join triple

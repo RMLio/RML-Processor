@@ -3,9 +3,9 @@ package be.ugent.mmlab.rml.processor.concrete;
 import be.ugent.mmlab.rml.core.RMLMappingFactory;
 import be.ugent.mmlab.rml.core.RMLPerformer;
 import be.ugent.mmlab.rml.model.TriplesMap;
-import be.ugent.mmlab.rml.model.reference.ReferenceIdentifierImpl;
 import be.ugent.mmlab.rml.processor.AbstractRMLProcessor;
 import be.ugent.mmlab.rml.xml.XOMBuilder;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -17,12 +17,10 @@ import jlibs.xml.DefaultNamespaceContext;
 import jlibs.xml.Namespaces;
 import jlibs.xml.sax.dog.NodeItem;
 import jlibs.xml.sax.dog.XMLDog;
-import jlibs.xml.sax.dog.XPathResults;
 import jlibs.xml.sax.dog.expr.Expression;
 import jlibs.xml.sax.dog.expr.InstantEvaluationListener;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
 import nu.xom.Attribute;
-import nu.xom.Element;
 import nu.xom.Node;
 import nu.xom.Nodes;
 import nu.xom.XPathContext;
@@ -30,13 +28,21 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jaxen.saxpath.SAXPathException;
 import org.xml.sax.InputSource;
+import net.sf.saxon.s9api.DocumentBuilder;
+import net.sf.saxon.s9api.Processor;
+import net.sf.saxon.s9api.SaxonApiException;
+import net.sf.saxon.s9api.XPathCompiler;
+import net.sf.saxon.s9api.XPathSelector;
+import net.sf.saxon.s9api.XdmNode;
 
 /**
  *
  * @author mielvandersande, andimou
  */
 public class XPathProcessor extends AbstractRMLProcessor {
-
+    private int enumerator =0;
+    private TriplesMap map;
+    
     private static Log log = LogFactory.getLog(RMLMappingFactory.class);
 
     private XPathContext nsContext = new XPathContext();
@@ -79,10 +85,39 @@ public class XPathProcessor extends AbstractRMLProcessor {
     
        return dnc;
     }
+    
+    private String replace (Node node, String expression){
+        String expre = extractValueFromNode(node,expression.split("\\{")[1].split("\\}")[0]).get(0);
+        log.info("[XPathProcessor:execute] expre " + expre);
+        return expre;
+    }
+    
+    public String execute(Node node, String expression) throws SaxonApiException {
 
+            Processor proc = new Processor(false);
+            XPathCompiler xpath = proc.newXPathCompiler();
+            DocumentBuilder builder = proc.newDocumentBuilder();
+
+            String fileName = getClass().getResource(map.getLogicalSource().getIdentifier()).getFile();
+
+            XdmNode doc = builder.build(new File(fileName));
+            String expre = replace(node, expression);
+            expression = expression.replaceAll("\\{" + expression.split("\\{")[1].split("\\}")[0] + "\\}", "'" + expre + "'");
+
+            XPathSelector selector = xpath.compile(expression).load();
+            selector.setContextItem(doc);
+            
+            // Evaluate the expression.
+            Object result = selector.evaluate();
+
+            return result.toString();
+ 
+    }
+    
     @Override
     public void execute(final SesameDataSet dataset, final TriplesMap map, final RMLPerformer performer, String fileName) {
         try {
+            this.map = map;
             String reference = getReference(map.getLogicalSource());
             //Inititalize the XMLDog for processing XPath
             // an implementation of javax.xml.namespace.NamespaceContext
@@ -140,22 +175,17 @@ public class XPathProcessor extends AbstractRMLProcessor {
     }
     
     @Override
-    public void execute_node(SesameDataSet dataset, TriplesMap map, TriplesMap parentTriplesMap, RMLPerformer performer, Object node) {
+    public void execute_node(SesameDataSet dataset, String expression, TriplesMap parentTriplesMap, RMLPerformer performer, Object node) {
         //still need to make it work with more nore-results 
         //currently it handles only one
-        
-        DefaultNamespaceContext dnc = get_namespaces();     
-        int end = map.getLogicalSource().getReference().length();
-        log.debug("[AbstractRMLProcessorProcessor] initial expression " + map.getLogicalSource().getReference());
-        log.debug("[AbstractRMLProcessorProcessor] next expression " + parentTriplesMap.getLogicalSource().getReference());
-        String expression = parentTriplesMap.getLogicalSource().getReference().toString().substring(end);
+    
         if(expression.startsWith("/"))
             expression = expression.substring(1);
         log.debug("[AbstractRMLProcessorProcessor] expression " + expression);
         
-        Node node2 = (Node) node;
+        Node node2 = (Node) node; 
         Nodes nodes = node2.query(expression, nsContext);
-        log.debug("[AbstractRMLProcessorProcessor:node] " + "nodes " + nodes);
+        log.debug("[AbstractRMLProcessorProcessor:node] " + "nodes' size " + nodes.size());
         
         for (int i = 0; i < nodes.size(); i++) {
             Node n = nodes.get(i);
@@ -173,23 +203,48 @@ public class XPathProcessor extends AbstractRMLProcessor {
      * @return value that matches expression
      */
     private List<String> extractValueFromNode(Node node, String expression) {
-        Nodes nodes = node.query(expression, nsContext);
-        List<String> list = new ArrayList<String>();
+        DefaultNamespaceContext dnc = get_namespaces();
+        List<String> list = new ArrayList<>();
         
-        for (int i = 0; i < nodes.size(); i++) {
-            Node n = nodes.get(i);
-
-            //checks if the node has a value or children
-            if(!n.getValue().isEmpty() || (n.getChildCount()!=0))
-                 if (!(n instanceof Attribute) && n.getChild(0) instanceof Element) {
-                    list.add(n.toXML());
-                } 
-                else {
-                    list.add(n.getValue());
-                }
-                //list.add(n.toXML());
+        if(expression.startsWith("count(")){
+            //Nodes result = node.query(expression, nsContext);
+            String result;
+            try {
+                result = execute(node, expression);
+                list.add(result.toString());
+            } catch (SaxonApiException ex) {
+                Logger.getLogger(XPathProcessor.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
-        
+        else{
+            log.info("[XPathProcessor:extractValueFromNode] expression doesn't start with count " + expression.toString());
+            //if there's nothing to uniquelly identify, use # - temporary solution - challenge
+            if(expression.equals("#")){
+                list.add(Integer.toString(enumerator++));
+                return list;
+            }
+            Nodes nodes = node.query(expression, nsContext);
+
+            for (int i = 0; i < nodes.size(); i++) {
+                Node n = nodes.get(i);
+
+                //checks if the node has a value or children
+                if(!n.getValue().isEmpty() || (n.getChildCount()!=0))
+                    //MVS's for extracting elements and not the string
+                    /* if (!(n instanceof Attribute) && n.getChild(0) instanceof Element) {
+                        list.add(n.toXML());
+                    } 
+                    else {
+                        list.add(n.getValue());
+                    }
+                */
+                    //checks if the node has children, then cleans up new lines and extra spaces
+                    if (!(n instanceof Attribute) && n.getChildCount()>1)
+                        list.add(n.getValue().trim().replaceAll("[\\t\\n\\r]", " ").replaceAll(" +", " ").replaceAll("\\( ", "\\(").replaceAll(" \\)", "\\)").replaceAll(" :", ":").replaceAll(" ,", ","));
+                    else
+                        list.add(n.getValue().toString());
+            }
+        }
         return list;
         
     }

@@ -91,17 +91,35 @@ public class MapperTest
         assertTrue(assertMap(fileToRMLFile, fileToOutputFile));
     }
     
+    public void testExample13() {
+        URL fileToRMLFile = getClass().getResource("/example13/gemeentes.rml.ttl");
+        URL fileToOutputFile = getClass().getResource("/example13/gemeentes.output.ttl");
+        assertTrue(assertMap(fileToRMLFile, fileToOutputFile));
+    }
+    
     /*public void testExample7() {
-        URL fileToRMLFile = getClass().getResource("/example7/mapping_document.rml.ttl");
+        URL fileToRMLFile = getClass().getResource("/example7/taxpub_dtd.rml.ttl");
         URL fileToOutputFile = getClass().getResource("/example7/example.output.ttl");
         assertTrue(assertMap(fileToRMLFile, fileToOutputFile));
     }*/
     
-    public void testExample8() {
+    /*public void testExample12() {
+        URL fileToRMLFile = getClass().getResource("/example12/jats_Adv_Virol.mapping.rml.ttl");
+        URL fileToOutputFile = getClass().getResource("/example12/Adv_Virol_2010_Jan_18_2010_407476.output.ttl");
+        assertTrue(assertMap(fileToRMLFile, fileToOutputFile));
+    }
+    
+    public void testExample13() {
+        URL fileToRMLFile = getClass().getResource("/example13/BMC_Pediatr_2013_Jan_15_13_8.rml.ttl");
+        URL fileToOutputFile = getClass().getResource("/example13/BMC_Pediatr_2013_Jan_15_13_8.output.ttl");
+        assertTrue(assertMap(fileToRMLFile, fileToOutputFile));
+    }*/
+    
+    /*public void testExample8() {
         URL fileToRMLFile = getClass().getResource("/example8/simergy.rml.ttl");
         URL fileToOutputFile = getClass().getResource("/example8/simergy.output.ttl");
         assertTrue(assertMap(fileToRMLFile, fileToOutputFile));
-    }
+    }*/
     
     private boolean assertMap(URL mappingURL, URL outputURL) {
         try {

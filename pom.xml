@@ -103,6 +103,12 @@
             <version>2.0.1</version>
             <type>jar</type>
         </dependency>
+        <dependency>
+            <groupId>net.sf.saxon</groupId>
+            <artifactId>Saxon-HE</artifactId>
+            <version>9.5.1-4</version>
+            <classifier>compressed</classifier>
+        </dependency>
     </dependencies>
 
 </project>

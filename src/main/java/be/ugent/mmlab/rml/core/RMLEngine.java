@@ -1,6 +1,7 @@
 package be.ugent.mmlab.rml.core;
 
 import be.ugent.mmlab.rml.dataset.FileSesameDataset;
+import be.ugent.mmlab.rml.model.LogicalSource;
 import be.ugent.mmlab.rml.model.RMLMapping;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.RMLProcessor;
@@ -31,13 +32,21 @@ public class RMLEngine {
     private static Log log = LogFactory.getLog(R2RMLEngine.class);
     // A base IRI used in resolving relative IRIs produced by the R2RML mapping.
     private String baseIRI;
-
+    private static boolean source_properties;
     //Properties containing the identifiers for files
     //There are probably better ways to do this than a static variable
     private static Properties fileMap = new Properties();
 
     public static Properties getFileMap() {
         return fileMap;
+    }
+    
+    public static boolean getSourceProperties() {
+        return source_properties;
+    }
+    
+    protected String getIdentifier(LogicalSource ls) {
+        return RMLEngine.getFileMap().getProperty(ls.getIdentifier());
     }
 
     /**
@@ -53,7 +62,7 @@ public class RMLEngine {
     public SesameDataSet runRMLMapping(RMLMapping rmlMapping,
             String baseIRI) throws SQLException,
             R2RMLDataError, UnsupportedEncodingException {
-        return runRMLMapping(rmlMapping, baseIRI, null, false);
+        return runRMLMapping(rmlMapping, baseIRI, null, false, false);
     }
 
     /**
@@ -68,8 +77,9 @@ public class RMLEngine {
      * @throws UnsupportedEncodingException
      */
     public SesameDataSet runRMLMapping(RMLMapping rmlMapping,
-            String baseIRI, String pathToNativeStore, boolean filebased) throws SQLException,
+            String baseIRI, String pathToNativeStore, boolean filebased, boolean source_properties) throws SQLException,
             R2RMLDataError, UnsupportedEncodingException {
+        RMLEngine.source_properties = source_properties;
         long startTime = System.nanoTime();
 
         log.debug("[RMLEngine:runRMLMapping] Run RML mapping... ");
@@ -99,16 +109,15 @@ public class RMLEngine {
             log.debug("[RMLEngine:runRMLMapping] Use default store (memory) ");
             sesameDataSet = new SesameDataSet();
         }
-        
         // Explore RML Mapping TriplesMap objects  
-        generateRDFTriples(sesameDataSet, rmlMapping, filebased);
+ 
+        generateRDFTriples(sesameDataSet, rmlMapping, filebased, source_properties);
         
 	log.info("[RMLEngine:generateRDFTriples] All triples were generated ");
         log.info("Sesame dataset " + sesameDataSet);
         
 	long endTime = System.nanoTime();
         long duration = endTime - startTime;
-
         log.debug("[RMLEngine:runRMLMapping] RML mapping done! Generated " + sesameDataSet.getSize() + " in " + ((double) duration) / 1000000000 + "s . ");
         return sesameDataSet;
     }
@@ -125,7 +134,7 @@ public class RMLEngine {
      * @throws UnsupportedEncodingException
      */
     private void generateRDFTriples(SesameDataSet sesameDataSet,
-            RMLMapping r2rmlMapping, boolean filebased) throws SQLException, R2RMLDataError,
+            RMLMapping r2rmlMapping, boolean filebased, boolean source_properties) throws SQLException, R2RMLDataError,
             UnsupportedEncodingException {
 
         log.debug("[RMLEngine:generateRDFTriples] Generate RDF triples... ");
@@ -135,16 +144,19 @@ public class RMLEngine {
 
         for (TriplesMap triplesMap : r2rmlMapping.getTriplesMaps()) {
             FileInputStream input = null;
-
+            System.out.println("[RMLEngine:generateRDFTriples] Generate RDF triples for " + triplesMap.getName());
             RMLProcessor processor = factory.create(triplesMap.getLogicalSource().getQueryLanguage());
             //URL filePath = getClass().getProtectionDomain().getCodeSource().getLocation();
-            //System.out.println("XPath Processor filePath " + filePath);
             String fileName;
             if(filebased)
-                fileName = triplesMap.getLogicalSource().getIdentifier();
+                if(source_properties){
+                    String file = triplesMap.getLogicalSource().getIdentifier();
+                    fileName = RMLEngine.getFileMap().getProperty(file.toString());
+                }
+                else
+                    fileName = triplesMap.getLogicalSource().getIdentifier();
             else
                 fileName = getClass().getResource(triplesMap.getLogicalSource().getIdentifier()).getFile();
-
             try {
                 getFileMap().put(fileName, fileName);
                 input = new FileInputStream(fileName);
@@ -159,6 +171,7 @@ public class RMLEngine {
                     + (sesameDataSet.getSize() - delta)
                     + " triples generated for " + triplesMap.getName());
             delta = sesameDataSet.getSize();
+                        
             try {
                 input.close();
             } catch (IOException ex) {
