@@ -75,7 +75,6 @@ public abstract class AbstractTermMap implements TermMap {
                 setStringTemplate(stringTemplate);
                 setTermType(termType, dataType);
                 setDataType(dataType);
-
                 setInversionExpression(inverseExpression);
                 checkGlobalConsistency();
         }
