@@ -111,7 +111,7 @@ public class CSS3Extractor extends AbstractRMLProcessor{
             String regex = expression.split("&")[1];
             expression = expression.split("&")[0];
             
-            if(regex.startsWith("deduct:")){
+            /*if(regex.startsWith("deduct:")){
                 regex = regex.split("deduct:")[1];
                 expression = expression.split("\\{")[0];
                 String value = StringEscapeUtils.unescapeHtml(doc.$(expression).text().trim().replaceAll("[\\t\\n\\r\\s]{2,}", " "));
@@ -134,7 +134,7 @@ public class CSS3Extractor extends AbstractRMLProcessor{
                 
                 }
                 return list;
-            }
+            }*/
             
             if(regex.contains("#")){
                 replacement = regex.split("#")[1];
@@ -171,37 +171,38 @@ public class CSS3Extractor extends AbstractRMLProcessor{
                     else
                         list.add(StringEscapeUtils.unescapeHtml(value));
                 }
-            else{   
-                //DecimalFormat formatter = new DecimalFormat("00");
-                Pattern replace = Pattern.compile(regex);
-                Matcher matcher = replace.matcher(value);
-                if(matcher.find()){
-                    if(!matcher.replaceAll(replacement).equals("") && !matcher.replaceAll(replacement).equals(" ")){
-                        String[] values = null;
-                        /*if(matcher.replaceAll(replacement).matches("\\d{1}")){
-                            int newInt = Integer.parseInt(matcher.replaceAll(replacement));                           
-                            list.add(formatter.format(newInt).toString().trim());
-                        }
-                        
-                        for(int i=0; i<11; i++)
-                            if( matcher.replaceAll(replacement).toString().contains(months[i]))
-                                list.add(String.valueOf(matcher.replaceAll(replacement).replace(months[i], formatter.format(i+1))));
-                         
-                        for(int i=0; i<11; i++)
-                            if( matcher.replaceAll(replacement).toString().contains(shortMonths[i]))
-                                list.add(String.valueOf(matcher.replaceAll(replacement).replace(shortMonths[i], formatter.format(i+1))));
-                        
-                        if (replace.toString().contains("Edited by:") || replace.toString().contains("CEURAUTHORS")){
-                            values = matcher.replaceAll(replacement).split(",");
-                            for(String val:values)
-                                list.add(StringEscapeUtils.unescapeHtml(val));
-                        }
-                        else*/
-                            if(!matcher.replaceAll(replacement).equals(""))
-                            list.add(StringEscapeUtils.unescapeHtml(matcher.replaceAll(replacement)));
-                    }        
-                }
-            }     
+                else
+                {   
+                    //DecimalFormat formatter = new DecimalFormat("00");
+                    Pattern replace = Pattern.compile(regex);
+                    Matcher matcher = replace.matcher(value);
+                    if(matcher.find()){
+                        if(!matcher.replaceAll(replacement).equals("") && !matcher.replaceAll(replacement).equals(" ")){
+                            String[] values = null;
+                            /*if(matcher.replaceAll(replacement).matches("\\d{1}")){
+                                int newInt = Integer.parseInt(matcher.replaceAll(replacement));                           
+                                list.add(formatter.format(newInt).toString().trim());
+                            }
+
+                            for(int i=0; i<11; i++)
+                                if( matcher.replaceAll(replacement).toString().contains(months[i]))
+                                    list.add(String.valueOf(matcher.replaceAll(replacement).replace(months[i], formatter.format(i+1))));
+
+                            for(int i=0; i<11; i++)
+                                if( matcher.replaceAll(replacement).toString().contains(shortMonths[i]))
+                                    list.add(String.valueOf(matcher.replaceAll(replacement).replace(shortMonths[i], formatter.format(i+1))));
+
+                            if (replace.toString().contains("Edited by:") || replace.toString().contains("CEURAUTHORS")){
+                                values = matcher.replaceAll(replacement).split(",");
+                                for(String val:values)
+                                    list.add(StringEscapeUtils.unescapeHtml(val));
+                            }
+                            else*/
+                                if(!matcher.replaceAll(replacement).equals(""))
+                                list.add(StringEscapeUtils.unescapeHtml(matcher.replaceAll(replacement)));
+                        }        
+                    }
+                }     
             }
         }
         else{

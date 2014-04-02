@@ -43,6 +43,8 @@
       ] 
   ].
 
+
+
 <#Results2Mapping>
   rml:logicalSource 
   [
@@ -73,4 +75,3 @@
         rml:reference "span [itemprop=price]"
       ] 
   ].
-
