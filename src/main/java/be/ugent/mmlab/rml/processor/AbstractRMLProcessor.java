@@ -20,11 +20,14 @@ import be.ugent.mmlab.rml.processor.concrete.ConcreteRMLProcessorFactory;
 import be.ugent.mmlab.rml.vocabulary.Vocab.QLTerm;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
 import net.antidot.semantic.rdf.rdb2rdf.r2rml.core.R2RMLEngine;
 import net.antidot.semantic.rdf.rdb2rdf.r2rml.tools.R2RMLToolkit;
@@ -243,8 +246,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                     //same Logical Source and no Conditions
                     else if (joinConditions.isEmpty() & parentTriplesMap.getLogicalSource().getIdentifier().equals(map.getLogicalSource().getIdentifier())){
                         performer = new SimpleReferencePerformer(processor, subject, predicate);
-                        
-                        if((parentTriplesMap.getLogicalSource().getReference()).equals(map.getLogicalSource().getReference())){
+                        if((parentTriplesMap.getLogicalSource().getQueryLanguage().toString() == "CSV") || (parentTriplesMap.getLogicalSource().getReference().equals(map.getLogicalSource().getReference()))){
                             performer.perform(node, dataset, parentTriplesMap);
                         }
                         else{
@@ -342,9 +344,9 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                 case LITERAL:
                     if (objectMap.getLanguageTag() != null) {
                         valueList.add(new LiteralImpl(value, objectMap.getLanguageTag()));
-                    } else if (objectMap.getDataType() != null) {
+                    } else if (value != null && !value.equals("") && objectMap.getDataType() != null) {
                         valueList.add(new LiteralImpl(value, objectMap.getDataType()));
-                    } else if (value != null) {
+                    } else if (value != null && !value.equals("")) {
                         valueList.add(new LiteralImpl(value.trim()));
                     }
             }
