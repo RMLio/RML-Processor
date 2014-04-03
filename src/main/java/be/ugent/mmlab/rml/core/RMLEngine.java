@@ -114,7 +114,6 @@ public class RMLEngine {
         generateRDFTriples(sesameDataSet, rmlMapping, filebased, source_properties);
         
 	log.info("[RMLEngine:generateRDFTriples] All triples were generated ");
-        log.info("Sesame dataset " + sesameDataSet);
         
 	long endTime = System.nanoTime();
         long duration = endTime - startTime;
