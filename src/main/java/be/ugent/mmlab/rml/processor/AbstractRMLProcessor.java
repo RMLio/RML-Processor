@@ -313,6 +313,8 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
 
         List<URI> uris = new ArrayList<>();
         for (String value : values) {
+            if(value.startsWith("www."))
+                value = "http://" + value;
             uris.add(new URIImpl(value));
         }
         //return the uri
@@ -334,8 +336,10 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
         for (String value : values) {
             switch (objectMap.getTermType()) {
                 case IRI:
-                    if (value != null && !value.equals(""))
-                        valueList.add(new URIImpl(value));
+                    if (value != null && !value.equals("")){
+                        if(value.startsWith("www."))
+                            value = "http://" + value;
+                        valueList.add(new URIImpl(value));}
                     break;
                 case BLANK_NODE:
                     valueList.add(new BNodeImpl(value));
