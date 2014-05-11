@@ -217,7 +217,6 @@ public class XPathProcessor extends AbstractRMLProcessor {
             }
         }
         else{
-            log.info("[XPathProcessor:extractValueFromNode] expression doesn't start with count " + expression.toString());
             //if there's nothing to uniquelly identify, use # - temporary solution - challenge
             if(expression.equals("#")){
                 list.add(Integer.toString(enumerator++));

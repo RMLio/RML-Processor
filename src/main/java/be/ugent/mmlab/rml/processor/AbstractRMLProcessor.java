@@ -139,10 +139,10 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                 //Resolve the template
                 String template = map.getStringTemplate();
                 Set<String> tokens = R2RMLToolkit.extractColumnNamesFromStringTemplate(template);
-
+                
                 for (String expression : tokens) {
                     List<String> replacements = extractValueFromNode(node, expression);
-
+                    
                     for (int i = 0; i < replacements.size(); i++) {
                         if (value.size() < (i + 1)) {
                             value.add(template);
@@ -169,15 +169,17 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                             expression = expression.replaceAll("\\$", "");
                             temp = temp.replaceAll("\\$", "");
                         }
-                        
-                        //temp = temp.replaceAll("\\{" + expression + "\\}", URLEncoder.encode(replacement,"UTF-8"));
+                        /*(try {
+                            temp = temp.replaceAll("\\{" + expression + "\\}", URLEncoder.encode(replacement,"UTF-8"));
+                        } catch (UnsupportedEncodingException ex) {
+                            Logger.getLogger(AbstractRMLProcessor.class.getName()).log(Level.SEVERE, null, ex);
+                        }*/
                         temp = temp.replaceAll("\\{" + expression + "\\}", replacement);
-                        URI temp_uri = new URIImpl(temp);
-                                               
-                       value.set(i, temp_uri.toString());
-                    }
+                        value.set(i, temp.toString());
+
+                    }      
                 }
-                
+
                 //Check if there are any placeholders left in the templates and remove uris that are not
                 List<String> validValues = new ArrayList<>();
                 for (String uri : value){
