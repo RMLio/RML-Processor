@@ -20,11 +20,14 @@ import be.ugent.mmlab.rml.processor.concrete.ConcreteRMLProcessorFactory;
 import be.ugent.mmlab.rml.vocabulary.Vocab.QLTerm;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
+import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
 import net.antidot.semantic.rdf.rdb2rdf.r2rml.core.R2RMLEngine;
 import net.antidot.semantic.rdf.rdb2rdf.r2rml.tools.R2RMLToolkit;
@@ -167,14 +170,11 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                             temp = temp.replaceAll("\\$", "");
                         }
                         
-                        try {
-                            //Use encoding UTF-8 explicit URL encode; other one is deprecated
-                            temp = temp.replaceAll("\\{" + expression + "\\}", URLEncoder.encode(replacement,"UTF-8"));
-                        } catch (UnsupportedEncodingException ex) {
-                            log.error(ex);
-                        }
-                        
-                        value.set(i, temp);
+                        //temp = temp.replaceAll("\\{" + expression + "\\}", URLEncoder.encode(replacement,"UTF-8"));
+                        temp = temp.replaceAll("\\{" + expression + "\\}", replacement);
+                        URI temp_uri = new URIImpl(temp);
+                                               
+                       value.set(i, temp_uri.toString());
                     }
                 }
                 
