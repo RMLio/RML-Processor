@@ -20,14 +20,11 @@ import be.ugent.mmlab.rml.processor.concrete.ConcreteRMLProcessorFactory;
 import be.ugent.mmlab.rml.vocabulary.Vocab.QLTerm;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
 import net.antidot.semantic.rdf.rdb2rdf.r2rml.core.R2RMLEngine;
 import net.antidot.semantic.rdf.rdb2rdf.r2rml.tools.R2RMLToolkit;
@@ -93,7 +90,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
         //Since it is the subject, more than one value is not allowed. Only return the first one. Throw exception if not?
         String value = values.get(0);
 
-        if (value == null) {
+        if ((value == null) || (value.equals(""))) {
             return null;
         }
 
@@ -147,11 +144,12 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                         if (value.size() < (i + 1)) {
                             value.add(template);
                         }
-                        
-                        String replacement = replacements.get(i).trim();
+                        String replacement = null;
+                        if(replacements.get(i) != null)
+                            replacement = replacements.get(i).trim();
 
                         //if (replacement == null || replacement.isEmpty()) {
-                        if (replacement == null) {
+                        if (replacement == null || replacement.equals("")) {
                             //if the replacement value is null or empty, the reulting uri would be invalid, skip this.
                             //The placeholders remain which removes them in the end.
                             continue;
@@ -336,7 +334,8 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
         for (String value : values) {
             switch (objectMap.getTermType()) {
                 case IRI:
-                    valueList.add(new URIImpl(value));
+                    if (value != null && !value.equals(""))
+                        valueList.add(new URIImpl(value));
                     break;
                 case BLANK_NODE:
                     valueList.add(new BNodeImpl(value));
