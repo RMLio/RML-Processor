@@ -69,7 +69,10 @@ public class CSVProcessor extends AbstractRMLProcessor {
         HashMap<String, String> row = (HashMap<String, String>) node;
         //call the right header in the row
         List<String> list = new ArrayList();
-        list.add(row.get(expression));
+        if (row.containsKey(expression)){
+            list.add(row.get(expression));
+        }
+        
         return list;
     }
 
