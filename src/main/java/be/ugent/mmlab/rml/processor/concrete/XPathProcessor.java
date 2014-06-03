@@ -34,6 +34,7 @@ import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.XPathCompiler;
 import net.sf.saxon.s9api.XPathSelector;
 import net.sf.saxon.s9api.XdmNode;
+import nu.xom.Element;
 
 /**
  *
@@ -230,18 +231,19 @@ public class XPathProcessor extends AbstractRMLProcessor {
                 //checks if the node has a value or children
                 if(!n.getValue().isEmpty() || (n.getChildCount()!=0))
                     //MVS's for extracting elements and not the string
-                    /* if (!(n instanceof Attribute) && n.getChild(0) instanceof Element) {
+                    /*if (!(n instanceof Attribute) && n.getChild(0) instanceof Element) {
                         list.add(n.toXML());
                     } 
                     else {
                         list.add(n.getValue());
-                    }
-                */
+                    }*/
+                    
                     //checks if the node has children, then cleans up new lines and extra spaces
                     if (!(n instanceof Attribute) && n.getChildCount()>1)
                         list.add(n.getValue().trim().replaceAll("[\\t\\n\\r]", " ").replaceAll(" +", " ").replaceAll("\\( ", "\\(").replaceAll(" \\)", "\\)").replaceAll(" :", ":").replaceAll(" ,", ","));
                     else
                         list.add(n.getValue().toString());
+                    
             }
         }
         return list;

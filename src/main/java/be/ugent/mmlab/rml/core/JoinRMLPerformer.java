@@ -42,6 +42,7 @@ public class JoinRMLPerformer extends NodeRMLPerformer{
         }       
         log.debug("[JoinRMLPerformer:addTriples] Subject "
                     + subject + " Predicate " + predicate + "Object " + object.toString());
+        
         //add the join triple
         dataset.add(subject, predicate, object);
     }
