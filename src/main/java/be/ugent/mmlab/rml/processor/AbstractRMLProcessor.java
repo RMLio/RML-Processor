@@ -169,12 +169,12 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                             expression = expression.replaceAll("\\$", "");
                             temp = temp.replaceAll("\\$", "");
                         }
-                        /*(try {
+                        try {
                             temp = temp.replaceAll("\\{" + expression + "\\}", URLEncoder.encode(replacement,"UTF-8"));
                         } catch (UnsupportedEncodingException ex) {
                             Logger.getLogger(AbstractRMLProcessor.class.getName()).log(Level.SEVERE, null, ex);
-                        }*/
-                        temp = temp.replaceAll("\\{" + expression + "\\}", replacement);
+                        }
+                        //temp = temp.replaceAll("\\{" + expression + "\\}", replacement);
                         value.set(i, temp.toString());
 
                     }      
