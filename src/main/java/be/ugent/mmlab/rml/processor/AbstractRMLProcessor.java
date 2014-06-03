@@ -14,13 +14,14 @@ import be.ugent.mmlab.rml.model.PredicateObjectMap;
 import be.ugent.mmlab.rml.model.ReferencingObjectMap;
 import be.ugent.mmlab.rml.model.SubjectMap;
 import be.ugent.mmlab.rml.model.TermMap;
+import static be.ugent.mmlab.rml.model.TermType.BLANK_NODE;
+import static be.ugent.mmlab.rml.model.TermType.IRI;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.model.reference.ReferenceIdentifierImpl;
 import be.ugent.mmlab.rml.processor.concrete.ConcreteRMLProcessorFactory;
 import be.ugent.mmlab.rml.vocabulary.Vocab.QLTerm;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
-import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -82,26 +83,45 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
      * @return the created subject
      */
     @Override
-    public Resource processSubjectMap(SesameDataSet dataset, SubjectMap subjectMap, Object node) {
+    public Resource processSubjectMap(SesameDataSet dataset, SubjectMap subjectMap, Object node) {       
         //Get the uri
-        List<String> values = processTermMap(subjectMap, node);
+        List<String> values = processTermMap(subjectMap, node);    
         //log.info("Abstract RML Processor Graph Map" + subjectMap.getGraphMaps().toString());
-        if (values.isEmpty()) {
-            return null;
+        if (values.isEmpty()) 
+            if(subjectMap.getTermType() != BLANK_NODE)
+                return null;
+            
+        String value = null;
+        if(subjectMap.getTermType() != BLANK_NODE){
+            //Since it is the subject, more than one value is not allowed. 
+            //Only return the first one. Throw exception if not?
+            value = values.get(0);
+
+            if ((value == null) || (value.equals(""))) 
+                return null;
         }
-
-        //Since it is the subject, more than one value is not allowed. Only return the first one. Throw exception if not?
-        String value = values.get(0);
-
-        if ((value == null) || (value.equals(""))) {
-            return null;
+        
+        Resource subject = null;
+               
+        //doublicate code from ObjectMap - they should be handled together
+        switch (subjectMap.getTermType()) {
+            case IRI:
+                if (value != null && !value.equals("")){
+                    if(value.startsWith("www."))
+                        value = "http://" + value;
+                    subject = new URIImpl(value);
+                }
+                break;
+            case BLANK_NODE:
+                subject = new BNodeImpl(org.apache.commons.lang.RandomStringUtils.randomAlphanumeric(10));
+                break;
+            default:
+                subject = new URIImpl(value);
         }
-
-        Resource subject = new URIImpl(value);
-
+        //subject = new URIImpl(value);
         return subject;
     }
-    
+        
     @Override
     public void processSubjectTypeMap(SesameDataSet dataset, Resource subject, SubjectMap subjectMap, Object node) {
 
