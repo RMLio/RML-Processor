@@ -266,12 +266,21 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                     //same Logical Source and no Conditions
                     else if (joinConditions.isEmpty() & parentTriplesMap.getLogicalSource().getIdentifier().equals(map.getLogicalSource().getIdentifier())){
                         performer = new SimpleReferencePerformer(processor, subject, predicate);
-                        if((parentTriplesMap.getLogicalSource().getQueryLanguage().toString() == "CSV") || (parentTriplesMap.getLogicalSource().getReference().equals(map.getLogicalSource().getReference()))){
+                        if((parentTriplesMap.getLogicalSource().getQueryLanguage().toString().equals("CSV")) || (parentTriplesMap.getLogicalSource().getReference().equals(map.getLogicalSource().getReference()))){
                             performer.perform(node, dataset, parentTriplesMap);
                         }
                         else{
                             int end = map.getLogicalSource().getReference().length();
-                            String expression = parentTriplesMap.getLogicalSource().getReference().toString().substring(end);
+                            log.info("RML:AbstractRMLProcessor " + parentTriplesMap.getLogicalSource().getReference().toString());
+                            String expression = "";
+                            switch (parentTriplesMap.getLogicalSource().getQueryLanguage().toString()) {
+                                case "XPath":
+                                    expression = parentTriplesMap.getLogicalSource().getReference().toString().substring(end);
+                                    break;
+                                case "JSONPath":
+                                    expression = parentTriplesMap.getLogicalSource().getReference().toString().substring(end+1);
+                                    break;
+                            }
                             processor.execute_node(dataset, expression, parentTriplesMap, performer, node);
                         }
                     }

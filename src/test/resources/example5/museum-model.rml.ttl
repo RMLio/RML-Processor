@@ -31,10 +31,6 @@
     rr:predicate crm:P14_carried_out_by;
 	rr:objectMap [ 
             rr:parentTriplesMap <#ArtistMapping> ;
-#            rr:joinCondition [
-#                rr:child "Ref";
-#                rr:parent "Ref";
-#            ];
         ];
     ];
 
@@ -42,11 +38,7 @@
   [
     rr:predicate crm:P108_has_produced;
 	rr:objectMap [
-        rr:parentTriplesMap <#ArtworkMapping>;
-#        rr:joinCondition [
-#            rr:child "Ref";
-#            rr:parent "Ref";
-#        ];
+            rr:parentTriplesMap <#ArtworkMapping>;
     ];
   ].
 
@@ -85,10 +77,6 @@
     rr:predicate crm:P62_depicts;
     rr:objectMap [ 
             rr:parentTriplesMap <#SitterMapping> ;
-#            rr:joinCondition [
-#                rr:child "Ref";
-#                rr:parent "Ref";
-#            ];
         ];
   ].
  
@@ -96,7 +84,7 @@
   rml:logicalSource [
     rml:sourceName "/example5/museum.json";
     rml:queryLanguage ql:JSONPath;
-    rml:iterator "$";
+    rml:iterator "$.[*]";
   ];
 
   rr:subjectMap [
@@ -130,10 +118,11 @@
   rml:logicalSource [
     rml:sourceName "/example5/museum.json";
     rml:queryLanguage ql:JSONPath;
-    rml:iterator "$";
+    rml:iterator "$.[*].Sitter[*]";
   ];
   rr:subjectMap [
-    rr:template "http://ex.com/{Sitter[0].Name}";
+    #rr:template "http://ex.com/{Sitter[0].Name}";
+    rr:template "http://ex.com/{Name}";
     rr:class crm:E21_Person ;
   ];
 
@@ -142,7 +131,8 @@
     rr:predicate rdfs:label;
     rr:objectMap 
     [
-      rml:reference "$.Sitter[0].Name" 
+      #rml:reference "$.Sitter[0].Name"
+      rml:reference "$Name"
     ]
   ].
 
