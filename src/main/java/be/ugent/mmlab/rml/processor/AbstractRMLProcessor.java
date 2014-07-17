@@ -244,7 +244,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
 
                     //Create the processor based on the parent triples map to perform the join
                     RMLProcessorFactory factory = new ConcreteRMLProcessorFactory();
-                    QLTerm queryLanguage = parentTriplesMap.getLogicalSource().getQueryLanguage();
+                    QLTerm queryLanguage = parentTriplesMap.getLogicalSource().getReferenceFormulation();
 
                     String fileName ;
                     File file = new File(parentTriplesMap.getLogicalSource().getIdentifier());
@@ -266,14 +266,14 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                     //same Logical Source and no Conditions
                     else if (joinConditions.isEmpty() & parentTriplesMap.getLogicalSource().getIdentifier().equals(map.getLogicalSource().getIdentifier())){
                         performer = new SimpleReferencePerformer(processor, subject, predicate);
-                        if((parentTriplesMap.getLogicalSource().getQueryLanguage().toString().equals("CSV")) || (parentTriplesMap.getLogicalSource().getReference().equals(map.getLogicalSource().getReference()))){
+                        if((parentTriplesMap.getLogicalSource().getReferenceFormulation().toString().equals("CSV")) || (parentTriplesMap.getLogicalSource().getReference().equals(map.getLogicalSource().getReference()))){
                             performer.perform(node, dataset, parentTriplesMap);
                         }
                         else{
                             int end = map.getLogicalSource().getReference().length();
                             log.info("RML:AbstractRMLProcessor " + parentTriplesMap.getLogicalSource().getReference().toString());
                             String expression = "";
-                            switch (parentTriplesMap.getLogicalSource().getQueryLanguage().toString()) {
+                            switch (parentTriplesMap.getLogicalSource().getReferenceFormulation().toString()) {
                                 case "XPath":
                                     expression = parentTriplesMap.getLogicalSource().getReference().toString().substring(end);
                                     break;

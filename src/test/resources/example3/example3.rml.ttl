@@ -23,8 +23,8 @@
 
 <#AirportMapping>
     rml:logicalSource [
-	rml:sourceName "/example3/Airport.csv";
-        rml:queryLanguage ql:CSV
+	rml:source "/example3/Airport.csv";
+        rml:referenceFormulation ql:CSV
     ];
     rr:subjectMap [
 	 rr:template "http://airport.example.com/{id}";
@@ -54,9 +54,9 @@
 
 <#BusMapping>
     rml:logicalSource[
-      rml:sourceName "/example3/Transport.xml";
+      rml:source "/example3/Transport.xml";
       rml:iterator "/transport/bus";
-      rml:queryLanguage ql:XPath;
+      rml:referenceFormulation ql:XPath;
     ];
     
     rr:subjectMap [
@@ -77,9 +77,9 @@
 
 <#BusStopMapping>
     rml:logicalSource [
-      rml:sourceName "/example3/Transport.xml";
+      rml:source "/example3/Transport.xml";
       rml:iterator "/transport/bus/route/stop";
-      rml:queryLanguage ql:XPath;
+      rml:referenceFormulation ql:XPath;
     ];
     rr:subjectMap [
       rr:template "http://trans.example.com/stops/{@id}";
@@ -95,8 +95,8 @@
 
 <#VenueMapping>
     rml:logicalSource [
-      rml:sourceName "/example3/Venue.json";
-      rml:queryLanguage ql:JSONPath;
+      rml:source "/example3/Venue.json";
+      rml:referenceFormulation ql:JSONPath;
       rml:iterator "$"
     ];
     rr:subjectMap [
@@ -126,8 +126,8 @@
 
 <#LocationMapping>
   rml:logicalSource [
-    rml:sourceName "/example3/Venue.json";
-    rml:queryLanguage ql:JSONPath;
+    rml:source "/example3/Venue.json";
+    rml:referenceFormulation ql:JSONPath;
     rml:iterator "$"
   ];
 

@@ -976,7 +976,7 @@ public abstract class RMLMappingFactory {
 
         // Check SQL base table or view
         URI pName = rmlMappingGraph.URIref(Vocab.RML_NAMESPACE
-                + Vocab.RMLTerm.SOURCE_NAME);
+                + Vocab.RMLTerm.SOURCE);
 
         List<Statement> statementsName = rmlMappingGraph.tuplePattern(
                 blankLogicalSource, pName, null);
@@ -1081,7 +1081,7 @@ public abstract class RMLMappingFactory {
 
     private static Vocab.QLTerm getQueryLanguage(SesameDataSet rmlMappingGraph, Resource subject) throws InvalidR2RMLStructureException {
         URI pQueryLanguage = rmlMappingGraph.URIref(Vocab.RML_NAMESPACE
-                + Vocab.RMLTerm.QUERY_LANGUAGE);
+                + Vocab.RMLTerm.REFERENCE_FORMULATION);
         List<Statement> statements = rmlMappingGraph.tuplePattern(
                 subject, pQueryLanguage, null);
         if (statements.size() > 1) {

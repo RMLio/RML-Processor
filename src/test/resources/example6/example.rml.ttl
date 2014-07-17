@@ -7,24 +7,23 @@
 @base <http://example.com/base> .
 
 <#FromToMaps>
-rml:logicalSource [ 
-	rml:sourceName "/example6/example6.xml";
-        rml:queryLanguage ql:XPath;
-	rml:iterator "/notes/note";
-];
-rr:subjectMap [
+    rml:logicalSource [ 
+        rml:source "/example6/example6.xml";
+        rml:referenceFormulation ql:XPath;
+        rml:iterator "/notes/note";
+    ];
+    rr:subjectMap [
         rr:template "http://www.example.com/note/{@id}"; 
         rr:class mail:note;
         #rr:graphMap [ rr:constant <http://www.example.com/testgraph1> ];
-];
-rr:predicateObjectMap [
+    ];
+    rr:predicateObjectMap [
         rr:predicate mail:when;
         rr:objectMap [ 
             rr:template "{@year}-{@month}-{@day}";
             rr:datatype xsd:date;
             rr:termType rr:Literal;
 	];
-        # rr:graphMap [ rr:constant <http://www.example.com/testgraph3> ];
     ];
         
     rr:predicateObjectMap [
@@ -49,9 +48,9 @@ rr:predicateObjectMap [
         
 <#DateTime>
     rml:logicalSource [ 
-	rml:sourceName "/example6/example6.xml";
+	rml:source "/example6/example6.xml";
 	rml:iterator "/notes/note";
-	rml:queryLanguage ql:XPath;
+	rml:referenceFormulation ql:XPath;
 	];
 	rr:subjectMap [
 		rr:template "http://www.example.com/DateTime/{@year}{@month}{@day}";

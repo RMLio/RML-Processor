@@ -144,7 +144,7 @@ public class RMLEngine {
         for (TriplesMap triplesMap : r2rmlMapping.getTriplesMaps()) {
             FileInputStream input = null;
             System.out.println("[RMLEngine:generateRDFTriples] Generate RDF triples for " + triplesMap.getName());
-            RMLProcessor processor = factory.create(triplesMap.getLogicalSource().getQueryLanguage());
+            RMLProcessor processor = factory.create(triplesMap.getLogicalSource().getReferenceFormulation());
             //URL filePath = getClass().getProtectionDomain().getCodeSource().getLocation();
             String fileName;
             if(filebased)

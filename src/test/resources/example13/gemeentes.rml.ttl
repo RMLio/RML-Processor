@@ -17,8 +17,8 @@
 
 <#cultureel-per-gemeente>
     rml:logicalSource [
-    rml:sourceName "/example13/bevolking-naar-socio-economische-positie-2011-1-csv.csv";
-        rml:queryLanguage ql:CSV
+        rml:source "/example13/bevolking-naar-socio-economische-positie-2011-1-csv.csv";
+        rml:referenceFormulation ql:CSV
     ];
     rr:subjectMap [
      rr:template "http://ewi.mmlab.be/datajournalism/gemeentes/{NIS code}/cultural-events/2011"    
@@ -26,18 +26,18 @@
 
 <#Geboorten-per-gemeente>
     rml:logicalSource [
-	rml:sourceName "/example13/1_Geboorten_per_gemeente-xls.csv";
-        rml:queryLanguage ql:CSV
+	rml:source "/example13/1_Geboorten_per_gemeente-xls.csv";
+        rml:referenceFormulation ql:CSV
     ];
     rr:subjectMap [
-     rr:template "http://ewi.mmlab.be/datajournalism/gemeentes/{NIScode}/births/{Jaar}" 
-	 #was: rr:template "http://ewi.mmlab.be/datajournalism/gemeentes/{NIScode}/births/{jaar}"    
+        rr:template "http://ewi.mmlab.be/datajournalism/gemeentes/{NIScode}/births/{Jaar}" 
+        #was: rr:template "http://ewi.mmlab.be/datajournalism/gemeentes/{NIScode}/births/{jaar}"    
     ].
 
 <#demography-gemeentes>
     rml:logicalSource [
-        rml:sourceName "/example13/1_Bevolking_en_bevolkingsdichtheid_gemeente-1-xls.csv";
-        rml:queryLanguage ql:CSV
+        rml:source "/example13/1_Bevolking_en_bevolkingsdichtheid_gemeente-1-xls.csv";
+        rml:referenceFormulation ql:CSV
     ];
     rr:subjectMap [
         rr:template "http://ewi.mmlab.be/datajournalism/gemeentes/{NIS-CODE}/demography/{jaar}"
