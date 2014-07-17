@@ -144,6 +144,8 @@ public class RMLEngine {
         for (TriplesMap triplesMap : r2rmlMapping.getTriplesMaps()) {
             FileInputStream input = null;
             System.out.println("[RMLEngine:generateRDFTriples] Generate RDF triples for " + triplesMap.getName());
+            //need to add control if reference Formulation is not defined
+            //need to add check for correct spelling, aka rml:queryLanguage and not rml:referenceFormulation otherwise breaks
             RMLProcessor processor = factory.create(triplesMap.getLogicalSource().getReferenceFormulation());
             //URL filePath = getClass().getProtectionDomain().getCodeSource().getLocation();
             String fileName;
@@ -158,6 +160,7 @@ public class RMLEngine {
                 fileName = getClass().getResource(triplesMap.getLogicalSource().getIdentifier()).getFile();
             try {
                 log.info("[RMLEngine:generateRDFTriples] next file to be openned " + fileName);
+                //add control in case rml:source is not declared
                 getFileMap().put(fileName, fileName);
                 input = new FileInputStream(fileName);
                 getFileMap().load(input);

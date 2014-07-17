@@ -28,14 +28,17 @@ public class StdLogicalSource implements LogicalSource {
         this.referenceFormulation = queryLanguage;
     }
     
+    @Override
     public String getReference() {
         return reference;
     }
 
+    @Override
     public QLTerm getReferenceFormulation() {
         return referenceFormulation;
     }
 
+    @Override
     public String getIdentifier() {
         return identifier;
     }
