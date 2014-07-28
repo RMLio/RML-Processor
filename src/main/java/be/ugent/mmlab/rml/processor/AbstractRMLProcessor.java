@@ -149,7 +149,15 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
             case REFERENCE_VALUED:
                 //Get the expression and extract the value
                 ReferenceIdentifierImpl identifier = (ReferenceIdentifierImpl) map.getReferenceValue();
-                return extractValueFromNode(node, identifier.toString().trim());
+                value = extractValueFromNode(node, identifier.toString().trim());
+                if(value.size() > 0){
+                    //need better solution to remove HTML tags
+                    List<String> value_noHTML = new ArrayList<>();
+                    boolean add = value_noHTML.add(value.get(0).toString().replaceAll("\\<.*?>",""));
+                    if(add)
+                        return value_noHTML;
+                }
+                return value;
             case CONSTANT_VALUED:
                 //Extract the value directly from the mapping
                 value.add(map.getConstantValue().stringValue().trim());
