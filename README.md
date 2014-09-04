@@ -28,6 +28,8 @@ An example `<sources_properties>` file `sources.properties` could contain:
     file2=/path/to/file2.json
     file3=/path/to/file3.xml
 
+More information about the solution can be found at http://rml.io
 
 This application is developed by Multimedia Lab http://www.mmlab.be
+
 Copyright 2014, Multimedia Lab - Ghent University - iMinds
