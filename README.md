@@ -33,6 +33,7 @@ For instance, to run example1, execute the following command by replacing the pa
     mvn exec:java -Dexec.args="/path/to/the/mapping/document/example.rml.ttl /path/to/the/output/file/example1_test.output.nt -sp /path/to/the/properties/file/source.properties"
 
 and the source.properties file should contain
+
     /example1/example1=/path/to/the/source/file/example1.xml
 
 More Information
