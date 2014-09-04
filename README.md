@@ -12,13 +12,12 @@ Usage
 The processor can be run using Maven, so make sure you have installed it first: http://maven.apache.org/download.cgi
 You can run a mapping process by executing the following command.
     
-    mvn exec:java -Dexec.args="<sources_properties> <mapping_file> <output_file> [<graph>]"
+    mvn exec:java -Dexec.args="<mapping_file> <output_file> [-sp source.properties] [-g <graph>]"
 
-With
-    
-    <sources_properties> = Java properties file containing key-value pairs which configure the data sources used in the mapping file. 
+With 
     <mapping_file> = The RML mapping file conform with the [RML specification](http://semweb.mmlab.be/ns/rml)
-    <output_file> = The file where the output RDF triples are stored; default in [Turtle](http://www.w3.org/TR/turtle/) syntax.
+    <output_file> = The file where the output RDF triples are stored; default in [N-Triples](http://www.w3.org/TR/n-triples/) syntax.
+    <sources_properties> = Java properties file containing key-value pairs which configure the data sources used in the mapping file.
     <graph> (optional) = The named graph in which the output RDF triples are stored.
         
 An example `<sources_properties>` file `sources.properties` could contain:
