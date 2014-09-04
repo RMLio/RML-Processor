@@ -15,6 +15,7 @@ You can run a mapping process by executing the following command.
     mvn exec:java -Dexec.args="<mapping_file> <output_file> [-sp source.properties] [-g <graph>]"
 
 With 
+    
     <mapping_file> = The RML mapping file conform with the [RML specification](http://semweb.mmlab.be/ns/rml)
     <output_file> = The file where the output RDF triples are stored; default in [N-Triples](http://www.w3.org/TR/n-triples/) syntax.
     <sources_properties> = Java properties file containing key-value pairs which configure the data sources used in the mapping file.
