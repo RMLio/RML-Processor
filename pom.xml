@@ -21,14 +21,22 @@
               <version>2.4</version>
               <configuration>
               <archive>
-              <manifest>
-                  <mainClass>be.ugent.mmlab.rml.main.Main</mainClass>
-              </manifest>
+                <manifest>
+                    <mainClass>be.ugent.mmlab.rml.main.Main</mainClass>
+                </manifest>
               </archive>
               <descriptorRefs>
                   <descriptorRef>jar-with-dependencies</descriptorRef>
               </descriptorRefs>
               </configuration>
+              <executions>
+                <execution>
+                  <phase>package</phase>
+                  <goals>
+                    <goal>single</goal>
+                  </goals>
+                </execution>
+              </executions>
             </plugin>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -45,6 +53,11 @@
                 <configuration>
                     <mainClass>be.ugent.mmlab.rml.main.Main</mainClass>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.5</version>                
             </plugin>
         </plugins>
     </build>
