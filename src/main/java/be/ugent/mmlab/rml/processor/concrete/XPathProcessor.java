@@ -1,9 +1,12 @@
 package be.ugent.mmlab.rml.processor.concrete;
 
+import be.ugent.mmlab.rml.core.NodeRMLPerformer;
 import be.ugent.mmlab.rml.core.RMLMappingFactory;
 import be.ugent.mmlab.rml.core.RMLPerformer;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.AbstractRMLProcessor;
+import be.ugent.mmlab.rml.processor.RMLProcessor;
+import be.ugent.mmlab.rml.processor.RMLProcessorFactory;
 import be.ugent.mmlab.rml.xml.XOMBuilder;
 import java.io.File;
 import java.io.FileInputStream;
@@ -35,6 +38,7 @@ import net.sf.saxon.s9api.XPathCompiler;
 import net.sf.saxon.s9api.XPathSelector;
 import net.sf.saxon.s9api.XdmNode;
 import nu.xom.Element;
+import org.openrdf.model.Resource;
 
 /**
  *
@@ -176,7 +180,7 @@ public class XPathProcessor extends AbstractRMLProcessor {
     }
     
     @Override
-    public void execute_node(SesameDataSet dataset, String expression, TriplesMap parentTriplesMap, RMLPerformer performer, Object node) {
+    public void execute_node(SesameDataSet dataset, String expression, TriplesMap parentTriplesMap, RMLPerformer performer, Object node, Resource subject) {
         //still need to make it work with more nore-results 
         //currently it handles only one
     
@@ -191,7 +195,14 @@ public class XPathProcessor extends AbstractRMLProcessor {
         for (int i = 0; i < nodes.size(); i++) {
             Node n = nodes.get(i);
             log.debug("[AbstractRMLProcessorProcessor:node] " + "new node " + n.toXML().toString());
-            performer.perform(n, dataset, parentTriplesMap);
+            if(subject == null)
+                performer.perform(n, dataset, parentTriplesMap);
+            else{
+                RMLProcessorFactory factory = new ConcreteRMLProcessorFactory();
+                RMLProcessor subprocessor = factory.create(map.getLogicalSource().getReferenceFormulation());
+                RMLPerformer subperformer = new NodeRMLPerformer(subprocessor);
+                subperformer.perform(n, dataset, parentTriplesMap, subject);
+            }
         }
 
     }

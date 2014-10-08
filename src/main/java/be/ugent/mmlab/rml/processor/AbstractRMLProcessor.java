@@ -281,7 +281,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                                     expression = parentTriplesMap.getLogicalSource().getReference().toString().substring(end+1);
                                     break;
                             }
-                            processor.execute_node(dataset, expression, parentTriplesMap, performer, node);
+                            processor.execute_node(dataset, expression, parentTriplesMap, performer, node, null);
                         }
                     }
                     //Conditions

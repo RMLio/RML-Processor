@@ -2,7 +2,9 @@ package be.ugent.mmlab.rml.core;
 
 import be.ugent.mmlab.rml.dataset.FileSesameDataset;
 import be.ugent.mmlab.rml.model.LogicalSource;
+import be.ugent.mmlab.rml.model.PredicateObjectMap;
 import be.ugent.mmlab.rml.model.RMLMapping;
+import be.ugent.mmlab.rml.model.ReferencingObjectMap;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.RMLProcessor;
 import be.ugent.mmlab.rml.processor.RMLProcessorFactory;
@@ -15,7 +17,6 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
-import net.antidot.semantic.rdf.rdb2rdf.r2rml.core.R2RMLEngine;
 import net.antidot.semantic.rdf.rdb2rdf.r2rml.exception.R2RMLDataError;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -29,7 +30,7 @@ import org.openrdf.repository.RepositoryException;
 public class RMLEngine {
 
     // Log
-    private static Log log = LogFactory.getLog(R2RMLEngine.class);
+    private static Log log = LogFactory.getLog(RMLEngine.class);
     // A base IRI used in resolving relative IRIs produced by the R2RML mapping.
     private String baseIRI;
     private static boolean source_properties;
@@ -92,7 +93,7 @@ public class RMLEngine {
                     "[RMLEngine:runRMLMapping] No base IRI found.");
         }
 
-        SesameDataSet sesameDataSet = null;
+        SesameDataSet sesameDataSet ;
         // Update baseIRI
         this.baseIRI = baseIRI;
         log.info("RMLEngine base IRI " + baseIRI);
@@ -120,6 +121,18 @@ public class RMLEngine {
         log.debug("[RMLEngine:runRMLMapping] RML mapping done! Generated " + sesameDataSet.getSize() + " in " + ((double) duration) / 1000000000 + "s . ");
         return sesameDataSet;
     }
+    
+    private boolean check_ReferencingObjectMap(RMLMapping mapping, TriplesMap map) {
+        for (TriplesMap triplesMap : mapping.getTriplesMaps()) 
+            for (PredicateObjectMap predicateObjectMap : triplesMap.getPredicateObjectMaps()) 
+                if (predicateObjectMap.hasReferencingObjectMaps()) 
+                    for (ReferencingObjectMap referencingObjectMap : predicateObjectMap.getReferencingObjectMaps()) 
+                        if (referencingObjectMap.getJoinConditions().isEmpty() 
+                                && referencingObjectMap.getParentTriplesMap() == map
+                                && referencingObjectMap.getParentTriplesMap().getLogicalSource().getIdentifier().equals(triplesMap.getLogicalSource().getIdentifier())) 
+                            return true;
+        return false;
+    }
 
     /**
      * This process adds RDF triples to the output dataset. Each generated
@@ -142,6 +155,8 @@ public class RMLEngine {
         RMLProcessorFactory factory = new ConcreteRMLProcessorFactory();
 
         for (TriplesMap triplesMap : r2rmlMapping.getTriplesMaps()) {
+            if (check_ReferencingObjectMap(r2rmlMapping, triplesMap)) 
+                continue;
             FileInputStream input = null;
             System.out.println("[RMLEngine:generateRDFTriples] Generate RDF triples for " + triplesMap.getName());
             //need to add control if reference Formulation is not defined

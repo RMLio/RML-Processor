@@ -54,6 +54,7 @@ public class StdPredicateObjectMap implements PredicateObjectMap {
 		setReferencingObjectMap(referencingObjectMaps);
 	}
 
+        @Override
 	public void setReferencingObjectMap(Set<ReferencingObjectMap> refObjectMaps) {
 		if (refObjectMaps == null)
 			this.refObjectMaps = new HashSet<ReferencingObjectMap>();
@@ -66,26 +67,32 @@ public class StdPredicateObjectMap implements PredicateObjectMap {
 		}
 	}
 
+        @Override
 	public Set<ObjectMap> getObjectMaps() {
 		return objectMaps;
 	}
 
+        @Override
 	public Set<PredicateMap> getPredicateMaps() {
 		return predicateMaps;
 	}
 
+        @Override
 	public Set<ReferencingObjectMap> getReferencingObjectMaps() {
 		return refObjectMaps;
 	}
 
+        @Override
 	public boolean hasReferencingObjectMaps() {
 		return refObjectMaps != null && !refObjectMaps.isEmpty();
 	}
 
+        @Override
 	public TriplesMap getOwnTriplesMap() {
 		return ownTriplesMap;
 	}
 
+        @Override
 	public void setObjectMaps(Set<ObjectMap> objectMaps) {
 		if (objectMaps == null)
 			this.objectMaps = new HashSet<ObjectMap>();
@@ -98,6 +105,7 @@ public class StdPredicateObjectMap implements PredicateObjectMap {
 		}
 	}
 
+        @Override
 	public void setOwnTriplesMap(TriplesMap ownTriplesMap) {
 		// Update triples map if not contains this subject map
 		if (ownTriplesMap.getSubjectMap() != null)
@@ -106,6 +114,7 @@ public class StdPredicateObjectMap implements PredicateObjectMap {
 		this.ownTriplesMap = ownTriplesMap;
 	}
 
+        @Override
 	public void setPredicateMaps(Set<PredicateMap> predicateMaps) {
 		if (predicateMaps == null)
 			this.predicateMaps = new HashSet<PredicateMap>();
@@ -118,10 +127,12 @@ public class StdPredicateObjectMap implements PredicateObjectMap {
 		}
 	}
 	
+        @Override
 	public Set<GraphMap> getGraphMaps() {
 		return graphMaps;
 	}
 	
+        @Override
 	public void setGraphMaps(Set<GraphMap> graphMaps) {
 		this.graphMaps = new HashSet<GraphMap>(graphMaps);
 	}

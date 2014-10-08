@@ -50,4 +50,17 @@ public class NodeRMLPerformer implements RMLPerformer{
         }
     }
     
+    /**
+     *
+     * @param node
+     * @param dataset
+     * @param map
+     * @param subject
+     */
+    @Override
+    public void perform(Object node, SesameDataSet dataset, TriplesMap map, Resource subject) {
+        processor.processSubjectTypeMap(dataset, subject, map.getSubjectMap(), node);
+        for (PredicateObjectMap pom : map.getPredicateObjectMaps()) 
+            processor.processPredicateObjectMap(dataset, subject, pom, node, map);
+    }
 }

@@ -2,6 +2,7 @@ package be.ugent.mmlab.rml.core;
 
 import be.ugent.mmlab.rml.model.TriplesMap;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
+import org.openrdf.model.Resource;
 
 /**
  *
@@ -18,4 +19,6 @@ public interface RMLPerformer {
      * @param map current triple map that is being processed
      */
     public void perform(Object node, SesameDataSet dataset, TriplesMap map);
+    
+    public void perform(Object node, SesameDataSet dataset, TriplesMap map, Resource subject);
 }
