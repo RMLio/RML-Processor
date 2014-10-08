@@ -174,7 +174,7 @@ public class RMLEngine {
             else
                 fileName = getClass().getResource(triplesMap.getLogicalSource().getIdentifier()).getFile();
             try {
-                log.info("[RMLEngine:generateRDFTriples] next file to be openned " + fileName);
+                log.info("[RMLEngine:generateRDFTriples] next file to be opened " + fileName);
                 //add control in case rml:source is not declared
                 getFileMap().put(fileName, fileName);
                 input = new FileInputStream(fileName);
