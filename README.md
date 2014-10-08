@@ -9,7 +9,7 @@ Class diagram
 
 Usage
 -----
-The processor can be run using Maven, so make sure you have installed it first: http://maven.apache.org/download.cgi
+The processor can be run using Maven, so make sure you have installed it first: http://maven.apache.org/download.cgi and java 1.7
 You can run a mapping process by executing the following command.
     
     mvn exec:java -Dexec.args="<mapping_file> <output_file> [-sp source.properties] [-g <graph>]"
@@ -35,6 +35,8 @@ For instance, to run example1, execute the following command by replacing the pa
 and the source.properties file should contain
 
     /example1/example1=/path/to/the/source/file/example1.xml
+
+On OSX, it might be needed to export JAVA_HOME=$(/usr/libexec/java_home)
 
 More Information
 ----------------
