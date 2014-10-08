@@ -68,8 +68,8 @@ public interface TermMap {
 	public Value getConstantValue();
 
 	/**
-	 * The column value of the term map is the data value of that column in a
-	 * given logical table row. Only if REFERENCE_VALUED type.
+	 * The value of the term map is the data value of that reference. 
+         * Only if REFERENCE_VALUED type.
 	 */
 	public ReferenceIdentifier getReferenceValue();
 
@@ -108,7 +108,7 @@ public interface TermMap {
 	/**
 	 * A typeable term map has an implicit datatype. If the term map is a
 	 * column-valued term map, then the implicit datatype is the corresponding
-	 * RDF datatype of the respective column in the logical table row.
+	 * RDF datatype of the respective reference in the logical source.
 	 * Otherwise, the term map must be a template-valued term map and its
 	 * implicit datatype is empty
 	 */
@@ -151,7 +151,7 @@ public interface TermMap {
 	 * @throws UnsupportedEncodingException 
 	 * @throws SQLException 
 	 * @throws R2RMLDataError 
-	 * The generated RDF term of a term map for a given logical table row is
+	 * The generated RDF term of a term map for a given logical source is
 	 * determined as follows: If the term map is a constant-valued term map,
 	 * then the generated RDF term is the term map's constant value. If the term
 	 * map is a column-valued term map, then the generated RDF term is

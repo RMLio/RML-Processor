@@ -10,7 +10,6 @@ import com.csvreader.CsvReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,6 +17,7 @@ import java.util.List;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openrdf.model.Resource;
 
 /**
  *
@@ -36,28 +36,26 @@ public class CSVProcessor extends AbstractRMLProcessor {
     }
 
     @Override
-    public void execute(SesameDataSet dataset, TriplesMap map, RMLPerformer performer) {
-        InputStream fis = null;
+    public void execute(SesameDataSet dataset, TriplesMap map, RMLPerformer performer, String fileName) {
+        //InputStream fis = null;
         try {
-            String identifier = getIdentifier(map.getLogicalSource());
             char delimiter = getDelimiter(map.getLogicalSource());
 
-            fis = new FileInputStream(identifier);
-
             //TODO: add character guessing
-            CsvReader reader = new CsvReader(fis, Charset.defaultCharset());
+            //CsvReader reader = new CsvReader(fis, Charset.defaultCharset());
+            log.info("[CSV Processor] filename " + fileName);
+            CsvReader reader = new CsvReader(new FileInputStream(fileName), Charset.defaultCharset());
             reader.setDelimiter(delimiter);
             
             reader.readHeaders();
             //Iterate the rows
             while (reader.readRecord()) {
-                HashMap<String, String> row = new HashMap<String, String>();
+                HashMap<String, String> row = new HashMap<>();
 
                 for (String header : reader.getHeaders()) {
                     row.put(header, reader.get(header));
                 }
                 //let the performer handle the rows
-                log.debug("[CSVProcessor:row] " + "row " + row.toString());
                 performer.perform(row, dataset, map);
             }
 
@@ -73,7 +71,15 @@ public class CSVProcessor extends AbstractRMLProcessor {
         HashMap<String, String> row = (HashMap<String, String>) node;
         //call the right header in the row
         List<String> list = new ArrayList();
-        list.add(row.get(expression));
+        if (row.containsKey(expression)){
+            list.add(row.get(expression));
+        }
+        
         return list;
+    }
+
+    @Override
+    public void execute_node(SesameDataSet dataset, String expression, TriplesMap parentTriplesMap, RMLPerformer performer, Object node, Resource subject) {
+        throw new UnsupportedOperationException("Not applicable for CSV sources."); //To change body of generated methods, choose Tools | Templates.
     }
 }

@@ -24,5 +24,5 @@ public interface LogicalSource {
      * Every logical source can indicate how its expression should be
      * interpreted
      */
-    public Vocab.QLTerm getQueryLanguage();
+    public Vocab.QLTerm getReferenceFormulation();
 }

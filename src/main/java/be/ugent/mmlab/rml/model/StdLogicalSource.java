@@ -10,7 +10,7 @@ import be.ugent.mmlab.rml.vocabulary.Vocab.QLTerm;
 public class StdLogicalSource implements LogicalSource {
 
     private String reference;
-    private QLTerm queryLanguage = QLTerm.SQL_CLASS;
+    private QLTerm referenceFormulation = QLTerm.SQL_CLASS;
     private String identifier;
 
     public StdLogicalSource(String reference, String identifier) {
@@ -25,17 +25,20 @@ public class StdLogicalSource implements LogicalSource {
     public StdLogicalSource(String reference, String identifier, QLTerm queryLanguage) {
         this.reference = reference;
         this.identifier = identifier;
-        this.queryLanguage = queryLanguage;
+        this.referenceFormulation = queryLanguage;
     }
     
+    @Override
     public String getReference() {
         return reference;
     }
 
-    public QLTerm getQueryLanguage() {
-        return queryLanguage;
+    @Override
+    public QLTerm getReferenceFormulation() {
+        return referenceFormulation;
     }
 
+    @Override
     public String getIdentifier() {
         return identifier;
     }
@@ -43,6 +46,6 @@ public class StdLogicalSource implements LogicalSource {
     @Override
     public String toString() {
         return "[StdLogicalSource : reference = " + reference
-                + "; identifier" + identifier + "; queryLanguage = " + queryLanguage + "]";
+                + "; identifier" + identifier + "; referenceFormulation = " + referenceFormulation + "]";
     }
 }

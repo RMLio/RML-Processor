@@ -9,8 +9,8 @@
 
  <#SitterMapping>
   rml:logicalSource [
-    rml:sourceName "museum.json";
-    rml:queryLanguage ql:JSONPath;
+    rml:source "museum.json";
+    rml:referenceFormulation ql:JSONPath;
     rml:iterator "$.Sitter";
   ];
   rr:subjectMap [
@@ -29,8 +29,8 @@
 
 <#ProductionMapping>
   rml:logicalSource [
-    rml:sourceName "museum.json";
-    rml:queryLanguage ql:JSONPath;
+    rml:source "/example5/museum.json";
+    rml:referenceFormulation ql:JSONPath;
     rml:iterator "$.[*]";
   ];
 
@@ -59,15 +59,15 @@
   [
     rr:predicate crm:P108_has_produced;
 	rr:objectMap [
-        rr:parentTriplesMap <#ArtworkMapping>;
+            rr:parentTriplesMap <#ArtworkMapping>;
     ];
   ].
 
 
 <#ArtworkMapping>
   rml:logicalSource [
-    rml:sourceName "museum.json";
-    rml:queryLanguage ql:JSONPath;
+    rml:source "/example5/museum.json";
+    rml:referenceFormulation ql:JSONPath;
     rml:iterator "$.[*]";
   ];
 
@@ -105,9 +105,9 @@
 
 <#ArtistMapping>
   rml:logicalSource [
-    rml:sourceName "museum.json";
-    rml:queryLanguage ql:JSONPath;
-    rml:iterator "$";
+    rml:source "/example5/museum.json";
+    rml:referenceFormulation ql:JSONPath;
+    rml:iterator "$.[*]";
   ];
 
   rr:subjectMap [
@@ -137,11 +137,32 @@
     ].    
 
 
-
 <#MoonWalkersMapping>
   rml:logicalSource [
-    rml:sourceName "moon-walkers.csv";
-    rml:queryLanguage ql:CSV;
+    rml:source "/example5/museum.json";
+    rml:referenceFormulation ql:JSONPath;
+    rml:iterator "$.[*].Sitter[*]";
+  ];
+  rr:subjectMap [
+    #rr:template "http://ex.com/{Sitter[0].Name}";
+    rr:template "http://ex.com/{Name}";
+    rr:class crm:E21_Person ;
+  ];
+
+  rr:predicateObjectMap 
+  [
+    rr:predicate rdfs:label;
+    rr:objectMap 
+    [
+      #rml:reference "$.Sitter[0].Name"
+      rml:reference "$Name"
+    ]
+  ].
+
+<#WikipediaExportMapping>
+  rml:logicalSource [
+    rml:source "/example5/moon-walkers.csv";
+    rml:referenceFormulation ql:CSV;
   ];
   rr:subjectMap [
     rr:template "http://ex.com/{Name}";

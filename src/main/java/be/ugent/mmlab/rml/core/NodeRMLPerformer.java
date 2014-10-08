@@ -1,8 +1,10 @@
 package be.ugent.mmlab.rml.core;
 
+import be.ugent.mmlab.rml.model.GraphMap;
 import be.ugent.mmlab.rml.model.PredicateObjectMap;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.RMLProcessor;
+import java.util.Set;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
 import org.openrdf.model.Resource;
 import org.apache.commons.logging.Log;
@@ -34,17 +36,31 @@ public class NodeRMLPerformer implements RMLPerformer{
      * @param dataset dataset for endresult
      * @param map current triple map that is being processed
      */
+    @Override
     public void perform(Object node, SesameDataSet dataset, TriplesMap map) {
         Resource subject = processor.processSubjectMap(dataset, map.getSubjectMap(), node);
+        processor.processSubjectTypeMap(dataset, subject, map.getSubjectMap(), node);
         if (subject == null){
-            log.debug("[NodeRMLPerformer:processSubjectMap] Extracted "
-                    + subject + " for node " + node.toString());
             return;
         }
+        Set<GraphMap> graph = map.getSubjectMap().getGraphMaps();
 
         for (PredicateObjectMap pom : map.getPredicateObjectMaps()) {
-            processor.processPredicateObjectMap(dataset, subject, pom, node);
+            processor.processPredicateObjectMap(dataset, subject, pom, node, map);
         }
     }
     
+    /**
+     *
+     * @param node
+     * @param dataset
+     * @param map
+     * @param subject
+     */
+    @Override
+    public void perform(Object node, SesameDataSet dataset, TriplesMap map, Resource subject) {
+        processor.processSubjectTypeMap(dataset, subject, map.getSubjectMap(), node);
+        for (PredicateObjectMap pom : map.getPredicateObjectMaps()) 
+            processor.processPredicateObjectMap(dataset, subject, pom, node, map);
+    }
 }

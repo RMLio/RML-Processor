@@ -37,12 +37,12 @@ public class Vocab {
         // RML CLASSES
         LOGICAL_SOURCE_CLASS("LogicalSource"),
         // RPROPERTIES
-        QUERY_LANGUAGE("queryLanguage"),
+        REFERENCE_FORMULATION("referenceFormulation"),
         LOGICAL_SOURCE("logicalSource"),
         REFERENCE("reference"),
         ITERATOR("iterator"),
         VERSION("version"),
-        SOURCE_NAME("sourceName");
+        SOURCE("source");
         
         private String displayName;
 

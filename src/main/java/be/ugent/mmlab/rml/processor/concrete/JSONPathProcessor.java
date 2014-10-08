@@ -12,7 +12,6 @@ import com.jayway.jsonpath.JsonPath;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -23,6 +22,7 @@ import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openrdf.model.Resource;
 
 /**
  *
@@ -33,50 +33,21 @@ public class JSONPathProcessor extends AbstractRMLProcessor {
     private static Log log = LogFactory.getLog(RMLMappingFactory.class);
 
     @Override
-    public void execute(SesameDataSet dataset, TriplesMap map, RMLPerformer performer) {
-        InputStream fis = null;
+    public void execute(SesameDataSet dataset, TriplesMap map, RMLPerformer performer, String fileName) {
+
         try {
-            String identifier = getIdentifier(map.getLogicalSource());
             String reference = getReference(map.getLogicalSource());
             //This is a none streaming solution. A streaming parser requires own implementation, possibly based on https://code.google.com/p/json-simple/wiki/DecodingExamples
             JsonPath path = JsonPath.compile(reference);
-
-            fis = new FileInputStream(identifier);
-
-            Object val = path.read(fis);
-
-            if (val instanceof JSONObject) {
-                performer.perform(val, dataset, map);
-            } else {
-                List<Object> nodes;
-
-                if (val instanceof JSONArray) {
-                    JSONArray arr = (JSONArray) val;
-                    nodes = arr.subList(0, arr.size());
-                } else {
-                    try {
-                        nodes = (List<Object>) val;
-                    } catch (ClassCastException cce) {
-                        nodes = new ArrayList<Object>();
-                    }
-                }
-                //iterate over all the objects
-                for (Object object : nodes) {
-                    performer.perform(object, dataset, map);
-                }
-            }
+            Object val = path.read(new FileInputStream(fileName));
+            
+            execute(dataset, map, performer, val);
 
         } catch (FileNotFoundException ex) {
             Logger.getLogger(JSONPathProcessor.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(JSONPathProcessor.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            try {
-                fis.close();
-            } catch (IOException ex) {
-                Logger.getLogger(JSONPathProcessor.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
+        } 
     }
 
     @Override
@@ -87,7 +58,6 @@ public class JSONPathProcessor extends AbstractRMLProcessor {
             List<String> list = new ArrayList<>();
             if (val instanceof JSONArray) {
                 JSONArray arr = (JSONArray) val;
-
                 return Arrays.asList(arr.toArray(new String[0]));
             }
             list.add((String) val.toString());
@@ -101,4 +71,36 @@ public class JSONPathProcessor extends AbstractRMLProcessor {
         
     }
 
+    @Override
+    public void execute_node(SesameDataSet dataset, String expression, TriplesMap parentTriplesMap, RMLPerformer performer, Object node, Resource subject) {
+       
+        Object val = JsonPath.read(node, expression);
+        
+        execute(dataset, parentTriplesMap, performer, val);
+        
+        //TODO: check if it's complete for sub-mappings
+    }
+    
+    private void execute (SesameDataSet dataset, TriplesMap parentTriplesMap, RMLPerformer performer, Object node){
+        if (node instanceof JSONObject) 
+            performer.perform(node, dataset, parentTriplesMap);
+        else {
+            List<Object> nodes;
+
+            if (node instanceof JSONArray) {
+                JSONArray arr = (JSONArray) node;
+                nodes = arr.subList(0, arr.size());
+            } else {
+                try {
+                    nodes = (List<Object>) node;
+                } catch (ClassCastException cce) {
+                    nodes = new ArrayList<Object>();
+                }
+            }
+                
+            //iterate over all the objects
+            for (Object object : nodes) 
+                performer.perform(object, dataset, parentTriplesMap);
+        }
+    }
 }

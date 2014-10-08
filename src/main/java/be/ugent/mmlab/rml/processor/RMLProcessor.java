@@ -3,6 +3,7 @@ package be.ugent.mmlab.rml.processor;
 import be.ugent.mmlab.rml.core.RMLPerformer;
 import be.ugent.mmlab.rml.model.PredicateObjectMap;
 import be.ugent.mmlab.rml.model.SubjectMap;
+import be.ugent.mmlab.rml.model.TermMap;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import java.util.List;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
@@ -22,7 +23,10 @@ public interface RMLProcessor {
      * @param map the triplemap
      * @param performer the performer handling the action done on the triplemap
      */
-    public void execute(SesameDataSet dataset, TriplesMap map, RMLPerformer performer);
+    public void execute(SesameDataSet dataset, TriplesMap map, RMLPerformer performer, String fileName);
+    
+    public void execute_node(SesameDataSet dataset, String expression, TriplesMap parentTriplesMap, RMLPerformer performer, Object node, Resource subject);
+
     /**
      * Resolve an expression and extract a single string value from a node
      * @param node current object
@@ -38,6 +42,8 @@ public interface RMLProcessor {
      * @return 
      */
     public Resource processSubjectMap(SesameDataSet dataset, SubjectMap subjectMap, Object node);
+    
+    public void processSubjectTypeMap(SesameDataSet dataset, Resource subject, SubjectMap subjectMap, Object node);
     /**
      * process a predicate object map
      * @param dataset
@@ -45,5 +51,13 @@ public interface RMLProcessor {
      * @param pom the predicate object map
      * @param node 
      */
-    public void processPredicateObjectMap(SesameDataSet dataset, Resource subject, PredicateObjectMap pom, Object node);
+    public void processPredicateObjectMap(SesameDataSet dataset, Resource subject, PredicateObjectMap pom, Object node, TriplesMap map);
+
+    /**
+     *
+     * @param map
+     * @param node
+     * @return
+     */
+    public List<String> processTermMap(TermMap map, Object node);
 }

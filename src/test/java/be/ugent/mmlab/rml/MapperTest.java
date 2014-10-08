@@ -11,6 +11,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import junit.framework.Test;
 import junit.framework.TestCase;
+import static junit.framework.TestCase.assertTrue;
 import junit.framework.TestSuite;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
 import net.antidot.semantic.rdf.rdb2rdf.r2rml.exception.InvalidR2RMLStructureException;
@@ -33,15 +34,6 @@ public class MapperTest
      */
     public MapperTest(String testName) {
         super(testName);
-
-        RMLEngine.getFileMap().put("example.xml", getClass().getResource("/example1/example.xml").getFile());
-        RMLEngine.getFileMap().put("Airport.csv", getClass().getResource("/example3/Airport.csv").getFile());
-        RMLEngine.getFileMap().put("Venue.json", getClass().getResource("/example3/Venue.json").getFile());
-        RMLEngine.getFileMap().put("Transport.xml", getClass().getResource("/example3/Transport.xml").getFile());
-        RMLEngine.getFileMap().put("Venue4.json", getClass().getResource("/example4/Venue.json").getFile());
-        RMLEngine.getFileMap().put("moon-walkers.csv", getClass().getResource("/example5/moon-walkers.csv").getFile());
-        RMLEngine.getFileMap().put("museum.json", getClass().getResource("/example5/museum.json").getFile());
-        RMLEngine.getFileMap().put("moon-walkers7.csv", getClass().getResource("/example7/moon-walkers7.csv").getFile());
     }
 
     /**
@@ -52,7 +44,7 @@ public class MapperTest
     }
 
     /**
-     * Rigourous Test :-)
+     * Tests
      */
     public void testExample1() {
         URL fileToRMLFile = getClass().getResource("/example1/example.rml.ttl");
@@ -90,18 +82,12 @@ public class MapperTest
         assertTrue(assertMap(fileToRMLFile, fileToOutputFile));
     }
     
-    public void testExample7() {
-        URL fileToRMLFile = getClass().getResource("/example7/moon-walkers.rml.ttl");
-        URL fileToOutputFile = getClass().getResource("/example7/moon-walkers.output.ttl");
-        assertTrue(assertMap(fileToRMLFile, fileToOutputFile));
-    }
-
     private boolean assertMap(URL mappingURL, URL outputURL) {
         try {
             RMLMapping mapping = RMLMappingFactory.extractRMLMapping(mappingURL.getFile());
 
             RMLEngine engine = new RMLEngine();
-            
+                       
             SesameDataSet output = engine.runRMLMapping(mapping, "http://example.com");
 
             output.dumpRDF(System.out, RDFFormat.TURTLE);

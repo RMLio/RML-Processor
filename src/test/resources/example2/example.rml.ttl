@@ -8,9 +8,9 @@
 
 <#FromToMaps>
 rml:logicalSource [ 
-	rml:sourceName "example.xml";
+	rml:source "/example2/example2.xml";
 	rml:iterator "/notes/note";
-	rml:queryLanguage ql:XPath;
+	rml:referenceFormulation ql:XPath;
 ];
 rr:subjectMap [
         rr:template "http://www.example.com/note/{@id}"; 
@@ -20,18 +20,6 @@ rr:subjectMap [
 		rr:predicate mail:when;
                      rr:objectMap [ 
 			rr:parentTriplesMap <#DateTime>;
-                        rr:joinCondition [
-                            rr:child "@day";
-                            rr:parent "@day";
-                        ];
-                        rr:joinCondition [
-                            rr:child "@month";
-                            rr:parent "@month";
-                        ];
-                        rr:joinCondition [
-                            rr:child "@year";
-                            rr:parent "@year";
-                        ]
 		];
     ];
         
@@ -57,9 +45,9 @@ rr:subjectMap [
         
 <#DateTime>
     rml:logicalSource [ 
-	rml:sourceName "example.xml";
+	rml:source "/example2/example2.xml";
 	rml:iterator "/notes/note";
-	rml:queryLanguage ql:XPath;
+	rml:referenceFormulation ql:XPath;
 	];
 	rr:subjectMap [
 		rr:template "http://www.example.com/DateTime/{@year}{@month}{@day}";
