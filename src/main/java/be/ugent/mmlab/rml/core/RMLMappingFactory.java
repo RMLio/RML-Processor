@@ -902,7 +902,7 @@ public abstract class RMLMappingFactory {
     }
 
     /**
-     * Extract logicalTable contents.
+     * Extract logicalSource contents.
      *
      * @param r2rmlMappingGraph
      * @param triplesMapSubject
@@ -916,7 +916,7 @@ public abstract class RMLMappingFactory {
             throws InvalidR2RMLStructureException, InvalidR2RMLSyntaxException,
             R2RMLDataError {
 
-        Vocab.QLTerm queryLanguage = null;
+        Vocab.QLTerm referenceFormulation = null;
 
         // Extract logical table blank node
         // favor logical table over source
@@ -936,7 +936,7 @@ public abstract class RMLMappingFactory {
             throw new InvalidR2RMLStructureException(
                     "[RMLMappingFactory:extractLogicalSource] "
                     + triplesMapSubject
-                    + " has a source and table defined.");
+                    + " has both a source and table defined.");
         }
 
         if (!sTable.isEmpty()) {
@@ -948,13 +948,13 @@ public abstract class RMLMappingFactory {
 
         if (statements.isEmpty()) {
             throw new InvalidR2RMLStructureException(
-                    "[RMLMappingFactory:extractLogicalTable] "
+                    "[RMLMappingFactory:extractLogicalSource] "
                     + triplesMapSubject
                     + " has no logical source defined.");
         }
         if (statements.size() > 1) {
             throw new InvalidR2RMLStructureException(
-                    "[RMLMappingFactory:extractLogicalTable] "
+                    "[RMLMappingFactory:extractLogicalSource] "
                     + triplesMapSubject
                     + " has too many logical source defined.");
         }
@@ -963,13 +963,12 @@ public abstract class RMLMappingFactory {
         Resource blankLogicalSource = (Resource) statements.get(0).getObject();
 
 
-        if (queryLanguage == null) {
-            queryLanguage = getQueryLanguage(rmlMappingGraph, blankLogicalSource);
-        }
+        if (referenceFormulation == null) 
+            referenceFormulation = getReferenceFormulation(rmlMappingGraph, blankLogicalSource);
 
-        if (queryLanguage == null) {
+        if (referenceFormulation == null) {
             throw new InvalidR2RMLStructureException(
-                    "[RMLMappingFactory:extractLogicalTable] "
+                    "[RMLMappingFactory:extractLogicalSource] "
                     + triplesMapSubject
                     + " has an unknown query language.");
         }
@@ -991,9 +990,9 @@ public abstract class RMLMappingFactory {
         if (!statementsName.isEmpty()) {
             if (statementsName.size() > 1) {
                 throw new InvalidR2RMLStructureException(
-                        "[RMLMappingFactory:extractLogicalTable] "
+                        "[RMLMappingFactory:extractLogicalSource] "
                         + triplesMapSubject
-                        + " has too many logical table name defined.");
+                        + " has too many logical source name defined.");
             }
             /*
              * MVS: This check is only valid in case of logicalTable/R2RMLView
@@ -1019,7 +1018,7 @@ public abstract class RMLMappingFactory {
             }
 
             //MVS: find a good way to distinct SQL and others
-            logicalSource = new StdLogicalSource(iterator, file, queryLanguage);
+            logicalSource = new StdLogicalSource(iterator, file, referenceFormulation);
 
 
         } else {
@@ -1037,7 +1036,7 @@ public abstract class RMLMappingFactory {
              + triplesMapSubject
              + " has no logical table defined.");
              }*/
-            //TODO: add support for querylanguage version
+            //TODO: add support for referenceFormulation version
             /*URI pVersion = rmlMappingGraph
              .URIref(Vocab.RML_NAMESPACE
              + Vocab.RMLTerm.VERSION);*/
@@ -1074,19 +1073,19 @@ public abstract class RMLMappingFactory {
              }
              logicalSource = new StdR2RMLView(sqlQuery, versions);*/
         }
-        log.debug("[RMLMappingFactory:extractLogicalTable] Logical table extracted : "
+        log.debug("[RMLMappingFactory:extractLogicalSource] Logical source extracted : "
                 + logicalSource);
         return logicalSource;
     }
 
-    private static Vocab.QLTerm getQueryLanguage(SesameDataSet rmlMappingGraph, Resource subject) throws InvalidR2RMLStructureException {
-        URI pQueryLanguage = rmlMappingGraph.URIref(Vocab.RML_NAMESPACE
+    private static Vocab.QLTerm getReferenceFormulation(SesameDataSet rmlMappingGraph, Resource subject) throws InvalidR2RMLStructureException {
+        URI pReferenceFormulation = rmlMappingGraph.URIref(Vocab.RML_NAMESPACE
                 + Vocab.RMLTerm.REFERENCE_FORMULATION);
         List<Statement> statements = rmlMappingGraph.tuplePattern(
-                subject, pQueryLanguage, null);
+                subject, pReferenceFormulation, null);
         if (statements.size() > 1) {
             throw new InvalidR2RMLStructureException(
-                    "[RMLMappingFactory:extractLogicalTable] "
+                    "[RMLMappingFactory:extractLogicalSource] "
                     + subject
                     + " has too many query language defined.");
         }
@@ -1099,6 +1098,6 @@ public abstract class RMLMappingFactory {
     }
 
     private static void extractLogicalTable() {
-        // Original R2RML Logic move here
+        // TODO: Original R2RML Logic move here
     }
 }

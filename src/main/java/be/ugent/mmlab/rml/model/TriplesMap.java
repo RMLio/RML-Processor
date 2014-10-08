@@ -20,7 +20,7 @@
  * R2RML Model : TriplesMap Interface
  *
  * A triples map specifies a rule for translating each
- * row of a logical table to zero or more RDF triples.
+ * iteration of a logical source to zero or more RDF triples.
  * 
  * Modified by mielvandersande
  *
@@ -38,7 +38,7 @@ public interface TriplesMap {
 	 * collection of values to be mapped to triples.
 	 */
 	public LogicalSource getLogicalSource();
-	public void setLogicalSource(LogicalSource logicalTable);
+	public void setLogicalSource(LogicalSource logicalSource);
         
 
 	

@@ -46,11 +46,9 @@ public class StdTriplesMap implements TriplesMap {
 		setName(name);
 	}
 
-	public void setLogicalSource(LogicalSource logicalTable) {
-		/*if (logicalTable == null)
-			throw new InvalidR2RMLStructureException(
-					"[StdTriplesMap:setLogicalTable] A logical table is required.");*/
-		this.logicalSource = logicalTable;
+        @Override
+	public void setLogicalSource(LogicalSource logicalSource) {
+		this.logicalSource = logicalSource;
 	}
 
 	public void setPredicateObjectMap(
@@ -84,9 +82,6 @@ public class StdTriplesMap implements TriplesMap {
 	}
 
 	public void setSubjectMap(SubjectMap subjectMap) throws InvalidR2RMLStructureException {
-		/*if (subjectMap == null)
-			throw new InvalidR2RMLStructureException(
-					"[StdTriplesMap:setLogicalTable] A subject map is required.");*/
 		this.subjectMap = subjectMap;
 
 	}
