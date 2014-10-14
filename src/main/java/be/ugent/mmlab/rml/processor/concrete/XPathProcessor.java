@@ -9,8 +9,7 @@ import be.ugent.mmlab.rml.processor.RMLProcessor;
 import be.ugent.mmlab.rml.processor.RMLProcessorFactory;
 import be.ugent.mmlab.rml.xml.XOMBuilder;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -100,9 +99,9 @@ public class XPathProcessor extends AbstractRMLProcessor {
             XPathCompiler xpath = proc.newXPathCompiler();
             DocumentBuilder builder = proc.newDocumentBuilder();
 
-            String fileName = getClass().getResource(map.getLogicalSource().getIdentifier()).getFile();
+            String source = getClass().getResource(map.getLogicalSource().getIdentifier()).getFile();
 
-            XdmNode doc = builder.build(new File(fileName));
+            XdmNode doc = builder.build(new File(source));
             String expre = replace(node, expression);
             expression = expression.replaceAll("\\{" + expression.split("\\{")[1].split("\\}")[0] + "\\}", "'" + expre + "'");
 
@@ -117,7 +116,8 @@ public class XPathProcessor extends AbstractRMLProcessor {
     }
     
     @Override
-    public void execute(final SesameDataSet dataset, final TriplesMap map, final RMLPerformer performer, String fileName) {
+    public void execute(final SesameDataSet dataset, final TriplesMap map, 
+    final RMLPerformer performer, InputStream input) {
         try {
             this.map = map;
             String reference = getReference(map.getLogicalSource());
@@ -165,12 +165,11 @@ public class XPathProcessor extends AbstractRMLProcessor {
             });
             //Execute the streaming
 
-            dog.sniff(event, new InputSource(new FileInputStream(fileName)));
+            //dog.sniff(event, new InputSource(new FileInputStream(fileName)));
+            dog.sniff(event, new InputSource(input));
         } catch (SAXPathException ex) {
             Logger.getLogger(XPathProcessor.class.getName()).log(Level.SEVERE, null, ex);
         } catch (XPathException ex) {
-            Logger.getLogger(XPathProcessor.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (FileNotFoundException ex) {
             Logger.getLogger(XPathProcessor.class.getName()).log(Level.SEVERE, null, ex);
         } 
 

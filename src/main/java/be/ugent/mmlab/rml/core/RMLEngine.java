@@ -9,9 +9,13 @@ import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.RMLProcessor;
 import be.ugent.mmlab.rml.processor.RMLProcessorFactory;
 import be.ugent.mmlab.rml.processor.concrete.ConcreteRMLProcessorFactory;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
 import java.sql.SQLException;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -33,7 +37,7 @@ public class RMLEngine {
     private static Log log = LogFactory.getLog(RMLEngine.class);
     // A base IRI used in resolving relative IRIs produced by the R2RML mapping.
     private String baseIRI;
-    private static boolean source_properties;
+    //private static boolean source_properties;
     //Properties containing the identifiers for files
     //There are probably better ways to do this than a static variable
     private static Properties fileMap = new Properties();
@@ -42,9 +46,6 @@ public class RMLEngine {
         return fileMap;
     }
     
-    public static boolean getSourceProperties() {
-        return source_properties;
-    }
     
     protected String getIdentifier(LogicalSource ls) {
         return RMLEngine.getFileMap().getProperty(ls.getIdentifier());
@@ -62,8 +63,8 @@ public class RMLEngine {
      */
     public SesameDataSet runRMLMapping(RMLMapping rmlMapping,
             String baseIRI) throws SQLException,
-            R2RMLDataError, UnsupportedEncodingException {
-        return runRMLMapping(rmlMapping, baseIRI, null, false, false);
+            R2RMLDataError, UnsupportedEncodingException, IOException {
+        return runRMLMapping(rmlMapping, baseIRI, null, false);
     }
 
     /**
@@ -78,9 +79,8 @@ public class RMLEngine {
      * @throws UnsupportedEncodingException
      */
     public SesameDataSet runRMLMapping(RMLMapping rmlMapping,
-            String baseIRI, String pathToNativeStore, boolean filebased, boolean source_properties) throws SQLException,
-            R2RMLDataError, UnsupportedEncodingException {
-        RMLEngine.source_properties = source_properties;
+            String baseIRI, String pathToNativeStore, boolean filebased) 
+            throws SQLException, R2RMLDataError, UnsupportedEncodingException, IOException {
         long startTime = System.nanoTime();
 
         log.debug("[RMLEngine:runRMLMapping] Run RML mapping... ");
@@ -110,7 +110,7 @@ public class RMLEngine {
         }
         // Explore RML Mapping TriplesMap objects  
  
-        generateRDFTriples(sesameDataSet, rmlMapping, filebased, source_properties);
+        generateRDFTriples(sesameDataSet, rmlMapping, filebased);
         
 	log.info("[RMLEngine:generateRDFTriples] All triples were generated ");
         
@@ -144,8 +144,8 @@ public class RMLEngine {
      * @throws UnsupportedEncodingException
      */
     private void generateRDFTriples(SesameDataSet sesameDataSet,
-            RMLMapping r2rmlMapping, boolean filebased, boolean source_properties) throws SQLException, R2RMLDataError,
-            UnsupportedEncodingException {
+            RMLMapping r2rmlMapping, boolean filebased) throws SQLException, R2RMLDataError,
+            UnsupportedEncodingException, ProtocolException, IOException {
 
         log.debug("[RMLEngine:generateRDFTriples] Generate RDF triples... ");
         int delta = 0;
@@ -155,34 +155,29 @@ public class RMLEngine {
         for (TriplesMap triplesMap : r2rmlMapping.getTriplesMaps()) {
             if (check_ReferencingObjectMap(r2rmlMapping, triplesMap)) 
                 continue;
-            FileInputStream input = null;
+            //FileInputStream input = null;
             System.out.println("[RMLEngine:generateRDFTriples] Generate RDF triples for " + triplesMap.getName());
             //need to add control if reference Formulation is not defined
             //need to add check for correct spelling, aka rml:queryLanguage and not rml:referenceFormulation otherwise breaks
             RMLProcessor processor = factory.create(triplesMap.getLogicalSource().getReferenceFormulation());
             //URL filePath = getClass().getProtectionDomain().getCodeSource().getLocation();
-            String fileName;
-            if(filebased)
-                if(source_properties){
-                    String file = triplesMap.getLogicalSource().getIdentifier();
-                    fileName = RMLEngine.getFileMap().getProperty(file.toString());
-                }
-                else
-                    fileName = triplesMap.getLogicalSource().getIdentifier();
-            else
-                fileName = getClass().getResource(triplesMap.getLogicalSource().getIdentifier()).getFile();
+            String source = triplesMap.getLogicalSource().getIdentifier();
+            HttpURLConnection con = null;
             try {
-                log.info("[RMLEngine:generateRDFTriples] next file to be opened " + fileName);
-                //add control in case rml:source is not declared
-                getFileMap().put(fileName, fileName);
-                input = new FileInputStream(fileName);
-                getFileMap().load(input);
-           } catch (IOException ex) {
-               log.error("Input File was not found.");
+                con = (HttpURLConnection) new URL(source).openConnection();
+            } catch (MalformedURLException ex) {
                 Logger.getLogger(RMLEngine.class.getName()).log(Level.SEVERE, null, ex);
-           }
-
-            processor.execute(sesameDataSet, triplesMap, new NodeRMLPerformer(processor), fileName);
+            } catch (IOException ex) {
+                Logger.getLogger(RMLEngine.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            con.setRequestMethod("HEAD");
+            InputStream input = null;
+            if (con.getResponseCode() == HttpURLConnection.HTTP_OK) 
+                input = new URL(source).openStream();
+            else 
+                log.info("input stream was not possible.");
+            
+            processor.execute(sesameDataSet, triplesMap, new NodeRMLPerformer(processor), input);
 
             log.info("[RMLEngine:generateRDFTriples] "
                     + (sesameDataSet.getSize() - delta)

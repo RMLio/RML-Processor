@@ -3,7 +3,6 @@ package be.ugent.mmlab.rml.main;
 import be.ugent.mmlab.rml.core.RMLEngine;
 import be.ugent.mmlab.rml.core.RMLMappingFactory;
 import be.ugent.mmlab.rml.model.RMLMapping;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.logging.Level;
@@ -42,17 +41,7 @@ public class Main {
             RMLMapping mapping = RMLMappingFactory.extractRMLMapping(args[0]);
             RMLEngine engine = new RMLEngine();
             System.out.println("mapping document " + args[0]);
-            
-            FileInputStream source_properties ;    
-            if(cmd.hasOption("sp")) {
-                source_properties = new FileInputStream(cmd.getOptionValue("sp"));
-                System.out.println("source properties parameter is equal to " + cmd.getOptionValue("sp"));
-                //load the properties
-                RMLEngine.getFileMap().load(source_properties);
-                engine.runRMLMapping(mapping, graphName, args[1], true, true);
-            }
-            else
-                engine.runRMLMapping(mapping, graphName, args[1], true, false);
+            engine.runRMLMapping(mapping, graphName, args[1], true);
             if(cmd.hasOption("g")) 
                     graphName = cmd.getOptionValue("g");           
             

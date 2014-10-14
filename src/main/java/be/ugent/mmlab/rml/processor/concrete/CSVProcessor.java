@@ -7,9 +7,9 @@ import be.ugent.mmlab.rml.model.LogicalSource;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.AbstractRMLProcessor;
 import com.csvreader.CsvReader;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.Charset;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import java.util.ArrayList;
@@ -37,14 +37,13 @@ public class CSVProcessor extends AbstractRMLProcessor {
     }
 
     @Override
-    public void execute(SesameDataSet dataset, TriplesMap map, RMLPerformer performer, String fileName) {
+    public void execute(SesameDataSet dataset, TriplesMap map, RMLPerformer performer, InputStream input) {
         //InputStream fis = null;
         try {
             char delimiter = getDelimiter(map.getLogicalSource());
 
-            //TODO: add character guessing
-            log.info("[CSV Processor] filename " + fileName);
-            CsvReader reader = new CsvReader(new FileInputStream(fileName), Charset.defaultCharset());
+            //TODO: add charset guessing
+            CsvReader reader = new CsvReader(input, Charset.defaultCharset());
             reader.setDelimiter(delimiter);
             
             reader.readHeaders();

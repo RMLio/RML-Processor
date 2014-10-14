@@ -9,9 +9,9 @@ import be.ugent.mmlab.rml.core.RMLPerformer;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.AbstractRMLProcessor;
 import com.jayway.jsonpath.JsonPath;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -33,13 +33,13 @@ public class JSONPathProcessor extends AbstractRMLProcessor {
     private static Log log = LogFactory.getLog(RMLMappingFactory.class);
 
     @Override
-    public void execute(SesameDataSet dataset, TriplesMap map, RMLPerformer performer, String fileName) {
+    public void execute(SesameDataSet dataset, TriplesMap map, RMLPerformer performer, InputStream input) {
 
         try {
             String reference = getReference(map.getLogicalSource());
             //This is a none streaming solution. A streaming parser requires own implementation, possibly based on https://code.google.com/p/json-simple/wiki/DecodingExamples
             JsonPath path = JsonPath.compile(reference);
-            Object val = path.read(new FileInputStream(fileName));
+            Object val = path.read(input);
             
             execute(dataset, map, performer, val);
 

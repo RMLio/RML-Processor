@@ -5,6 +5,7 @@ import be.ugent.mmlab.rml.model.PredicateObjectMap;
 import be.ugent.mmlab.rml.model.SubjectMap;
 import be.ugent.mmlab.rml.model.TermMap;
 import be.ugent.mmlab.rml.model.TriplesMap;
+import java.io.InputStream;
 import java.util.List;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
 import org.openrdf.model.Resource;
@@ -23,7 +24,7 @@ public interface RMLProcessor {
      * @param map the triplemap
      * @param performer the performer handling the action done on the triplemap
      */
-    public void execute(SesameDataSet dataset, TriplesMap map, RMLPerformer performer, String fileName);
+    public void execute(SesameDataSet dataset, TriplesMap map, RMLPerformer performer, InputStream input);
     
     public void execute_node(SesameDataSet dataset, String expression, TriplesMap parentTriplesMap, RMLPerformer performer, Object node, Resource subject);
 

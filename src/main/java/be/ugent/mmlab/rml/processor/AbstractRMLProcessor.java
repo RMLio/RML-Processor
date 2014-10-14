@@ -2,7 +2,6 @@ package be.ugent.mmlab.rml.processor;
 
 import be.ugent.mmlab.rml.core.ConditionalJoinRMLPerformer;
 import be.ugent.mmlab.rml.core.JoinRMLPerformer;
-import be.ugent.mmlab.rml.core.RMLEngine;
 import be.ugent.mmlab.rml.core.RMLPerformer;
 import be.ugent.mmlab.rml.core.SimpleReferencePerformer;
 import be.ugent.mmlab.rml.model.GraphMap;
@@ -20,8 +19,11 @@ import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.model.reference.ReferenceIdentifierImpl;
 import be.ugent.mmlab.rml.processor.concrete.ConcreteRMLProcessorFactory;
 import be.ugent.mmlab.rml.vocabulary.Vocab.QLTerm;
-import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -257,22 +259,23 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                     RMLProcessorFactory factory = new ConcreteRMLProcessorFactory();
                     QLTerm queryLanguage = parentTriplesMap.getLogicalSource().getReferenceFormulation();
 
-                    String fileName ;
-                    File file = new File(parentTriplesMap.getLogicalSource().getIdentifier());
-                    if(RMLEngine.getSourceProperties())
-                        fileName = RMLEngine.getFileMap().getProperty(file.toString());
-                    else if(!file.exists())
-                        fileName = getClass().getResource(parentTriplesMap.getLogicalSource().getIdentifier()).getFile();
-                    else
-                        fileName = parentTriplesMap.getLogicalSource().getIdentifier();
-
+                    String source = parentTriplesMap.getLogicalSource().getIdentifier();
+                    InputStream input = null;
+                    try {
+                        input = new URL(source).openStream();
+                    } catch (MalformedURLException ex) {
+                        Logger.getLogger(AbstractRMLProcessor.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (IOException ex) {
+                        Logger.getLogger(AbstractRMLProcessor.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    
                     RMLProcessor processor = factory.create(queryLanguage);
 
                     RMLPerformer performer ;
                     //different Logical Source and no Conditions
                     if (joinConditions.isEmpty() & !parentTriplesMap.getLogicalSource().getIdentifier().equals(map.getLogicalSource().getIdentifier())) {
                         performer = new JoinRMLPerformer(processor, subject, predicate);
-                        processor.execute(dataset, parentTriplesMap, performer, fileName);
+                        processor.execute(dataset, parentTriplesMap, performer, input);
                     } 
                     //same Logical Source and no Conditions
                     else if (joinConditions.isEmpty() & parentTriplesMap.getLogicalSource().getIdentifier().equals(map.getLogicalSource().getIdentifier())){
@@ -310,7 +313,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                                 joinMap.put(joinCondition.getParent(), childValue);  
                                 if(joinMap.size() == joinConditions.size()){
                                     performer = new ConditionalJoinRMLPerformer(processor, joinMap, subject, predicate);
-                                    processor.execute(dataset, parentTriplesMap, performer, fileName);
+                                    processor.execute(dataset, parentTriplesMap, performer, input);
                                 }
                             }
                         }
