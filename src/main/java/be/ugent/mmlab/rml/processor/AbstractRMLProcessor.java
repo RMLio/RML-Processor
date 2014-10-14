@@ -25,10 +25,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
@@ -44,6 +42,7 @@ import org.openrdf.model.impl.LiteralImpl;
 import org.openrdf.model.impl.URIImpl;
 import org.openrdf.model.vocabulary.RDF;
 import java.util.regex.Pattern;
+import net.antidot.semantic.rdf.rdb2rdf.r2rml.model.TermType;
 
 /**
  * This class contains all generic functionality for executing an iteration and
@@ -191,7 +190,19 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                             temp = temp.replaceAll("\\$", "");
                         }
                         try {
-                            temp = temp.replaceAll("\\{" + Pattern.quote(expression) + "\\}", URLEncoder.encode(replacement,"UTF-8"));
+                            if (map.getTermType().toString().equals(TermType.IRI.toString())) {
+                                //TODO: replace the following with URIbuilder
+                                temp = temp.replaceAll("\\{" + Pattern.quote(expression) + "\\}",
+                                        URLEncoder.encode(replacement, "UTF-8")
+                                        .replaceAll("\\+", "%20")
+                                        .replaceAll("\\%21", "!")
+                                        .replaceAll("\\%27", "'")
+                                        .replaceAll("\\%28", "(")
+                                        .replaceAll("\\%29", ")")
+                                        .replaceAll("\\%7E", "~"));
+                            } else {
+                                temp = temp.replaceAll("\\{" + expression + "\\}", replacement);
+                            }
                         } catch (UnsupportedEncodingException ex) {
                             Logger.getLogger(AbstractRMLProcessor.class.getName()).log(Level.SEVERE, null, ex);
                         }
