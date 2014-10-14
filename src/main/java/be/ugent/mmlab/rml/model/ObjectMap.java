@@ -21,9 +21,13 @@
  *
  * An object map is a specific term map used for 
  * representing RDF object. 
+ * 
+ * modified by andimou
  *
  ****************************************************************************/
 package be.ugent.mmlab.rml.model;
+
+import net.antidot.semantic.rdf.rdb2rdf.r2rml.exception.InvalidR2RMLStructureException;
 
 public interface ObjectMap extends TermMap {
 	
@@ -31,6 +35,8 @@ public interface ObjectMap extends TermMap {
 	 * A object map knows in own Predicate Object container.
 	 */
 	public PredicateObjectMap getPredicateObjectMap();
+        
 	public void setPredicateObjectMap(PredicateObjectMap predicateObjectMap);
-
+        
+        public void setOwnTriplesMap(TriplesMap ownTriplesMap) throws InvalidR2RMLStructureException;
 }

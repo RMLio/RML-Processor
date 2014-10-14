@@ -22,7 +22,7 @@
  * A predicate map is a specific term map used for 
  * representing RDF predicate. 
  * 
- * modified by mielvandersande
+ * modified by mielvandersande, andimou
  * 
  ****************************************************************************/
 package be.ugent.mmlab.rml.model;
@@ -55,8 +55,10 @@ public class StdPredicateMap extends AbstractTermMap implements TermMap,
 		super(constantValue, null, null, stringTemplate, termType,
 				inverseExpression, referenceValue);
 		setPredicateObjectMap(predicateObjectMap);
+                setOwnTriplesMap(ownTriplesMap);
 	}
 
+        @Override
 	protected void checkSpecificTermType(TermType tt)
 			throws InvalidR2RMLStructureException {
 		// If the term map is a predicate map: rr:IRI
@@ -67,6 +69,7 @@ public class StdPredicateMap extends AbstractTermMap implements TermMap,
 		}
 	}
 
+        @Override
 	protected void checkConstantValue(Value constantValue)
 			throws R2RMLDataError {
 		// If the constant-valued term map is a predicate map then its constant
@@ -77,10 +80,12 @@ public class StdPredicateMap extends AbstractTermMap implements TermMap,
 							+ constantValue);
 	}
 
+        @Override
 	public PredicateObjectMap getPredicateObjectMap() {
 		return predicateObjectMap;
 	}
 
+        @Override
 	public void setPredicateObjectMap(PredicateObjectMap predicateObjectMap) {
 		/*
 		 * if (predicateObjectMap.getPredicateMaps() != null) { if
@@ -102,5 +107,10 @@ public class StdPredicateMap extends AbstractTermMap implements TermMap,
 		this.predicateObjectMap = predicateObjectMap;
 
 	}
-
+        
+        @Override
+	public void setOwnTriplesMap(TriplesMap ownTriplesMap)
+			throws InvalidR2RMLStructureException {
+		this.ownTriplesMap = ownTriplesMap;
+	}
 }

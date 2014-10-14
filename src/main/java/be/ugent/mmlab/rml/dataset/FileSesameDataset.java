@@ -1,6 +1,9 @@
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
+ * 
+ * @author andimou
+ * 
  */
 package be.ugent.mmlab.rml.dataset;
 
@@ -67,7 +70,7 @@ public class FileSesameDataset extends SesameDataSet {
             writer.startRDF();
 
         } catch (IOException | RDFHandlerException ex) {
-            log.error("", ex);
+            log.error("File not found.", ex);
         } 
 
     }
@@ -103,7 +106,7 @@ public class FileSesameDataset extends SesameDataSet {
 
         URL url = new URL(stringURL);
 
-        RDFFormat format = RDFFormat.forFileName(stringURL);
+        format = RDFFormat.forFileName(stringURL);
 
         if (this.format.equals(format)) {
             //append to file
@@ -207,6 +210,7 @@ public class FileSesameDataset extends SesameDataSet {
      * @param location of file (/path/file) with RDF data
      * @param format RDF format of the string (used to select parser)
      */
+    @Override
     public void addFile(String filepath, RDFFormat format) {
         if (this.format.equals(format)) {
             //append to file

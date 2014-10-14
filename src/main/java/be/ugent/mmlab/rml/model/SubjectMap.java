@@ -22,6 +22,8 @@
  * A subject map is a term map. It specifies a rule
  * for generating the subjects of the RDF triples generated 
  * by a triples map.
+ * 
+ * modified by andimou
  *
  ****************************************************************************/
 package be.ugent.mmlab.rml.model;
@@ -47,7 +49,9 @@ public interface SubjectMap extends TermMap {
 	 * In 7.7 Inverse Expressions : "Let t be the logical table
 	 * associated with this term map" suggests this feature.
 	 */
+        @Override
 	public TriplesMap getOwnTriplesMap();
+        
 	public void setOwnTriplesMap(TriplesMap ownTriplesMap) throws InvalidR2RMLStructureException;
 
 }

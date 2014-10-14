@@ -23,7 +23,7 @@
  * for generating the subjects of the RDF triples generated 
  * by a triples map.
  * 
- * modified by mielvandersande
+ * modified by mielvandersande, andimou
  *
  ****************************************************************************/
 package be.ugent.mmlab.rml.model;
@@ -36,7 +36,8 @@ import net.antidot.semantic.rdf.model.tools.RDFDataValidator;
 import net.antidot.semantic.rdf.rdb2rdf.r2rml.exception.InvalidR2RMLStructureException;
 import net.antidot.semantic.rdf.rdb2rdf.r2rml.exception.InvalidR2RMLSyntaxException;
 import net.antidot.semantic.rdf.rdb2rdf.r2rml.exception.R2RMLDataError;
-import net.antidot.sql.model.db.ColumnIdentifier;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import org.openrdf.model.URI;
 import org.openrdf.model.Value;
@@ -45,7 +46,7 @@ public class StdSubjectMap extends AbstractTermMap implements SubjectMap {
 
 	private Set<URI> classIRIs;
 	private HashSet<GraphMap> graphMaps;
-	protected TriplesMap ownTriplesMap;
+        private static Log log = LogFactory.getLog(StdSubjectMap.class);
 
 	public StdSubjectMap(TriplesMap ownTriplesMap, Value constantValue,
 			String stringTemplate, URI termType, String inverseExpression,
@@ -62,10 +63,11 @@ public class StdSubjectMap extends AbstractTermMap implements SubjectMap {
 		setOwnTriplesMap(ownTriplesMap);
 	}
 
+        @Override
 	public void setOwnTriplesMap(TriplesMap ownTriplesMap)
 			throws InvalidR2RMLStructureException {
 		// Update triples map if not contains this subject map
-		if (ownTriplesMap.getSubjectMap() != null)
+		if (ownTriplesMap != null && ownTriplesMap.getSubjectMap() != null)
 			if (ownTriplesMap.getSubjectMap() != this)
 				throw new IllegalStateException(
 						"[StdSubjectMap:setSubjectMap] "
@@ -73,7 +75,6 @@ public class StdSubjectMap extends AbstractTermMap implements SubjectMap {
 								+ "already contains another Subject Map !");
 			else
 				ownTriplesMap.setSubjectMap(this);
-               
 		this.ownTriplesMap = ownTriplesMap;
 	}
 
@@ -101,10 +102,12 @@ public class StdSubjectMap extends AbstractTermMap implements SubjectMap {
 		}
 	}
 
+        @Override
 	public Set<URI> getClassIRIs() {
 		return classIRIs;
 	}
 
+        @Override
 	protected void checkSpecificTermType(TermType tt)
 			throws InvalidR2RMLStructureException {
 		// If the term map is a subject map: rr:IRI or rr:BlankNode
@@ -115,6 +118,7 @@ public class StdSubjectMap extends AbstractTermMap implements SubjectMap {
 		}
 	}
 
+        @Override
 	protected void checkConstantValue(Value constantValue)
 			throws R2RMLDataError {
 		// If the constant-valued term map is a subject map then its constant
@@ -125,14 +129,17 @@ public class StdSubjectMap extends AbstractTermMap implements SubjectMap {
 							+ constantValue);
 	}
 
+        @Override
 	public Set<GraphMap> getGraphMaps() {
 		return graphMaps;
 	}
 
+        @Override
 	public TriplesMap getOwnTriplesMap() {
 		return ownTriplesMap;
 	}
 
+        @Override
 	public String toString() {
 		String result = super.toString() + " [StdSubjectMap : classIRIs = [";
 		for (URI uri : classIRIs)

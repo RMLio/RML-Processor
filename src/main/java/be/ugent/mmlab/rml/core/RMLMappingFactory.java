@@ -6,6 +6,8 @@
  * Factory responsible of RML Mapping generation.
  *
  * based on R2RMLMappingFactory in db2triples
+ * 
+ * modified by andimou
  *
  ***************************************************************************
  */
@@ -314,7 +316,8 @@ public abstract class RMLMappingFactory {
         try {
             for (Statement statement : statements) {
                 PredicateObjectMap predicateObjectMap = extractPredicateObjectMap(
-                        r2rmlMappingGraph, (Resource) statement.getObject(),
+                        r2rmlMappingGraph, triplesMapSubject,
+                        (Resource) statement.getObject(),
                         graphMaps, triplesMapResources);
                 // Add own tripleMap to predicateObjectMap
                 predicateObjectMap.setOwnTriplesMap(result);
@@ -336,6 +339,7 @@ public abstract class RMLMappingFactory {
 
     private static PredicateObjectMap extractPredicateObjectMap(
             SesameDataSet r2rmlMappingGraph,
+            Resource triplesMapSubject,
             Resource predicateObject,
             Set<GraphMap> savedGraphMaps,
             Map<Resource, TriplesMap> triplesMapResources)
@@ -394,10 +398,13 @@ public abstract class RMLMappingFactory {
                     continue;
                 }
                 ObjectMap objectMap = extractObjectMap(r2rmlMappingGraph,
-                        (Resource) statement.getObject(), savedGraphMaps);
-                if (objectMap != null) {
-                    objectMaps.add(objectMap);
-                }
+                        (Resource) statement.getObject(), savedGraphMaps, 
+                        triplesMapResources);
+                objectMap.setOwnTriplesMap(triplesMapResources.get(triplesMapSubject));
+                log.debug("[RMLMappingFactory:extractPredicateObjectMap] ownTriplesMap attempted " 
+                        + triplesMapResources.get(statement.getContext()) +
+                        " for object " + statement.getObject().stringValue());
+                objectMaps.add(objectMap);
             }
         } catch (ClassCastException e) {
             throw new InvalidR2RMLStructureException(
@@ -542,7 +549,8 @@ public abstract class RMLMappingFactory {
      */
 
     private static ObjectMap extractObjectMap(SesameDataSet r2rmlMappingGraph,
-            Resource object, Set<GraphMap> graphMaps)
+            Resource object, Set<GraphMap> graphMaps, 
+            Map<Resource, TriplesMap> triplesMapResources)
             throws InvalidR2RMLStructureException, R2RMLDataError,
             InvalidR2RMLSyntaxException {
         log.debug("[RMLMappingFactory:extractObjectMap] Extract object map..");
@@ -809,7 +817,7 @@ public abstract class RMLMappingFactory {
      * @return
      * @throws InvalidR2RMLStructureException
      */
-    private static Value extractValueFromTermMap(
+        private static Value extractValueFromTermMap(
             SesameDataSet r2rmlMappingGraph, Resource termType,
             Enum term)
             throws InvalidR2RMLStructureException {

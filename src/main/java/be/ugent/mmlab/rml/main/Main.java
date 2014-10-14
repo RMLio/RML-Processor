@@ -43,7 +43,7 @@ public class Main {
             RMLEngine engine = new RMLEngine();
             System.out.println("mapping document " + args[0]);
             
-            FileInputStream source_properties = null;    
+            FileInputStream source_properties ;    
             if(cmd.hasOption("sp")) {
                 source_properties = new FileInputStream(cmd.getOptionValue("sp"));
                 System.out.println("source properties parameter is equal to " + cmd.getOptionValue("sp"));

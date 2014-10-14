@@ -22,7 +22,7 @@
  *
  * Partial implementation of a term map.
  *
- * modified by mielvandersande
+ * modified by mielvandersande, andimou
  *
  ***************************************************************************
  */
@@ -46,7 +46,6 @@ import net.antidot.semantic.xmls.xsd.XSDType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openrdf.model.Literal;
-import org.openrdf.model.Resource;
 import org.openrdf.model.URI;
 import org.openrdf.model.Value;
 
@@ -62,6 +61,7 @@ public abstract class AbstractTermMap implements TermMap {
         private String stringTemplate;
         private ReferenceIdentifier referenceValue;
         private String inverseExpression;
+        protected TriplesMap ownTriplesMap;
 
         protected AbstractTermMap(Value constantValue, URI dataType,
                 String languageTag, String stringTemplate, URI termType,
@@ -77,6 +77,7 @@ public abstract class AbstractTermMap implements TermMap {
                 setDataType(dataType);
                 setInversionExpression(inverseExpression);
                 checkGlobalConsistency();
+                setOwnTriplesMap(ownTriplesMap);
         }
 
         /**
@@ -160,14 +161,8 @@ public abstract class AbstractTermMap implements TermMap {
                                 log.debug("[AbstractTermMap:setTermType] No term type specified : use IRI by default." + getReferenceValue());
                         }
 
-                } else {
-                        TermType tt = null;
-
-                        if (termType != null) {
-                                tt = checkTermType(termType);
-                        }
-                        this.termType = tt;
-                }
+                } else 
+                    this.termType = checkTermType(termType);
         }
 
         private TermType checkTermType(URI termType)
@@ -291,19 +286,28 @@ public abstract class AbstractTermMap implements TermMap {
                         this.dataType = dataType;
                 }
         }
+        
+        public void setOwnTriplesMap(TriplesMap ownTriplesMap)
+			throws InvalidR2RMLStructureException {               
+		this.ownTriplesMap = ownTriplesMap;
+	}
 
+        @Override
         public Value getConstantValue() {
                 return constantValue;
         }
 
+        @Override
         public URI getDataType() {
                 return dataType;
         }
 
+        @Override
         public URI getImplicitDataType() {
                 return implicitDataType;
         }
 
+        @Override
         public XSDLexicalTransformation.Transformation getImplicitTransformation() {
                 if (implicitDataType == null) {
                         return null;
@@ -313,16 +317,19 @@ public abstract class AbstractTermMap implements TermMap {
                 }
         }
 
+        @Override
         public String getInverseExpression() {
                 return inverseExpression;
         }
 
+        @Override
         public String getLanguageTag() {
                 return languageTag;
         }
 
+        @Override
         public Set<ReferenceIdentifier> getReferencedSelectors() {
-                Set<ReferenceIdentifier> referencedColumns = new HashSet<ReferenceIdentifier>();
+                Set<ReferenceIdentifier> references = new HashSet<ReferenceIdentifier>();
                 switch (getTermMapType()) {
                         case CONSTANT_VALUED:
                                 // The referenced columns of a constant-valued term map is the
@@ -333,7 +340,7 @@ public abstract class AbstractTermMap implements TermMap {
                                 // The referenced columns of a column-valued term map is
                                 // the singleton set containing the value of rr:column.
                                 // referencedColumns.add(R2RMLToolkit.deleteBackSlash(columnValue));
-                                referencedColumns.add(referenceValue);
+                                references.add(referenceValue);
                                 break;
 
                         case TEMPLATE_VALUED:
@@ -342,22 +349,24 @@ public abstract class AbstractTermMap implements TermMap {
                                 // in the template string.
                                 for (String colName : R2RMLToolkit
                                         .extractColumnNamesFromStringTemplate(stringTemplate)) {
-                                        referencedColumns.add(ReferenceIdentifierImpl.buildFromR2RMLConfigFile(colName));
+                                        references.add(ReferenceIdentifierImpl.buildFromR2RMLConfigFile(colName));
                                 }
                                 break;
 
                         default:
                                 break;
                 }
-                log.debug("[AbstractTermMap:getReferencedColumns] ReferencedColumns are now : "
-                        + referencedColumns);
-                return referencedColumns;
+                log.debug("[AbstractTermMap:getReferencedSelectors] References are now : "
+                        + references);
+                return references;
         }
 
+        @Override
         public String getStringTemplate() {
                 return stringTemplate;
         }
 
+        @Override
         public TermMapType getTermMapType() {
                 if (constantValue != null) {
                         return TermMapType.CONSTANT_VALUED;
@@ -371,14 +380,17 @@ public abstract class AbstractTermMap implements TermMap {
                 return null;
         }
 
+        @Override
         public TermType getTermType() {
                 return termType;
         }
 
+        @Override
         public ReferenceIdentifier getReferenceValue() {
                 return referenceValue;
         }
 
+        @Override
         public boolean isOveridden() {
                 if (implicitDataType == null) {
                         // No implicit datatype extracted for yet
@@ -388,12 +400,18 @@ public abstract class AbstractTermMap implements TermMap {
                 return dataType != implicitDataType;
         }
 
+        @Override
         public boolean isTypeable() {
                 return (termType == TermType.LITERAL) && (languageTag == null);
         }
 
         public void setImplicitDataType(URI implicitDataType) {
                 this.implicitDataType = implicitDataType;
+        }
+        
+        @Override
+        public TriplesMap getOwnTriplesMap(){
+            return this.ownTriplesMap;
         }
 
 //	public String getValue(Map<ColumnIdentifier, byte[]> dbValues,

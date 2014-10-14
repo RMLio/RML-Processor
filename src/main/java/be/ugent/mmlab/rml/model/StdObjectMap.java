@@ -22,7 +22,7 @@
  * An object map is a specific term map used for 
  * representing RDF object. 
  * 
- * modified by mielvandersande
+ * modified by mielvandersande, andimou
  * 
  ****************************************************************************/
 package be.ugent.mmlab.rml.model;
@@ -38,7 +38,7 @@ import net.antidot.semantic.rdf.rdb2rdf.r2rml.exception.R2RMLDataError;
 import org.openrdf.model.URI;
 import org.openrdf.model.Value;
 
-public class StdObjectMap extends AbstractTermMap implements TermMap, ObjectMap {
+public final class StdObjectMap extends AbstractTermMap implements TermMap, ObjectMap {
 
 	private PredicateObjectMap predicateObjectMap;
 
@@ -52,6 +52,7 @@ public class StdObjectMap extends AbstractTermMap implements TermMap, ObjectMap 
 		setPredicateObjectMap(predicateObjectMap);
 	}
 
+        @Override
 	protected void checkSpecificTermType(TermType tt)
 			throws InvalidR2RMLStructureException {
 		// If the term map is a subject map: rr:IRI or rr:BlankNode or
@@ -64,6 +65,7 @@ public class StdObjectMap extends AbstractTermMap implements TermMap, ObjectMap 
 		}
 	}
 
+        @Override
 	protected void checkConstantValue(Value constantValue)
 			throws R2RMLDataError {
 		if (!RDFDataValidator.isValidURI(constantValue.stringValue())
@@ -74,10 +76,12 @@ public class StdObjectMap extends AbstractTermMap implements TermMap, ObjectMap 
 							+ constantValue);
 	}
 
+        @Override
 	public PredicateObjectMap getPredicateObjectMap() {
 		return predicateObjectMap;
 	}
 
+        @Override
 	public void setPredicateObjectMap(PredicateObjectMap predicateObjectMap) {
 		/*
 		 * if (predicateObjectMap.getObjectMaps() != null) { if
@@ -95,5 +99,10 @@ public class StdObjectMap extends AbstractTermMap implements TermMap, ObjectMap 
 		}
 		this.predicateObjectMap = predicateObjectMap;
 	}
-
+        
+        @Override
+	public void setOwnTriplesMap(TriplesMap ownTriplesMap)
+			throws InvalidR2RMLStructureException {   
+            this.ownTriplesMap = ownTriplesMap;
+	}
 }

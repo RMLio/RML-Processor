@@ -84,14 +84,12 @@ public class RMLEngine {
         long startTime = System.nanoTime();
 
         log.debug("[RMLEngine:runRMLMapping] Run RML mapping... ");
-        if (rmlMapping == null) {
+        if (rmlMapping == null) 
             throw new IllegalArgumentException(
                     "[RMLEngine:runRMLMapping] No RML Mapping object found.");
-        }
-        if (baseIRI == null) {
+        if (baseIRI == null) 
             throw new IllegalArgumentException(
                     "[RMLEngine:runRMLMapping] No base IRI found.");
-        }
 
         SesameDataSet sesameDataSet ;
         // Update baseIRI
@@ -180,6 +178,7 @@ public class RMLEngine {
                 input = new FileInputStream(fileName);
                 getFileMap().load(input);
            } catch (IOException ex) {
+               log.error("Input File was not found.");
                 Logger.getLogger(RMLEngine.class.getName()).log(Level.SEVERE, null, ex);
            }
 
@@ -193,6 +192,7 @@ public class RMLEngine {
             try {
                 input.close();
             } catch (IOException ex) {
+                log.error("Input file could not be closed.");
                 Logger.getLogger(RMLEngine.class.getName()).log(Level.SEVERE, null, ex);
             }
         }

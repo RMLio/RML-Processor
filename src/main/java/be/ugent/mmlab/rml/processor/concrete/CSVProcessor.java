@@ -11,6 +11,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,7 +43,6 @@ public class CSVProcessor extends AbstractRMLProcessor {
             char delimiter = getDelimiter(map.getLogicalSource());
 
             //TODO: add character guessing
-            //CsvReader reader = new CsvReader(fis, Charset.defaultCharset());
             log.info("[CSV Processor] filename " + fileName);
             CsvReader reader = new CsvReader(new FileInputStream(fileName), Charset.defaultCharset());
             reader.setDelimiter(delimiter);
@@ -51,9 +51,10 @@ public class CSVProcessor extends AbstractRMLProcessor {
             //Iterate the rows
             while (reader.readRecord()) {
                 HashMap<String, String> row = new HashMap<>();
-
-                for (String header : reader.getHeaders()) {
-                    row.put(header, reader.get(header));
+               for (String header : reader.getHeaders()) {
+                   //log.debug("[CSVProcessor:extractValueFromNode] header " + header);
+                   row.put(new String(header.getBytes("iso8859-1"), UTF_8), reader.get(header));
+                    //row.put(header, reader.get(header));
                 }
                 //let the performer handle the rows
                 performer.perform(row, dataset, map);
@@ -63,18 +64,19 @@ public class CSVProcessor extends AbstractRMLProcessor {
             log.error(ex);
         } catch (IOException ex) {
             log.error(ex);
-        }
+        } 
     }
 
     @Override
     public List<String> extractValueFromNode(Object node, String expression) {
         HashMap<String, String> row = (HashMap<String, String>) node;
+        for(String key : row.keySet())
+            key = new String(key.getBytes(), UTF_8);
         //call the right header in the row
         List<String> list = new ArrayList();
         if (row.containsKey(expression)){
             list.add(row.get(expression));
         }
-        
         return list;
     }
 

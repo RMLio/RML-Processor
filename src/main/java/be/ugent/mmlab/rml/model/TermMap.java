@@ -22,7 +22,9 @@
  * A term map is a function that generates an RDF term
  * from a logical source expression. The result of that function
  * is known as the term map's generated RDF term.
- * Modified by mielvandersande
+ 
+ * Modified by mielvandersande, andimou
+ * 
  ****************************************************************************/
 package be.ugent.mmlab.rml.model;
 
@@ -36,7 +38,10 @@ import org.openrdf.model.Value;
 public interface TermMap {
 
 	/**
-	 * A term map must be exactly one of the following types.
+	 * A term map must be exactly one of the following types:
+         * CONSTANT_VALUED
+         * REFERENCE_VALUED
+         * TEMPLATE_VALUED
 	 */
 	public enum TermMapType {
 		// A constant-valued term map is a term map that ignores the logical
@@ -52,6 +57,8 @@ public interface TermMap {
 		// auto-assignments of blank nodes.
 		NO_VALUE_FOR_BNODE
 	}
+        
+        public TriplesMap getOwnTriplesMap();
 
 	public TermMapType getTermMapType();
 

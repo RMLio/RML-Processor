@@ -25,8 +25,10 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
@@ -41,6 +43,7 @@ import org.openrdf.model.impl.BNodeImpl;
 import org.openrdf.model.impl.LiteralImpl;
 import org.openrdf.model.impl.URIImpl;
 import org.openrdf.model.vocabulary.RDF;
+import java.util.regex.Pattern;
 
 /**
  * This class contains all generic functionality for executing an iteration and
@@ -159,10 +162,8 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                 //Resolve the template
                 String template = map.getStringTemplate();
                 Set<String> tokens = R2RMLToolkit.extractColumnNamesFromStringTemplate(template);
-                
                 for (String expression : tokens) {
                     List<String> replacements = extractValueFromNode(node, expression);
-                    
                     for (int i = 0; i < replacements.size(); i++) {
                         if (value.size() < (i + 1)) {
                             value.add(template);
@@ -179,27 +180,26 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                         }
 
                         String temp = value.get(i).trim();
-
                         if (expression.contains("[")) {
                             expression = expression.replaceAll("\\[", "").replaceAll("\\]", "");
                             temp = temp.replaceAll("\\[", "").replaceAll("\\]", "");
-                        }
+                        }   
                         //JSONPath expression cause problems when replacing, remove the $ first
-                        if (expression.contains("$")) {
+                        if ((map.getOwnTriplesMap().getLogicalSource().getReferenceFormulation() == QLTerm.JSONPATH_CLASS) 
+                                && expression.contains("$")) {
                             expression = expression.replaceAll("\\$", "");
                             temp = temp.replaceAll("\\$", "");
                         }
                         try {
-                            temp = temp.replaceAll("\\{" + expression + "\\}", URLEncoder.encode(replacement,"UTF-8"));
+                            temp = temp.replaceAll("\\{" + Pattern.quote(expression) + "\\}", URLEncoder.encode(replacement,"UTF-8"));
                         } catch (UnsupportedEncodingException ex) {
                             Logger.getLogger(AbstractRMLProcessor.class.getName()).log(Level.SEVERE, null, ex);
                         }
-                        //temp = temp.replaceAll("\\{" + expression + "\\}", replacement);
                         value.set(i, temp.toString());
 
                     }      
                 }
-
+                
                 //Check if there are any placeholders left in the templates and remove uris that are not
                 List<String> validValues = new ArrayList<>();
                 for (String uri : value){
@@ -207,7 +207,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                         validValues.add(uri);
                     }
                 }
-
+                
                 return validValues;
 
             default:
@@ -216,7 +216,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
 
         //return value;
     }
-
+    
     /**
      * Process a predicate object map
      *
@@ -344,6 +344,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
 
         List<URI> uris = new ArrayList<>();
         for (String value : values) {
+            //TODO: add better control
             if(value.startsWith("www."))
                 value = "http://" + value;
             uris.add(new URIImpl(value));

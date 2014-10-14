@@ -37,7 +37,6 @@ import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.XPathCompiler;
 import net.sf.saxon.s9api.XPathSelector;
 import net.sf.saxon.s9api.XdmNode;
-import nu.xom.Element;
 import org.openrdf.model.Resource;
 
 /**
@@ -92,9 +91,7 @@ public class XPathProcessor extends AbstractRMLProcessor {
     }
     
     private String replace (Node node, String expression){
-        String expre = extractValueFromNode(node,expression.split("\\{")[1].split("\\}")[0]).get(0);
-        log.info("[XPathProcessor:execute] expre " + expre);
-        return expre;
+        return extractValueFromNode(node,expression.split("\\{")[1].split("\\}")[0]).get(0);
     }
     
     public String execute(Node node, String expression) throws SaxonApiException {
@@ -186,15 +183,12 @@ public class XPathProcessor extends AbstractRMLProcessor {
     
         if(expression.startsWith("/"))
             expression = expression.substring(1);
-        log.debug("[AbstractRMLProcessorProcessor] expression " + expression);
         
         Node node2 = (Node) node; 
         Nodes nodes = node2.query(expression, nsContext);
-        log.debug("[AbstractRMLProcessorProcessor:node] " + "nodes' size " + nodes.size());
         
         for (int i = 0; i < nodes.size(); i++) {
             Node n = nodes.get(i);
-            log.debug("[AbstractRMLProcessorProcessor:node] " + "new node " + n.toXML().toString());
             if(subject == null)
                 performer.perform(n, dataset, parentTriplesMap);
             else{

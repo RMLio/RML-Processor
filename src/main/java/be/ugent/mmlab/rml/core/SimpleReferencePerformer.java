@@ -33,16 +33,18 @@ public class SimpleReferencePerformer extends NodeRMLPerformer {
         if(map.getSubjectMap().getTermType() == be.ugent.mmlab.rml.model.TermType.BLANK_NODE || map.getSubjectMap().getTermType() == be.ugent.mmlab.rml.model.TermType.IRI){
             RMLProcessorFactory factory = new ConcreteRMLProcessorFactory();
             RMLProcessor subprocessor = factory.create(map.getLogicalSource().getReferenceFormulation());
-            RMLPerformer performer = new NodeRMLPerformer(subprocessor);
+            RMLPerformer performer = new NodeRMLPerformer(subprocessor);            
             Resource object = processor.processSubjectMap(dataset, map.getSubjectMap(), node); 
             dataset.add(subject, predicate, object);
             log.debug("[SimpleReferencePerformer:addTriples] Subject "
                         + subject + " Predicate " + predicate + "Object " + object.toString());
-            if((map.getLogicalSource().getReferenceFormulation().toString().equals("CSV")) || (map.getLogicalSource().getReference().equals(map.getLogicalSource().getReference())))
+            
+            if((map.getLogicalSource().getReferenceFormulation().toString().equals("CSV")) 
+                    || (map.getLogicalSource().getReference().equals(map.getLogicalSource().getReference())))
                 performer.perform(node, dataset, map, object);
             else {
                 int end = map.getLogicalSource().getReference().length();
-                log.info("[RML:SimpleReferencePerformer] " + map.getLogicalSource().getReference().toString());
+                log.info("[SimpleReferencePerformer:perform] reference " + map.getLogicalSource().getReference().toString());
                 String expression = "";
                 switch (map.getLogicalSource().getReferenceFormulation().toString()) {
                     case "XPath":
