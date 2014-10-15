@@ -71,7 +71,7 @@ public class FileSesameDataset extends SesameDataSet {
 
         } catch (IOException | RDFHandlerException ex) {
             log.error("File not found.", ex);
-        } 
+        }
 
     }
 
