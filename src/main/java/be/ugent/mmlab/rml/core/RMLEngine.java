@@ -9,6 +9,8 @@ import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.RMLProcessor;
 import be.ugent.mmlab.rml.processor.RMLProcessorFactory;
 import be.ugent.mmlab.rml.processor.concrete.ConcreteRMLProcessorFactory;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -162,18 +164,34 @@ public class RMLEngine {
             RMLProcessor processor = factory.create(triplesMap.getLogicalSource().getReferenceFormulation());
             //URL filePath = getClass().getProtectionDomain().getCodeSource().getLocation();
             String source = triplesMap.getLogicalSource().getIdentifier();
-            HttpURLConnection con = null;
-            try {
-                con = (HttpURLConnection) new URL(source).openConnection();
-            } catch (MalformedURLException ex) {
-                Logger.getLogger(RMLEngine.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
-                Logger.getLogger(RMLEngine.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            con.setRequestMethod("HEAD");
+            HttpURLConnection con ;
+            //log.debug("[RMLEngine:generateRDFTriples] is local file? " + isLocalFile(source));
             InputStream input = null;
-            if (con.getResponseCode() == HttpURLConnection.HTTP_OK) 
-                input = new URL(source).openStream();
+            if(!isLocalFile(source))
+                try {
+                    con = (HttpURLConnection) new URL(source).openConnection();
+                    con.setRequestMethod("HEAD");
+                    if (con.getResponseCode() == HttpURLConnection.HTTP_OK) 
+                        input = new URL(source).openStream();
+                } catch (MalformedURLException ex) {
+                    Logger.getLogger(RMLEngine.class.getName()).log(Level.SEVERE, null, ex);
+                } 
+            else if(isLocalFile(source))
+                try {
+                    File file  = new File(new File(source).getCanonicalPath());
+                    if(!file.exists()){
+                        source = getClass().getResource(triplesMap.getLogicalSource().getIdentifier()).getFile();
+                        file  = new File(new File(source).getCanonicalPath());
+                        if(!file.exists())
+                            log.error("[RMLEngine:generateRDFTriples] Input file not found. " );
+                    }
+                    input = new FileInputStream(file);
+                    
+                    
+                    //con = (HttpURLConnection) new URL(source).toURI().toURL().openConnection();
+                } catch (IOException ex) {
+                    Logger.getLogger(RMLEngine.class.getName()).log(Level.SEVERE, null, ex);
+                } 
             else 
                 log.info("input stream was not possible.");
             
@@ -197,5 +215,14 @@ public class RMLEngine {
             } catch (RepositoryException ex) {
                 log.error("[RMLEngine:generateRDFTriples] Cannot close output repository", ex);
             }
+    }
+    
+    public boolean isLocalFile(String source) {
+        try {
+            new URL(source);
+            return false;
+        } catch (MalformedURLException e) {
+            return true;
+        }
     }
 }
