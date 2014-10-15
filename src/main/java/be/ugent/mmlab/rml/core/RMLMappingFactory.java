@@ -38,6 +38,8 @@ import be.ugent.mmlab.rml.vocabulary.Vocab;
 import be.ugent.mmlab.rml.vocabulary.Vocab.R2RMLTerm;
 import be.ugent.mmlab.rml.vocabulary.Vocab.RMLTerm;
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -93,7 +95,19 @@ public abstract class RMLMappingFactory {
             R2RMLDataError, RepositoryException, RDFParseException, IOException {
         // Load RDF data from R2RML Mapping document
         SesameDataSet r2rmlMappingGraph = new SesameDataSet();
-        r2rmlMappingGraph.loadDataFromFile(fileToRMLFile, RDFFormat.TURTLE);
+        
+        //RML document is a a URI
+        if(!RMLEngine.isLocalFile(fileToRMLFile)){
+            HttpURLConnection con = (HttpURLConnection) new URL(fileToRMLFile).openConnection();
+            con.setRequestMethod("HEAD");
+            if (con.getResponseCode() == HttpURLConnection.HTTP_OK)
+                r2rmlMappingGraph.addURI(fileToRMLFile, RDFFormat.TURTLE);
+        }
+        //RML document is a a local file
+        else {
+            //r2rmlMappingGraph.addFile(fileToRMLFile, RDFFormat.TURTLE);
+            r2rmlMappingGraph.loadDataFromFile(fileToRMLFile, RDFFormat.TURTLE);
+        }
         log.debug("[RMLMappingFactory:extractRMLMapping] Number of R2RML triples in file "
                 + fileToRMLFile + " : " + r2rmlMappingGraph.getSize());
         // Transform RDF with replacement shortcuts

@@ -188,7 +188,7 @@ public class RMLEngine {
             }
     }
     
-    private static boolean isLocalFile(String source) {
+    public static boolean isLocalFile(String source) {
         try {
             new URL(source);
             return false;
