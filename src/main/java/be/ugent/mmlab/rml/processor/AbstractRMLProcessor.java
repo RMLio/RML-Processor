@@ -2,6 +2,7 @@ package be.ugent.mmlab.rml.processor;
 
 import be.ugent.mmlab.rml.core.ConditionalJoinRMLPerformer;
 import be.ugent.mmlab.rml.core.JoinRMLPerformer;
+import be.ugent.mmlab.rml.core.RMLEngine;
 import be.ugent.mmlab.rml.core.RMLPerformer;
 import be.ugent.mmlab.rml.core.SimpleReferencePerformer;
 import be.ugent.mmlab.rml.model.GraphMap;
@@ -23,7 +24,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -260,15 +260,16 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                     QLTerm queryLanguage = parentTriplesMap.getLogicalSource().getReferenceFormulation();
 
                     String source = parentTriplesMap.getLogicalSource().getIdentifier();
+
                     InputStream input = null;
                     try {
-                        input = new URL(source).openStream();
+                        input = RMLEngine.getInputStream(source, parentTriplesMap);
                     } catch (MalformedURLException ex) {
                         Logger.getLogger(AbstractRMLProcessor.class.getName()).log(Level.SEVERE, null, ex);
                     } catch (IOException ex) {
                         Logger.getLogger(AbstractRMLProcessor.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                    
+                                       
                     RMLProcessor processor = factory.create(queryLanguage);
 
                     RMLPerformer performer ;

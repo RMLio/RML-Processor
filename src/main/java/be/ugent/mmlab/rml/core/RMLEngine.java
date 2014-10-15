@@ -159,41 +159,12 @@ public class RMLEngine {
                 continue;
             //FileInputStream input = null;
             System.out.println("[RMLEngine:generateRDFTriples] Generate RDF triples for " + triplesMap.getName());
-            //need to add control if reference Formulation is not defined
-            //need to add check for correct spelling, aka rml:queryLanguage and not rml:referenceFormulation otherwise breaks
+            //TODO:need to add control if reference Formulation is not defined
+            //TODO:need to add check for correct spelling, rml:referenceFormulation otherwise breaks
             RMLProcessor processor = factory.create(triplesMap.getLogicalSource().getReferenceFormulation());
-            //URL filePath = getClass().getProtectionDomain().getCodeSource().getLocation();
+            
             String source = triplesMap.getLogicalSource().getIdentifier();
-            HttpURLConnection con ;
-            //log.debug("[RMLEngine:generateRDFTriples] is local file? " + isLocalFile(source));
-            InputStream input = null;
-            if(!isLocalFile(source))
-                try {
-                    con = (HttpURLConnection) new URL(source).openConnection();
-                    con.setRequestMethod("HEAD");
-                    if (con.getResponseCode() == HttpURLConnection.HTTP_OK) 
-                        input = new URL(source).openStream();
-                } catch (MalformedURLException ex) {
-                    Logger.getLogger(RMLEngine.class.getName()).log(Level.SEVERE, null, ex);
-                } 
-            else if(isLocalFile(source))
-                try {
-                    File file  = new File(new File(source).getCanonicalPath());
-                    if(!file.exists()){
-                        source = getClass().getResource(triplesMap.getLogicalSource().getIdentifier()).getFile();
-                        file  = new File(new File(source).getCanonicalPath());
-                        if(!file.exists())
-                            log.error("[RMLEngine:generateRDFTriples] Input file not found. " );
-                    }
-                    input = new FileInputStream(file);
-                    
-                    
-                    //con = (HttpURLConnection) new URL(source).toURI().toURL().openConnection();
-                } catch (IOException ex) {
-                    Logger.getLogger(RMLEngine.class.getName()).log(Level.SEVERE, null, ex);
-                } 
-            else 
-                log.info("input stream was not possible.");
+            InputStream input = getInputStream(source, triplesMap);
             
             processor.execute(sesameDataSet, triplesMap, new NodeRMLPerformer(processor), input);
 
@@ -217,12 +188,44 @@ public class RMLEngine {
             }
     }
     
-    public boolean isLocalFile(String source) {
+    private static boolean isLocalFile(String source) {
         try {
             new URL(source);
             return false;
         } catch (MalformedURLException e) {
             return true;
         }
+    }
+    
+    public static InputStream getInputStream (String source, TriplesMap triplesMap) throws IOException{
+        InputStream input = null;
+            if(!isLocalFile(source))
+                try {
+                    HttpURLConnection con = (HttpURLConnection) new URL(source).openConnection();
+                    con.setRequestMethod("HEAD");
+                    if (con.getResponseCode() == HttpURLConnection.HTTP_OK) 
+                        input = new URL(source).openStream();
+                } catch (MalformedURLException ex) {
+                    Logger.getLogger(RMLEngine.class.getName()).log(Level.SEVERE, null, ex);
+                } 
+            else if(isLocalFile(source))
+                try {
+                    File file  = new File(new File(source).getCanonicalPath());
+                    if(!file.exists()){
+                        source = RMLEngine.class.getResource(triplesMap.getLogicalSource().getIdentifier()).getFile();
+                        log.info("[RMLEngine:getInputStream] source " + source);
+                        file  = new File(new File(source).getCanonicalPath());
+                        if(!file.exists())
+                            log.error("[RMLEngine:generateRDFTriples] Input file not found. " );
+                    }
+                    input = new FileInputStream(file);
+                } catch (IOException ex) {
+                    Logger.getLogger(RMLEngine.class.getName()).log(Level.SEVERE, null, ex);
+                } 
+            else {
+                log.info("Input stream was not possible.");
+                return null;
+            }
+            return input;
     }
 }
