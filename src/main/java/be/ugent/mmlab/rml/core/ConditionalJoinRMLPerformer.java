@@ -64,11 +64,15 @@ public class ConditionalJoinRMLPerformer extends NodeRMLPerformer{
             }
             if(flag){
                 object = processor.processSubjectMap(dataset, map.getSubjectMap(), node);
-                if (object != null){
+                if (subject != null && object != null){
                     dataset.add(subject, predicate, object);
                     log.debug("[ConditionalJoinRMLPerformer:addTriples] Subject "
                                 + subject + " Predicate " + predicate + "Object " + object.toString());
                 } 
+                else
+                    log.debug("[ConditionalJoinRMLPerformer:addTriples] triple for Subject "
+                                + subject + " Predicate " + predicate + "Object " + object.toString()
+                            + "was not created");
             }
         }       
     }
