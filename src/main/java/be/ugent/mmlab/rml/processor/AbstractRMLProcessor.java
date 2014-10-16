@@ -330,7 +330,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                     for (Value object : objects) {
                         if (object.stringValue() != null) {
                             Set<GraphMap> graphs = pom.getGraphMaps();
-                            if(graphs.isEmpty())
+                            if(graphs.isEmpty() && subject != null)
                                 dataset.add(subject, predicate, object);
                             else
                                 for (GraphMap graph : graphs) {
