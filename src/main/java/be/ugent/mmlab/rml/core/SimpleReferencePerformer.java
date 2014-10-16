@@ -35,27 +35,32 @@ public class SimpleReferencePerformer extends NodeRMLPerformer {
             RMLProcessor subprocessor = factory.create(map.getLogicalSource().getReferenceFormulation());
             RMLPerformer performer = new NodeRMLPerformer(subprocessor);            
             Resource object = processor.processSubjectMap(dataset, map.getSubjectMap(), node); 
-            dataset.add(subject, predicate, object);
-            log.debug("[SimpleReferencePerformer:addTriples] Subject "
+            if (object != null) {
+                dataset.add(subject, predicate, object);
+                log.debug("[SimpleReferencePerformer:addTriples] Subject "
                         + subject + " Predicate " + predicate + "Object " + object.toString());
-            
-            if((map.getLogicalSource().getReferenceFormulation().toString().equals("CSV")) 
-                    || (map.getLogicalSource().getReference().equals(map.getLogicalSource().getReference())))
-                performer.perform(node, dataset, map, object);
-            else {
-                int end = map.getLogicalSource().getReference().length();
-                log.info("[SimpleReferencePerformer:perform] reference " + map.getLogicalSource().getReference().toString());
-                String expression = "";
-                switch (map.getLogicalSource().getReferenceFormulation().toString()) {
-                    case "XPath":
-                        expression = map.getLogicalSource().getReference().toString().substring(end);
-                        break;
-                    case "JSONPath":
-                        expression = map.getLogicalSource().getReference().toString().substring(end + 1);
-                        break;
+
+                if ((map.getLogicalSource().getReferenceFormulation().toString().equals("CSV"))
+                        || (map.getLogicalSource().getReference().equals(map.getLogicalSource().getReference()))) {
+                    performer.perform(node, dataset, map, object);
+                } else {
+                    int end = map.getLogicalSource().getReference().length();
+                    log.info("[SimpleReferencePerformer:perform] reference " + map.getLogicalSource().getReference().toString());
+                    String expression = "";
+                    switch (map.getLogicalSource().getReferenceFormulation().toString()) {
+                        case "XPath":
+                            expression = map.getLogicalSource().getReference().toString().substring(end);
+                            break;
+                        case "JSONPath":
+                            expression = map.getLogicalSource().getReference().toString().substring(end + 1);
+                            break;
+                    }
+                    processor.execute_node(dataset, expression, map, performer, node, object);
                 }
-                processor.execute_node(dataset, expression, map, performer, node, object);
             }
+            else
+                log.debug("[SimpleReferencePerformer] object of " + map.getName() + 
+                        "Triples Map for " + node.toString() + "row was null. Triple was not ");
         }
         else{
             List<String> values = processor.processTermMap(map.getSubjectMap(), node);    

@@ -13,7 +13,8 @@ import org.apache.commons.logging.LogFactory;
 /**
  * Performs the normal handling of an object in the iteration.
  * 
- * @author mielvandersande
+ * @author mielvandersande, andimou
+ * 
  */
 public class NodeRMLPerformer implements RMLPerformer{
     
@@ -40,13 +41,12 @@ public class NodeRMLPerformer implements RMLPerformer{
     public void perform(Object node, SesameDataSet dataset, TriplesMap map) {
         Resource subject = processor.processSubjectMap(dataset, map.getSubjectMap(), node);
         processor.processSubjectTypeMap(dataset, subject, map.getSubjectMap(), node);
-        if (subject == null){
-            return;
-        }
-        Set<GraphMap> graph = map.getSubjectMap().getGraphMaps();
-
-        for (PredicateObjectMap pom : map.getPredicateObjectMaps()) {
-            processor.processPredicateObjectMap(dataset, subject, pom, node, map);
+        if (subject == null) 
+            log.debug("[NodeRMLPerformer:perform] No subject was generated for " + map.getName() + "triple Map and row " +node.toString());
+        else {
+            Set<GraphMap> graph = map.getSubjectMap().getGraphMaps();
+            for (PredicateObjectMap pom : map.getPredicateObjectMaps()) 
+                processor.processPredicateObjectMap(dataset, subject, pom, node, map);
         }
     }
     
