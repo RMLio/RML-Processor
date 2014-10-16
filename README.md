@@ -38,4 +38,7 @@ This application is developed by Multimedia Lab http://www.mmlab.be
 
 Copyright 2014, Multimedia Lab - Ghent University - iMinds
 
+License
+-------
 
+The RMLProcessor is released under the terms of the [MIT license](http://opensource.org/licenses/mit-license.html).
