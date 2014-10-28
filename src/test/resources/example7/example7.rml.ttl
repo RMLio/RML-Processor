@@ -26,6 +26,7 @@
 	rr:predicate transit:service;
 	rr:objectMap [
             rml:reference "bus" ;
-	    ]
+	    ] ;
+        rr:graphMap [ rr:constant ex:Graph ];
     ].
 
