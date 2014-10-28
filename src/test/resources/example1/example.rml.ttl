@@ -58,13 +58,15 @@ rr:subjectMap [
         rr:predicateObjectMap [
 		rr:predicate ex:day;
 		rr:objectMap [
-			rml:reference "@day";
+			rr:template "---{@day}";
+                        rr:termType rr:Literal ;
 			rr:datatype xsd:gDay
 		]
 	],[
                 rr:predicate ex:month;
                 rr:objectMap [
-			rml:reference "@month";
+			rr:template "--{@month}";
+                        rr:termType rr:Literal;
 			rr:datatype xsd:gMonth
 		]
 	],[

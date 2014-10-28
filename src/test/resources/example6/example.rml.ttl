@@ -55,18 +55,19 @@
 	rr:subjectMap [
 		rr:template "http://www.example.com/DateTime/{@year}{@month}{@day}";
 		rr:class ex:DateTime ;
-                rr:graphMap [ rr:constant <http://www.example.com/testgraph2> ];
 	];
         rr:predicateObjectMap [
 		rr:predicate ex:day;
 		rr:objectMap [
-			rml:reference "@day";
+			rr:template "---{@day}";
+                        rr:termType rr:Literal;
 			rr:datatype xsd:gDay
 		]
 	],[
                 rr:predicate ex:month;
                 rr:objectMap [
-			rml:reference "@month";
+			rr:template "--{@month}";
+                        rr:termType rr:Literal;
 			rr:datatype xsd:gMonth
 		]
 	],[

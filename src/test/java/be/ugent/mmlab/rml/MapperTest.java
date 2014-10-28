@@ -49,40 +49,58 @@ public class MapperTest
     public void testExample1() {
         URL fileToRMLFile = getClass().getResource("/example1/example.rml.ttl");
         URL fileToOutputFile = getClass().getResource("/example1/example.output.ttl");
-        assertTrue(assertMap(fileToRMLFile, fileToOutputFile));
+        assertTrue(desiredOutput(fileToOutputFile).isEqualTo(assertMap(fileToRMLFile)));
     }
 
     public void testExample2() {
         URL fileToRMLFile = getClass().getResource("/example2/example.rml.ttl");
         URL fileToOutputFile = getClass().getResource("/example2/example.output.ttl");
-        assertTrue(assertMap(fileToRMLFile, fileToOutputFile));
+        assertTrue(desiredOutput(fileToOutputFile).isEqualTo(assertMap(fileToRMLFile)));
     }
 
     public void testExample3() {
         URL fileToRMLFile = getClass().getResource("/example3/example3.rml.ttl");
         URL fileToOutputFile = getClass().getResource("/example3/example3.output.ttl");
-        assertTrue(assertMap(fileToRMLFile, fileToOutputFile));
+        assertTrue(desiredOutput(fileToOutputFile).isEqualTo(assertMap(fileToRMLFile)));
     }
 
     public void testExample4() {
         URL fileToRMLFile = getClass().getResource("/example4/example4_Venue.rml.ttl");
         URL fileToOutputFile = getClass().getResource("/example4/example4_Venue.output.ttl");
-        assertTrue(assertMap(fileToRMLFile, fileToOutputFile));
+        assertTrue(desiredOutput(fileToOutputFile).isEqualTo(assertMap(fileToRMLFile)));
     }
 
     public void testExample5() {
         URL fileToRMLFile = getClass().getResource("/example5/museum-model.rml.ttl");
         URL fileToOutputFile = getClass().getResource("/example5/museum.output.ttl");
-        assertTrue(assertMap(fileToRMLFile, fileToOutputFile));
+        assertTrue(desiredOutput(fileToOutputFile).isEqualTo(assertMap(fileToRMLFile)));
     }
     
     public void testExample6() {
         URL fileToRMLFile = getClass().getResource("/example6/example.rml.ttl");
         URL fileToOutputFile = getClass().getResource("/example6/example.output.ttl");
-        assertTrue(assertMap(fileToRMLFile, fileToOutputFile));
+        assertTrue(desiredOutput(fileToOutputFile).isEqualTo(assertMap(fileToRMLFile)));
     }
     
-    private boolean assertMap(URL mappingURL, URL outputURL) {
+    public void testExample7() {
+        URL fileToRMLFile = getClass().getResource("/example7/example7.rml.ttl");
+        URL fileToOutputFile = getClass().getResource("/example7/example7.output.ttl");
+        assertTrue(desiredContextOutput(fileToOutputFile).isEqualTo(assertMap(fileToRMLFile)));
+    }
+    
+    private SesameDataSet desiredOutput (URL outputURL){
+        SesameDataSet desiredOutput = new SesameDataSet();
+        desiredOutput.addFile(outputURL.getFile(), RDFFormat.TURTLE);
+        return desiredOutput;
+    }
+    
+    private SesameDataSet desiredContextOutput (URL outputURL){
+        SesameDataSet desiredOutput = new SesameDataSet();
+        desiredOutput.addFile(outputURL.getFile(), RDFFormat.NQUADS);
+        return desiredOutput;
+    }
+    
+    private SesameDataSet assertMap(URL mappingURL) {
         try {
             RMLMapping mapping = RMLMappingFactory.extractRMLMapping(mappingURL.getFile());
 
@@ -91,12 +109,11 @@ public class MapperTest
             SesameDataSet output = engine.runRMLMapping(mapping, "http://example.com");
 
             output.dumpRDF(System.out, RDFFormat.TURTLE);
+            
+            return output;
 
-            SesameDataSet desiredOutput = new SesameDataSet();
-            desiredOutput.addFile(outputURL.getFile(), RDFFormat.TURTLE);
-
-            return desiredOutput.isEqualTo(output);
-        } catch (SQLException | InvalidR2RMLStructureException | InvalidR2RMLSyntaxException | R2RMLDataError | RepositoryException | RDFParseException ex) {
+        } catch (SQLException | InvalidR2RMLStructureException | InvalidR2RMLSyntaxException | 
+                R2RMLDataError | RepositoryException | RDFParseException ex) {
             Logger.getLogger(MapperTest.class.getName()).log(Level.SEVERE, null, ex);
         } catch (UnsupportedEncodingException ex) {
             Logger.getLogger(MapperTest.class.getName()).log(Level.SEVERE, null, ex);
@@ -104,6 +121,6 @@ public class MapperTest
             Logger.getLogger(MapperTest.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        return false;
+        return null;
     }
 }

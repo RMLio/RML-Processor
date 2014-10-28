@@ -21,11 +21,11 @@ note:M18 a mail:note;
         mail:body "We now leave at six".
 
 dt:20080110 a ex:DateTime;
-	ex:day "10"^^xsd:gDay;
-	ex:month "01"^^xsd:gMonth;
+	ex:day "---10"^^xsd:gDay;
+	ex:month "--01"^^xsd:gMonth;
 	ex:year "2008"^^xsd:gYear .
 
 dt:20080210 a ex:DateTime;
-	ex:day "10"^^xsd:gDay;
-	ex:month "02"^^xsd:gMonth;
+	ex:day "---10"^^xsd:gDay;
+	ex:month "--02"^^xsd:gMonth;
 	ex:year "2008"^^xsd:gYear .
