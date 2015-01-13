@@ -10,10 +10,4 @@ target/
 nb-configuration.xml
 nbactions.xml
 gc.log
-<<<<<<< HEAD
-
 src/main/java/be/ugent/mmlab/rml/main/Main_*.java
-=======
-src/main/java/be/ugent/mmlab/rml/main/Main_1.java
-
->>>>>>> development
