@@ -28,7 +28,7 @@ With
         
 For instance, to run example1, execute the following command by replacing the paths to the files with the local paths:
 
-    mvn exec:java -Dexec.args="/path/to/the/mapping/document/example.rml.ttl /path/to/the/output/file/example1_test.output.nt"
+    java -jar target/RMLMapper-0.1.jar /path/to/the/mapping/document/example.rml.ttl /path/to/the/output/file/example1_test.output.nt
 
 Remark
 -----
