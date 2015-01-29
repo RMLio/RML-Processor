@@ -7,12 +7,24 @@ Class diagram
 -------------
 ![alt text](https://raw.github.com/mmlab/RMLProcessor/master/docs/class-diagram.jpg)
 
+Installation
+------------
+
+The processor can be installed with the following command
+
+    mvn clean install
+
 Usage
 -----
 The processor can be run using Maven, so make sure you have installed it first: http://maven.apache.org/download.cgi and java 1.7
 You can run a mapping process by executing the following command.
     
     mvn exec:java -Dexec.args="<mapping_file> <output_file> [-g <graph>]"
+
+
+or
+
+    java -jar target/RMLMapper-0.1.jar <mapping_file> <output_file> [-g <graph>]
 
 With 
     
