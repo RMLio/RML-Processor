@@ -6,6 +6,27 @@
 @prefix ex: <http://example.com/>.
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
 
+
+ <#SitterMapping>
+  rml:logicalSource [
+    rml:source "museum.json";
+    rml:referenceFormulation ql:JSONPath;
+    rml:iterator "$.Sitter";
+  ];
+  rr:subjectMap [
+    rr:template "http://ex.com/{Name}";
+    rr:class crm:E21_Person ;
+  ];
+
+  rr:predicateObjectMap 
+  [
+    rr:predicate rdfs:label;
+    rr:objectMap 
+    [
+      rml:reference "Name" 
+    ]
+  ].
+
 <#ProductionMapping>
   rml:logicalSource [
     rml:source "/example5/museum.json";
@@ -41,6 +62,7 @@
             rr:parentTriplesMap <#ArtworkMapping>;
     ];
   ].
+
 
 <#ArtworkMapping>
   rml:logicalSource [
@@ -79,7 +101,8 @@
             rr:parentTriplesMap <#SitterMapping> ;
         ];
   ].
- 
+
+
 <#ArtistMapping>
   rml:logicalSource [
     rml:source "/example5/museum.json";
@@ -105,7 +128,7 @@
   [
     rr:predicate crm:P14_carried_out_by;
 	rr:objectMap [ 
-            rr:parentTriplesMap <#WikipediaExportMapping> ;
+            rr:parentTriplesMap <#MoonWalkersMapping> ;
             rr:joinCondition [
                 rr:child "Artist";
                 rr:parent "Name";
@@ -114,7 +137,7 @@
     ].    
 
 
-<#SitterMapping>
+<#MoonWalkersMapping>
   rml:logicalSource [
     rml:source "/example5/museum.json";
     rml:referenceFormulation ql:JSONPath;

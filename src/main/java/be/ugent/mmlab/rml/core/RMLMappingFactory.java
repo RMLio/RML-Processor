@@ -373,6 +373,7 @@ public abstract class RMLMappingFactory {
                     + predicateObject.stringValue()
                     + " has no predicate map defined : one or more is required.");
         }
+        
         Set<PredicateMap> predicateMaps = new HashSet<PredicateMap>();
         try {
             for (Statement statement : statements) {
