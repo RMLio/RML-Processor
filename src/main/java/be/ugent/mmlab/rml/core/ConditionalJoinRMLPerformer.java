@@ -71,7 +71,7 @@ public class ConditionalJoinRMLPerformer extends NodeRMLPerformer{
                 } 
                 else
                     log.debug("[ConditionalJoinRMLPerformer:addTriples] triple for Subject "
-                                + subject + " Predicate " + predicate + "Object " + object.toString()
+                                + subject + " Predicate " + predicate + "Object " + object
                             + "was not created");
             }
         }       
