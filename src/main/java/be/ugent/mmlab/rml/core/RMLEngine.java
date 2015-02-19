@@ -210,11 +210,18 @@ public class RMLEngine {
                 } 
             else if(isLocalFile(source))
                 try {
-                    File file  = new File(new File(source).getCanonicalPath());
+                    //File file  = new File(new File(source).getCanonicalPath());
+                    File file  = new File(new File(source).getAbsolutePath());
+                    
                     if(!file.exists()){
-                        source = RMLEngine.class.getResource(triplesMap.getLogicalSource().getIdentifier()).getFile();
-                        log.info("[RMLEngine:getInputStream] source " + source);
-                        file  = new File(new File(source).getCanonicalPath());
+                        if(RMLEngine.class.getResource(triplesMap.getLogicalSource().getIdentifier()) == null){
+                            source = triplesMap.getLogicalSource().getIdentifier();
+                            file  = new File(new File(source).getAbsolutePath());
+                        }
+                        else{
+                            source = RMLEngine.class.getResource(triplesMap.getLogicalSource().getIdentifier()).getFile();
+                            file  = new File(new File(source).getCanonicalPath());
+                        }
                         if(!file.exists())
                             log.error("[RMLEngine:generateRDFTriples] Input file not found. " );
                     }
