@@ -3,6 +3,7 @@ package be.ugent.mmlab.rml;
 import be.ugent.mmlab.rml.core.RMLEngine;
 import be.ugent.mmlab.rml.core.RMLMappingFactory;
 import be.ugent.mmlab.rml.model.RMLMapping;
+import be.ugent.mmlab.rml.sesame.RMLSesameDataSet;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
@@ -89,14 +90,14 @@ public class MapperTest
         assertTrue(desiredContextOutput(fileToOutputFile).isEqualTo(assertMap(fileToRMLFile)));
     }
     
-    private SesameDataSet desiredOutput (URL outputURL){
-        SesameDataSet desiredOutput = new SesameDataSet();
+    private RMLSesameDataSet desiredOutput (URL outputURL){
+        RMLSesameDataSet desiredOutput = new RMLSesameDataSet();
         desiredOutput.addFile(outputURL.getFile(), RDFFormat.TURTLE);
         return desiredOutput;
     }
     
-    private SesameDataSet desiredContextOutput (URL outputURL){
-        SesameDataSet desiredOutput = new SesameDataSet();
+    private RMLSesameDataSet desiredContextOutput (URL outputURL){
+        RMLSesameDataSet desiredOutput = new RMLSesameDataSet();
         desiredOutput.addFile(outputURL.getFile(), RDFFormat.NQUADS);
         return desiredOutput;
     }

@@ -34,6 +34,7 @@ import be.ugent.mmlab.rml.model.SubjectMap;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.model.reference.ReferenceIdentifier;
 import be.ugent.mmlab.rml.model.reference.ReferenceIdentifierImpl;
+import be.ugent.mmlab.rml.sesame.RMLSesameDataSet;
 import be.ugent.mmlab.rml.vocabulary.Vocab;
 import be.ugent.mmlab.rml.vocabulary.Vocab.R2RMLTerm;
 import be.ugent.mmlab.rml.vocabulary.Vocab.RMLTerm;
@@ -94,7 +95,7 @@ public abstract class RMLMappingFactory {
             throws InvalidR2RMLStructureException, InvalidR2RMLSyntaxException,
             R2RMLDataError, RepositoryException, RDFParseException, IOException {
         // Load RDF data from R2RML Mapping document
-        SesameDataSet r2rmlMappingGraph = new SesameDataSet();
+        SesameDataSet r2rmlMappingGraph = new RMLSesameDataSet();
         
         //RML document is a a URI
         if(!RMLEngine.isLocalFile(fileToRMLFile)){

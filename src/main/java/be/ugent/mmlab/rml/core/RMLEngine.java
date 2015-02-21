@@ -9,6 +9,7 @@ import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.RMLProcessor;
 import be.ugent.mmlab.rml.processor.RMLProcessorFactory;
 import be.ugent.mmlab.rml.processor.concrete.ConcreteRMLProcessorFactory;
+import be.ugent.mmlab.rml.sesame.RMLSesameDataSet;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -108,7 +109,7 @@ public class RMLEngine {
             sesameDataSet = new SesameDataSet(pathToNativeStore, false);
         } else {
             log.debug("[RMLEngine:runRMLMapping] Use default store (memory) ");
-            sesameDataSet = new SesameDataSet();
+            sesameDataSet = new RMLSesameDataSet();
         }
         // Explore RML Mapping TriplesMap objects  
  
