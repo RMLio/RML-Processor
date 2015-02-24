@@ -19,7 +19,7 @@ import static be.ugent.mmlab.rml.model.TermType.IRI;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.model.reference.ReferenceIdentifierImpl;
 import be.ugent.mmlab.rml.processor.concrete.ConcreteRMLProcessorFactory;
-import be.ugent.mmlab.rml.vocabulary.Vocab.QLTerm;
+import be.ugent.mmlab.rml.vocabulary.RMLVocabulary.QLTerm;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;

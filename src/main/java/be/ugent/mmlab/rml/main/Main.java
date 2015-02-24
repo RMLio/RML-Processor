@@ -38,7 +38,10 @@ public class Main {
             //should be new DefaultParser() but requires cli 1.3 instead of clli 1.2
             CommandLineParser parser = new BasicParser();
             CommandLine cmd = parser.parse( options, args);
-            RMLMapping mapping = RMLMappingFactory.extractRMLMapping(args[0]);
+            
+            RMLMappingFactory mappingFactory = new RMLMappingFactory();
+            RMLMapping mapping = mappingFactory.extractRMLMapping(args[0]);
+            //RMLMapping mapping = RMLMappingFactory.extractRMLMapping(args[0]);
             RMLEngine engine = new RMLEngine();
             System.out.println("mapping document " + args[0]);
             engine.runRMLMapping(mapping, graphName, args[1], true);

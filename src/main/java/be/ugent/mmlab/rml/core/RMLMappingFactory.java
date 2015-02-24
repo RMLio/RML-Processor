@@ -13,6 +13,9 @@
  */
 package be.ugent.mmlab.rml.core;
 
+import be.ugent.mmlab.rml.extractor.RMLInputExtractor;
+import be.ugent.mmlab.rml.extractor.RMLMappingExtractor;
+import be.ugent.mmlab.rml.extractor.RMLUnValidatedMappingExtractor;
 import be.ugent.mmlab.rml.model.GraphMap;
 import be.ugent.mmlab.rml.model.JoinCondition;
 import be.ugent.mmlab.rml.model.LogicalSource;
@@ -35,12 +38,10 @@ import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.model.reference.ReferenceIdentifier;
 import be.ugent.mmlab.rml.model.reference.ReferenceIdentifierImpl;
 import be.ugent.mmlab.rml.sesame.RMLSesameDataSet;
-import be.ugent.mmlab.rml.vocabulary.Vocab;
+import be.ugent.mmlab.rml.vocabulary.RMLVocabulary;
+import be.ugent.mmlab.rml.vocabulary.RMLVocabulary.RMLTerm;
 import be.ugent.mmlab.rml.vocabulary.Vocab.R2RMLTerm;
-import be.ugent.mmlab.rml.vocabulary.Vocab.RMLTerm;
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -52,8 +53,7 @@ import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
 import net.antidot.semantic.rdf.rdb2rdf.r2rml.exception.InvalidR2RMLStructureException;
 import net.antidot.semantic.rdf.rdb2rdf.r2rml.exception.InvalidR2RMLSyntaxException;
 import net.antidot.semantic.rdf.rdb2rdf.r2rml.exception.R2RMLDataError;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.LogManager;
 import org.openrdf.model.BNode;
 import org.openrdf.model.Resource;
 import org.openrdf.model.Statement;
@@ -65,12 +65,18 @@ import org.openrdf.repository.RepositoryException;
 import org.openrdf.rio.RDFFormat;
 import org.openrdf.rio.RDFParseException;
 
-public abstract class RMLMappingFactory {
+public class RMLMappingFactory {
 
     // Log
-    private static Log log = LogFactory.getLog(RMLMappingFactory.class);
+    private static final org.apache.log4j.Logger log = LogManager.getLogger(RMLMappingFactory.class);
     // Value factory
     private static ValueFactory vf = new ValueFactoryImpl();
+    
+    private RMLMappingExtractor extractor;
+    
+    public RMLMappingFactory(){
+        this.extractor = new RMLUnValidatedMappingExtractor();
+    }
 
     /**
      * Extract RML Mapping object from a RML file written with Turtle syntax.
@@ -91,14 +97,16 @@ public abstract class RMLMappingFactory {
      * @throws RDFParseException
      * @throws RepositoryException
      */
-    public static RMLMapping extractRMLMapping(String fileToRMLFile)
+    public RMLMapping extractRMLMapping(String fileToRMLFile)
             throws InvalidR2RMLStructureException, InvalidR2RMLSyntaxException,
             R2RMLDataError, RepositoryException, RDFParseException, IOException {
         // Load RDF data from R2RML Mapping document
-        SesameDataSet r2rmlMappingGraph = new RMLSesameDataSet();
+        RMLSesameDataSet rmlMappingGraph ;
+        RMLInputExtractor inputExtractor = new RMLInputExtractor() ;
+        rmlMappingGraph = inputExtractor.getMappingDoc(fileToRMLFile, RDFFormat.TURTLE);
         
         //RML document is a a URI
-        if(!RMLEngine.isLocalFile(fileToRMLFile)){
+        /*if(!RMLEngine.isLocalFile(fileToRMLFile)){
             HttpURLConnection con = (HttpURLConnection) new URL(fileToRMLFile).openConnection();
             con.setRequestMethod("HEAD");
             if (con.getResponseCode() == HttpURLConnection.HTTP_OK)
@@ -108,15 +116,16 @@ public abstract class RMLMappingFactory {
         else {
             //r2rmlMappingGraph.addFile(fileToRMLFile, RDFFormat.TURTLE);
             r2rmlMappingGraph.loadDataFromFile(fileToRMLFile, RDFFormat.TURTLE);
-        }
+        }*/
         log.debug("[RMLMappingFactory:extractRMLMapping] Number of R2RML triples in file "
-                + fileToRMLFile + " : " + r2rmlMappingGraph.getSize());
+                + fileToRMLFile + " : " + rmlMappingGraph.getSize());
         // Transform RDF with replacement shortcuts
-        replaceShortcuts(r2rmlMappingGraph);
+        extractor.replaceShortcuts(rmlMappingGraph);
         // Run few tests to help user in its RDF syntax
-        launchPreChecks(r2rmlMappingGraph);
-        // Construct R2RML Mapping object
-        Map<Resource, TriplesMap> triplesMapResources = extractTripleMapResources(r2rmlMappingGraph);
+        launchPreChecks(rmlMappingGraph);
+               
+        // Construct RML Mapping object
+        Map<Resource, TriplesMap> triplesMapResources = extractor.extractTriplesMapResources(rmlMappingGraph);
 
         log.debug("[RMLMappingFactory:extractRMLMapping] Number of RML triples with "
                 + " type "
@@ -126,7 +135,7 @@ public abstract class RMLMappingFactory {
         // Fill each triplesMap object
         for (Resource triplesMapResource : triplesMapResources.keySet()) // Extract each triplesMap
         {
-            extractTriplesMap(r2rmlMappingGraph, triplesMapResource,
+            extractor.extractTriplesMap(rmlMappingGraph, triplesMapResource,
                     triplesMapResources);
         }
         // Generate RMLMapping object
@@ -140,31 +149,31 @@ public abstract class RMLMappingFactory {
      * rr:graph. Occurrances of these properties must be treated exactly as if
      * the following triples were present in the mapping graph instead.
      *
-     * @param r2rmlMappingGraph
+     * @param rmlMappingGraph
      */
-    private static void replaceShortcuts(SesameDataSet r2rmlMappingGraph) {
+    private static void replaceShortcuts(SesameDataSet rmlMappingGraph) {
         Map<URI, URI> shortcutPredicates = new HashMap<URI, URI>();
         shortcutPredicates.put(
-                vf.createURI(Vocab.R2RML_NAMESPACE
+                vf.createURI(RMLVocabulary.R2RML_NAMESPACE
                 + R2RMLTerm.SUBJECT),
-                vf.createURI(Vocab.R2RML_NAMESPACE
+                vf.createURI(RMLVocabulary.R2RML_NAMESPACE
                 + R2RMLTerm.SUBJECT_MAP));
         shortcutPredicates.put(
-                vf.createURI(Vocab.R2RML_NAMESPACE
+                vf.createURI(RMLVocabulary.R2RML_NAMESPACE
                 + R2RMLTerm.PREDICATE),
-                vf.createURI(Vocab.R2RML_NAMESPACE
+                vf.createURI(RMLVocabulary.R2RML_NAMESPACE
                 + R2RMLTerm.PREDICATE_MAP));
-        shortcutPredicates.put(vf.createURI(Vocab.R2RML_NAMESPACE
+        shortcutPredicates.put(vf.createURI(RMLVocabulary.R2RML_NAMESPACE
                 + R2RMLTerm.OBJECT), vf
-                .createURI(Vocab.R2RML_NAMESPACE
+                .createURI(RMLVocabulary.R2RML_NAMESPACE
                 + R2RMLTerm.OBJECT_MAP));
         shortcutPredicates
-                .put(vf.createURI(Vocab.R2RML_NAMESPACE
+                .put(vf.createURI(RMLVocabulary.R2RML_NAMESPACE
                 + R2RMLTerm.GRAPH),
-                vf.createURI(Vocab.R2RML_NAMESPACE
+                vf.createURI(RMLVocabulary.R2RML_NAMESPACE
                 + R2RMLTerm.GRAPH_MAP));
         for (URI u : shortcutPredicates.keySet()) {
-            List<Statement> shortcutTriples = r2rmlMappingGraph.tuplePattern(
+            List<Statement> shortcutTriples = rmlMappingGraph.tuplePattern(
                     null, u, null);
             log.debug("[RMLMappingFactory:replaceShortcuts] Number of R2RML shortcuts found "
                     + "for "
@@ -172,17 +181,17 @@ public abstract class RMLMappingFactory {
                     + " : "
                     + shortcutTriples.size());
             for (Statement shortcutTriple : shortcutTriples) {
-                r2rmlMappingGraph.remove(shortcutTriple.getSubject(),
+                rmlMappingGraph.remove(shortcutTriple.getSubject(),
                         shortcutTriple.getPredicate(),
                         shortcutTriple.getObject());
                 BNode blankMap = vf.createBNode();
 
                 URI pMap = vf.createURI(shortcutPredicates.get(u).toString());
-                URI pConstant = vf.createURI(Vocab.R2RML_NAMESPACE
+                URI pConstant = vf.createURI(RMLVocabulary.R2RML_NAMESPACE
                         + R2RMLTerm.CONSTANT);
-                r2rmlMappingGraph.add(shortcutTriple.getSubject(), pMap,
+                rmlMappingGraph.add(shortcutTriple.getSubject(), pMap,
                         blankMap);
-                r2rmlMappingGraph.add(blankMap, pConstant,
+                rmlMappingGraph.add(blankMap, pConstant,
                         shortcutTriple.getObject());
             }
         }
@@ -193,20 +202,20 @@ public abstract class RMLMappingFactory {
      * resource that references the following other resources : - It must have
      * exactly one subject map * using the rr:subjectMap property.
      *
-     * @param r2rmlMappingGraph
+     * @param rmlMappingGraph
      * @return
      * @throws InvalidR2RMLStructureException
      */
     private static Map<Resource, TriplesMap> extractTripleMapResources(
-            SesameDataSet r2rmlMappingGraph)
+            SesameDataSet rmlMappingGraph)
             throws InvalidR2RMLStructureException {
         // A triples map is represented by a resource that references the
         // following other resources :
         // - It must have exactly one subject map
         Map<Resource, TriplesMap> triplesMapResources = new HashMap<Resource, TriplesMap>();
-        URI p = r2rmlMappingGraph.URIref(Vocab.R2RML_NAMESPACE
-                + Vocab.R2RMLTerm.SUBJECT_MAP);
-        List<Statement> statements = r2rmlMappingGraph.tuplePattern(null, p,
+        URI p = rmlMappingGraph.URIref(RMLVocabulary.R2RML_NAMESPACE
+                + RMLVocabulary.R2RMLTerm.SUBJECT_MAP);
+        List<Statement> statements = rmlMappingGraph.tuplePattern(null, p,
                 null);
         if (statements.isEmpty()) {
             log.warn("[RMLMappingFactory:extractRMLMapping] No subject statement found. Exit...");
@@ -217,7 +226,7 @@ public abstract class RMLMappingFactory {
          */ else // No subject map, Many shortcuts subjects
         {
             for (Statement s : statements) {
-                List<Statement> otherStatements = r2rmlMappingGraph
+                List<Statement> otherStatements = rmlMappingGraph
                         .tuplePattern(s.getSubject(), p, null);
                 if (otherStatements.size() > 1) {
                     throw new InvalidR2RMLStructureException(
@@ -235,18 +244,18 @@ public abstract class RMLMappingFactory {
         return triplesMapResources;
     }
 
-    private static void launchPreChecks(SesameDataSet r2rmlMappingGraph)
+    private static void launchPreChecks(SesameDataSet rmlMappingGraph)
             throws InvalidR2RMLStructureException {
         // Pre-check 1 : test if a triplesMap with predicateObject map exists
         // without subject map
-        URI p = r2rmlMappingGraph.URIref(Vocab.R2RML_NAMESPACE
+        URI p = rmlMappingGraph.URIref(RMLVocabulary.R2RML_NAMESPACE
                 + R2RMLTerm.PREDICATE_OBJECT_MAP);
-        List<Statement> statements = r2rmlMappingGraph.tuplePattern(null, p,
+        List<Statement> statements = rmlMappingGraph.tuplePattern(null, p,
                 null);
         for (Statement s : statements) {
-            p = r2rmlMappingGraph.URIref(Vocab.R2RML_NAMESPACE
+            p = rmlMappingGraph.URIref(RMLVocabulary.R2RML_NAMESPACE
                     + R2RMLTerm.SUBJECT_MAP);
-            List<Statement> otherStatements = r2rmlMappingGraph.tuplePattern(
+            List<Statement> otherStatements = rmlMappingGraph.tuplePattern(
                     s.getSubject(), p, null);
             if (otherStatements.isEmpty()) {
                 throw new InvalidR2RMLStructureException(
@@ -260,7 +269,7 @@ public abstract class RMLMappingFactory {
      * Extract triplesMap contents.
      *
      * @param triplesMap
-     * @param r2rmlMappingGraph
+     * @param rmlMappingGraph
      * @param triplesMapSubject
      * @param triplesMapResources
      * @param storedTriplesMaps
@@ -268,7 +277,7 @@ public abstract class RMLMappingFactory {
      * @throws InvalidR2RMLSyntaxException
      * @throws R2RMLDataError
      */
-    private static void extractTriplesMap(SesameDataSet r2rmlMappingGraph,
+    private static void extractTriplesMap(SesameDataSet rmlMappingGraph,
             Resource triplesMapSubject,
             Map<Resource, TriplesMap> triplesMapResources)
             throws InvalidR2RMLStructureException, InvalidR2RMLSyntaxException,
@@ -283,20 +292,20 @@ public abstract class RMLMappingFactory {
 
         // Extract TriplesMap properties
         // MVS: create LogicalSource
-        LogicalSource logicalSource = extractLogicalSource(r2rmlMappingGraph, triplesMapSubject);
+        LogicalSource logicalSource = extractLogicalSource(rmlMappingGraph, triplesMapSubject);
 
         // Extract subject
         // Create a graph maps storage to save all met graph uri during parsing.
         Set<GraphMap> graphMaps = new HashSet<GraphMap>();
         //log.debug("[RMLMappingFactory:extractTriplesMap] Current number of created graphMaps : "
         //        + graphMaps.size());
-        SubjectMap subjectMap = extractSubjectMap(r2rmlMappingGraph,
+        SubjectMap subjectMap = extractSubjectMap(rmlMappingGraph,
                 triplesMapSubject, graphMaps, result);
         //log.debug("[RMLMappingFactory:extractTriplesMap] Current number of created graphMaps : "
         //        + graphMaps.size());
         // Extract predicate-object maps
         Set<PredicateObjectMap> predicateObjectMaps = extractPredicateObjectMaps(
-                r2rmlMappingGraph, triplesMapSubject, graphMaps, result,
+                rmlMappingGraph, triplesMapSubject, graphMaps, result,
                 triplesMapResources);
         log.debug("[RMLMappingFactory:extractTriplesMap] Current number of created graphMaps : "
                 + graphMaps.size());
@@ -314,24 +323,24 @@ public abstract class RMLMappingFactory {
      * Still needs changing!!!!
      */
     private static Set<PredicateObjectMap> extractPredicateObjectMaps(
-            SesameDataSet r2rmlMappingGraph, Resource triplesMapSubject,
+            SesameDataSet rmlMappingGraph, Resource triplesMapSubject,
             Set<GraphMap> graphMaps, TriplesMap result,
             Map<Resource, TriplesMap> triplesMapResources)
             throws InvalidR2RMLStructureException, R2RMLDataError,
             InvalidR2RMLSyntaxException {
         log.debug("[RMLMappingFactory:extractPredicateObjectMaps] Extract predicate-object maps...");
         // Extract predicate-object maps
-        URI p = r2rmlMappingGraph.URIref(Vocab.R2RML_NAMESPACE
+        URI p = rmlMappingGraph.URIref(RMLVocabulary.R2RML_NAMESPACE
                 + R2RMLTerm.PREDICATE_OBJECT_MAP);
         
-        List<Statement> statements = r2rmlMappingGraph.tuplePattern(
+        List<Statement> statements = rmlMappingGraph.tuplePattern(
                 triplesMapSubject, p, null);
         
         Set<PredicateObjectMap> predicateObjectMaps = new HashSet<PredicateObjectMap>();
         try {
             for (Statement statement : statements) {
                 PredicateObjectMap predicateObjectMap = extractPredicateObjectMap(
-                        r2rmlMappingGraph, triplesMapSubject,
+                        rmlMappingGraph, triplesMapSubject,
                         (Resource) statement.getObject(),
                         graphMaps, triplesMapResources);
                 // Add own tripleMap to predicateObjectMap
@@ -353,7 +362,7 @@ public abstract class RMLMappingFactory {
      */
 
     private static PredicateObjectMap extractPredicateObjectMap(
-            SesameDataSet r2rmlMappingGraph,
+            SesameDataSet rmlMappingGraph,
             Resource triplesMapSubject,
             Resource predicateObject,
             Set<GraphMap> savedGraphMaps,
@@ -362,10 +371,10 @@ public abstract class RMLMappingFactory {
             InvalidR2RMLSyntaxException {
         log.debug("[RMLMappingFactory:extractPredicateObjectMap] Extract predicate-object map..");
         // Extract predicate maps
-        URI p = r2rmlMappingGraph.URIref(Vocab.R2RML_NAMESPACE
+        URI p = rmlMappingGraph.URIref(RMLVocabulary.R2RML_NAMESPACE
                 + R2RMLTerm.PREDICATE_MAP);
         
-        List<Statement> statements = r2rmlMappingGraph.tuplePattern(
+        List<Statement> statements = rmlMappingGraph.tuplePattern(
                 predicateObject, p, null);
         
         if (statements.size() < 1) {
@@ -380,7 +389,7 @@ public abstract class RMLMappingFactory {
             for (Statement statement : statements) {
                 log.info("[RMLMappingFactory] saved Graphs " + savedGraphMaps);
                 PredicateMap predicateMap = extractPredicateMap(
-                        r2rmlMappingGraph, (Resource) statement.getObject(),
+                        rmlMappingGraph, (Resource) statement.getObject(),
                         savedGraphMaps);
                 predicateMaps.add(predicateMap);
             }
@@ -391,9 +400,9 @@ public abstract class RMLMappingFactory {
                     + predicateObject.stringValue());
         }
         // Extract object maps
-        URI o = r2rmlMappingGraph.URIref(Vocab.R2RML_NAMESPACE
+        URI o = rmlMappingGraph.URIref(RMLVocabulary.R2RML_NAMESPACE
                 + R2RMLTerm.OBJECT_MAP);
-        statements = r2rmlMappingGraph.tuplePattern(predicateObject, o, null);
+        statements = rmlMappingGraph.tuplePattern(predicateObject, o, null);
         if (statements.size() < 1) {
             throw new InvalidR2RMLStructureException(
                     "[RMLMappingFactory:extractPredicateObjectMap] "
@@ -406,14 +415,14 @@ public abstract class RMLMappingFactory {
             for (Statement statement : statements) {
                 log.debug("[RMLMappingFactory:extractPredicateObjectMap] Try to extract object map..");
                 ReferencingObjectMap refObjectMap = extractReferencingObjectMap(
-                        r2rmlMappingGraph, (Resource) statement.getObject(),
+                        rmlMappingGraph, (Resource) statement.getObject(),
                         savedGraphMaps, triplesMapResources);
                 if (refObjectMap != null) {
                     refObjectMaps.add(refObjectMap);
                     // Not a simple object map, skip to next.
                     continue;
                 }
-                ObjectMap objectMap = extractObjectMap(r2rmlMappingGraph,
+                ObjectMap objectMap = extractObjectMap(rmlMappingGraph,
                         (Resource) statement.getObject(), savedGraphMaps, 
                         triplesMapResources);
                 objectMap.setOwnTriplesMap(triplesMapResources.get(triplesMapSubject));
@@ -434,10 +443,10 @@ public abstract class RMLMappingFactory {
         // Add graphMaps
         Set<GraphMap> graphMaps = new HashSet<GraphMap>();
         Set<Value> graphMapValues = extractValuesFromResource(
-                r2rmlMappingGraph, predicateObject, R2RMLTerm.GRAPH_MAP);
+                rmlMappingGraph, predicateObject, R2RMLTerm.GRAPH_MAP);
         
         if (graphMapValues != null) {
-            graphMaps = extractGraphMapValues(r2rmlMappingGraph, graphMapValues, savedGraphMaps);
+            graphMaps = extractGraphMapValues(rmlMappingGraph, graphMapValues, savedGraphMaps);
             log.info("[RMLMappingFactory] graph Maps returned " + graphMaps);
         }
         /*Set<GraphMap> graphMaps = new HashSet<GraphMap>();
@@ -474,15 +483,15 @@ public abstract class RMLMappingFactory {
      */
 
     private static ReferencingObjectMap extractReferencingObjectMap(
-            SesameDataSet r2rmlMappingGraph, Resource object,
+            SesameDataSet rmlMappingGraph, Resource object,
             Set<GraphMap> graphMaps,
             Map<Resource, TriplesMap> triplesMapResources)
             throws InvalidR2RMLStructureException, InvalidR2RMLSyntaxException {
         log.debug("[RMLMappingFactory:extractReferencingObjectMap] Extract referencing object map..");
-        URI parentTriplesMap = (URI) extractValueFromTermMap(r2rmlMappingGraph,
+        URI parentTriplesMap = (URI) extractValueFromTermMap(rmlMappingGraph,
                 object, R2RMLTerm.PARENT_TRIPLES_MAP);
         Set<JoinCondition> joinConditions = extractJoinConditions(
-                r2rmlMappingGraph, object);
+                rmlMappingGraph, object);
         if (parentTriplesMap == null && !joinConditions.isEmpty()) {
             throw new InvalidR2RMLStructureException(
                     "[RMLMappingFactory:extractReferencingObjectMap] "
@@ -527,21 +536,21 @@ public abstract class RMLMappingFactory {
      */
 
     private static Set<JoinCondition> extractJoinConditions(
-            SesameDataSet r2rmlMappingGraph, Resource object)
+            SesameDataSet rmlMappingGraph, Resource object)
             throws InvalidR2RMLStructureException, InvalidR2RMLSyntaxException {
         log.debug("[RMLMappingFactory:extractJoinConditions] Extract join conditions..");
         Set<JoinCondition> result = new HashSet<JoinCondition>();
         // Extract predicate-object maps
-        URI p = r2rmlMappingGraph.URIref(Vocab.R2RML_NAMESPACE
+        URI p = rmlMappingGraph.URIref(RMLVocabulary.R2RML_NAMESPACE
                 + R2RMLTerm.JOIN_CONDITION);
-        List<Statement> statements = r2rmlMappingGraph.tuplePattern(object, p,
+        List<Statement> statements = rmlMappingGraph.tuplePattern(object, p,
                 null);
         try {
             for (Statement statement : statements) {
                 Resource jc = (Resource) statement.getObject();
-                String child = extractLiteralFromTermMap(r2rmlMappingGraph, jc,
+                String child = extractLiteralFromTermMap(rmlMappingGraph, jc,
                         R2RMLTerm.CHILD);
-                String parent = extractLiteralFromTermMap(r2rmlMappingGraph,
+                String parent = extractLiteralFromTermMap(rmlMappingGraph,
                         jc, R2RMLTerm.PARENT);
                 if (parent == null || child == null) {
                     throw new InvalidR2RMLStructureException(
@@ -564,28 +573,28 @@ public abstract class RMLMappingFactory {
      * Still needs changing
      */
 
-    private static ObjectMap extractObjectMap(SesameDataSet r2rmlMappingGraph,
+    private static ObjectMap extractObjectMap(SesameDataSet rmlMappingGraph,
             Resource object, Set<GraphMap> graphMaps, 
             Map<Resource, TriplesMap> triplesMapResources)
             throws InvalidR2RMLStructureException, R2RMLDataError,
             InvalidR2RMLSyntaxException {
         log.debug("[RMLMappingFactory:extractObjectMap] Extract object map..");
         // Extract object maps properties
-        Value constantValue = extractValueFromTermMap(r2rmlMappingGraph,
+        Value constantValue = extractValueFromTermMap(rmlMappingGraph,
                 object, R2RMLTerm.CONSTANT);
-        String stringTemplate = extractLiteralFromTermMap(r2rmlMappingGraph,
+        String stringTemplate = extractLiteralFromTermMap(rmlMappingGraph,
                 object, R2RMLTerm.TEMPLATE);
-        String languageTag = extractLiteralFromTermMap(r2rmlMappingGraph,
+        String languageTag = extractLiteralFromTermMap(rmlMappingGraph,
                 object, R2RMLTerm.LANGUAGE);
-        URI termType = (URI) extractValueFromTermMap(r2rmlMappingGraph, object,
+        URI termType = (URI) extractValueFromTermMap(rmlMappingGraph, object,
                 R2RMLTerm.TERM_TYPE);
-        URI dataType = (URI) extractValueFromTermMap(r2rmlMappingGraph, object,
+        URI dataType = (URI) extractValueFromTermMap(rmlMappingGraph, object,
                 R2RMLTerm.DATATYPE);
-        String inverseExpression = extractLiteralFromTermMap(r2rmlMappingGraph,
+        String inverseExpression = extractLiteralFromTermMap(rmlMappingGraph,
                 object, R2RMLTerm.INVERSE_EXPRESSION);
 
         //MVS: Decide on ReferenceIdentifier
-        ReferenceIdentifier referenceValue = extractReferenceIdentifier(r2rmlMappingGraph, object);
+        ReferenceIdentifier referenceValue = extractReferenceIdentifier(rmlMappingGraph, object);
 
         StdObjectMap result = new StdObjectMap(null, constantValue, dataType,
                 languageTag, stringTemplate, termType, inverseExpression,
@@ -594,10 +603,10 @@ public abstract class RMLMappingFactory {
         return result;
     }
 
-    private static ReferenceIdentifier extractReferenceIdentifier(SesameDataSet r2rmlMappingGraph, Resource resource) throws InvalidR2RMLStructureException {
+    private static ReferenceIdentifier extractReferenceIdentifier(SesameDataSet rmlMappingGraph, Resource resource) throws InvalidR2RMLStructureException {
         //MVS: look for a reference or column, prefer rr:column
-        String columnValueStr = extractLiteralFromTermMap(r2rmlMappingGraph, resource, R2RMLTerm.COLUMN);
-        String referenceValueStr = extractLiteralFromTermMap(r2rmlMappingGraph, resource, RMLTerm.REFERENCE);
+        String columnValueStr = extractLiteralFromTermMap(rmlMappingGraph, resource, R2RMLTerm.COLUMN);
+        String referenceValueStr = extractLiteralFromTermMap(rmlMappingGraph, resource, RMLTerm.REFERENCE);
 
         if (columnValueStr != null && referenceValueStr != null) {
             throw new InvalidR2RMLStructureException(
@@ -615,23 +624,23 @@ public abstract class RMLMappingFactory {
     }
 
     private static PredicateMap extractPredicateMap(
-            SesameDataSet r2rmlMappingGraph, Resource object,
+            SesameDataSet rmlMappingGraph, Resource object,
             Set<GraphMap> graphMaps) throws InvalidR2RMLStructureException,
             R2RMLDataError, InvalidR2RMLSyntaxException {
         log.debug("[RMLMappingFactory:extractPredicateMap] Extract predicate map..");
         // Extract object maps properties
-        Value constantValue = extractValueFromTermMap(r2rmlMappingGraph,
+        Value constantValue = extractValueFromTermMap(rmlMappingGraph,
                 object, R2RMLTerm.CONSTANT);
-        String stringTemplate = extractLiteralFromTermMap(r2rmlMappingGraph,
+        String stringTemplate = extractLiteralFromTermMap(rmlMappingGraph,
                 object, R2RMLTerm.TEMPLATE);
-        URI termType = (URI) extractValueFromTermMap(r2rmlMappingGraph, object,
+        URI termType = (URI) extractValueFromTermMap(rmlMappingGraph, object,
                 R2RMLTerm.TERM_TYPE);
 
-        String inverseExpression = extractLiteralFromTermMap(r2rmlMappingGraph,
+        String inverseExpression = extractLiteralFromTermMap(rmlMappingGraph,
                 object, R2RMLTerm.INVERSE_EXPRESSION);
 
         //MVS: Decide on ReferenceIdentifier
-        ReferenceIdentifier referenceValue = extractReferenceIdentifier(r2rmlMappingGraph, object);
+        ReferenceIdentifier referenceValue = extractReferenceIdentifier(rmlMappingGraph, object);
 
         PredicateMap result = new StdPredicateMap(null, constantValue,
                 stringTemplate, inverseExpression, referenceValue, termType);
@@ -642,7 +651,7 @@ public abstract class RMLMappingFactory {
     /**
      * Extract subjectMap contents
      *
-     * @param r2rmlMappingGraph
+     * @param rmlMappingGraph
      * @param triplesMapSubject
      * @return
      * @throws InvalidR2RMLStructureException
@@ -650,15 +659,15 @@ public abstract class RMLMappingFactory {
      * @throws R2RMLDataError
      */
     private static SubjectMap extractSubjectMap(
-            SesameDataSet r2rmlMappingGraph, Resource triplesMapSubject,
+            SesameDataSet rmlMappingGraph, Resource triplesMapSubject,
             Set<GraphMap> savedGraphMaps, TriplesMap ownTriplesMap)
             throws InvalidR2RMLStructureException, R2RMLDataError,
             InvalidR2RMLSyntaxException {
         log.debug("[RMLMappingFactory:extractPredicateObjectMaps] Extract subject map...");
         // Extract subject map
-        URI p = r2rmlMappingGraph.URIref(Vocab.R2RML_NAMESPACE
+        URI p = rmlMappingGraph.URIref(RMLVocabulary.R2RML_NAMESPACE
                 + R2RMLTerm.SUBJECT_MAP);
-        List<Statement> statements = r2rmlMappingGraph.tuplePattern(
+        List<Statement> statements = rmlMappingGraph.tuplePattern(
                 triplesMapSubject, p, null);
 
         if (statements.isEmpty()) {
@@ -678,32 +687,32 @@ public abstract class RMLMappingFactory {
         log.debug("[RMLMappingFactory:extractTriplesMap] Found subject map : "
                 + subjectMap.stringValue());
 
-        Value constantValue = extractValueFromTermMap(r2rmlMappingGraph,
+        Value constantValue = extractValueFromTermMap(rmlMappingGraph,
                 subjectMap, R2RMLTerm.CONSTANT);
-        String stringTemplate = extractLiteralFromTermMap(r2rmlMappingGraph,
+        String stringTemplate = extractLiteralFromTermMap(rmlMappingGraph,
                 subjectMap, R2RMLTerm.TEMPLATE);
-        URI termType = (URI) extractValueFromTermMap(r2rmlMappingGraph,
+        URI termType = (URI) extractValueFromTermMap(rmlMappingGraph,
                 subjectMap, R2RMLTerm.TERM_TYPE);
-        String inverseExpression = extractLiteralFromTermMap(r2rmlMappingGraph,
+        String inverseExpression = extractLiteralFromTermMap(rmlMappingGraph,
                 subjectMap, R2RMLTerm.INVERSE_EXPRESSION);
 
         //MVS: Decide on ReferenceIdentifier
-        ReferenceIdentifier referenceValue = extractReferenceIdentifier(r2rmlMappingGraph, subjectMap);
+        ReferenceIdentifier referenceValue = extractReferenceIdentifier(rmlMappingGraph, subjectMap);
         //AD: The values of the rr:class property must be IRIs. 
         //AD: Would that mean that it can not be a reference to an extract of the input or a template?
-        Set<URI> classIRIs = extractURIsFromTermMap(r2rmlMappingGraph,
+        Set<URI> classIRIs = extractURIsFromTermMap(rmlMappingGraph,
                 subjectMap, R2RMLTerm.CLASS);
         
         Set<GraphMap> graphMaps = new HashSet<GraphMap>();
         Set<Value> graphMapValues = extractValuesFromResource(
-                r2rmlMappingGraph, subjectMap, R2RMLTerm.GRAPH_MAP);
+                rmlMappingGraph, subjectMap, R2RMLTerm.GRAPH_MAP);
        
         if (graphMapValues != null) {
-            graphMaps = extractGraphMapValues(r2rmlMappingGraph, graphMapValues, savedGraphMaps);
+            graphMaps = extractGraphMapValues(rmlMappingGraph, graphMapValues, savedGraphMaps);
             log.info("[RMLMappingFactory] graph Maps returned " + graphMaps);
         }
         /*Set<Value> graphMapValues = extractValuesFromResource(
-                r2rmlMappingGraph, subjectMap, R2RMLTerm.GRAPH_MAP);
+                rmlMappingGraph, subjectMap, R2RMLTerm.GRAPH_MAP);
         Set<GraphMap> graphMaps = new HashSet<GraphMap>();
         if (graphMapValues != null) {
             for (Value graphMap : graphMapValues) {
@@ -718,7 +727,7 @@ public abstract class RMLMappingFactory {
         /*        if (found) {
                     graphMaps.add(graphMapFound);
                 } else {
-                    GraphMap newGraphMap = extractGraphMap(r2rmlMappingGraph,
+                    GraphMap newGraphMap = extractGraphMap(rmlMappingGraph,
                             (Resource) graphMap);
                     savedGraphMaps.add(newGraphMap);
                     graphMaps.add(newGraphMap);
@@ -733,7 +742,7 @@ public abstract class RMLMappingFactory {
     }
     
     
-    private static Set<GraphMap> extractGraphMapValues(SesameDataSet r2rmlMappingGraph, Set<Value> graphMapValues, Set<GraphMap> savedGraphMaps) throws InvalidR2RMLStructureException {
+    private static Set<GraphMap> extractGraphMapValues(SesameDataSet rmlMappingGraph, Set<Value> graphMapValues, Set<GraphMap> savedGraphMaps) throws InvalidR2RMLStructureException {
         
         Set<GraphMap> graphMaps = new HashSet<GraphMap>();
         
@@ -751,7 +760,7 @@ public abstract class RMLMappingFactory {
                 } else {
                     GraphMap newGraphMap = null;
                     try {
-                        newGraphMap = extractGraphMap(r2rmlMappingGraph,
+                        newGraphMap = extractGraphMap(rmlMappingGraph,
                        (Resource) graphMap);
                     } catch (R2RMLDataError ex) {
                         Logger.getLogger(RMLMappingFactory.class.getName()).log(Level.SEVERE, null, ex);
@@ -770,22 +779,22 @@ public abstract class RMLMappingFactory {
     /*
      * Still needs to be modified!!
      */
-    private static GraphMap extractGraphMap(SesameDataSet r2rmlMappingGraph,
+    private static GraphMap extractGraphMap(SesameDataSet rmlMappingGraph,
             Resource graphMap) throws InvalidR2RMLStructureException,
             R2RMLDataError, InvalidR2RMLSyntaxException {
         log.debug("[RMLMappingFactory:extractPredicateObjectMaps] Extract graph map...");
 
-        Value constantValue = extractValueFromTermMap(r2rmlMappingGraph,
+        Value constantValue = extractValueFromTermMap(rmlMappingGraph,
                 graphMap, R2RMLTerm.CONSTANT);
-        String stringTemplate = extractLiteralFromTermMap(r2rmlMappingGraph,
+        String stringTemplate = extractLiteralFromTermMap(rmlMappingGraph,
                 graphMap, R2RMLTerm.TEMPLATE);
-        String inverseExpression = extractLiteralFromTermMap(r2rmlMappingGraph,
+        String inverseExpression = extractLiteralFromTermMap(rmlMappingGraph,
                 graphMap, R2RMLTerm.INVERSE_EXPRESSION);
 
         //MVS: Decide on ReferenceIdentifier
-        ReferenceIdentifier referenceValue = extractReferenceIdentifier(r2rmlMappingGraph, graphMap);
+        ReferenceIdentifier referenceValue = extractReferenceIdentifier(rmlMappingGraph, graphMap);
 
-        URI termType = (URI) extractValueFromTermMap(r2rmlMappingGraph,
+        URI termType = (URI) extractValueFromTermMap(rmlMappingGraph,
                 graphMap, R2RMLTerm.TERM_TYPE);
 
         GraphMap result = new StdGraphMap(constantValue, stringTemplate,
@@ -797,19 +806,19 @@ public abstract class RMLMappingFactory {
     /**
      * Extract content literal from a term type resource.
      *
-     * @param r2rmlMappingGraph
+     * @param rmlMappingGraph
      * @param termType
      * @param term
      * @return
      * @throws InvalidR2RMLStructureException
      */
     private static String extractLiteralFromTermMap(
-            SesameDataSet r2rmlMappingGraph, Resource termType, Enum term)
+            SesameDataSet rmlMappingGraph, Resource termType, Enum term)
             throws InvalidR2RMLStructureException {
 
-        URI p = getTermURI(r2rmlMappingGraph, term);
+        URI p = getTermURI(rmlMappingGraph, term);
 
-        List<Statement> statements = r2rmlMappingGraph.tuplePattern(termType,
+        List<Statement> statements = rmlMappingGraph.tuplePattern(termType,
                 p, null);
         if (statements.isEmpty()) {
             return null;
@@ -834,13 +843,13 @@ public abstract class RMLMappingFactory {
      * @throws InvalidR2RMLStructureException
      */
         private static Value extractValueFromTermMap(
-            SesameDataSet r2rmlMappingGraph, Resource termType,
+            SesameDataSet rmlMappingGraph, Resource termType,
             Enum term)
             throws InvalidR2RMLStructureException {
 
-        URI p = getTermURI(r2rmlMappingGraph, term);
+        URI p = getTermURI(rmlMappingGraph, term);
 
-        List<Statement> statements = r2rmlMappingGraph.tuplePattern(termType,
+        List<Statement> statements = rmlMappingGraph.tuplePattern(termType,
                 p, null);
         if (statements.isEmpty()) {
             return null;
@@ -863,13 +872,13 @@ public abstract class RMLMappingFactory {
      * @throws InvalidR2RMLStructureException
      */
     private static Set<Value> extractValuesFromResource(
-            SesameDataSet r2rmlMappingGraph,
+            SesameDataSet rmlMappingGraph,
             Resource termType,
             Enum term)
             throws InvalidR2RMLStructureException {
-        URI p = getTermURI(r2rmlMappingGraph, term);
+        URI p = getTermURI(rmlMappingGraph, term);
 
-        List<Statement> statements = r2rmlMappingGraph.tuplePattern(termType,
+        List<Statement> statements = rmlMappingGraph.tuplePattern(termType,
                 p, null);
         if (statements.isEmpty()) {
             return null;
@@ -891,12 +900,12 @@ public abstract class RMLMappingFactory {
      * @throws InvalidR2RMLStructureException
      */
     private static Set<URI> extractURIsFromTermMap(
-            SesameDataSet r2rmlMappingGraph, Resource termType,
+            SesameDataSet rmlMappingGraph, Resource termType,
             R2RMLTerm term)
             throws InvalidR2RMLStructureException {
-        URI p = getTermURI(r2rmlMappingGraph, term);
+        URI p = getTermURI(rmlMappingGraph, term);
 
-        List<Statement> statements = r2rmlMappingGraph.tuplePattern(termType,
+        List<Statement> statements = rmlMappingGraph.tuplePattern(termType,
                 p, null);
         if (statements.isEmpty()) {
             return null;
@@ -911,24 +920,24 @@ public abstract class RMLMappingFactory {
         return uris;
     }
 
-    private static URI getTermURI(SesameDataSet r2rmlMappingGraph, Enum term) throws InvalidR2RMLStructureException {
-        String namespace = Vocab.R2RML_NAMESPACE;
+    private static URI getTermURI(SesameDataSet rmlMappingGraph, Enum term) throws InvalidR2RMLStructureException {
+        String namespace = RMLVocabulary.R2RML_NAMESPACE;
 
-        if (term instanceof Vocab.RMLTerm) {
-            namespace = Vocab.RML_NAMESPACE;
+        if (term instanceof RMLVocabulary.RMLTerm) {
+            namespace = RMLVocabulary.RML_NAMESPACE;
         } else if (!(term instanceof R2RMLTerm)) {
             throw new InvalidR2RMLStructureException(
                     "[RMLMappingFactory:extractValueFromTermMap] " + term + " is not valid.");
         }
 
-        return r2rmlMappingGraph
+        return rmlMappingGraph
                 .URIref(namespace + term);
     }
 
     /**
      * Extract logicalSource contents.
      *
-     * @param r2rmlMappingGraph
+     * @param rmlMappingGraph
      * @param triplesMapSubject
      * @return
      * @throws InvalidR2RMLStructureException
@@ -940,15 +949,15 @@ public abstract class RMLMappingFactory {
             throws InvalidR2RMLStructureException, InvalidR2RMLSyntaxException,
             R2RMLDataError {
 
-        Vocab.QLTerm referenceFormulation = null;
+        RMLVocabulary.QLTerm referenceFormulation = null;
 
         // Extract logical table blank node
         // favor logical table over source
-        URI pTable = rmlMappingGraph.URIref(Vocab.R2RML_NAMESPACE
-                + Vocab.R2RMLTerm.LOGICAL_TABLE);
+        URI pTable = rmlMappingGraph.URIref(RMLVocabulary.R2RML_NAMESPACE
+                + RMLVocabulary.R2RMLTerm.LOGICAL_TABLE);
 
-        URI pSource = rmlMappingGraph.URIref(Vocab.RML_NAMESPACE
-                + Vocab.RMLTerm.LOGICAL_SOURCE);
+        URI pSource = rmlMappingGraph.URIref(RMLVocabulary.RML_NAMESPACE
+                + RMLVocabulary.RMLTerm.LOGICAL_SOURCE);
 
         List<Statement> sTable = rmlMappingGraph.tuplePattern(
                 triplesMapSubject, pTable, null);
@@ -998,14 +1007,14 @@ public abstract class RMLMappingFactory {
         }
 
         // Check SQL base table or view
-        URI pName = rmlMappingGraph.URIref(Vocab.RML_NAMESPACE
-                + Vocab.RMLTerm.SOURCE);
+        URI pName = rmlMappingGraph.URIref(RMLVocabulary.RML_NAMESPACE
+                + RMLVocabulary.RMLTerm.SOURCE);
 
         List<Statement> statementsName = rmlMappingGraph.tuplePattern(
                 blankLogicalSource, pName, null);
 
-        URI pView = rmlMappingGraph.URIref(Vocab.RML_NAMESPACE
-                + Vocab.RMLTerm.ITERATOR);
+        URI pView = rmlMappingGraph.URIref(RMLVocabulary.RML_NAMESPACE
+                + RMLVocabulary.RMLTerm.ITERATOR);
         List<Statement> statementsView = rmlMappingGraph.tuplePattern(
                 blankLogicalSource, pView, null);
 
@@ -1102,9 +1111,9 @@ public abstract class RMLMappingFactory {
         return logicalSource;
     }
 
-    private static Vocab.QLTerm getReferenceFormulation(SesameDataSet rmlMappingGraph, Resource subject) throws InvalidR2RMLStructureException {
-        URI pReferenceFormulation = rmlMappingGraph.URIref(Vocab.RML_NAMESPACE
-                + Vocab.RMLTerm.REFERENCE_FORMULATION);
+    private static RMLVocabulary.QLTerm getReferenceFormulation(SesameDataSet rmlMappingGraph, Resource subject) throws InvalidR2RMLStructureException {
+        URI pReferenceFormulation = rmlMappingGraph.URIref(RMLVocabulary.RML_NAMESPACE
+                + RMLVocabulary.RMLTerm.REFERENCE_FORMULATION);
         List<Statement> statements = rmlMappingGraph.tuplePattern(
                 subject, pReferenceFormulation, null);
         if (statements.size() > 1) {
@@ -1114,11 +1123,11 @@ public abstract class RMLMappingFactory {
                     + " has too many query language defined.");
         }
         if (statements.isEmpty()) {
-            return Vocab.QLTerm.SQL_CLASS;
+            return RMLVocabulary.QLTerm.SQL_CLASS;
         }
         Resource object = (Resource) statements.get(0).getObject();
 
-        return Vocab.getQLTerms(object.stringValue());
+        return RMLVocabulary.getQLTerms(object.stringValue());
     }
 
     private static void extractLogicalTable() {

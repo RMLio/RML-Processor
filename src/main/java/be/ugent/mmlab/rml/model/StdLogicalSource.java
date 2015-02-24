@@ -1,6 +1,6 @@
 package be.ugent.mmlab.rml.model;
 
-import be.ugent.mmlab.rml.vocabulary.Vocab.QLTerm;
+import be.ugent.mmlab.rml.vocabulary.RMLVocabulary.QLTerm;
 
 /**
  *  Concrete implementation of a Logical Source

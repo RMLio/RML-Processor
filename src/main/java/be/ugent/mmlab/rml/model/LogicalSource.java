@@ -1,6 +1,6 @@
 package be.ugent.mmlab.rml.model;
 
-import be.ugent.mmlab.rml.vocabulary.Vocab;
+import be.ugent.mmlab.rml.vocabulary.RMLVocabulary;
 
 /**
  *
@@ -24,5 +24,5 @@ public interface LogicalSource {
      * Every logical source can indicate how its expression should be
      * interpreted
      */
-    public Vocab.QLTerm getReferenceFormulation();
+    public RMLVocabulary.QLTerm getReferenceFormulation();
 }

@@ -2,7 +2,7 @@ package be.ugent.mmlab.rml.processor.concrete;
 
 import be.ugent.mmlab.rml.processor.RMLProcessor;
 import be.ugent.mmlab.rml.processor.RMLProcessorFactory;
-import be.ugent.mmlab.rml.vocabulary.Vocab.QLTerm;
+import be.ugent.mmlab.rml.vocabulary.RMLVocabulary.QLTerm;
 
 /**
  * This factory class creates language-dependent processors processors

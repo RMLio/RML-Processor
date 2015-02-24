@@ -4,7 +4,6 @@
  */
 package be.ugent.mmlab.rml.sesame;
 
-//import be.ugent.mmlab.rml.extractor.RMLUnValidatedMappingExtractor;
 import info.aduna.iteration.Iterations;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -75,7 +74,7 @@ public class RMLSesameDataSet extends SesameDataSet {
     public RMLSesameDataSet(boolean inferencing) {
         try {
             if (inferencing) {
-                log.error("inference enabled");
+                log.debug("inference enabled");
 
                 String pre =
                           "PREFIX rml: <http://semweb.mmlab.be/ns/rml#>\n"
@@ -128,12 +127,12 @@ public class RMLSesameDataSet extends SesameDataSet {
                         + "?gm <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/r2rml#GraphMap> . } "
                         + "}";
                 currentRepository = new SailRepository(new CustomGraphQueryInferencer(
-                        new MemoryStore(), QueryLanguage.SPARQL, rule, match));    
+                        new MemoryStore(), QueryLanguage.SPARQL, rule, match));   
             } else {
                 log.error("inference disabled");
                 currentRepository = new SailRepository(new MemoryStore());
             }
-            currentRepository.initialize();
+                currentRepository.initialize();
         } catch (RepositoryException e) {
             log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": " + e);
         } catch (MalformedQueryException ex) {
@@ -187,13 +186,13 @@ public class RMLSesameDataSet extends SesameDataSet {
     public void loadDataFromFile(String filePath, RDFFormat format,
             Resource... contexts) throws RepositoryException, IOException, RDFParseException {
 
-        RepositoryConnection con = null;
+        RepositoryConnection con = currentRepository.getConnection();
         try {
-            con = currentRepository.getConnection();
             // upload a file
             File f = new File(filePath);
             try{
             con.add(f, null, RDFFormat.TURTLE);
+            con.commit();
             }
             catch(Exception e){
                 log.error( 
@@ -212,19 +211,26 @@ public class RMLSesameDataSet extends SesameDataSet {
     
     @Override
     public void addFile(String filepath, RDFFormat format) {
+        RepositoryConnection con = null;
         try {
-            RepositoryConnection con = currentRepository.getConnection();
-            
+            con = currentRepository.getConnection();
+            File file = new File(filepath);
+            con.add(file, "", format);
+            con.commit();
+        } catch (RepositoryException ex) {
+            log.error("ex " + ex);
+            java.util.logging.Logger.getLogger(RMLSesameDataSet.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            java.util.logging.Logger.getLogger(RMLSesameDataSet.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (RDFParseException ex) {
+            java.util.logging.Logger.getLogger(RMLSesameDataSet.class.getName()).log(Level.SEVERE, null, ex);
+        } 
+        finally {
             try {
-                
-                log.error("the repository " + con.getRepository());
-                con.add(new File(filepath), "", format);
-                con.commit();
-            } finally {
                 con.close();
+            } catch (RepositoryException ex) {
+                java.util.logging.Logger.getLogger(RMLSesameDataSet.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
     

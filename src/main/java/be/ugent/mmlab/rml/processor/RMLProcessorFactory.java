@@ -1,7 +1,7 @@
 
 package be.ugent.mmlab.rml.processor;
 
-import be.ugent.mmlab.rml.vocabulary.Vocab.QLTerm;
+import be.ugent.mmlab.rml.vocabulary.RMLVocabulary.QLTerm;
 
 /**
  * Interface for creating processors
