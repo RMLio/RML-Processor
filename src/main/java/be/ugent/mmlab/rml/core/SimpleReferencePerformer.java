@@ -59,8 +59,7 @@ public class SimpleReferencePerformer extends NodeRMLPerformer {
                 }
             }
             else
-                log.debug("[SimpleReferencePerformer] object of " + map.getName() + 
-                        "Triples Map for " + node.toString() + "row was null. Triple was not ");
+                log.debug("[SimpleReferencePerformer] object of " + map.getName() + " was null. ");
         }
         else{
             List<String> values = processor.processTermMap(map.getSubjectMap(), node);    

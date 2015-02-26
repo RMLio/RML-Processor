@@ -18,7 +18,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class NodeRMLPerformer implements RMLPerformer{
     
-    private static Log log = LogFactory.getLog(RMLMappingFactory.class);
+    private static Log log = LogFactory.getLog(NodeRMLPerformer.class);
     
     protected RMLProcessor processor;
 

@@ -40,7 +40,6 @@ public class JSONPathProcessor extends AbstractRMLProcessor {
             JsonPath path = JsonPath.compile(reference);
             
             Object val = path.read(input);
-            log.info("[JSONPathProcessor:execute] input " + input.toString());
             execute(dataset, map, performer, val);
 
         } catch (FileNotFoundException ex) {

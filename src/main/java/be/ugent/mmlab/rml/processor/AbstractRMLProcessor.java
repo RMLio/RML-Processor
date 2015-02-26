@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
 import net.antidot.semantic.rdf.rdb2rdf.r2rml.core.R2RMLEngine;
 import net.antidot.semantic.rdf.rdb2rdf.r2rml.tools.R2RMLToolkit;
@@ -265,7 +264,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
 
                     //Create the processor based on the parent triples map to perform the join
                     RMLProcessorFactory factory = new ConcreteRMLProcessorFactory();
-                    QLTerm queryLanguage = parentTriplesMap.getLogicalSource().getReferenceFormulation();
+                    QLTerm referenceFormulation = parentTriplesMap.getLogicalSource().getReferenceFormulation();
                     String source = parentTriplesMap.getLogicalSource().getIdentifier();
 
                     InputStream input = null;
@@ -276,8 +275,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                     } catch (IOException ex) {
                         Logger.getLogger(AbstractRMLProcessor.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                                       
-                    RMLProcessor processor = factory.create(queryLanguage);
+                    RMLProcessor processor = factory.create(referenceFormulation);
 
                     RMLPerformer performer ;
                     //different Logical Source and no Conditions
@@ -301,6 +299,9 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                                     break;
                                 case "JSONPath":
                                     expression = parentTriplesMap.getLogicalSource().getReference().toString().substring(end+1);
+                                    break;
+                                case "CSS3":
+                                    expression = parentTriplesMap.getLogicalSource().getReference().toString().substring(end);
                                     break;
                             }
                             processor.execute_node(dataset, expression, parentTriplesMap, performer, node, null);
