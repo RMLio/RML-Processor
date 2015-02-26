@@ -7,7 +7,7 @@
     <version>0.1</version>
     <packaging>jar</packaging>
 
-    <name>RML Processor5</name>
+    <name>RML Processor6</name>
     <url>http://maven.apache.org</url>
 
     <properties>
@@ -208,7 +208,12 @@
             <groupId>net.sf.saxon</groupId>
             <artifactId>Saxon-HE</artifactId>
             <version>9.5.1-4</version>
-            <classifier>compressed</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.jodd</groupId>
+            <artifactId>jodd-lagarto</artifactId>
+            <version>3.5</version>
+            <type>jar</type>
         </dependency>
     </dependencies>
 

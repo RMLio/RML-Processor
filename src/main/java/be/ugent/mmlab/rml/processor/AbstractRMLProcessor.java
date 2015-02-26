@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
 import net.antidot.semantic.rdf.rdb2rdf.r2rml.core.R2RMLEngine;
 import net.antidot.semantic.rdf.rdb2rdf.r2rml.tools.R2RMLToolkit;
@@ -209,6 +210,10 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                             } else {
                                 temp = temp.replaceAll("\\{" + expression + "\\}", replacement);
                             }
+                            //Use encoding UTF-8 explicit URL encode; other one is deprecated 
+                            //temp.replaceAll(expression, "body div.CEURTOC h2+ul li a&<a href=\\\"([\\\\w\\\\d]*.\\\\w*)\\\">([\\\\w\\\\d]*)</a>#$1");
+                            //temp = temp.replaceAll("\\{" + Pattern.quote(expression) + "\\}", ((replacement.startsWith("http")||replacement.startsWith("ftp")) ? replacement.toString() : URLEncoder.encode(replacement,"UTF-8")));
+                            
                         } catch (UnsupportedEncodingException ex) {
                             Logger.getLogger(AbstractRMLProcessor.class.getName()).log(Level.SEVERE, null, ex);
                         }
@@ -216,7 +221,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
 
                     }      
                 }
-                
+                                
                 //Check if there are any placeholders left in the templates and remove uris that are not
                 List<String> validValues = new ArrayList<>();
                 for (String uri : value){
@@ -224,7 +229,6 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                         validValues.add(uri);
                     }
                 }
-                
                 return validValues;
 
             default:
@@ -262,7 +266,6 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                     //Create the processor based on the parent triples map to perform the join
                     RMLProcessorFactory factory = new ConcreteRMLProcessorFactory();
                     QLTerm queryLanguage = parentTriplesMap.getLogicalSource().getReferenceFormulation();
-
                     String source = parentTriplesMap.getLogicalSource().getIdentifier();
 
                     InputStream input = null;

@@ -17,6 +17,8 @@ The processor can be installed using Maven, so make sure you have installed it f
 Usage
 -----
 You can run a mapping process by executing the following command.
+
+Master branch:    
     
     java -jar target/RMLMapper-0.1.jar <mapping_file> <output_file> [-g <graph>]
 

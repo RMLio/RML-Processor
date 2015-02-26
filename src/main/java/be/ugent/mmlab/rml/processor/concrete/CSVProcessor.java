@@ -18,7 +18,6 @@ import java.util.List;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openrdf.model.Resource;
 
 /**
  *
@@ -28,6 +27,8 @@ public class CSVProcessor extends AbstractRMLProcessor {
 
     private static Log log = LogFactory.getLog(RMLMappingFactory.class);
     
+    
+    //AD:That should not be on the core of RML processing..
     private char getDelimiter(LogicalSource ls) {
         String d = RMLEngine.getFileMap().getProperty(ls.getIdentifier() + ".delimiter");
         if (d == null) {
