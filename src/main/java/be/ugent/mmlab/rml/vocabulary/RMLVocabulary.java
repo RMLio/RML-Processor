@@ -65,7 +65,8 @@ public class RMLVocabulary {
         XPATH_CLASS("XPath"),
         SQL_CLASS("SQL"),
         JSONPATH_CLASS("JSONPath"),
-        CSV_CLASS("CSV");
+        CSV_CLASS("CSV"),
+        CSS3_CLASS("CSS3");
         
         private String displayName;
 

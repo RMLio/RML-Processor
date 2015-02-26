@@ -6,6 +6,7 @@ import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.AbstractRMLProcessor;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +22,7 @@ import jodd.lagarto.dom.NodeSelector;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openrdf.model.Resource;
 
 
 /**
@@ -32,8 +34,7 @@ public class CSS3Extractor extends AbstractRMLProcessor{
     private static Log log = LogFactory.getLog(RMLMappingFactory.class);
     private int enumerator;
     
-    @Override
-    public void execute(SesameDataSet dataset, TriplesMap map, RMLPerformer performer, String fileName) {       
+        public void execute(SesameDataSet dataset, TriplesMap map, RMLPerformer performer, String fileName) {       
         //this should not be needed to be defined within the extractor
         String reference = getReference(map.getLogicalSource());
         // more configuration...
@@ -54,7 +55,7 @@ public class CSS3Extractor extends AbstractRMLProcessor{
                
     }
 
-    @Override
+    //@Override
     public void execute_node(SesameDataSet dataset, TriplesMap map, TriplesMap parentTriplesMap, RMLPerformer performer, Object node) {
         int end = map.getLogicalSource().getReference().length();
         String expression = parentTriplesMap.getLogicalSource().getReference().toString().substring(end);
@@ -230,4 +231,14 @@ public class CSS3Extractor extends AbstractRMLProcessor{
         
        return value;
     }   
+
+    @Override
+    public void execute(SesameDataSet dataset, TriplesMap map, RMLPerformer performer, InputStream input) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void execute_node(SesameDataSet dataset, String expression, TriplesMap parentTriplesMap, RMLPerformer performer, Object node, Resource subject) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }
