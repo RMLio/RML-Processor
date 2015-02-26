@@ -1,5 +1,6 @@
 package be.ugent.mmlab.rml.main;
 
+import be.ugent.mmlab.rml.config.RMLConfiguration;
 import be.ugent.mmlab.rml.core.RMLEngine;
 import be.ugent.mmlab.rml.core.RMLMappingFactory;
 import be.ugent.mmlab.rml.model.RMLMapping;
@@ -15,6 +16,8 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.LogManager;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.rio.RDFParseException;
 
@@ -28,25 +31,44 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        // Log
+        org.apache.log4j.Logger log = LogManager.getLogger(Main.class);
+        String map_doc = null;
+        BasicConfigurator.configure();
+        CommandLine commandLine;
+        
         try {
+            commandLine = RMLConfiguration.parseArguments(args);
+            String outputFile = null;
             String graphName = "";
-            // create Options object
-            Options options = new Options();            
-            // add options
-            options.addOption("sp", true, "source properties file");
-            options.addOption("g", true, "Graph name");
+
+            if (commandLine.hasOption("h")) {
+                RMLConfiguration.displayHelp();
+            }
+            if (commandLine.hasOption("o")) {
+                outputFile = commandLine.getOptionValue("o", null);
+            }
+            if (commandLine.hasOption("g")) {
+                graphName = commandLine.getOptionValue("g", "");
+            }
+            if (commandLine.hasOption("m")) {
+                map_doc = commandLine.getOptionValue("m", null);
+            }
+
             //should be new DefaultParser() but requires cli 1.3 instead of clli 1.2
-            CommandLineParser parser = new BasicParser();
-            CommandLine cmd = parser.parse( options, args);
+            //CommandLineParser parser = new BasicParser();
+            //CommandLine cmd = parser.parse( options, args);
             
             RMLMappingFactory mappingFactory = new RMLMappingFactory();
-            RMLMapping mapping = mappingFactory.extractRMLMapping(args[0]);
+            //RMLMapping mapping = mappingFactory.extractRMLMapping(args[0]);
+            RMLMapping mapping = mappingFactory.extractRMLMapping(map_doc);
             //RMLMapping mapping = RMLMappingFactory.extractRMLMapping(args[0]);
             RMLEngine engine = new RMLEngine();
-            System.out.println("mapping document " + args[0]);
-            engine.runRMLMapping(mapping, graphName, args[1], true);
-            if(cmd.hasOption("g")) 
-                    graphName = cmd.getOptionValue("g");           
+            //System.out.println("mapping document " + args[0]);
+            //engine.runRMLMapping(mapping, graphName, args[1], true);
+            engine.runRMLMapping(mapping, graphName, outputFile, true);
+            //if(cmd.hasOption("g")) 
+            //       graphName = cmd.getOptionValue("g");           
             
             System.out.println("--------------------------------------------------------------------------------");
             System.out.println("RML Processor");
@@ -62,9 +84,11 @@ public class Main {
             System.out.println("--------------------------------------------------------------------------------");
             //}
         } catch (IOException | InvalidR2RMLStructureException | InvalidR2RMLSyntaxException | R2RMLDataError | RepositoryException | RDFParseException | SQLException ex) {
-            System.out.println(ex.getMessage());
+            log.error(ex);
+            RMLConfiguration.displayHelp();
         } catch (ParseException ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+            log.error(ex);
+            RMLConfiguration.displayHelp();
         }
 
     }
