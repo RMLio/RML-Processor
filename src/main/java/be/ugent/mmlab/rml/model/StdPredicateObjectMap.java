@@ -29,8 +29,13 @@ package be.ugent.mmlab.rml.model;
 
 import java.util.HashSet;
 import java.util.Set;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 
 public class StdPredicateObjectMap implements PredicateObjectMap {
+    
+    // Log
+    private static final Logger log = LogManager.getLogger(StdPredicateObjectMap.class);
 
 	private Set<ObjectMap> objectMaps;
 	private Set<ReferencingObjectMap> refObjectMaps;
@@ -125,6 +130,7 @@ public class StdPredicateObjectMap implements PredicateObjectMap {
 			}
 			this.predicateMaps = predicateMaps;
 		}
+                log.error( "number of predicate maps " + predicateMaps.size());
 	}
 	
         @Override

@@ -4,7 +4,6 @@
  */
 package be.ugent.mmlab.rml.processor.concrete;
 
-import be.ugent.mmlab.rml.core.RMLMappingFactory;
 import be.ugent.mmlab.rml.core.RMLPerformer;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.AbstractRMLProcessor;
@@ -30,7 +29,7 @@ import org.openrdf.model.Resource;
  */
 public class JSONPathProcessor extends AbstractRMLProcessor {
 
-    private static Log log = LogFactory.getLog(RMLMappingFactory.class);
+    private static Log log = LogFactory.getLog(JSONPathProcessor.class);
 
     @Override
     public void execute(SesameDataSet dataset, TriplesMap map, RMLPerformer performer, InputStream input) {

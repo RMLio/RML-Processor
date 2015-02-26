@@ -1,7 +1,6 @@
 package be.ugent.mmlab.rml.processor.concrete;
 
 import be.ugent.mmlab.rml.core.NodeRMLPerformer;
-import be.ugent.mmlab.rml.core.RMLMappingFactory;
 import be.ugent.mmlab.rml.core.RMLPerformer;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.AbstractRMLProcessor;
@@ -46,12 +45,12 @@ public class XPathProcessor extends AbstractRMLProcessor {
     private int enumerator =0;
     private TriplesMap map;
     
-    private static Log log = LogFactory.getLog(RMLMappingFactory.class);
+    private static Log log = LogFactory.getLog(XPathProcessor.class);
 
     private XPathContext nsContext = new XPathContext();
     
     private DefaultNamespaceContext get_namespaces (){
-        //Get the namespaces from xml file?
+        //TODO:Get the namespaces from xml file
         DefaultNamespaceContext dnc = new DefaultNamespaceContext();
         
         this.nsContext.addNamespace("xsd", Namespaces.URI_XSD);

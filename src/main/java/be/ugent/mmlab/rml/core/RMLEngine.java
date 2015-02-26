@@ -1,5 +1,7 @@
 package be.ugent.mmlab.rml.core;
 
+import be.ugent.mmlab.rml.InputExtractor.InputExtractor;
+import be.ugent.mmlab.rml.InputExtractor.LocalFileExtractor;
 import be.ugent.mmlab.rml.dataset.FileSesameDataset;
 import be.ugent.mmlab.rml.model.LogicalSource;
 import be.ugent.mmlab.rml.model.PredicateObjectMap;
@@ -117,6 +119,7 @@ public class RMLEngine {
         
 	log.info("[RMLEngine:generateRDFTriples] All triples were generated ");
         
+        //TODO:add metadata this Triples Map started then, finished then and lasted that much
 	long endTime = System.nanoTime();
         long duration = endTime - startTime;
         log.debug("[RMLEngine:runRMLMapping] RML mapping done! Generated " + sesameDataSet.getSize() + " in " + ((double) duration) / 1000000000 + "s . ");
@@ -146,32 +149,36 @@ public class RMLEngine {
      * @throws R2RMLDataError
      * @throws UnsupportedEncodingException
      */
-    private void generateRDFTriples(SesameDataSet sesameDataSet,
-            RMLMapping r2rmlMapping, boolean filebased) throws SQLException, R2RMLDataError,
-            UnsupportedEncodingException, ProtocolException, IOException {
+    private void generateRDFTriples(SesameDataSet sesameDataSet, RMLMapping rmlMapping, boolean filebased) 
+            throws SQLException, R2RMLDataError, UnsupportedEncodingException, ProtocolException, IOException {
 
         log.debug("[RMLEngine:generateRDFTriples] Generate RDF triples... ");
         int delta = 0;
 
         RMLProcessorFactory factory = new ConcreteRMLProcessorFactory();
 
-        for (TriplesMap triplesMap : r2rmlMapping.getTriplesMaps()) {
-            if (check_ReferencingObjectMap(r2rmlMapping, triplesMap)) 
+        for (TriplesMap triplesMap : rmlMapping.getTriplesMaps()) {
+            if (check_ReferencingObjectMap(rmlMapping, triplesMap)) 
                 continue;
             //FileInputStream input = null;
             System.out.println("[RMLEngine:generateRDFTriples] Generate RDF triples for " + triplesMap.getName());
+            //TODO: Add metadata that this Map Doc has that many Triples Maps
+            
             //TODO:need to add control if reference Formulation is not defined
             //TODO:need to add check for correct spelling, rml:referenceFormulation otherwise breaks
             RMLProcessor processor = factory.create(triplesMap.getLogicalSource().getReferenceFormulation());
             
             String source = triplesMap.getLogicalSource().getIdentifier();
-            InputStream input = getInputStream(source, triplesMap);
+            InputExtractor inputExtractor = new LocalFileExtractor();
+            InputStream input = inputExtractor.getInputStream(source, triplesMap);
+            //InputStream input = getInputStream(source, triplesMap);
             
             processor.execute(sesameDataSet, triplesMap, new NodeRMLPerformer(processor), input);
 
             log.info("[RMLEngine:generateRDFTriples] "
                     + (sesameDataSet.getSize() - delta)
                     + " triples generated for " + triplesMap.getName());
+            //TODO: Add metadata that this Triples Map generatedthat many triples
             delta = sesameDataSet.getSize();
                         
             try {

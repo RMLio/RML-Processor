@@ -13,9 +13,9 @@
  */
 package be.ugent.mmlab.rml.core;
 
-import be.ugent.mmlab.rml.extractor.RMLInputExtractor;
-import be.ugent.mmlab.rml.extractor.RMLMappingExtractor;
-import be.ugent.mmlab.rml.extractor.RMLUnValidatedMappingExtractor;
+import be.ugent.mmlab.rml.RMLextractor.RMLDocExtractor;
+import be.ugent.mmlab.rml.RMLextractor.RMLMappingExtractor;
+import be.ugent.mmlab.rml.RMLextractor.RMLUnValidatedMappingExtractor;
 import be.ugent.mmlab.rml.model.GraphMap;
 import be.ugent.mmlab.rml.model.JoinCondition;
 import be.ugent.mmlab.rml.model.LogicalSource;
@@ -102,25 +102,13 @@ public class RMLMappingFactory {
             R2RMLDataError, RepositoryException, RDFParseException, IOException {
         // Load RDF data from R2RML Mapping document
         RMLSesameDataSet rmlMappingGraph ;
-        RMLInputExtractor inputExtractor = new RMLInputExtractor() ;
+        RMLDocExtractor inputExtractor = new RMLDocExtractor() ;
         rmlMappingGraph = inputExtractor.getMappingDoc(fileToRMLFile, RDFFormat.TURTLE);
-        
-        //RML document is a a URI
-        /*if(!RMLEngine.isLocalFile(fileToRMLFile)){
-            HttpURLConnection con = (HttpURLConnection) new URL(fileToRMLFile).openConnection();
-            con.setRequestMethod("HEAD");
-            if (con.getResponseCode() == HttpURLConnection.HTTP_OK)
-                r2rmlMappingGraph.addURI(fileToRMLFile, RDFFormat.TURTLE);
-        }
-        //RML document is a a local file
-        else {
-            //r2rmlMappingGraph.addFile(fileToRMLFile, RDFFormat.TURTLE);
-            r2rmlMappingGraph.loadDataFromFile(fileToRMLFile, RDFFormat.TURTLE);
-        }*/
+
         log.debug("[RMLMappingFactory:extractRMLMapping] Number of R2RML triples in file "
                 + fileToRMLFile + " : " + rmlMappingGraph.getSize());
         // Transform RDF with replacement shortcuts
-        extractor.replaceShortcuts(rmlMappingGraph);
+        rmlMappingGraph = extractor.replaceShortcuts(rmlMappingGraph);
         // Run few tests to help user in its RDF syntax
         launchPreChecks(rmlMappingGraph);
                

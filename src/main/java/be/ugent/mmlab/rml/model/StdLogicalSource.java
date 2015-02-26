@@ -9,28 +9,28 @@ import be.ugent.mmlab.rml.vocabulary.RMLVocabulary.QLTerm;
  */
 public class StdLogicalSource implements LogicalSource {
 
-    private String reference;
+    private String iterator;
     private QLTerm referenceFormulation = QLTerm.SQL_CLASS;
     private String identifier;
 
-    public StdLogicalSource(String reference, String identifier) {
-        this.reference = reference;
+    public StdLogicalSource(String identifier, QLTerm referenceFormulation) {
+        this.referenceFormulation = referenceFormulation;
         this.identifier = identifier;
     }
 
     public StdLogicalSource(String reference) {
-        this.reference = reference;
+        this.iterator = reference;
     }
 
-    public StdLogicalSource(String reference, String identifier, QLTerm queryLanguage) {
-        this.reference = reference;
+    public StdLogicalSource(String iterator, String identifier, QLTerm referenceFormulation) {
+        this.iterator = iterator;
         this.identifier = identifier;
-        this.referenceFormulation = queryLanguage;
+        this.referenceFormulation = referenceFormulation;
     }
     
     @Override
     public String getReference() {
-        return reference;
+        return iterator;
     }
 
     @Override
@@ -45,7 +45,7 @@ public class StdLogicalSource implements LogicalSource {
 
     @Override
     public String toString() {
-        return "[StdLogicalSource : reference = " + reference
+        return "[StdLogicalSource : iterator = " + iterator
                 + "; identifier" + identifier + "; referenceFormulation = " + referenceFormulation + "]";
     }
 }

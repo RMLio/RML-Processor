@@ -68,7 +68,7 @@ public class RMLSesameDataSet extends SesameDataSet {
     private static final Logger log = LogManager.getLogger(RMLSesameDataSet.class);
        
     public RMLSesameDataSet() {
-		this(false);
+		this(true);
 	}
     
     public RMLSesameDataSet(boolean inferencing) {
