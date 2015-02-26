@@ -130,7 +130,6 @@ public class StdPredicateObjectMap implements PredicateObjectMap {
 			}
 			this.predicateMaps = predicateMaps;
 		}
-                log.error( "number of predicate maps " + predicateMaps.size());
 	}
 	
         @Override

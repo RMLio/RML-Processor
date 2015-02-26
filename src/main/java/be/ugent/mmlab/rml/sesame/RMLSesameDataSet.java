@@ -129,7 +129,7 @@ public class RMLSesameDataSet extends SesameDataSet {
                 currentRepository = new SailRepository(new CustomGraphQueryInferencer(
                         new MemoryStore(), QueryLanguage.SPARQL, rule, match));   
             } else {
-                log.error("inference disabled");
+                log.debug("inference disabled");
                 currentRepository = new SailRepository(new MemoryStore());
             }
                 currentRepository.initialize();
@@ -218,7 +218,6 @@ public class RMLSesameDataSet extends SesameDataSet {
             con.add(file, "", format);
             con.commit();
         } catch (RepositoryException ex) {
-            log.error("ex " + ex);
             java.util.logging.Logger.getLogger(RMLSesameDataSet.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             java.util.logging.Logger.getLogger(RMLSesameDataSet.class.getName()).log(Level.SEVERE, null, ex);
@@ -278,7 +277,6 @@ public class RMLSesameDataSet extends SesameDataSet {
             if(p.stringValue().equals("http://www.w3.org/1999/02/22-rdf-syntax-ns#type")){
                 Statement st = myFactory.createStatement((Resource) s, p,
                         (Value) o);
-                log.error("stupid rdf:type");
                 con.remove(st);
                 con.remove(s, null, o);
             }
@@ -306,7 +304,6 @@ public class RMLSesameDataSet extends SesameDataSet {
         try {
             RepositoryConnection con = currentRepository.getConnection();
             try {
-                log.error("statement " + st);
                 //con.remove((Resource) s, (URI) p, (Value) o, contexts);
                 con.remove(st, contexts);
                 con.commit();

@@ -29,7 +29,7 @@ public class RMLDocExtractor {
     
     public RMLSesameDataSet getMappingDoc(String fileToRMLFile, RDFFormat format) {
         RMLSesameDataSet rmlMappingGraph = new RMLSesameDataSet();
-log.error("file " + fileToRMLFile);
+
         //RML document is a URI
         if (!isLocalFile(fileToRMLFile)) {
             try {

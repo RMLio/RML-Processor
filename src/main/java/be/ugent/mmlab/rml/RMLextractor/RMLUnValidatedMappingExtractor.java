@@ -231,7 +231,7 @@ public class RMLUnValidatedMappingExtractor implements RMLMappingExtractor{
         Map<Resource, TriplesMap> triplesMapResources = new HashMap<Resource, TriplesMap>();
         
         List<Statement> statements = getTriplesMapResources(rmlMappingGraph);
-log.error("triples map resources " + triplesMapResources.size());
+
         triplesMapResources = putTriplesMapResources(statements, triplesMapResources);
 
         return triplesMapResources;
@@ -301,7 +301,7 @@ log.error("triples map resources " + triplesMapResources.size());
         Set<PredicateObjectMap> predicateObjectMaps = extractPredicateObjectMaps(
                 rmlMappingGraph, triplesMapSubject, graphMaps, result,
                 triplesMapResources);
-log.error("predicate object maps size " + predicateObjectMaps.size());
+
         // Extract zero or more PredicateObjectMaps
         for (PredicateObjectMap predicateObjectMap : predicateObjectMaps) {
             result.addPredicateObjectMap(predicateObjectMap);
@@ -338,7 +338,6 @@ log.error("predicate object maps size " + predicateObjectMaps.size());
                 String file = sourceStatement.getObject().stringValue();
 
                 if (!iterators.isEmpty()) {
-                log.error("iterator " + iterators.get(0).getObject().stringValue());
                     logicalSource =
                             new StdLogicalSource(iterators.get(0).getObject().stringValue(), file.toString(), referenceFormulation);
                 }
@@ -458,12 +457,9 @@ log.error("predicate object maps size " + predicateObjectMaps.size());
             RMLSesameDataSet rmlMappingGraph, Resource triplesMapSubject,
             Set<GraphMap> graphMaps, TriplesMap result,
             Map<Resource, TriplesMap> triplesMapResources) {
-        log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
-                + "First step: Extract predicate-object maps...");
         // Extract predicate-object maps
         URI p = rmlMappingGraph.URIref(RMLVocabulary.R2RML_NAMESPACE
                 + RMLVocabulary.R2RMLTerm.PREDICATE_OBJECT_MAP);
-        log.error("predicate URI " + p.stringValue());
 
         List<Statement> statements = rmlMappingGraph.tuplePattern(
                 triplesMapSubject, p, null);
@@ -471,19 +467,11 @@ log.error("predicate object maps size " + predicateObjectMaps.size());
         Set<PredicateObjectMap> predicateObjectMaps = new HashSet<PredicateObjectMap>();
 
         for (Statement statement : statements) {
-            //PredicateObjectMap predicateObjectMap = extractPredicatesObjectMap(
             predicateObjectMaps = extractPredicatesObjectMap(
                     rmlMappingGraph, triplesMapSubject,
                     (Resource) statement.getObject(),
                     graphMaps, triplesMapResources, result, predicateObjectMaps);
-            // Add own tripleMap to predicateObjectMap
-            //predicateObjectMap.setOwnTriplesMap(result);
-            //predicateObjectMaps.add(predicateObjectMap);
         }
-
-        log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
-                + "Number of extracted predicate-object maps : "
-                + predicateObjectMaps.size());
         return predicateObjectMaps;
     }
     
@@ -495,26 +483,17 @@ log.error("predicate object maps size " + predicateObjectMaps.size());
             Set<GraphMap> savedGraphMaps,
             Map<Resource, TriplesMap> triplesMapResources,
             TriplesMap triplesMap, Set<PredicateObjectMap> predicateObjectMaps){
-
-        log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
-                + "Second step: Extract predicate-object map..");
         
         List<Statement> statements = getStatements(
              rmlMappingGraph, triplesMapSubject, RMLVocabulary.R2RML_NAMESPACE, 
-             RMLVocabulary.R2RMLTerm.PREDICATE_OBJECT_MAP, triplesMap);
-        log.error("number of POM statements " + statements.size());
-        
-        
+             RMLVocabulary.R2RMLTerm.PREDICATE_OBJECT_MAP, triplesMap);      
         try {
             for (Statement statement : statements) {
-                log.error("statement " + statement.getObject());
-
                 List<Statement> predicate_statements = getStatements(
                         rmlMappingGraph, (Resource) statement.getObject(), RMLVocabulary.R2RML_NAMESPACE,
                         RMLVocabulary.R2RMLTerm.PREDICATE_MAP, triplesMap);
-log.error("predicate statements size " + predicate_statements.size());
+
                 for (Statement predicate_statement : predicate_statements) {
-                    log.error("predicate statement considered " + predicate_statement);
                     PredicateObjectMap predicateObjectMap = extractPredicateObjectMap(
                             //rmlMappingGraph, triplesMapSubject, predicateObject,
                             rmlMappingGraph, triplesMapSubject, (Resource) statement.getObject(),
@@ -525,7 +504,6 @@ log.error("predicate statements size " + predicate_statements.size());
                 }
             }
             return predicateObjectMaps;
-            //log.error(" number of predicate maps added " + predicateMaps.size());
         } catch (ClassCastException e) {
             log.error(
                     Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
@@ -544,24 +522,6 @@ log.error("predicate statements size " + predicate_statements.size());
             Map<Resource, TriplesMap> triplesMapResources,
             TriplesMap triplesMap, Statement predicate_statement){
 
-        /*log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
-                + "Extract predicate-object map..");
-        
-        List<Statement> statements = getStatements(
-             rmlMappingGraph, triplesMapSubject, RMLVocabulary.R2RML_NAMESPACE, 
-             RMLVocabulary.R2RMLTerm.PREDICATE_OBJECT_MAP, triplesMap);
-        log.error("number of POM statements " + statements.size());
-        
-        
-        try {
-            for (Statement statement : statements) {
-                log.error("statement " + statement.getObject());
-                
-                List<Statement> predicate_statements = getStatements(
-             rmlMappingGraph, (Resource) statement.getObject(), RMLVocabulary.R2RML_NAMESPACE, 
-             RMLVocabulary.R2RMLTerm.PREDICATE_MAP, triplesMap);
-                
-                for (Statement predicate_statement : predicate_statements){*/
                     Set<PredicateMap> predicateMaps = new HashSet<PredicateMap>();
                     PredicateMap predicateMap = extractPredicateMap(
                         rmlMappingGraph, predicate_statement,
@@ -572,9 +532,9 @@ log.error("predicate statements size " + predicate_statements.size());
                     URI o = rmlMappingGraph.URIref(RMLVocabulary.R2RML_NAMESPACE
                             + RMLVocabulary.R2RMLTerm.OBJECT_MAP);
                     List<Statement> object_statements = rmlMappingGraph.tuplePattern(predicateObject, o, null);
-                    log.error("object statement " + object_statements.get(0));
+
                     if (object_statements.size() < 1) {
-                        log.error(
+                        log.debug(
                                 Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
                                 + predicateObject.stringValue()
                                 + " has no object map defined : one or more is required.");
@@ -589,7 +549,7 @@ log.error("predicate statements size " + predicate_statements.size());
                         ReferencingObjectMap refObjectMap = extractReferencingObjectMap(
                                 rmlMappingGraph, (Resource) object_statements.get(0).getObject(),
                                 savedGraphMaps, triplesMapResources, triplesMap);
-                        log.error("object for object map " + object_statements.get(0).getObject());
+
                         if (refObjectMap != null) {
                             refObjectMaps.add(refObjectMap);
                             // Not a simple object map, skip to next.
@@ -603,11 +563,6 @@ log.error("predicate statements size " + predicate_statements.size());
                         } catch (InvalidR2RMLStructureException ex) {
                             java.util.logging.Logger.getLogger(RMLUnValidatedMappingExtractor.class.getName()).log(Level.SEVERE, null, ex);
                         }
-                        /*log.debug(
-                                Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
-                                + "ownTriplesMap attempted "
-                                + triplesMapResources.get(statement.getContext())
-                                + " for object " + statement.getObject().stringValue());*/
                         objectMaps.add(objectMap);
                         }
                         //} 
@@ -638,28 +593,14 @@ log.error("predicate statements size " + predicate_statements.size());
                             Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
                             + "Extract predicate-object map done.");
                     return predicateObjectMap;
-                /*}
-            }
-            //log.error(" number of predicate maps added " + predicateMaps.size());
-        } catch (ClassCastException e) {
-            log.error(
-                    Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
-                    + "A resource was expected in object of predicateMap of "
-                    + predicateObject.stringValue());
-        }
-        return null;*/
     }
     
     @Override
     public PredicateMap extractPredicateMap(
             RMLSesameDataSet rmlMappingGraph, Statement statement,
             Set<GraphMap> graphMaps, TriplesMap triplesMap) {
-        log.error(" object " + statement.getObject());
         Resource object = (Resource) statement.getObject();
         try {
-            log.error(
-                    Thread.currentThread().getStackTrace()[1].getMethodName() + ": " 
-                    + "Extract unvalidated predicate map..");
             // Extract object maps properties
             Value constantValue = extractValueFromTermMap(rmlMappingGraph,
                     object, RMLVocabulary.R2RMLTerm.CONSTANT, triplesMap);
@@ -674,10 +615,7 @@ log.error("predicate statements size " + predicate_statements.size());
             //MVS: Decide on ReferenceIdentifier
             ReferenceIdentifier referenceValue = 
                     extractReferenceIdentifier(rmlMappingGraph, object, triplesMap);
-log.error("reference value " + referenceValue);
-log.error("constant value " + constantValue);
-log.error("stringTemplate value " + stringTemplate);
-log.error("termType value " + termType);
+
             PredicateMap result = new StdPredicateMap(null, constantValue,
                     stringTemplate, inverseExpression, referenceValue, termType);
             log.debug(
@@ -699,9 +637,6 @@ log.error("termType value " + termType);
             Set<GraphMap> graphMaps,
             Map<Resource, TriplesMap> triplesMapResources, TriplesMap triplesMap){
         try {
-            log.debug(
-                    Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
-                    + "Extract referencing object map..");
             URI parentTriplesMap = (URI) extractValueFromTermMap(rmlMappingGraph,
                     object, RMLVocabulary.R2RMLTerm.PARENT_TRIPLES_MAP, triplesMap);
             Set<JoinCondition> joinConditions = extractJoinConditions(
@@ -714,7 +649,7 @@ log.error("termType value " + termType);
                         + " : exactly one parentTripleMap is required.");
             }
             if (parentTriplesMap == null && joinConditions.isEmpty()) {
-                log.debug(
+                log.error(
                         Thread.currentThread().getStackTrace()[1].getMethodName() + ": " 
                         + "This object map is not a referencing object map.");
                 return null;
@@ -748,7 +683,6 @@ log.error("termType value " + termType);
                     parent, joinConditions);
             log.debug(
                     Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
-                    //"[RMLMappingFactory:extractReferencingObjectMap] 
                     + "Extract referencing object map done.");
             return refObjectMap;
         } catch (InvalidR2RMLStructureException ex) {
@@ -1026,7 +960,6 @@ log.error("termType value " + termType);
             String namespace, RMLVocabulary.Term term, TriplesMap triplesMap){
         URI logicalSource = rmlMappingGraph.URIref(namespace
                 + term);
-        //log.error("generated URI " + logicalSource.toString());
         List<Statement> source = rmlMappingGraph.tuplePattern(
                 triplesMapSubject, logicalSource, null);
         
