@@ -69,7 +69,7 @@ public class RMLEngine {
     public SesameDataSet runRMLMapping(RMLMapping rmlMapping,
             String baseIRI) throws SQLException,
             R2RMLDataError, UnsupportedEncodingException, IOException {
-        return runRMLMapping(rmlMapping, baseIRI, null, false);
+        return runRMLMapping(rmlMapping, baseIRI, null, "ntriples", false);
     }
 
     /**
@@ -84,7 +84,7 @@ public class RMLEngine {
      * @throws UnsupportedEncodingException
      */
     public SesameDataSet runRMLMapping(RMLMapping rmlMapping,
-            String baseIRI, String pathToNativeStore, boolean filebased) 
+            String baseIRI, String pathToNativeStore, String outputFormat, boolean filebased) 
             throws SQLException, R2RMLDataError, UnsupportedEncodingException, IOException {
         long startTime = System.nanoTime();
 

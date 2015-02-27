@@ -39,14 +39,17 @@ public class Main {
         
         try {
             commandLine = RMLConfiguration.parseArguments(args);
-            String outputFile = null;
+            String outputFile = null, outputFormat = null;
             String graphName = "";
 
             if (commandLine.hasOption("h")) {
                 RMLConfiguration.displayHelp();
             }
+            if (commandLine.hasOption("f")) {
+                outputFile = commandLine.getOptionValue("f", null);
+            }
             if (commandLine.hasOption("o")) {
-                outputFile = commandLine.getOptionValue("o", null);
+                outputFormat = commandLine.getOptionValue("o", null);
             }
             if (commandLine.hasOption("g")) {
                 graphName = commandLine.getOptionValue("g", "");
@@ -66,7 +69,7 @@ public class Main {
             RMLEngine engine = new RMLEngine();
             //System.out.println("mapping document " + args[0]);
             //engine.runRMLMapping(mapping, graphName, args[1], true);
-            engine.runRMLMapping(mapping, graphName, outputFile, true);
+            engine.runRMLMapping(mapping, graphName, outputFile, outputFormat, true);
             //if(cmd.hasOption("g")) 
             //       graphName = cmd.getOptionValue("g");           
             
