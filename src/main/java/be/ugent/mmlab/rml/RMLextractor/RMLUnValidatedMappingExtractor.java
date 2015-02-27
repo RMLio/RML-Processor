@@ -272,11 +272,9 @@ public class RMLUnValidatedMappingExtractor implements RMLMappingExtractor{
     public void extractTriplesMap(
             RMLSesameDataSet rmlMappingGraph, Resource triplesMapSubject,
             Map<Resource, TriplesMap> triplesMapResources) {
-        //if (log.isDebugEnabled()) {
-        log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
+        log.debug(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
                 + "Extract TriplesMap subject : "
                 + triplesMapSubject.stringValue());
-        //}
         TriplesMap result = triplesMapResources.get(triplesMapSubject);
 
         // Extract TriplesMap properties
@@ -307,7 +305,7 @@ public class RMLUnValidatedMappingExtractor implements RMLMappingExtractor{
             result.addPredicateObjectMap(predicateObjectMap);
         }
 
-        log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
+        log.info(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
                 + "Extract of TriplesMap subject : "
                 + triplesMapSubject.stringValue() + " done.");
     }
@@ -551,6 +549,7 @@ public class RMLUnValidatedMappingExtractor implements RMLMappingExtractor{
                                 savedGraphMaps, triplesMapResources, triplesMap);
 
                         if (refObjectMap != null) {
+                            refObjectMap.setOwnTriplesMap(triplesMapResources.get(triplesMapSubject));
                             refObjectMaps.add(refObjectMap);
                             // Not a simple object map, skip to next.
                             //continue;
@@ -571,7 +570,9 @@ public class RMLUnValidatedMappingExtractor implements RMLMappingExtractor{
                                 "[RMLMappingFactory:extractPredicateObjectMaps] "
                                 + "A resource was expected in object of objectMap of "
                                 + predicateObject.stringValue());
-                    }
+                    } catch (InvalidR2RMLStructureException ex) {
+            java.util.logging.Logger.getLogger(RMLUnValidatedMappingExtractor.class.getName()).log(Level.SEVERE, null, ex);
+        }
                     PredicateObjectMap predicateObjectMap = new StdPredicateObjectMap(
                             predicateMaps, objectMaps, refObjectMaps);
 
@@ -649,9 +650,6 @@ public class RMLUnValidatedMappingExtractor implements RMLMappingExtractor{
                         + " : exactly one parentTripleMap is required.");
             }
             if (parentTriplesMap == null && joinConditions.isEmpty()) {
-                log.error(
-                        Thread.currentThread().getStackTrace()[1].getMethodName() + ": " 
-                        + "This object map is not a referencing object map.");
                 return null;
             }
             // Extract parent
