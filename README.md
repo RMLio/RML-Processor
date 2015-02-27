@@ -20,12 +20,13 @@ You can run a mapping process by executing the following command.
 
 Master branch:    
     
-    java -jar target/RMLMapper-0.1.jar <mapping_file> <output_file> [-g <graph>]
+    java -jar target/RMLMapper-0.1.jar -m <mapping_file> -f <output_file> -o <output_format> [-g <graph>]
 
 With 
     
-    <mapping_file> = The RML mapping file conform with the [RML specification](http://semweb.mmlab.be/ns/rml)
-    <output_file> = The file where the output RDF triples are stored; default in [N-Triples](http://www.w3.org/TR/n-triples/) syntax.
+    <mapping_file>  = The RML mapping file conform with the [RML specification](http://semweb.mmlab.be/ns/rml)
+    <output_file>   = The file where the output RDF triples are stored; default in [N-Triples](http://www.w3.org/TR/n-triples/) syntax.
+    <output_format> = The prefered output format, use one of the followings: turtle, ntriples, nquads, rdfxml, rdfjson, jsonld.
     <graph> (optional) = The named graph in which the output RDF triples are stored.
         
 For instance, to run example1, execute the following command by replacing the paths to the files with the local paths:

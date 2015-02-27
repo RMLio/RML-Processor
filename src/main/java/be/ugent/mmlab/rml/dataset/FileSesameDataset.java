@@ -81,7 +81,6 @@ public class FileSesameDataset extends SesameDataSet {
 
         try {
             fw = new BufferedWriter(new FileWriter(target));
-            log.error("outputFormat " + outputFormat);
             switch (outputFormat) {
                 case "ntriples": 
                     this.format = RDFFormat.NTRIPLES; 
