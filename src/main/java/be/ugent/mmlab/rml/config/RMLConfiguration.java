@@ -31,7 +31,8 @@ public class RMLConfiguration {
         cliOptions.addOption("h", "help", false, "show this help message");
         cliOptions.addOption("m", "mapping document", true, "the URI of the mapping file (required)");
         cliOptions.addOption("f", "output file", true, "the URI of the output file (required)");
-        cliOptions.addOption("o", "file format", true, "the output format, default: NTriples (optional)");
+        cliOptions.addOption("o", "file format", true, 
+                "the output format of the results: turtle, n3, ntriples (default), rdfxml (optional)");
         //cliOptions.addOption("p", 
         //        "arguments to pass if the rml:source of the mapping document is a URI template "
         //        + "and requires parameters (they should be comma separated)", false, 

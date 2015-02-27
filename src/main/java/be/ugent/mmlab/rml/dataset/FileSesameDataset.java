@@ -74,6 +74,45 @@ public class FileSesameDataset extends SesameDataSet {
         }
 
     }
+    
+    public FileSesameDataset(String target, String outputFormat) {
+
+        this.target = new File(target);
+
+        try {
+            fw = new BufferedWriter(new FileWriter(target));
+            log.error("outputFormat " + outputFormat);
+            switch (outputFormat) {
+                case "ntriples": 
+                    this.format = RDFFormat.NTRIPLES; 
+                    break;
+                case "n3": 
+                    this.format = RDFFormat.N3;
+                    break;
+                case "turtle": 
+                    this.format = RDFFormat.TURTLE;
+                    break;
+                case "nquads": 
+                    this.format = RDFFormat.NQUADS;
+                    break;
+                case "rdfxml": 
+                    this.format = RDFFormat.RDFXML;
+                    break;
+                case "rdfjson": 
+                    this.format = RDFFormat.RDFJSON;
+                    break;
+                case "jsonld": 
+                    this.format = RDFFormat.JSONLD;
+                    break;
+            }
+            writer = Rio.createWriter(this.format, fw);
+            writer.startRDF();
+
+        } catch (IOException | RDFHandlerException ex) {
+            log.error("File not found.", ex);
+        }
+
+    }
 
     /**
      * Load data in specified graph (use default graph if contexts is null)

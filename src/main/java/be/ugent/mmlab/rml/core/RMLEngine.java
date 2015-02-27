@@ -104,7 +104,7 @@ public class RMLEngine {
         if (filebased) {
             log.debug("[RMLEngine:runRMLMapping] Use direct file "
                     + pathToNativeStore);
-            sesameDataSet = new FileSesameDataset(pathToNativeStore);
+            sesameDataSet = new FileSesameDataset(pathToNativeStore, outputFormat);
         } else if (pathToNativeStore != null) { // Check if use of native store is required
             log.debug("[RMLEngine:runRMLMapping] Use native store "
                     + pathToNativeStore);
