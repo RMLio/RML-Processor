@@ -52,21 +52,14 @@ public class Main {
             if (commandLine.hasOption("m")) {
                 map_doc = commandLine.getOptionValue("m", null);
             }
-
-            //should be new DefaultParser() but requires cli 1.3 instead of clli 1.2
-            //CommandLineParser parser = new BasicParser();
-            //CommandLine cmd = parser.parse( options, args);
             
             RMLMappingFactory mappingFactory = new RMLMappingFactory();
-            //RMLMapping mapping = mappingFactory.extractRMLMapping(args[0]);
+
             RMLMapping mapping = mappingFactory.extractRMLMapping(map_doc);
-            //RMLMapping mapping = RMLMappingFactory.extractRMLMapping(args[0]);
+
             RMLEngine engine = new RMLEngine();
-            //System.out.println("mapping document " + args[0]);
-            //engine.runRMLMapping(mapping, graphName, args[1], true);
-            engine.runRMLMapping(mapping, graphName, outputFile, outputFormat, true);
-            //if(cmd.hasOption("g")) 
-            //       graphName = cmd.getOptionValue("g");           
+
+            engine.runRMLMapping(mapping, graphName, outputFile, outputFormat, true);        
             
             System.out.println("--------------------------------------------------------------------------------");
             System.out.println("RML Processor");

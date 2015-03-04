@@ -31,8 +31,10 @@ public class ConcreteRMLProcessorFactory implements RMLProcessorFactory{
                 return new JSONPathProcessor();
             case CSS3_CLASS:
                 return new CSS3Extractor();
+            default:
+                log.error("The term " + term + "was not defined.");
+                return null;
         }
-        return null;
     }
     
 }

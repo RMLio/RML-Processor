@@ -125,7 +125,6 @@ public class LocalFileExtractor implements InputExtractor {
             log.info("[LocalFileExtractor] Input stream was not possible.");
             return null;
         }
-        log.error("returned source " + source.toString());
         return source;
     }
 }
