@@ -81,7 +81,7 @@ public class RMLMappingFactory {
         RMLDocExtractor inputExtractor = new RMLDocExtractor() ;
         rmlMappingGraph = inputExtractor.getMappingDoc(fileToRMLFile, RDFFormat.TURTLE);
 
-        log.debug("[RMLMappingFactory:extractRMLMapping] Number of R2RML triples in file "
+        log.debug("[RMLMappingFactory:extractRMLMapping] Number of RML triples in file "
                 + fileToRMLFile + " : " + rmlMappingGraph.getSize());
         // Transform RDF with replacement shortcuts
         rmlMappingGraph = extractor.replaceShortcuts(rmlMappingGraph);

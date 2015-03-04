@@ -23,6 +23,7 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.Properties;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
@@ -69,7 +70,7 @@ public class RMLEngine {
     public SesameDataSet runRMLMapping(RMLMapping rmlMapping,
             String baseIRI) throws SQLException,
             R2RMLDataError, UnsupportedEncodingException, IOException {
-        return runRMLMapping(rmlMapping, baseIRI, null, "ntriples", false);
+        return runRMLMapping(rmlMapping, baseIRI, null, "ntriples", null, false);
     }
 
     /**
@@ -84,7 +85,8 @@ public class RMLEngine {
      * @throws UnsupportedEncodingException
      */
     public SesameDataSet runRMLMapping(RMLMapping rmlMapping,
-            String baseIRI, String pathToNativeStore, String outputFormat, boolean filebased) 
+            String baseIRI, String pathToNativeStore, String outputFormat, 
+            String parameter, boolean filebased) 
             throws SQLException, R2RMLDataError, UnsupportedEncodingException, IOException {
         long startTime = System.nanoTime();
 
@@ -115,7 +117,7 @@ public class RMLEngine {
         }
         // Explore RML Mapping TriplesMap objects  
  
-        generateRDFTriples(sesameDataSet, rmlMapping, filebased);
+        generateRDFTriples(sesameDataSet, rmlMapping, parameter, filebased);
                
         //TODO:add metadata this Triples Map started then, finished then and lasted that much
 	long endTime = System.nanoTime();
@@ -147,7 +149,8 @@ public class RMLEngine {
      * @throws R2RMLDataError
      * @throws UnsupportedEncodingException
      */
-    private void generateRDFTriples(SesameDataSet sesameDataSet, RMLMapping rmlMapping, boolean filebased) 
+    private void generateRDFTriples(SesameDataSet sesameDataSet, 
+            RMLMapping rmlMapping, String parameter, boolean filebased) 
             throws SQLException, R2RMLDataError, UnsupportedEncodingException, ProtocolException, IOException {
 
         log.debug("[RMLEngine:generateRDFTriples] Generate RDF triples... ");
@@ -167,11 +170,18 @@ public class RMLEngine {
                 processor = factory.create(triplesMap.getLogicalSource().getReferenceFormulation());
             } catch (Exception ex) {
                 log.error("There is no suitable processor for this reference formulation");
-                //log.error(ex);
             }
             
             String source = triplesMap.getLogicalSource().getIdentifier();
             InputExtractor inputExtractor = new LocalFileExtractor();
+            String[] splitParameter = null;
+            if (parameter != null) {
+                splitParameter = parameter.split("=");
+            }
+            Set<String> variables = inputExtractor.extractStringTemplate(source);
+            if (!variables.isEmpty()) {
+                source = source.replaceAll("\\{" + variables.iterator().next() + "\\}", splitParameter[1]);
+            }
             InputStream input = inputExtractor.getInputStream(source, triplesMap);
             
             try {

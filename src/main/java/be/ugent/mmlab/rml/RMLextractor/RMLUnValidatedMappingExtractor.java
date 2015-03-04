@@ -366,7 +366,7 @@ public class RMLUnValidatedMappingExtractor implements RMLMappingExtractor{
                 
         return blankLogicalSource;
     }
-    
+       
     protected RMLVocabulary.QLTerm getReferenceFormulation(
             RMLSesameDataSet rmlMappingGraph, Resource triplesMapSubject, 
             Resource subject, TriplesMap triplesMap) 

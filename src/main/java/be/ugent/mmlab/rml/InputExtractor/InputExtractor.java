@@ -6,6 +6,7 @@ package be.ugent.mmlab.rml.InputExtractor;
 
 import be.ugent.mmlab.rml.model.TriplesMap;
 import java.io.InputStream;
+import java.util.Set;
 
 /**
  *
@@ -18,5 +19,7 @@ public interface InputExtractor {
     boolean isLocalFile(String source);
 
     public String getInputSource(String reference, TriplesMap map);
+
+    public Set<String> extractStringTemplate(String source);
     
 }

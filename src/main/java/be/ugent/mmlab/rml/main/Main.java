@@ -28,7 +28,7 @@ public class Main {
     public static void main(String[] args) {
         // Log
         org.apache.log4j.Logger log = LogManager.getLogger(Main.class);
-        String map_doc = null;
+        String map_doc = null, parameter = null;
         BasicConfigurator.configure();
         CommandLine commandLine;
         
@@ -52,6 +52,9 @@ public class Main {
             if (commandLine.hasOption("m")) {
                 map_doc = commandLine.getOptionValue("m", null);
             }
+            if (commandLine.hasOption("p")) {
+                parameter = commandLine.getOptionValue("p", null);
+            }
             
             RMLMappingFactory mappingFactory = new RMLMappingFactory();
 
@@ -59,7 +62,7 @@ public class Main {
 
             RMLEngine engine = new RMLEngine();
 
-            engine.runRMLMapping(mapping, graphName, outputFile, outputFormat, true);        
+            engine.runRMLMapping(mapping, graphName, outputFile, outputFormat, parameter, true);        
             
             System.out.println("--------------------------------------------------------------------------------");
             System.out.println("RML Processor");
