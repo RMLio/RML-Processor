@@ -379,7 +379,7 @@ public class RMLUnValidatedMappingExtractor implements RMLMappingExtractor{
             return null;
         else
             return RMLVocabulary.getQLTerms(statements.get(0).getObject().stringValue());
-    }
+        }
     
     protected SubjectMap extractSubjectMap(
             RMLSesameDataSet rmlMappingGraph, Resource triplesMapSubject,

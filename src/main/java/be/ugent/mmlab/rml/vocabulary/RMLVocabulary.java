@@ -11,7 +11,12 @@
  */
 package be.ugent.mmlab.rml.vocabulary;
 
+import org.apache.log4j.LogManager;
+
 public class RMLVocabulary {
+    
+    // Log
+    private static final org.apache.log4j.Logger log = LogManager.getLogger(RMLVocabulary.class);
 
     // In this document, examples assume the following namespace 
     // prefix bindings unless otherwise stated:

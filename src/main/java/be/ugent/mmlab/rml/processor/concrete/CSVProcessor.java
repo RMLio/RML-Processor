@@ -1,7 +1,6 @@
 package be.ugent.mmlab.rml.processor.concrete;
 
 import be.ugent.mmlab.rml.core.RMLEngine;
-import be.ugent.mmlab.rml.core.RMLMappingFactory;
 import be.ugent.mmlab.rml.core.RMLPerformer;
 import be.ugent.mmlab.rml.model.LogicalSource;
 import be.ugent.mmlab.rml.model.TriplesMap;
@@ -26,7 +25,7 @@ import org.openrdf.model.Resource;
  */
 public class CSVProcessor extends AbstractRMLProcessor {
 
-    private static Log log = LogFactory.getLog(RMLMappingFactory.class);
+    private static Log log = LogFactory.getLog(CSVProcessor.class);
     
     private char getDelimiter(LogicalSource ls) {
         String d = RMLEngine.getFileMap().getProperty(ls.getIdentifier() + ".delimiter");
