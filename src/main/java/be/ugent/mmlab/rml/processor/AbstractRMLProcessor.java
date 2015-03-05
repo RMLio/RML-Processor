@@ -106,13 +106,15 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
         }
         
         Resource subject = null;
-               
+        List<Value> valueList = null;
+                
         //doublicate code from ObjectMap - they should be handled together
         switch (subjectMap.getTermType()) {
             case IRI:
                 if (value != null && !value.equals("")){
                     if(value.startsWith("www."))
                         value = "http://" + value;
+                    postProcessObjectMap(subjectMap, node, value, valueList);
                     subject = new URIImpl(value);
                 }
                 break;
@@ -388,27 +390,28 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
         //A Term map returns one or more values (in case expression matches more)
         List<String> values = processTermMap(objectMap, node);
         List<Value> valueList = new ArrayList<>();
-        for (String value : values) {
-            String split = objectMap.getSplit();
-            String process = objectMap.getProcess();
-            String replace = objectMap.getReplace();
-            
+        for (String value : values) {          
             TermType termType = objectMap.getTermType();
             String languageTag = objectMap.getLanguageTag();
             URI datatype = objectMap.getDataType();
             
-            if (split != null || process != null || replace != null) {
-                valueList = postProcessObjectMap(objectMap, node, value, valueList, split, process, replace);
+            if (objectMap.getSplit() != null ||
+                    objectMap.getProcess() != null || 
+                    objectMap.getReplace() != null) {
+                valueList = postProcessObjectMap(objectMap, node, value, valueList);
             }
             else{
-                valueList = applyTermType(termType, value, valueList, languageTag, datatype);
+                valueList = applyTermType(value, valueList, objectMap);
             }
         }
         return valueList;
     }
     
-    private List<Value> applyTermType(
-            TermType termType, String value, List<Value> valueList, String languageTag, URI datatype){
+    private List<Value> applyTermType(String value, List<Value> valueList, TermMap termMap){
+        TermType termType = termMap.getTermType();
+        String languageTag = termMap.getLanguageTag();
+        URI datatype = termMap.getDataType();
+        
         switch (termType) {
                 case IRI:
                     if (value != null && !value.equals("")){
@@ -432,19 +435,18 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
     }
     
     public List<Value> postProcessObjectMap(
-            ObjectMap objectMap, Object node, String value, List<Value> valueList,
-            String split, String process, String replace) {
-        String[] list = null;
-        TermType termType = objectMap.getTermType();
-        String languageTag = objectMap.getLanguageTag();
-        URI datatype = objectMap.getDataType();
+            TermMap objectMap, Object node, String value, List<Value> valueList) {
+        String[] list = null;       
+        String split = objectMap.getSplit();
+        String process = objectMap.getProcess();
+        String replace = objectMap.getReplace();
 
         if (split != null) {
             list = value.split(split);
             if (replace != null && list != null) {
                 Integer replaceOrder = Integer.parseInt(replace.substring(1));
                 value = list[replaceOrder - 1];
-                applyTermType(termType, value, valueList, languageTag, datatype);
+                applyTermType(value, valueList, objectMap);
             }
         }
 
@@ -452,7 +454,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
             Pattern replacement = Pattern.compile(process);
             Matcher matcher = replacement.matcher(value);
             if (matcher.find()) 
-                applyTermType(termType, matcher.replaceAll(replace), valueList, languageTag, datatype);
+                applyTermType(matcher.replaceAll(replace), valueList, objectMap);
         }
         return valueList;
     }

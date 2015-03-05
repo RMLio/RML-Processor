@@ -463,7 +463,6 @@ public class RMLUnValidatedMappingExtractor implements RMLMappingExtractor{
         Set<PredicateObjectMap> predicateObjectMaps = new HashSet<PredicateObjectMap>();
         try {
             for (Statement statement : statements) {
-                log.error("statement " + statement.toString());
                 PredicateObjectMap predicateObjectMap = extractPredicateObjectMap(
                         r2rmlMappingGraph, triplesMapSubject,
                         (Resource) statement.getObject(),
