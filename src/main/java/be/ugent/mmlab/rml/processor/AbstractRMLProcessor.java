@@ -14,6 +14,7 @@ import be.ugent.mmlab.rml.model.PredicateObjectMap;
 import be.ugent.mmlab.rml.model.ReferencingObjectMap;
 import be.ugent.mmlab.rml.model.SubjectMap;
 import be.ugent.mmlab.rml.model.TermMap;
+import be.ugent.mmlab.rml.model.TermType;
 import static be.ugent.mmlab.rml.model.TermType.BLANK_NODE;
 import static be.ugent.mmlab.rml.model.TermType.IRI;
 import be.ugent.mmlab.rml.model.TriplesMap;
@@ -31,8 +32,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
-import net.antidot.semantic.rdf.rdb2rdf.r2rml.core.R2RMLEngine;
 import net.antidot.semantic.rdf.rdb2rdf.r2rml.tools.R2RMLToolkit;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -44,7 +45,6 @@ import org.openrdf.model.impl.LiteralImpl;
 import org.openrdf.model.impl.URIImpl;
 import org.openrdf.model.vocabulary.RDF;
 import java.util.regex.Pattern;
-import net.antidot.semantic.rdf.rdb2rdf.r2rml.model.TermType;
 
 /**
  * This class contains all generic functionality for executing an iteration and
@@ -61,7 +61,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
      * @return the location of the file or table
      */
     // Log
-    private static Log log = LogFactory.getLog(R2RMLEngine.class);
+    private static Log log = LogFactory.getLog(AbstractRMLProcessor.class);
 
     /*protected String getIdentifier(LogicalSource ls) {
         return RMLEngine.getFileMap().getProperty(ls.getIdentifier());
@@ -157,7 +157,8 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
             case REFERENCE_VALUED:
                 //Get the expression and extract the value
                 ReferenceIdentifierImpl identifier = (ReferenceIdentifierImpl) map.getReferenceValue();
-                return extractValueFromNode(node, identifier.toString().trim());
+                value = extractValueFromNode(node, identifier.toString().trim()); 
+                return value;
             case CONSTANT_VALUED:
                 //Extract the value directly from the mapping
                 value.add(map.getConstantValue().stringValue().trim());
@@ -386,10 +387,29 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
     public List<Value> processObjectMap(ObjectMap objectMap, Object node) {
         //A Term map returns one or more values (in case expression matches more)
         List<String> values = processTermMap(objectMap, node);
-
         List<Value> valueList = new ArrayList<>();
         for (String value : values) {
-            switch (objectMap.getTermType()) {
+            String split = objectMap.getSplit();
+            String process = objectMap.getProcess();
+            String replace = objectMap.getReplace();
+            
+            TermType termType = objectMap.getTermType();
+            String languageTag = objectMap.getLanguageTag();
+            URI datatype = objectMap.getDataType();
+            
+            if (split != null || process != null || replace != null) {
+                valueList = postProcessObjectMap(objectMap, node, value, valueList, split, process, replace);
+            }
+            else{
+                valueList = applyTermType(termType, value, valueList, languageTag, datatype);
+            }
+        }
+        return valueList;
+    }
+    
+    private List<Value> applyTermType(
+            TermType termType, String value, List<Value> valueList, String languageTag, URI datatype){
+        switch (termType) {
                 case IRI:
                     if (value != null && !value.equals("")){
                         if(value.startsWith("www."))
@@ -400,15 +420,39 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                     valueList.add(new BNodeImpl(value));
                     break;
                 case LITERAL:
-                    if (objectMap.getLanguageTag() != null && !value.equals("")) {
-                        valueList.add(new LiteralImpl(value, objectMap.getLanguageTag()));
-                    } else if (value != null && !value.equals("") && objectMap.getDataType() != null) {
-                        valueList.add(new LiteralImpl(value, objectMap.getDataType()));
+                    if (languageTag != null && !value.equals("")) {
+                        valueList.add(new LiteralImpl(value, languageTag));
+                    } else if (value != null && !value.equals("") && datatype != null) {
+                        valueList.add(new LiteralImpl(value, datatype));
                     } else if (value != null && !value.equals("")) {
-                        valueList.add(new LiteralImpl(value.trim()));
-                    }
+                            valueList.add(new LiteralImpl(value.trim()));
+                    }      
             }
+        return valueList;
+    }
+    
+    public List<Value> postProcessObjectMap(
+            ObjectMap objectMap, Object node, String value, List<Value> valueList,
+            String split, String process, String replace) {
+        String[] list = null;
+        TermType termType = objectMap.getTermType();
+        String languageTag = objectMap.getLanguageTag();
+        URI datatype = objectMap.getDataType();
 
+        if (split != null) {
+            list = value.split(split);
+            if (replace != null && list != null) {
+                Integer replaceOrder = Integer.parseInt(replace.substring(1));
+                value = list[replaceOrder - 1];
+                applyTermType(termType, value, valueList, languageTag, datatype);
+            }
+        }
+
+        if (process != null && replace != null) {
+            Pattern replacement = Pattern.compile(process);
+            Matcher matcher = replacement.matcher(value);
+            if (matcher.find()) 
+                applyTermType(termType, matcher.replaceAll(replace), valueList, languageTag, datatype);
         }
         return valueList;
     }

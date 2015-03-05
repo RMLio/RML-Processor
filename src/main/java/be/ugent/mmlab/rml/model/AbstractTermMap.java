@@ -62,6 +62,9 @@ public abstract class AbstractTermMap implements TermMap {
         private ReferenceIdentifier referenceValue;
         private String inverseExpression;
         protected TriplesMap ownTriplesMap;
+        private String split;
+        private String process;
+        private String replace;
 
         protected AbstractTermMap(Value constantValue, URI dataType,
                 String languageTag, String stringTemplate, URI termType,
@@ -78,6 +81,27 @@ public abstract class AbstractTermMap implements TermMap {
                 setInversionExpression(inverseExpression);
                 checkGlobalConsistency();
                 setOwnTriplesMap(ownTriplesMap);
+        }
+        
+        protected AbstractTermMap(Value constantValue, URI dataType,
+                String languageTag, String stringTemplate, URI termType,
+                String inverseExpression, ReferenceIdentifier referenceValue,
+                String split, String process, String replace)
+                throws R2RMLDataError, InvalidR2RMLStructureException,
+                InvalidR2RMLSyntaxException {
+
+                setConstantValue(constantValue);
+                setReferenceValue(referenceValue);
+                setLanguageTag(languageTag);
+                setStringTemplate(stringTemplate);
+                setTermType(termType, dataType);
+                setDataType(dataType);
+                setInversionExpression(inverseExpression);
+                checkGlobalConsistency();
+                setOwnTriplesMap(ownTriplesMap);
+                setSplit(split);
+                setProcess(process);
+                setReplace(replace);
         }
 
         /**
@@ -223,6 +247,21 @@ public abstract class AbstractTermMap implements TermMap {
                         checkLanguageTag(languageTag);
                 }
                 this.languageTag = languageTag;
+        }
+        
+        private void setSplit(String split) throws R2RMLDataError {
+                //TODO:add control for regex, its value MUST be a valid regex
+                this.split = split;
+        }
+        
+        private void setProcess(String process) throws R2RMLDataError {
+                //TODO:add control for regex, its value MUST be a valid regex
+                this.process = process;
+        }
+        
+        private void setReplace(String replace) throws R2RMLDataError {
+                //TODO:add control for regex, its value MUST be a valid regex
+                this.replace = replace;
         }
 
         /**
@@ -413,54 +452,19 @@ public abstract class AbstractTermMap implements TermMap {
         public TriplesMap getOwnTriplesMap(){
             return this.ownTriplesMap;
         }
-
-//	public String getValue(Map<ColumnIdentifier, byte[]> dbValues,
-//			ResultSetMetaData dbTypes) throws R2RMLDataError, SQLException,
-//			UnsupportedEncodingException {
-//
-//		log.debug("[AbstractTermMap:getValue] Extract value of termType with termMapType : "
-//				+ getTermMapType());
-//		switch (getTermMapType()) {
-//		case CONSTANT_VALUED:
-//			return constantValue.stringValue();
-//
-//		case REFERENCE_VALUED:
-//			if (dbValues.keySet().isEmpty())
-//				throw new IllegalStateException(
-//						"[AbstractTermMap:getValue] impossible to extract from an empty database value set.");
-//			byte[] bytesResult = dbValues.get(referenceValue);
-//			/* Extract the SQLType in dbValues from the key which is
-//			 * equals to "columnValue" */
-//			SQLType sqlType = null;			
-//			for(ColumnIdentifier colId : dbValues.keySet()) {
-//			    if(colId.equals(referenceValue)) {
-//				sqlType = colId.getSqlType();
-//				break;
-//			    }
-//			}			    
-//			// Apply cast to string to the SQL data value
-//			String result;
-//			if (sqlType != null) {
-//				XSDType xsdType = SQLToXMLS.getEquivalentType(sqlType);
-//				result = XSDLexicalTransformation.extractNaturalRDFFormFrom(
-//						xsdType, bytesResult);
-//			}
-//			else
-//			{
-//			    result = new String(bytesResult, "UTF-8");
-//			}
-//			return result;
-//
-//		case TEMPLATE_VALUED:
-//			if (dbValues.keySet().isEmpty())
-//				throw new IllegalStateException(
-//						"[AbstractTermMap:getValue] impossible to extract from an empty database value set.");
-//			result = R2RMLToolkit.extractColumnValueFromStringTemplate(
-//					stringTemplate, dbValues, dbTypes);
-//			return result;
-//
-//		default:
-//			return null;
-//		}
-//}
+        
+        @Override
+        public String getSplit(){
+            return this.split;
+        }
+        
+        @Override
+        public String getProcess(){
+            return this.process;
+        }
+        
+        @Override
+        public String getReplace(){
+            return this.replace;
+        }
 }

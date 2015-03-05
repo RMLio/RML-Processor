@@ -144,7 +144,12 @@ public interface TermMap {
 	 * An inverse expression MUST satisfy some conditions. (see ref.)
 	 */
 	public String getInverseExpression();
+        
+        public String getSplit();
+        
+        public String getProcess();
 
+        public String getReplace();
         
         /*
          * 

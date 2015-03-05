@@ -41,14 +41,6 @@ public interface RMLMappingExtractor {
             RMLSesameDataSet rmlMappingGraph, Resource triplesMapSubject, 
             Map<Resource, TriplesMap> triplesMapResources);
     
-    public PredicateObjectMap extractPredicateObjectMap(
-            RMLSesameDataSet rmlMappingGraph,
-            Resource triplesMapSubject,
-            Resource predicateObject,
-            Set<GraphMap> savedGraphMaps,
-            Map<Resource, TriplesMap> triplesMapResources,
-            TriplesMap triplesMap);
-    
     /**
      *
      * @param rmlMappingGraph

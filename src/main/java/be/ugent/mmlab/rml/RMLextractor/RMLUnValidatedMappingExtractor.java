@@ -709,7 +709,14 @@ public class RMLUnValidatedMappingExtractor implements RMLMappingExtractor{
                     RMLVocabulary.R2RMLTerm.DATATYPE, triplesMap);
             String inverseExpression = extractLiteralFromTermMap(rmlMappingGraph,
                     object, RMLVocabulary.R2RMLTerm.INVERSE_EXPRESSION, triplesMap);
-
+            //TODO:handle the folowings separately
+            String split = extractLiteralFromTermMap(rmlMappingGraph,
+                    object, RMLVocabulary.RMLTerm.SPLIT, triplesMap);
+            String process = extractLiteralFromTermMap(rmlMappingGraph,
+                    object, RMLVocabulary.RMLTerm.PROCESS, triplesMap);
+            String replace = extractLiteralFromTermMap(rmlMappingGraph,
+                    object, RMLVocabulary.RMLTerm.REPLACE, triplesMap);
+            
             //MVS: Decide on ReferenceIdentifier
             ReferenceIdentifier referenceValue = 
                     extractReferenceIdentifier(rmlMappingGraph, object, triplesMap);
@@ -718,7 +725,8 @@ public class RMLUnValidatedMappingExtractor implements RMLMappingExtractor{
 
             StdObjectMap result = new StdObjectMap(null, constantValue, dataType,
                     languageTag, stringTemplate, termType, inverseExpression,
-                    referenceValue);
+                    referenceValue, split, process, replace);
+                       
             return result;
         } catch (R2RMLDataError ex) {
             java.util.logging.Logger.getLogger(RMLUnValidatedMappingExtractor.class.getName()).log(Level.SEVERE, null, ex);
@@ -974,9 +982,4 @@ public class RMLUnValidatedMappingExtractor implements RMLMappingExtractor{
         return statements;
     }
 
-    @Override
-    public PredicateObjectMap extractPredicateObjectMap(RMLSesameDataSet rmlMappingGraph, Resource triplesMapSubject, Resource predicateObject, Set<GraphMap> savedGraphMaps, Map<Resource, TriplesMap> triplesMapResources, TriplesMap triplesMap) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-    
 }

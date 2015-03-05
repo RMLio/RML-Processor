@@ -1,6 +1,5 @@
 package be.ugent.mmlab.rml.processor.concrete;
 
-import be.ugent.mmlab.rml.core.RMLMappingFactory;
 import be.ugent.mmlab.rml.core.RMLPerformer;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.AbstractRMLProcessor;
@@ -30,7 +29,7 @@ import org.openrdf.model.Resource;
  */
 public class CSS3Extractor extends AbstractRMLProcessor{
     
-    private static Log log = LogFactory.getLog(RMLMappingFactory.class);
+    private static Log log = LogFactory.getLog(CSS3Extractor.class);
     private int enumerator;
     
     @Override
@@ -76,12 +75,12 @@ public class CSS3Extractor extends AbstractRMLProcessor{
         List<String> list = new ArrayList();
         String replacement = null;
 
-        String months[] = {"January", "February", "March", "April",
+        /*String months[] = {"January", "February", "March", "April",
             "May", "June", "July", "August", "September",
             "October", "November", "December"};
         String shortMonths[] = {"Jan", "Feb", "Mar", "Apr",
             "May", "June", "July", "Aug", "Sep",
-            "Oct", "Nov", "Dec"};
+            "Oct", "Nov", "Dec"};*/
 
         if (expression.equals("#")) {
             list.add(Integer.toString(enumerator++));
@@ -93,7 +92,7 @@ public class CSS3Extractor extends AbstractRMLProcessor{
             String regex = expression.split("&")[1];
             expression = expression.split("&")[0];
 
-            if (regex.startsWith("deduct:")) {
+            /*if (regex.startsWith("deduct:")) {
                 regex = regex.split("deduct:")[1];
                 expression = expression.split("\\{")[0];
                 String value = StringEscapeUtils.unescapeHtml(doc.$(expression).text().trim().replaceAll("[\\t\\n\\r\\s]{2,}", " "));
@@ -115,12 +114,12 @@ public class CSS3Extractor extends AbstractRMLProcessor{
 
                 }
                 return list;
-            }
+            }*/
 
-            if (regex.contains("#")) {
+            /*if (regex.contains("#")) {
                 replacement = regex.split("#")[1];
                 regex = regex.split("#")[0];
-            }
+            }*/
 
             if (regex.contains("href")) {
                 Node doc2 = doc.get(0);
@@ -164,24 +163,24 @@ public class CSS3Extractor extends AbstractRMLProcessor{
                                 list.add(formatter.format(newInt).toString().trim());
                             }
 
-                            for (int i = 0; i < 11; i++) {
+                            /*for (int i = 0; i < 11; i++) {
                                 if (matcher.replaceAll(replacement).toString().contains(months[i])) {
                                     list.add(String.valueOf(matcher.replaceAll(replacement).replace(months[i], formatter.format(i + 1))));
                                 }
-                            }
+                            }*/
 
-                            for (int i = 0; i < 11; i++) {
+                            /*for (int i = 0; i < 11; i++) {
                                 if (matcher.replaceAll(replacement).toString().contains(shortMonths[i])) {
                                     list.add(String.valueOf(matcher.replaceAll(replacement).replace(shortMonths[i], formatter.format(i + 1))));
                                 }
-                            }
+                            }*/
 
-                            if (replace.toString().contains("Edited by:") || replace.toString().contains("CEURAUTHORS")) {
+                            /*if (replace.toString().contains("Edited by:") || replace.toString().contains("CEURAUTHORS")) {
                                 values = matcher.replaceAll(replacement).split(",");
                                 for (String val : values) {
                                     list.add(StringEscapeUtils.unescapeHtml(val));
                                 }
-                            } else if (!matcher.replaceAll(replacement).equals("")) {
+                            } else */ if (!matcher.replaceAll(replacement).equals("")) {
                                 list.add(StringEscapeUtils.unescapeHtml(matcher.replaceAll(replacement)));
                             }
                         }
@@ -194,17 +193,17 @@ public class CSS3Extractor extends AbstractRMLProcessor{
             List<Node> selectedNodes = nodeSelector.select(expression);
             for (Node snode : selectedNodes) {
                 if (snode.getInnerHtml().toString() != null && !snode.getInnerHtml().toString().trim().replaceAll("[\\t\\n\\r\\s]{2,}", " ").equals("")) {
-                    String finVal;
+                    //String finVal;
                     if (expression.contains("CEURAUTHORS")) {
                         String[] values = snode.getInnerHtml().toString().trim().replaceAll("[\\t\\n\\r\\s]{2,}", " ").split(",");
                         for (String val : values) {
                             list.add(StringEscapeUtils.unescapeHtml(val));
                         }
                     } else {
-                        finVal = checkforDate(StringEscapeUtils.unescapeHtml(snode.getInnerHtml().toString().trim().replaceAll("[\\t\\n\\r\\s]{2,}", " ")));
-                        if (!finVal.equals("")) {
-                            list.add(finVal);
-                        }
+                        //finVal = checkforDate(StringEscapeUtils.unescapeHtml(snode.getInnerHtml().toString().trim().replaceAll("[\\t\\n\\r\\s]{2,}", " ")));
+                        //if (!finVal.equals("")) {
+                            list.add(snode.getInnerHtml().toString().trim().replaceAll("[\\t\\n\\r\\s]{2,}", " "));
+                        //}
                     }
                 }
             }
@@ -212,7 +211,7 @@ public class CSS3Extractor extends AbstractRMLProcessor{
         return list;
     }
     
-    private String checkforDate(String value) {
+    /*private String checkforDate(String value) {
         String months[] = {"January", "February", "March", "April",
             "May", "June", "July", "August", "September",
             "October", "November", "December"};
@@ -234,5 +233,5 @@ public class CSS3Extractor extends AbstractRMLProcessor{
             }
         }
         return value;
-    }  
+    }  */
 }

@@ -51,6 +51,18 @@ public final class StdObjectMap extends AbstractTermMap implements TermMap, Obje
 				inverseExpression, referenceValue);
 		setPredicateObjectMap(predicateObjectMap);
 	}
+        
+        public StdObjectMap(PredicateObjectMap predicateObjectMap,
+			Value constantValue, URI dataType, String languageTag,
+			String stringTemplate, URI termType, String inverseExpression,
+			ReferenceIdentifier referenceValue, String split,
+                        String process, String replace) throws R2RMLDataError,
+			InvalidR2RMLStructureException, InvalidR2RMLSyntaxException {
+		super(constantValue, dataType, languageTag, stringTemplate, termType,
+				inverseExpression, referenceValue,
+                                split, process, replace);
+		setPredicateObjectMap(predicateObjectMap);
+	}
 
         @Override
 	protected void checkSpecificTermType(TermType tt)

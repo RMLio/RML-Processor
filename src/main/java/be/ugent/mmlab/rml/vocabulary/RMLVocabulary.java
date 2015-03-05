@@ -50,7 +50,10 @@ public class RMLVocabulary {
         REFERENCE("reference"),
         ITERATOR("iterator"),
         VERSION("version"),
-        SOURCE("source");
+        SOURCE("source"), 
+        PROCESS("process"),
+        REPLACE("replace"),
+        SPLIT("split");
         
         private String displayName;
 
