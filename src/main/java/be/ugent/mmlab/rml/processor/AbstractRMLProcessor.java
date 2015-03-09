@@ -110,14 +110,11 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
         //TODO: doublicate code from ObjectMap - they should be handled together
         switch (subjectMap.getTermType()) {
             case IRI:
-                if (value != null && !value.equals("")) {
+                if (value != null && !value.equals("")) 
                     if (value.startsWith("www.")) {
                         value = "http://" + value;
                     }
                     subject = new URIImpl(value);
-                } else {
-                    subject = new URIImpl(value);
-                }
                 break;
             case BLANK_NODE:
                 subject = new BNodeImpl(org.apache.commons.lang.RandomStringUtils.randomAlphanumeric(10));
@@ -178,10 +175,13 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                             value.add(template);
                         }
                         String replacement = null;
-                        if(replacements.get(i) != null) {
+                        if (replacements.get(i) != null) {
                             replacement = replacements.get(i).trim();
-                            valueList = postProcessTermMap(map, node, replacements.get(i), valueList);
-                            replacement = valueList.get(0).stringValue();
+                            //valueList = postProcessTermMap(map, node, replacements.get(i), valueList);
+                            if (map.getSplit() != null || map.getProcess() != null || map.getReplace() != null) {
+                                valueList = postProcessTermMap(map, node, replacement, valueList);
+                                replacement = valueList.get(0).stringValue();
+                            }
                         }
 
                         //if (replacement == null || replacement.isEmpty()) {
@@ -195,9 +195,9 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                         if (expression.contains("[")) {
                             expression = expression.replaceAll("\\[", "").replaceAll("\\]", "");
                             temp = temp.replaceAll("\\[", "").replaceAll("\\]", "");
-                        }   
+                        }
                         //JSONPath expression cause problems when replacing, remove the $ first
-                        if ((map.getOwnTriplesMap().getLogicalSource().getReferenceFormulation() == QLTerm.JSONPATH_CLASS) 
+                        if ((map.getOwnTriplesMap().getLogicalSource().getReferenceFormulation() == QLTerm.JSONPATH_CLASS)
                                 && expression.contains("$")) {
                             expression = expression.replaceAll("\\$", "");
                             temp = temp.replaceAll("\\$", "");
@@ -219,13 +219,13 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                             //Use encoding UTF-8 explicit URL encode; other one is deprecated 
                             //temp.replaceAll(expression, "body div.CEURTOC h2+ul li a&<a href=\\\"([\\\\w\\\\d]*.\\\\w*)\\\">([\\\\w\\\\d]*)</a>#$1");
                             //temp = temp.replaceAll("\\{" + Pattern.quote(expression) + "\\}", ((replacement.startsWith("http")||replacement.startsWith("ftp")) ? replacement.toString() : URLEncoder.encode(replacement,"UTF-8")));
-                            
+
                         } catch (UnsupportedEncodingException ex) {
                             Logger.getLogger(AbstractRMLProcessor.class.getName()).log(Level.SEVERE, null, ex);
                         }
                         value.set(i, temp.toString());
 
-                    }      
+                    }    
                 }
                                 
                 //Check if there are any placeholders left in the templates and remove uris that are not
