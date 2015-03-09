@@ -89,7 +89,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
     @Override
     public Resource processSubjectMap(SesameDataSet dataset, SubjectMap subjectMap, Object node) {       
         //Get the uri
-        List<String> values = processTermMap(subjectMap, node);    
+        List<String> values = processTermMap(subjectMap, node);   
         //log.info("Abstract RML Processor Graph Map" + subjectMap.getGraphMaps().toString());
         if (values.isEmpty()) 
             if(subjectMap.getTermType() != BLANK_NODE)
@@ -106,15 +106,17 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
         }
         
         Resource subject = null;
-        List<Value> valueList = null;
                 
-        //doublicate code from ObjectMap - they should be handled together
+        //TODO: doublicate code from ObjectMap - they should be handled together
         switch (subjectMap.getTermType()) {
             case IRI:
-                if (value != null && !value.equals("")){
-                    if(value.startsWith("www."))
+                log.error("IRI");
+                if (value != null && !value.equals("")) {
+                    if (value.startsWith("www.")) {
                         value = "http://" + value;
-                    postProcessObjectMap(subjectMap, node, value, valueList);
+                    }
+                    subject = new URIImpl(value);
+                } else {
                     subject = new URIImpl(value);
                 }
                 break;
@@ -124,7 +126,6 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
             default:
                 subject = new URIImpl(value);
         }
-        //subject = new URIImpl(value);
         return subject;
     }
         
@@ -170,6 +171,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                 //Resolve the template
                 String template = map.getStringTemplate();
                 Set<String> tokens = R2RMLToolkit.extractColumnNamesFromStringTemplate(template);
+                List<Value> valueList = null;
                 for (String expression : tokens) {
                     List<String> replacements = extractValueFromNode(node, expression);
                     for (int i = 0; i < replacements.size(); i++) {
@@ -177,8 +179,11 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                             value.add(template);
                         }
                         String replacement = null;
-                        if(replacements.get(i) != null)
+                        if(replacements.get(i) != null) {
                             replacement = replacements.get(i).trim();
+                            valueList = postProcessTermMap(map, node, replacements.get(i), valueList);
+                            replacement = valueList.get(0).stringValue();
+                        }
 
                         //if (replacement == null || replacement.isEmpty()) {
                         if (replacement == null || replacement.equals("")) {
@@ -391,14 +396,11 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
         List<String> values = processTermMap(objectMap, node);
         List<Value> valueList = new ArrayList<>();
         for (String value : values) {          
-            TermType termType = objectMap.getTermType();
-            String languageTag = objectMap.getLanguageTag();
-            URI datatype = objectMap.getDataType();
             
             if (objectMap.getSplit() != null ||
                     objectMap.getProcess() != null || 
                     objectMap.getReplace() != null) {
-                valueList = postProcessObjectMap(objectMap, node, value, valueList);
+                valueList = postProcessTermMap(objectMap, node, value, valueList);
             }
             else{
                 valueList = applyTermType(value, valueList, objectMap);
@@ -413,48 +415,62 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
         URI datatype = termMap.getDataType();
         
         switch (termType) {
-                case IRI:
-                    if (value != null && !value.equals("")){
-                        if(value.startsWith("www."))
-                            value = "http://" + value;
-                        valueList.add(new URIImpl(value));}
-                    break;
-                case BLANK_NODE:
-                    valueList.add(new BNodeImpl(value));
-                    break;
-                case LITERAL:
-                    if (languageTag != null && !value.equals("")) {
-                        valueList.add(new LiteralImpl(value, languageTag));
-                    } else if (value != null && !value.equals("") && datatype != null) {
-                        valueList.add(new LiteralImpl(value, datatype));
-                    } else if (value != null && !value.equals("")) {
-                            valueList.add(new LiteralImpl(value.trim()));
-                    }      
-            }
+            case IRI:
+                if (value != null && !value.equals("")) {
+                    if (value.startsWith("www.")) {
+                        value = "http://" + value;
+                    }
+                    if (valueList == null) {
+                        valueList = new ArrayList<Value>();
+                    }
+                    valueList.add(new URIImpl(value));
+                } 
+                break;
+            case BLANK_NODE:
+                valueList.add(new BNodeImpl(value));
+                break;
+            case LITERAL:
+                if (languageTag != null && !value.equals("")) {
+                    if (valueList == null) {
+                        valueList = new ArrayList<Value>();
+                    }
+                    valueList.add(new LiteralImpl(value, languageTag));
+                } else if (value != null && !value.equals("") && datatype != null) {
+                    valueList.add(new LiteralImpl(value, datatype));
+                } else if (value != null && !value.equals("")) {
+                    valueList.add(new LiteralImpl(value.trim()));
+                }
+        }
+        log.error("value List " + valueList);
         return valueList;
     }
     
-    public List<Value> postProcessObjectMap(
-            TermMap objectMap, Object node, String value, List<Value> valueList) {
-        String[] list = null;       
-        String split = objectMap.getSplit();
-        String process = objectMap.getProcess();
-        String replace = objectMap.getReplace();
+    public List<Value> postProcessTermMap(
+            TermMap termMap, Object node, String value, List<Value> valueList) {
+        String[] list = null;
+        String split = termMap.getSplit();
+        String process = termMap.getProcess();
+        String replace = termMap.getReplace();
 
         if (split != null) {
             list = value.split(split);
             if (replace != null && list != null) {
                 Integer replaceOrder = Integer.parseInt(replace.substring(1));
                 value = list[replaceOrder - 1];
-                applyTermType(value, valueList, objectMap);
+                if (valueList == null) {
+                    valueList = new ArrayList<Value>();
+                }
+                valueList.add(new LiteralImpl(value));
+                return valueList;
             }
         }
 
         if (process != null && replace != null) {
             Pattern replacement = Pattern.compile(process);
             Matcher matcher = replacement.matcher(value);
-            if (matcher.find()) 
-                applyTermType(matcher.replaceAll(replace), valueList, objectMap);
+            if (matcher.find()) {
+                valueList.add(new LiteralImpl(matcher.replaceAll(replace)));
+            }
         }
         return valueList;
     }

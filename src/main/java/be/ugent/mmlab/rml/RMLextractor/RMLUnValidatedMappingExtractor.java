@@ -407,7 +407,13 @@ public class RMLUnValidatedMappingExtractor implements RMLMappingExtractor{
                 subjectMap, RMLVocabulary.R2RMLTerm.INVERSE_EXPRESSION, triplesMap);
         //TODO:fix the following validation
         //validator.checkTermMap(constantValue, stringTemplate, null, subjectMap.toString());
-
+        //TODO:handle the folowings separately
+        String split = extractLiteralFromTermMap(rmlMappingGraph,
+                subjectMap, RMLVocabulary.RMLTerm.SPLIT, triplesMap);
+        String process = extractLiteralFromTermMap(rmlMappingGraph,
+                subjectMap, RMLVocabulary.RMLTerm.PROCESS, triplesMap);
+        String replace = extractLiteralFromTermMap(rmlMappingGraph,
+                subjectMap, RMLVocabulary.RMLTerm.REPLACE, triplesMap);
         //MVS: Decide on ReferenceIdentifier
         //TODO:Add check if the referenceValue is a valid reference according to the reference formulation
         ReferenceIdentifier referenceValue = 
@@ -432,14 +438,23 @@ public class RMLUnValidatedMappingExtractor implements RMLMappingExtractor{
         
         SubjectMap result = null;
         try {
-            result = new StdSubjectMap(triplesMap, constantValue,
-         stringTemplate, termType, inverseExpression, referenceValue,
-         classIRIs, graphMaps);
+            if (split != null || process != null || replace != null) {
+                result = new StdSubjectMap(triplesMap, constantValue,
+                        stringTemplate, termType, inverseExpression,
+                        referenceValue, split, process, replace);
+            } else {
+                result = new StdSubjectMap(triplesMap, constantValue,
+                        stringTemplate, termType, inverseExpression, referenceValue,
+                        classIRIs, graphMaps);
+            }         
         } catch (R2RMLDataError ex) {
+            log.error(ex);
             java.util.logging.Logger.getLogger(RMLUnValidatedMappingExtractor.class.getName()).log(Level.SEVERE, null, ex);
         } catch (InvalidR2RMLStructureException ex) {
+            log.error(ex);
             java.util.logging.Logger.getLogger(RMLUnValidatedMappingExtractor.class.getName()).log(Level.SEVERE, null, ex);
         } catch (InvalidR2RMLSyntaxException ex) {
+            log.error(ex);
             java.util.logging.Logger.getLogger(RMLUnValidatedMappingExtractor.class.getName()).log(Level.SEVERE, null, ex);
         }
         log.debug(
