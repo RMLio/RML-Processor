@@ -12,6 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import jodd.csselly.selector.PseudoFunctionSelector;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
 import jodd.jerry.Jerry;
 import jodd.lagarto.dom.Node;
@@ -31,6 +32,10 @@ public class CSS3Extractor extends AbstractRMLProcessor{
     
     private static Log log = LogFactory.getLog(CSS3Extractor.class);
     private int enumerator;
+    
+    public CSS3Extractor() {
+        PseudoFunctionSelector.registerPseudoFunction(CSS3NotFunction.class);
+    }
     
     @Override
     public void execute(SesameDataSet dataset, TriplesMap map, RMLPerformer performer, InputStream input) {
