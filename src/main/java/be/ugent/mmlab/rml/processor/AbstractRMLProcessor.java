@@ -110,7 +110,6 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
         //TODO: doublicate code from ObjectMap - they should be handled together
         switch (subjectMap.getTermType()) {
             case IRI:
-                log.error("IRI");
                 if (value != null && !value.equals("")) {
                     if (value.startsWith("www.")) {
                         value = "http://" + value;
@@ -441,7 +440,6 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                     valueList.add(new LiteralImpl(value.trim()));
                 }
         }
-        log.error("value List " + valueList);
         return valueList;
     }
     
@@ -469,6 +467,9 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
             Pattern replacement = Pattern.compile(process);
             Matcher matcher = replacement.matcher(value);
             if (matcher.find()) {
+                if (valueList == null) {
+                    valueList = new ArrayList<Value>();
+                }
                 valueList.add(new LiteralImpl(matcher.replaceAll(replace)));
             }
         }
