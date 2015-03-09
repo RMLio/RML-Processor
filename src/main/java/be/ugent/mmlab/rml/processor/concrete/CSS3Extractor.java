@@ -80,13 +80,6 @@ public class CSS3Extractor extends AbstractRMLProcessor{
         List<String> list = new ArrayList();
         String replacement = null;
 
-        /*String months[] = {"January", "February", "March", "April",
-            "May", "June", "July", "August", "September",
-            "October", "November", "December"};
-        String shortMonths[] = {"Jan", "Feb", "Mar", "Apr",
-            "May", "June", "July", "Aug", "Sep",
-            "Oct", "Nov", "Dec"};*/
-
         if (expression.equals("#")) {
             list.add(Integer.toString(enumerator++));
             return list;
@@ -199,17 +192,17 @@ public class CSS3Extractor extends AbstractRMLProcessor{
             for (Node snode : selectedNodes) {
                 if (snode.getInnerHtml().toString() != null && !snode.getInnerHtml().toString().trim().replaceAll("[\\t\\n\\r\\s]{2,}", " ").equals("")) {
                     //String finVal;
-                    if (expression.contains("CEURAUTHORS")) {
+                    /*if (expression.contains("CEURAUTHORS")) {
                         String[] values = snode.getInnerHtml().toString().trim().replaceAll("[\\t\\n\\r\\s]{2,}", " ").split(",");
                         for (String val : values) {
                             list.add(StringEscapeUtils.unescapeHtml(val));
                         }
-                    } else {
+                    } else {*/
                         //finVal = checkforDate(StringEscapeUtils.unescapeHtml(snode.getInnerHtml().toString().trim().replaceAll("[\\t\\n\\r\\s]{2,}", " ")));
                         //if (!finVal.equals("")) {
-                            list.add(snode.getInnerHtml().toString().trim().replaceAll("[\\t\\n\\r\\s]{2,}", " "));
+                            list.add(snode.getTextContent().toString().trim().replaceAll("[\\t\\n\\r\\s]{2,}", " "));
                         //}
-                    }
+                    //}
                 }
             }
         }

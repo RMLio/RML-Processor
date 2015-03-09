@@ -1,6 +1,5 @@
 package be.ugent.mmlab.rml.processor.concrete;
 
-import java.util.Arrays;
 import jodd.csselly.selector.PseudoFunction;
 import jodd.lagarto.dom.Node;
 
