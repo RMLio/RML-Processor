@@ -200,7 +200,7 @@ public class CSS3Extractor extends AbstractRMLProcessor{
                     } else {*/
                         //finVal = checkforDate(StringEscapeUtils.unescapeHtml(snode.getInnerHtml().toString().trim().replaceAll("[\\t\\n\\r\\s]{2,}", " ")));
                         //if (!finVal.equals("")) {
-                            list.add(snode.getTextContent().toString().trim().replaceAll("[\\t\\n\\r\\s]{2,}", " "));
+                            list.add(snode.getInnerHtml().toString().trim().replaceAll("[\\t\\n\\r\\s]{2,}", " "));
                         //}
                     //}
                 }
@@ -232,4 +232,12 @@ public class CSS3Extractor extends AbstractRMLProcessor{
         }
         return value;
     }  */
+
+    @Override
+    public String cleansing(String value) {
+        Jerry doc = Jerry.jerry(value);
+        Node node = doc.get(0);
+        value = node.getTextContent(); 
+        return value;
+    }
 }

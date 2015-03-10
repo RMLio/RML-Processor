@@ -258,4 +258,9 @@ public class XPathProcessor extends AbstractRMLProcessor {
     public List<String> extractValueFromNode(Object node, String expression) {
         return extractValueFromNode((Node) node, expression);
     }
+
+    @Override
+    public String cleansing(String value) {
+        return value;
+    }
 }

@@ -61,4 +61,11 @@ public interface RMLProcessor {
      * @return
      */
     public List<String> processTermMap(TermMap map, Object node);
+    
+    /**
+     *
+     * @param value
+     * @return
+     */
+    public String cleansing(String value);
 }

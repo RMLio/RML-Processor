@@ -102,4 +102,9 @@ public class JSONPathProcessor extends AbstractRMLProcessor {
                 performer.perform(object, dataset, parentTriplesMap);
         }
     }
+
+    @Override
+    public String cleansing(String value) {
+        return value;
+    }
 }

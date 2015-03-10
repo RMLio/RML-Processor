@@ -167,7 +167,6 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                 //Resolve the template
                 String template = map.getStringTemplate();
                 Set<String> tokens = R2RMLToolkit.extractColumnNamesFromStringTemplate(template);
-                List<Value> valueList = null;
                 for (String expression : tokens) {
                     List<String> replacements = extractValueFromNode(node, expression);
                     for (int i = 0; i < replacements.size(); i++) {
@@ -177,9 +176,8 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                         String replacement = null;
                         if (replacements.get(i) != null) {
                             replacement = replacements.get(i).trim();
-                            //valueList = postProcessTermMap(map, node, replacements.get(i), valueList);
                             if (map.getSplit() != null || map.getProcess() != null || map.getReplace() != null) {
-                                valueList = postProcessTermMap(map, node, replacement, valueList);
+                                List<Value> valueList = postProcessTermMap(map, node, replacement, null);
                                 replacement = valueList.get(0).stringValue();
                             }
                         }
@@ -422,17 +420,18 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                     if (valueList == null) {
                         valueList = new ArrayList<Value>();
                     }
-                    valueList.add(new URIImpl(value));
+                    valueList.add(new URIImpl(cleansing(value)));
                 } 
                 break;
             case BLANK_NODE:
-                valueList.add(new BNodeImpl(value));
+                valueList.add(new BNodeImpl(cleansing(value)));
                 break;
             case LITERAL:
                 if (languageTag != null && !value.equals("")) {
                     if (valueList == null) {
                         valueList = new ArrayList<Value>();
                     }
+                    value = cleansing(value);
                     valueList.add(new LiteralImpl(value, languageTag));
                 } else if (value != null && !value.equals("") && datatype != null) {
                     valueList.add(new LiteralImpl(value, datatype));
@@ -470,7 +469,8 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                 if (valueList == null) {
                     valueList = new ArrayList<Value>();
                 }
-                valueList.add(new LiteralImpl(matcher.replaceAll(replace)));
+                value = matcher.replaceAll(replace);
+                valueList.add(new LiteralImpl(value));
             }
         }
         return valueList;
