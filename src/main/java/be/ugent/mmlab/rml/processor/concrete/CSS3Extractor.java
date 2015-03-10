@@ -235,9 +235,12 @@ public class CSS3Extractor extends AbstractRMLProcessor{
 
     @Override
     public String cleansing(String value) {
-        Jerry doc = Jerry.jerry(value);
-        Node node = doc.get(0);
-        value = node.getTextContent(); 
-        return value;
+        try {
+            Jerry doc = Jerry.jerry(value);
+            Node node = doc.get(0);
+            value = node.getTextContent().trim();
+        } finally {
+            return value;
+        }
     }
 }

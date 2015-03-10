@@ -453,12 +453,18 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
             list = value.split(split);
             if (replace != null && list != null) {
                 Integer replaceOrder = Integer.parseInt(replace.substring(1));
-                value = list[replaceOrder - 1];
-                if (valueList == null) {
+
+                if ((replaceOrder - 1) < list.length) {
+                    value = list[replaceOrder - 1];
+                } else {
+                    value = null;
+                }
+                if (valueList.isEmpty()) {
                     valueList = new ArrayList<Value>();
                 }
-                valueList.add(new LiteralImpl(value));
-                return valueList;
+                if (value != null) {
+                    valueList.add(new LiteralImpl(cleansing(value)));
+                }
             }
         }
 

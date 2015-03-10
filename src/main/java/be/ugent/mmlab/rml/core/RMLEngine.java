@@ -187,6 +187,7 @@ public class RMLEngine {
             try {
                 processor.execute(sesameDataSet, triplesMap, new NodeRMLPerformer(processor), input);
             } catch (Exception ex) {
+                log.error(ex);
                 log.error("The execution of the mapping failed.");
             }
 
