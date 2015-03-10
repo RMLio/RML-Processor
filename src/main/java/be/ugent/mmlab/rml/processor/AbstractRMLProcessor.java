@@ -476,7 +476,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                     valueList = new ArrayList<Value>();
                 }
                 value = matcher.replaceAll(replace);
-                valueList.add(new LiteralImpl(value));
+                valueList.add(new LiteralImpl(cleansing(value)));
             }
         }
         return valueList;

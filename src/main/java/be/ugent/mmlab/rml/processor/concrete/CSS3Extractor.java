@@ -238,7 +238,7 @@ public class CSS3Extractor extends AbstractRMLProcessor{
         try {
             Jerry doc = Jerry.jerry(value);
             Node node = doc.get(0);
-            value = node.getTextContent().trim();
+            value = node.getTextContent().trim().replaceAll("[\\t\\n\\r\\s]", " ");
         } finally {
             return value;
         }
