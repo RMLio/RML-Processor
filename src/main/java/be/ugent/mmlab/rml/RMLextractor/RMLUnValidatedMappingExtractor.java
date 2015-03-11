@@ -441,7 +441,7 @@ public class RMLUnValidatedMappingExtractor implements RMLMappingExtractor{
             if (split != null || process != null || replace != null) {
                 result = new StdSubjectMap(triplesMap, constantValue,
                         stringTemplate, termType, inverseExpression,
-                        referenceValue, split, process, replace);
+                        referenceValue, classIRIs, graphMaps, split, process, replace);
             } else {
                 result = new StdSubjectMap(triplesMap, constantValue,
                         stringTemplate, termType, inverseExpression, referenceValue,
