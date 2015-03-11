@@ -87,9 +87,9 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
      * @return the created subject
      */
     @Override
-    public Resource processSubjectMap(SesameDataSet dataset, SubjectMap subjectMap, Object node) {       
+    public Resource processSubjectMap(SesameDataSet dataset, SubjectMap subjectMap, Object node) {  
         //Get the uri
-        List<String> values = processTermMap(subjectMap, node);   
+        List<String> values = processTermMap(subjectMap, node);
         //log.info("Abstract RML Processor Graph Map" + subjectMap.getGraphMaps().toString());
         if (values.isEmpty()) 
             if(subjectMap.getTermType() != BLANK_NODE)
@@ -444,7 +444,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
     
     public List<Value> postProcessTermMap(
             TermMap termMap, Object node, String value, List<Value> valueList) {
-        String[] list = null;
+        String[] list ;
         String split = termMap.getSplit();
         String process = termMap.getProcess();
         String replace = termMap.getReplace();
@@ -459,10 +459,10 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                 } else {
                     value = null;
                 }
-                if (valueList.isEmpty()) {
+                if (valueList == null) {
                     valueList = new ArrayList<Value>();
                 }
-                if (value != null) {
+                if (value != null && !value.equals("")) {
                     valueList.add(new LiteralImpl(cleansing(value)));
                 }
             }
@@ -476,7 +476,9 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                     valueList = new ArrayList<Value>();
                 }
                 value = matcher.replaceAll(replace);
-                valueList.add(new LiteralImpl(cleansing(value)));
+                if (value != null && !value.equals("")) {
+                    valueList.add(new LiteralImpl(cleansing(value)));
+                }
             }
         }
         return valueList;

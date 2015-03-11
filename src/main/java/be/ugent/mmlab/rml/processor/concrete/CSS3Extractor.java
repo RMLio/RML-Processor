@@ -8,8 +8,6 @@ import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import jodd.csselly.selector.PseudoFunctionSelector;
@@ -46,7 +44,7 @@ public class CSS3Extractor extends AbstractRMLProcessor{
         try {
             doc = Jerry.jerry(IOUtils.toString(input, "UTF-8"));
         } catch (IOException ex) {
-            Logger.getLogger(CSS3Extractor.class.getName()).log(Level.SEVERE, null, ex);
+            log.error(ex);
         }
         NodeSelector nodeSelector = null;
         nodeSelector = new NodeSelector(doc.get(0));
