@@ -451,6 +451,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
 
         if (split != null) {
             list = value.split(split);
+            log.error("list " + list);
             if (replace != null && list != null) {
                 Integer replaceOrder = Integer.parseInt(replace.substring(1));
 
@@ -465,6 +466,10 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                 if (value != null && !value.equals("")) {
                     valueList.add(new LiteralImpl(cleansing(value)));
                 }
+            }
+            else{
+                for(String item : list)
+                    valueList.add(new LiteralImpl(cleansing(item)));
             }
         }
 
