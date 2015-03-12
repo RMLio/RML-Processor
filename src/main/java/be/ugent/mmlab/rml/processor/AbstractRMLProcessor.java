@@ -210,7 +210,6 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
     }
     
     public String processTemplate(TermMap map, String expression, String template, String replacement) {
-        //log.error("230 replacement " + replacement);
         String temp = template;//.get(i).trim();
         if (expression.contains("[")) {
             expression = expression.replaceAll("\\[", "").replaceAll("\\]", "");
@@ -262,6 +261,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
         for (PredicateMap predicateMap : predicateMaps) {
             //Get the predicate
             List<URI> predicates = processPredicateMap(predicateMap, node);
+            //TODO:verify that it retrieves all predicates
 
             for (URI predicate : predicates) {
                 //Process the joins first
@@ -347,8 +347,9 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                     for (Value object : objects) {
                         if (object.stringValue() != null) {
                             Set<GraphMap> graphs = pom.getGraphMaps();
-                            if(graphs.isEmpty() && subject != null)
+                            if(graphs.isEmpty() && subject != null){
                                 dataset.add(subject, predicate, object);
+                            }
                             else
                                 for (GraphMap graph : graphs) {
                                     Resource graphResource = new URIImpl(graph.getConstantValue().toString());
@@ -401,6 +402,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                     || objectMap.getProcess() != null
                     || objectMap.getReplace() != null) {
                 List<Value> tempValueList = postProcessTermMap(objectMap, node, value, null);
+                if(tempValueList != null)
                 for (Value tempVal : tempValueList) {
                     valueList = applyTermType(tempVal.stringValue(), valueList, objectMap);
                 }
@@ -493,6 +495,8 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                     valueList.add(new LiteralImpl(cleansing(value)));
                 }
             }
+            else
+                log.error("no match found for " + process);
         }
         return valueList;
     }

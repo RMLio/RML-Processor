@@ -5,11 +5,8 @@ import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.AbstractRMLProcessor;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import jodd.csselly.selector.PseudoFunctionSelector;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
 import jodd.jerry.Jerry;
@@ -96,19 +93,25 @@ public class CSS3Extractor extends AbstractRMLProcessor{
                 list.add(StringEscapeUtils.unescapeHtml(snode.getAttribute("href").toString().replaceAll(expression, replacement).trim().replaceAll("[\\t\\n\\r\\s]{2,}", " ")));
             } else {
                 String value = StringEscapeUtils.unescapeHtml(doc.$(expression).text().trim().replaceAll("[\\t\\n\\r\\s]{2,}", " "));
-                if (replacement == null) {
-                    Pattern pattern = Pattern.compile(expression);
-                    Matcher matcher = pattern.matcher(value);
-                    if (matcher.find()) {
-                        if (!matcher.replaceAll(replacement).equals("") && !matcher.replaceAll(replacement).equals(" ")) {
-                            list.add(StringEscapeUtils.unescapeHtml(matcher.group()));
-                        }
-                    } else {
-                        //list.add(StringEscapeUtils.unescapeHtml(value));
-                        list.add(StringEscapeUtils.unescapeHtml(snode.getInnerHtml().toString().trim().replaceAll("[\\t\\n\\r\\s]{2,}", " ")));
-                    }
-                } else {
-                    DecimalFormat formatter = new DecimalFormat("00");
+                list.add(StringEscapeUtils.unescapeHtml(value));
+                //if (replacement == null) {
+                    //Pattern pattern = Pattern.compile(expression);
+                    //Matcher matcher = pattern.matcher(value);
+                    //if (matcher.find()) {
+                        //log.error("1 " + matcher.group());
+                        //if (!matcher.replaceAll(replacement).equals("") && !matcher.replaceAll(replacement).equals(" ")) {
+                        //    log.error("whatever ");
+                    //        list.add(StringEscapeUtils.unescapeHtml(matcher.group()));
+                        //}
+                        //else
+                        //    log.error("oti nanai");
+                    //} else {
+                    //    log.error("2 " + value);
+                        
+                        //list.add(StringEscapeUtils.unescapeHtml(snode.getInnerHtml().toString().trim().replaceAll("[\\t\\n\\r\\s]{2,}", " ")));
+                    //}
+                //} else {
+                   /* DecimalFormat formatter = new DecimalFormat("00");
                     Pattern replace = Pattern.compile(expression);
                     Matcher matcher = replace.matcher(value);
                     if (matcher.find()) {
@@ -122,8 +125,8 @@ public class CSS3Extractor extends AbstractRMLProcessor{
                                 list.add(StringEscapeUtils.unescapeHtml(matcher.replaceAll(replacement)));
                             }
                         }
-                    }
-                }
+                    }*/
+                //}
             }
         }
         /*for (Node snode : selectedNodes) {
