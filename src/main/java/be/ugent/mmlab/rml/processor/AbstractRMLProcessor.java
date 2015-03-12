@@ -151,6 +151,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
     @Override
     public List<String> processTermMap(TermMap map, Object node) {
         List<String> value = new ArrayList<>();
+        List<String> validValues = new ArrayList<>();
 
         switch (map.getTermMapType()) {
             case REFERENCE_VALUED:
@@ -173,63 +174,29 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                         if (value.size() < (i + 1)) {
                             value.add(template);
                         }
-                        String replacement = null;
-                        if (replacements.get(i) != null) {
-                            replacement = replacements.get(i).trim();
+                        for (String replacement : replacements) {
                             if (map.getSplit() != null || map.getProcess() != null || map.getReplace() != null) {
                                 List<Value> valueList = postProcessTermMap(map, node, replacement, null);
-                                replacement = valueList.get(0).stringValue();
-                            }
-                        }
+                                for (Value val : valueList) {
+                                    String temp = processTemplate(map, expression, template, val.stringValue());
 
-                        //if (replacement == null || replacement.isEmpty()) {
-                        if (replacement == null || replacement.equals("")) {
-                            //if the replacement value is null or empty, the reulting uri would be invalid, skip this.
-                            //The placeholders remain which removes them in the end.
-                            continue;
-                        }
-
-                        String temp = value.get(i).trim();
-                        if (expression.contains("[")) {
-                            expression = expression.replaceAll("\\[", "").replaceAll("\\]", "");
-                            temp = temp.replaceAll("\\[", "").replaceAll("\\]", "");
-                        }
-                        //JSONPath expression cause problems when replacing, remove the $ first
-                        if ((map.getOwnTriplesMap().getLogicalSource().getReferenceFormulation() == QLTerm.JSONPATH_CLASS)
-                                && expression.contains("$")) {
-                            expression = expression.replaceAll("\\$", "");
-                            temp = temp.replaceAll("\\$", "");
-                        }
-                        try {
-                            if (map.getTermType().toString().equals(TermType.IRI.toString())) {
-                                //TODO: replace the following with URIbuilder
-                                temp = temp.replaceAll("\\{" + Pattern.quote(expression) + "\\}",
-                                        URLEncoder.encode(replacement, "UTF-8")
-                                        .replaceAll("\\+", "%20")
-                                        .replaceAll("\\%21", "!")
-                                        .replaceAll("\\%27", "'")
-                                        .replaceAll("\\%28", "(")
-                                        .replaceAll("\\%29", ")")
-                                        .replaceAll("\\%7E", "~"));
+                                    if (R2RMLToolkit.extractColumnNamesFromStringTemplate(temp).isEmpty()) {
+                                        validValues.add(temp);
+                                    }
+                                }
                             } else {
-                                temp = temp.replaceAll("\\{" + expression + "\\}", replacement);
+                                String temp = processTemplate(map, expression, template, replacement);
+                                value.set(i, temp.toString());
+
                             }
-                            //Use encoding UTF-8 explicit URL encode; other one is deprecated 
-                            //temp.replaceAll(expression, "body div.CEURTOC h2+ul li a&<a href=\\\"([\\\\w\\\\d]*.\\\\w*)\\\">([\\\\w\\\\d]*)</a>#$1");
-                            //temp = temp.replaceAll("\\{" + Pattern.quote(expression) + "\\}", ((replacement.startsWith("http")||replacement.startsWith("ftp")) ? replacement.toString() : URLEncoder.encode(replacement,"UTF-8")));
-
-                        } catch (UnsupportedEncodingException ex) {
-                            Logger.getLogger(AbstractRMLProcessor.class.getName()).log(Level.SEVERE, null, ex);
                         }
-                        value.set(i, temp.toString());
-
-                    }    
+                    }
                 }
-                                
+
                 //Check if there are any placeholders left in the templates and remove uris that are not
-                List<String> validValues = new ArrayList<>();
-                for (String uri : value){
-                    if (R2RMLToolkit.extractColumnNamesFromStringTemplate(uri).isEmpty()){
+//                List<String> validValues = new ArrayList<>();
+                for (String uri : value) {
+                    if (R2RMLToolkit.extractColumnNamesFromStringTemplate(uri).isEmpty()) {
                         validValues.add(uri);
                     }
                 }
@@ -240,6 +207,43 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
         }
 
         //return value;
+    }
+    
+    public String processTemplate(TermMap map, String expression, String template, String replacement) {
+        //log.error("230 replacement " + replacement);
+        String temp = template;//.get(i).trim();
+        if (expression.contains("[")) {
+            expression = expression.replaceAll("\\[", "").replaceAll("\\]", "");
+            temp = temp.replaceAll("\\[", "").replaceAll("\\]", "");
+        }
+        //JSONPath expression cause problems when replacing, remove the $ first
+        if ((map.getOwnTriplesMap().getLogicalSource().getReferenceFormulation() == QLTerm.JSONPATH_CLASS)
+                && expression.contains("$")) {
+            expression = expression.replaceAll("\\$", "");
+            temp = temp.replaceAll("\\$", "");
+        }
+        try {
+            if (map.getTermType().toString().equals(TermType.IRI.toString())) {
+                //TODO: replace the following with URIbuilder
+                temp = temp.replaceAll("\\{" + Pattern.quote(expression) + "\\}",
+                        URLEncoder.encode(replacement, "UTF-8")
+                        .replaceAll("\\+", "%20")
+                        .replaceAll("\\%21", "!")
+                        .replaceAll("\\%27", "'")
+                        .replaceAll("\\%28", "(")
+                        .replaceAll("\\%29", ")")
+                        .replaceAll("\\%7E", "~"));
+            } else {
+                temp = temp.replaceAll("\\{" + expression + "\\}", replacement);
+            }
+            //Use encoding UTF-8 explicit URL encode; other one is deprecated 
+            //temp.replaceAll(expression, "body div.CEURTOC h2+ul li a&<a href=\\\"([\\\\w\\\\d]*.\\\\w*)\\\">([\\\\w\\\\d]*)</a>#$1");
+            //temp = temp.replaceAll("\\{" + Pattern.quote(expression) + "\\}", ((replacement.startsWith("http")||replacement.startsWith("ftp")) ? replacement.toString() : URLEncoder.encode(replacement,"UTF-8")));
+
+        } catch (UnsupportedEncodingException ex) {
+            Logger.getLogger(AbstractRMLProcessor.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return temp.toString();
     }
     
     /**
@@ -397,7 +401,10 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
             if (objectMap.getSplit() != null ||
                     objectMap.getProcess() != null || 
                     objectMap.getReplace() != null) {
-                valueList = postProcessTermMap(objectMap, node, value, valueList);
+                List<Value> tempValueList = postProcessTermMap(objectMap, node, value, null);
+                for(Value tempVal : tempValueList){
+                    valueList = applyTermType(tempVal.stringValue(), valueList, objectMap);
+                }                    
             }
             else{
                 valueList = applyTermType(value, valueList, objectMap);
@@ -451,7 +458,6 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
 
         if (split != null) {
             list = value.split(split);
-            log.error("list " + list);
             if (replace != null && list != null) {
                 Integer replaceOrder = Integer.parseInt(replace.substring(1));
 
@@ -467,9 +473,13 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                     valueList.add(new LiteralImpl(cleansing(value)));
                 }
             }
-            else{
-                for(String item : list)
+            else {
+                for (String item : list) {
+                    if (valueList == null) {
+                        valueList = new ArrayList<Value>();
+                    }
                     valueList.add(new LiteralImpl(cleansing(item)));
+                }
             }
         }
 

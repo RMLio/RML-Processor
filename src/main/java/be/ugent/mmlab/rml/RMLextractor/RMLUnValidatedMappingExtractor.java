@@ -717,7 +717,7 @@ public class RMLUnValidatedMappingExtractor implements RMLMappingExtractor{
             StdObjectMap result = new StdObjectMap(null, constantValue, dataType,
                     languageTag, stringTemplate, termType, inverseExpression,
                     referenceValue, split, process, replace);
-                       
+                       //log.error("result " + result);
             return result;
         } catch (R2RMLDataError ex) {
             java.util.logging.Logger.getLogger(RMLUnValidatedMappingExtractor.class.getName()).log(Level.SEVERE, null, ex);
