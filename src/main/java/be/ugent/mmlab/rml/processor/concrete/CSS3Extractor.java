@@ -77,67 +77,26 @@ public class CSS3Extractor extends AbstractRMLProcessor{
         Jerry doc = Jerry.jerry(node.toString());
         List<String> list = new ArrayList();
         String replacement = null;
-
+        
         if (expression.equals("#")) {
             list.add(Integer.toString(enumerator++));
             return list;
         }
+        
+        Node doc2 = doc.get(0);
+        NodeSelector nodeSelector = new NodeSelector(doc2);
+        List<Node> selectedNodes ; //= nodeSelector.select(expression);
+        if (expression.contains("href"))
+            selectedNodes = nodeSelector.select("a");
+        else
+            selectedNodes = nodeSelector.select(expression);
 
-        if (expression.contains("&")) {
-            String[] valueList = null;
-            String regex = expression.split("&")[1];
-            expression = expression.split("&")[0];
-
-            /*if (regex.startsWith("deduct:")) {
-                regex = regex.split("deduct:")[1];
-                expression = expression.split("\\{")[0];
-                String value = StringEscapeUtils.unescapeHtml(doc.$(expression).text().trim().replaceAll("[\\t\\n\\r\\s]{2,}", " "));
-                if (!value.isEmpty()) {
-                    if (value.contains("--")) {
-                        valueList = value.split("--");
-                    } else {
-                        valueList = value.split("-");
-                    }
-
-                    if (valueList.length > 1) {
-                        int val = Integer.parseInt(valueList[1]) - Integer.parseInt(valueList[0]);
-
-                        list.add(StringEscapeUtils.unescapeHtml(String.valueOf(val)));
-                    } else {
-                        valueList[0] = String.valueOf(1);
-                        list.add(StringEscapeUtils.unescapeHtml(String.valueOf(valueList[0])));
-                    }
-
-                }
-                return list;
-            }*/
-
-            /*if (regex.contains("#")) {
-                replacement = regex.split("#")[1];
-                regex = regex.split("#")[0];
-            }*/
-
-            if (regex.contains("href")) {
-                Node doc2 = doc.get(0);
-                NodeSelector nodeSelector = new NodeSelector(doc2);
-                List<Node> selectedNodes = nodeSelector.select(expression);
-                for (Node snode : selectedNodes) {
-                    list.add(StringEscapeUtils.unescapeHtml(snode.getAttribute("href").toString().replaceAll(regex, replacement).trim().replaceAll("[\\t\\n\\r\\s]{2,}", " ")));
-                }
+        for (Node snode : selectedNodes) {
+            if (expression.contains("href")) {
+                list.add(StringEscapeUtils.unescapeHtml(snode.getAttribute("href").toString().replaceAll(expression, replacement).trim().replaceAll("[\\t\\n\\r\\s]{2,}", " ")));
             } else {
                 String value = StringEscapeUtils.unescapeHtml(doc.$(expression).text().trim().replaceAll("[\\t\\n\\r\\s]{2,}", " "));
                 if (replacement == null) {
-
-                    Node doc2 = doc.get(0);
-                    NodeSelector nodeSelector = new NodeSelector(doc2);
-                    List<Node> selectedNodes = nodeSelector.select(expression);
-                    for (Node snode : selectedNodes) {
-                        if (snode.getInnerHtml().toString() != null && !snode.getInnerHtml().toString().equals("")) {
-                            if (!snode.getInnerHtml().toString().trim().replaceAll("[\\t\\n\\r\\s]{2,}", " ").equals("")) {
-                                list.add(StringEscapeUtils.unescapeHtml(snode.getInnerHtml().toString().trim().replaceAll("[\\t\\n\\r\\s]{2,}", " ")));
-                            }
-                        }
-                    }
                     Pattern pattern = Pattern.compile(expression);
                     Matcher matcher = pattern.matcher(value);
                     if (matcher.find()) {
@@ -145,11 +104,12 @@ public class CSS3Extractor extends AbstractRMLProcessor{
                             list.add(StringEscapeUtils.unescapeHtml(matcher.group()));
                         }
                     } else {
-                        list.add(StringEscapeUtils.unescapeHtml(value));
+                        //list.add(StringEscapeUtils.unescapeHtml(value));
+                        list.add(StringEscapeUtils.unescapeHtml(snode.getInnerHtml().toString().trim().replaceAll("[\\t\\n\\r\\s]{2,}", " ")));
                     }
                 } else {
                     DecimalFormat formatter = new DecimalFormat("00");
-                    Pattern replace = Pattern.compile(regex);
+                    Pattern replace = Pattern.compile(expression);
                     Matcher matcher = replace.matcher(value);
                     if (matcher.find()) {
                         if (!matcher.replaceAll(replacement).equals("") && !matcher.replaceAll(replacement).equals(" ")) {
@@ -158,78 +118,21 @@ public class CSS3Extractor extends AbstractRMLProcessor{
                                 int newInt = Integer.parseInt(matcher.replaceAll(replacement));
                                 list.add(formatter.format(newInt).toString().trim());
                             }
-
-                            /*for (int i = 0; i < 11; i++) {
-                                if (matcher.replaceAll(replacement).toString().contains(months[i])) {
-                                    list.add(String.valueOf(matcher.replaceAll(replacement).replace(months[i], formatter.format(i + 1))));
-                                }
-                            }*/
-
-                            /*for (int i = 0; i < 11; i++) {
-                                if (matcher.replaceAll(replacement).toString().contains(shortMonths[i])) {
-                                    list.add(String.valueOf(matcher.replaceAll(replacement).replace(shortMonths[i], formatter.format(i + 1))));
-                                }
-                            }*/
-
-                            /*if (replace.toString().contains("Edited by:") || replace.toString().contains("CEURAUTHORS")) {
-                                values = matcher.replaceAll(replacement).split(",");
-                                for (String val : values) {
-                                    list.add(StringEscapeUtils.unescapeHtml(val));
-                                }
-                            } else */ if (!matcher.replaceAll(replacement).equals("")) {
+                            if (!matcher.replaceAll(replacement).equals("")) {
                                 list.add(StringEscapeUtils.unescapeHtml(matcher.replaceAll(replacement)));
                             }
                         }
                     }
                 }
             }
-        } else {
-            Node doc2 = doc.get(0);
-            NodeSelector nodeSelector = new NodeSelector(doc2);
-            List<Node> selectedNodes = nodeSelector.select(expression);
-            for (Node snode : selectedNodes) {
-                if (snode.getInnerHtml().toString() != null && !snode.getInnerHtml().toString().trim().replaceAll("[\\t\\n\\r\\s]{2,}", " ").equals("")) {
-                    //String finVal;
-                    /*if (expression.contains("CEURAUTHORS")) {
-                        String[] values = snode.getInnerHtml().toString().trim().replaceAll("[\\t\\n\\r\\s]{2,}", " ").split(",");
-                        for (String val : values) {
-                            list.add(StringEscapeUtils.unescapeHtml(val));
-                        }
-                    } else {*/
-                        //finVal = checkforDate(StringEscapeUtils.unescapeHtml(snode.getInnerHtml().toString().trim().replaceAll("[\\t\\n\\r\\s]{2,}", " ")));
-                        //if (!finVal.equals("")) {
-                            list.add(snode.getInnerHtml().toString().trim().replaceAll("[\\t\\n\\r\\s]{2,}", " "));
-                        //}
-                    //}
-                }
-            }
         }
+        /*for (Node snode : selectedNodes) {
+            if (snode.getInnerHtml().toString() != null && !snode.getInnerHtml().toString().trim().replaceAll("[\\t\\n\\r\\s]{2,}", " ").equals("")) {
+                list.add(snode.getInnerHtml().toString().trim().replaceAll("[\\t\\n\\r\\s]{2,}", " "));
+            }
+        }*/
         return list;
     }
-    
-    /*private String checkforDate(String value) {
-        String months[] = {"January", "February", "March", "April",
-            "May", "June", "July", "August", "September",
-            "October", "November", "December"};
-        String shortMonths[] = {"Jan", "Feb", "Mar", "Apr",
-            "May", "June", "July", "Aug", "Sep",
-            "Oct", "Nov", "Dec"};
-
-        DecimalFormat formatter = new DecimalFormat("00");
-
-        for (int i = 0; i < 11; i++) {
-            if (value.contains(months[i])) {
-                value = String.valueOf(formatter.format(i + 1));
-            }
-        }
-
-        for (int i = 0; i < 11; i++) {
-            if (value.contains(shortMonths[i])) {
-                value = String.valueOf(formatter.format(i + 1));
-            }
-        }
-        return value;
-    }  */
 
     @Override
     public String cleansing(String value) {

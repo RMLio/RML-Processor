@@ -185,8 +185,8 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                                     }
                                 }
                             } else {
-                                String temp = processTemplate(map, expression, template, replacement);
-                                value.set(i, temp.toString());
+                                template = processTemplate(map, expression, template, replacement);
+                                value.set(i, template.toString());
 
                             }
                         }
@@ -396,17 +396,15 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
         //A Term map returns one or more values (in case expression matches more)
         List<String> values = processTermMap(objectMap, node);
         List<Value> valueList = new ArrayList<>();
-        for (String value : values) {          
-            
-            if (objectMap.getSplit() != null ||
-                    objectMap.getProcess() != null || 
-                    objectMap.getReplace() != null) {
+        for (String value : values) {
+            if (objectMap.getSplit() != null
+                    || objectMap.getProcess() != null
+                    || objectMap.getReplace() != null) {
                 List<Value> tempValueList = postProcessTermMap(objectMap, node, value, null);
-                for(Value tempVal : tempValueList){
+                for (Value tempVal : tempValueList) {
                     valueList = applyTermType(tempVal.stringValue(), valueList, objectMap);
-                }                    
-            }
-            else{
+                }
+            } else {
                 valueList = applyTermType(value, valueList, objectMap);
             }
         }
