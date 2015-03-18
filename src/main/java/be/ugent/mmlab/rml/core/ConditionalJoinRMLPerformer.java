@@ -52,11 +52,11 @@ public class ConditionalJoinRMLPerformer extends NodeRMLPerformer{
             boolean flag = true;
 
             iter: for (String expr : conditions.keySet()) {
-                String cond = conditions.get(expr);
+                String cond = conditions.get(expr).trim();
                 List<String> values = processor.extractValueFromNode(node, expr);
-                
+                //log.error("values" + values);
                 for(String value : values){
-                    if(value == null || !value.equals(cond)){
+                    if(value == null || !value.toLowerCase().trim().equals(cond.toLowerCase())){
                             flag = false;
                             break iter;
                     }

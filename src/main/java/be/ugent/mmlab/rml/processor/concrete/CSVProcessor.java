@@ -79,7 +79,9 @@ public class CSVProcessor extends AbstractRMLProcessor {
     }
 
     @Override
-    public void execute_node(SesameDataSet dataset, String expression, TriplesMap parentTriplesMap, RMLPerformer performer, Object node, Resource subject) {
+    public void execute_node(
+            SesameDataSet dataset, String expression, TriplesMap parentTriplesMap, 
+            RMLPerformer performer, Object node, Resource subject) {
         throw new UnsupportedOperationException("Not applicable for CSV sources."); //To change body of generated methods, choose Tools | Templates.
     }
 

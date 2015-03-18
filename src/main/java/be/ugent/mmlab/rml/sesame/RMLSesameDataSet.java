@@ -93,14 +93,15 @@ public class RMLSesameDataSet extends SesameDataSet {
                         + "?gm <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/r2rml#GraphMap> . } "
                         + " WHERE {"
                         + " ?tm <http://semweb.mmlab.be/ns/rml#logicalSource> ?ls ."
+                        + " ?tm <http://www.w3.org/ns/r2rml#subjectMap> ?sm ."
                         + " OPTIONAL {"
-                        + "?tm <http://www.w3.org/ns/r2rml#predicateObjectMap> ?pom ."
-                        + "?pom <http://www.w3.org/ns/r2rml#predicateMap> ?pm ."
-                        + "?pom <http://www.w3.org/ns/r2rml#objectMap> ?om . }"
+                        + "  ?tm <http://www.w3.org/ns/r2rml#predicateObjectMap> ?pom ."
+                        + "  ?pom <http://www.w3.org/ns/r2rml#predicateMap> ?pm ."
+                        + "  ?pom <http://www.w3.org/ns/r2rml#objectMap> ?om . }"
                         + " OPTIONAL {"
-                        + "?om <http://www.w3.org/ns/r2rml#joinCondition> ?jc. }"
+                        + "  ?om <http://www.w3.org/ns/r2rml#joinCondition> ?jc. }"
                         + " OPTIONAL { "
-                        + "?x <http://www.w3.org/ns/r2rml#graphMap> ?gm . } "
+                        + "  ?x <http://www.w3.org/ns/r2rml#graphMap> ?gm . } "
                         + "}";
                 String match =
                         pre
