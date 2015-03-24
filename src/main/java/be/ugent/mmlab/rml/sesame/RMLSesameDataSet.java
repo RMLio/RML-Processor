@@ -93,7 +93,7 @@ public class RMLSesameDataSet extends SesameDataSet {
                         + "?gm <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/r2rml#GraphMap> . } "
                         + " WHERE {"
                         + " ?tm <http://semweb.mmlab.be/ns/rml#logicalSource> ?ls ."
-                        + " ?tm <http://www.w3.org/ns/r2rml#subjectMap> ?sm ."
+                        //+ " ?tm <http://www.w3.org/ns/r2rml#subjectMap> ?sm ."
                         + " OPTIONAL {"
                         + "  ?tm <http://www.w3.org/ns/r2rml#predicateObjectMap> ?pom ."
                         + "  ?pom <http://www.w3.org/ns/r2rml#predicateMap> ?pm ."
