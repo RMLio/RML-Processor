@@ -326,6 +326,10 @@ public class RMLUnValidatedMappingExtractor implements RMLMappingExtractor{
                 rmlMappingGraph,blankLogicalSource,
                 RMLVocabulary.RML_NAMESPACE, RMLVocabulary.RMLTerm.SOURCE, triplesMap);
         
+        List<Statement> splitStatements = getStatements(
+                rmlMappingGraph,blankLogicalSource,
+                RMLVocabulary.RML_NAMESPACE, RMLVocabulary.RMLTerm.SPLIT, triplesMap);
+
         LogicalSource logicalSource = null;
 
         if (!sourceStatements.isEmpty()) {
@@ -334,11 +338,25 @@ public class RMLUnValidatedMappingExtractor implements RMLMappingExtractor{
                 String file = sourceStatement.getObject().stringValue();
 
                 if (!iterators.isEmpty()) {
+                    if(!splitStatements.isEmpty())
+                        logicalSource =
+                            new StdLogicalSource(
+                            iterators.get(0).getObject().stringValue(), file.toString(), 
+                                referenceFormulation, splitStatements.get(0).getObject().stringValue());
+                    else{
                     logicalSource =
-                            new StdLogicalSource(iterators.get(0).getObject().stringValue(), file.toString(), referenceFormulation);
+                            new StdLogicalSource(
+                            iterators.get(0).getObject().stringValue(), file.toString(), referenceFormulation);
+                    }
                 }
                 else
-                    logicalSource = new StdLogicalSource(file.toString(), referenceFormulation);
+                    if(!splitStatements.isEmpty())
+                        logicalSource =
+                            new StdLogicalSource(
+                            iterators.get(0).getObject().stringValue(), file.toString(), 
+                                referenceFormulation, splitStatements.get(0).getObject().toString());
+                    else
+                        logicalSource = new StdLogicalSource(file.toString(), referenceFormulation);
                     
             }
         }

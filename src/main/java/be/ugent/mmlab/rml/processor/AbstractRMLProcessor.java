@@ -176,6 +176,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                                 value.add(template);
                             }
                             for (String replacement : replacements) {
+                                log.error("replacement " + replacement);
                                 if (replacement != null || !replacement.equals("")) {
                                     //log.error("replacement" + replacement);
                                     if (map.getSplit() != null || map.getProcess() != null || map.getReplace() != null) {

@@ -25,4 +25,6 @@ public interface LogicalSource {
      * interpreted
      */
     public RMLVocabulary.QLTerm getReferenceFormulation();
+    
+    public String getSplitCondition();
 }
