@@ -40,9 +40,7 @@ public class NodeRMLPerformer implements RMLPerformer{
      */
     @Override
     public void perform(Object node, SesameDataSet dataset, TriplesMap map) {
-        if (!map.getLogicalSource().getSplitCondition().isEmpty()) {
-            perform(node, dataset, map, map.getLogicalSource().getSplitCondition());
-        } else {
+        if (map.getLogicalSource().getSplitCondition() == null) {
             Resource subject = processor.processSubjectMap(dataset, map.getSubjectMap(), node);
             processor.processSubjectTypeMap(dataset, subject, map.getSubjectMap(), node);
             if (subject == null) {
@@ -53,6 +51,8 @@ public class NodeRMLPerformer implements RMLPerformer{
                     processor.processPredicateObjectMap(dataset, subject, pom, node, map);
                 }
             }
+        } else {
+            perform(node, dataset, map, map.getLogicalSource().getSplitCondition());
         }
     }
     
