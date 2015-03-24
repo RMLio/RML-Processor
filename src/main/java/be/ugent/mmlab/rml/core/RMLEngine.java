@@ -101,7 +101,7 @@ public class RMLEngine {
         SesameDataSet sesameDataSet ;
         // Update baseIRI
         this.baseIRI = baseIRI;
-        log.info("RMLEngine base IRI " + baseIRI);
+        //log.info("RMLEngine base IRI " + baseIRI);
 
         if (filebased) {
             log.debug("[RMLEngine:runRMLMapping] Use direct file "

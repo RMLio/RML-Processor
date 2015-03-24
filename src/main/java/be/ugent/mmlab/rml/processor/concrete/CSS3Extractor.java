@@ -95,43 +95,12 @@ public class CSS3Extractor extends AbstractRMLProcessor{
 
         for (Node snode : selectedNodes) {
             if (expression.contains("href")) {
-                list.add(StringEscapeUtils.unescapeHtml(snode.getAttribute("href").toString().replaceAll(expression, replacement).trim().replaceAll("[\\t\\n\\r\\s]{2,}", " ")));
+                list.add(StringEscapeUtils.unescapeHtml(
+                        snode.getAttribute("href").toString().replaceAll(expression, replacement).trim().replaceAll("[\\t\\n\\r\\s]{2,}", " ")));
             } else {
-                String value = StringEscapeUtils.unescapeHtml(doc.$(expression).text().trim().replaceAll("[\\t\\n\\r\\s]{2,}", " "));
-                list.add(StringEscapeUtils.unescapeHtml(value));
-                //if (replacement == null) {
-                    //Pattern pattern = Pattern.compile(expression);
-                    //Matcher matcher = pattern.matcher(value);
-                    //if (matcher.find()) {
-                        //log.error("1 " + matcher.group());
-                        //if (!matcher.replaceAll(replacement).equals("") && !matcher.replaceAll(replacement).equals(" ")) {
-                        //    log.error("whatever ");
-                    //        list.add(StringEscapeUtils.unescapeHtml(matcher.group()));
-                        //}
-                        //else
-                        //    log.error("oti nanai");
-                    //} else {
-                    //    log.error("2 " + value);
-                        
-                        //list.add(StringEscapeUtils.unescapeHtml(snode.getInnerHtml().toString().trim().replaceAll("[\\t\\n\\r\\s]{2,}", " ")));
-                    //}
-                //} else {
-                   /* DecimalFormat formatter = new DecimalFormat("00");
-                    Pattern replace = Pattern.compile(expression);
-                    Matcher matcher = replace.matcher(value);
-                    if (matcher.find()) {
-                        if (!matcher.replaceAll(replacement).equals("") && !matcher.replaceAll(replacement).equals(" ")) {
-                            String[] values = null;
-                            if (matcher.replaceAll(replacement).matches("\\d{1}")) {
-                                int newInt = Integer.parseInt(matcher.replaceAll(replacement));
-                                list.add(formatter.format(newInt).toString().trim());
-                            }
-                            if (!matcher.replaceAll(replacement).equals("")) {
-                                list.add(StringEscapeUtils.unescapeHtml(matcher.replaceAll(replacement)));
-                            }
-                        }
-                    }*/
-                //}
+                String value = StringEscapeUtils.unescapeHtml(snode.getTextContent().replaceAll("[\\t\\n\\r\\s]{2,}", " ").trim());
+                if(value != null & !value.equals(""))
+                    list.add(StringEscapeUtils.unescapeHtml(value));
             }
         }
         /*for (Node snode : selectedNodes) {

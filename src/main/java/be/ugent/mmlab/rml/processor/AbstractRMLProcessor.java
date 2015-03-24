@@ -150,19 +150,37 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
 
     @Override
     public List<String> processTermMap(TermMap map, Object node) {
-        List<String> value = new ArrayList<>();
+        List<String> values = new ArrayList<>(), valueList = new ArrayList<>();
         List<String> validValues = new ArrayList<>();
 
         switch (map.getTermMapType()) {
             case REFERENCE_VALUED:
                 //Get the expression and extract the value
                 ReferenceIdentifierImpl identifier = (ReferenceIdentifierImpl) map.getReferenceValue();
-                value = extractValueFromNode(node, identifier.toString().trim()); 
-                return value;
+                values = extractValueFromNode(node, identifier.toString().trim());
+                for (String value : values) {
+                    if (map.getSplit() != null
+                            || map.getProcess() != null
+                            || map.getReplace() != null) {
+                        List<Value> tempValueList = postProcessTermMap(map, node, value, null);
+                        if (tempValueList != null) {
+                            for (Value tempVal : tempValueList) {
+                                //valueList = applyTermType(tempVal.stringValue(), valueList, map);
+                                valueList.add(tempVal.stringValue());
+                            }
+                        }
+                    } else {
+                            //valueList = applyTermType(tempVal.stringValue(), valueList, map);
+                        valueList.add(value);
+                    }
+                        //valueList = applyTermType(value, valueList, map);
+                    }
+                return valueList;
+                
             case CONSTANT_VALUED:
                 //Extract the value directly from the mapping
-                value.add(map.getConstantValue().stringValue().trim());
-                return value;
+                values.add(map.getConstantValue().stringValue().trim());
+                return values;
 
             case TEMPLATE_VALUED:
                 //Resolve the template
@@ -170,19 +188,18 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                 Set<String> tokens = R2RMLToolkit.extractColumnNamesFromStringTemplate(template);
                 for (String expression : tokens) {
                     List<String> replacements = extractValueFromNode(node, expression);
-                    if (replacements != null || replacements.isEmpty()) {
+                    if (replacements != null || replacements.isEmpty() || replacements.size() == 0) {
                         for (int i = 0; i < replacements.size(); i++) {
-                            if (value.size() < (i + 1)) {
-                                value.add(template);
+                            if (values.size() < (i + 1)) {
+                                values.add(template);
                             }
                             for (String replacement : replacements) {
                                 if (replacement != null || !replacement.equals("")) {
                                     //log.error("replacement" + replacement);
                                     if (map.getSplit() != null || map.getProcess() != null || map.getReplace() != null) {
-                                        List<Value> valueList = postProcessTermMap(map, node, replacement, null);
-                                        for (Value val : valueList) {
+                                        List<Value> list = postProcessTermMap(map, node, replacement, null);
+                                        for (Value val : list) {
                                             String temp = processTemplate(map, expression, template, val.stringValue());
-
                                             if (R2RMLToolkit.extractColumnNamesFromStringTemplate(temp).isEmpty()) {
                                                 validValues.add(temp);
                                             }
@@ -190,19 +207,27 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                                     } else {
                                         if (replacement != null & !replacement.isEmpty()) {
                                             template = processTemplate(map, expression, template, replacement);
-                                            value.set(i, template.toString());
+                                            values.set(i, template.toString());
                                         }
 
                                     }
                                 }
+                                else {
+                                    log.debug("No suitable replacement for template " + template + ".");
+                                    return null;
+                                }
                             }
                         }
+                    }
+                    else {
+                        log.debug("No replacements found for template " + template + ".");
+                        return null;
                     }
                 }
 
                 //Check if there are any placeholders left in the templates and remove uris that are not
 //                List<String> validValues = new ArrayList<>();
-                for (String uri : value) {
+                for (String uri : values) {
                     if (R2RMLToolkit.extractColumnNamesFromStringTemplate(uri).isEmpty()) {
                         validValues.add(uri);
                     }
@@ -210,7 +235,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                 return validValues;
 
             default:
-                return value;
+                return values;
         }
 
         //return value;
@@ -353,20 +378,24 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                 for (ObjectMap objectMap : objectMaps) {
                     //Get the one or more objects returned by the object map
                     List<Value> objects = processObjectMap(objectMap, node);
-                    for (Value object : objects) {
-                        if (object.stringValue() != null) {
-                            Set<GraphMap> graphs = pom.getGraphMaps();
-                            if(graphs.isEmpty() && subject != null){
-                                dataset.add(subject, predicate, object);
-                            }
-                            else
-                                for (GraphMap graph : graphs) {
-                                    Resource graphResource = new URIImpl(graph.getConstantValue().toString());
-                                    dataset.add(subject, predicate, object, graphResource);
+                    if (objects != null) {
+                        for (Value object : objects) {
+                            if (object.stringValue() != null) {
+                                Set<GraphMap> graphs = pom.getGraphMaps();
+                                if (graphs.isEmpty() && subject != null) {
+                                    dataset.add(subject, predicate, object);
+                                } else {
+                                    for (GraphMap graph : graphs) {
+                                        Resource graphResource = new URIImpl(graph.getConstantValue().toString());
+                                        dataset.add(subject, predicate, object, graphResource);
+                                    }
                                 }
-                                
+
+                            }
                         }
                     }
+                    else
+                        log.debug("No object created. No triple will be generated.");
                 }
             }
 
@@ -407,7 +436,6 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
         List<String> values = processTermMap(objectMap, node);
         List<Value> valueList = new ArrayList<>();
         for (String value : values) {
-
             valueList = applyTermType(value, valueList, objectMap);
             /*if (objectMap.getSplit() != null
                     || objectMap.getProcess() != null
