@@ -408,7 +408,9 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
         List<String> values = processTermMap(objectMap, node);
         List<Value> valueList = new ArrayList<>();
         for (String value : values) {
-            if (objectMap.getSplit() != null
+
+            valueList = applyTermType(value, valueList, objectMap);
+            /*if (objectMap.getSplit() != null
                     || objectMap.getProcess() != null
                     || objectMap.getReplace() != null) {
                 List<Value> tempValueList = postProcessTermMap(objectMap, node, value, null);
@@ -418,8 +420,9 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                 }
             } else {
                 valueList = applyTermType(value, valueList, objectMap);
-            }
+            }*/
         }
+        
         return valueList;
     }
     
