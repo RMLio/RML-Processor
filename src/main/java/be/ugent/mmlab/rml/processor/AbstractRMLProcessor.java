@@ -193,33 +193,29 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                             if (values.size() < (i + 1)) {
                                 values.add(template);
                             }
-                            for (String replacement : replacements) {
-                                if (replacement != null || !replacement.equals("")) {
-                                    //log.error("replacement" + replacement);
-                                    if (map.getSplit() != null || map.getProcess() != null || map.getReplace() != null) {
-                                        List<Value> list = postProcessTermMap(map, node, replacement, null);
-                                        for (Value val : list) {
-                                            String temp = processTemplate(map, expression, template, val.stringValue());
-                                            if (R2RMLToolkit.extractColumnNamesFromStringTemplate(temp).isEmpty()) {
-                                                validValues.add(temp);
-                                            }
+                            String replacement = replacements.get(i);
+                            if (replacement != null || !replacement.equals("")) {
+                                if (map.getSplit() != null || map.getProcess() != null || map.getReplace() != null) {
+                                    List<Value> list = postProcessTermMap(map, node, replacement, null);
+                                    for (Value val : list) {
+                                        String temp = processTemplate(map, expression, template, val.stringValue());
+                                        if (R2RMLToolkit.extractColumnNamesFromStringTemplate(temp).isEmpty()) {
+                                            validValues.add(temp);
                                         }
-                                    } else {
-                                        if (replacement != null & !replacement.isEmpty()) {
-                                            template = processTemplate(map, expression, template, replacement);
-                                            values.set(i, template.toString());
-                                        }
-
                                     }
+                                } else {
+                                    if (replacement != null & !replacement.isEmpty()) {
+                                        template = processTemplate(map, expression, template, replacement);
+                                        values.set(i, template.toString());
+                                    }
+
                                 }
-                                else {
-                                    log.debug("No suitable replacement for template " + template + ".");
-                                    return null;
-                                }
+                            } else {
+                                log.debug("No suitable replacement for template " + template + ".");
+                                return null;
                             }
                         }
-                    }
-                    else {
+                    } else {
                         log.debug("No replacements found for template " + template + ".");
                         return null;
                     }
