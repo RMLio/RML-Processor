@@ -20,5 +20,7 @@ public interface RMLPerformer {
      */
     public void perform(Object node, SesameDataSet dataset, TriplesMap map);
     
+    public void perform(Object node, SesameDataSet dataset, TriplesMap map, String splitCondition);
+    
     public void perform(Object node, SesameDataSet dataset, TriplesMap map, Resource subject);
 }

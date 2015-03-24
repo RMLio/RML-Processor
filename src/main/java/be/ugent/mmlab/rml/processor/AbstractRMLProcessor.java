@@ -176,7 +176,6 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                                 value.add(template);
                             }
                             for (String replacement : replacements) {
-                                log.error("replacement " + replacement);
                                 if (replacement != null || !replacement.equals("")) {
                                     //log.error("replacement" + replacement);
                                     if (map.getSplit() != null || map.getProcess() != null || map.getReplace() != null) {
@@ -508,9 +507,31 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                     valueList.add(new LiteralImpl(cleansing(value)));
                 }
             }
-            else
+            else{
+                valueList.add(new LiteralImpl(cleansing(value)));
                 log.error("no match found for " + process);
+            }
         }
+        return valueList;
+    }
+    
+    @Override
+    public List<String> postProcessLogicalSource(String split, Object node) {
+        String[] list, value ;
+        ArrayList<String> valueList = null;
+
+        if (split != null) {
+            list = node.toString().split(split);
+
+            for (String item : list) {
+                if (valueList == null) {
+                    valueList = new ArrayList<String>();
+                }
+                valueList.add(cleansing(item));
+            }
+            
+        }
+
         return valueList;
     }
 }

@@ -4,6 +4,7 @@ import be.ugent.mmlab.rml.model.GraphMap;
 import be.ugent.mmlab.rml.model.PredicateObjectMap;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.RMLProcessor;
+import java.util.List;
 import java.util.Set;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
 import org.openrdf.model.Resource;
@@ -39,15 +40,38 @@ public class NodeRMLPerformer implements RMLPerformer{
      */
     @Override
     public void perform(Object node, SesameDataSet dataset, TriplesMap map) {
-        Resource subject = processor.processSubjectMap(dataset, map.getSubjectMap(), node);
-        processor.processSubjectTypeMap(dataset, subject, map.getSubjectMap(), node);
-        if (subject == null) 
-            log.debug("[NodeRMLPerformer:perform] No subject was generated for " + map.getName() + "triple Map and row " +node.toString());
-        else {
-            Set<GraphMap> graph = map.getSubjectMap().getGraphMaps();
-            for (PredicateObjectMap pom : map.getPredicateObjectMaps()) 
-                processor.processPredicateObjectMap(dataset, subject, pom, node, map);
+        if (!map.getLogicalSource().getSplitCondition().isEmpty()) {
+            perform(node, dataset, map, map.getLogicalSource().getSplitCondition());
+        } else {
+            Resource subject = processor.processSubjectMap(dataset, map.getSubjectMap(), node);
+            processor.processSubjectTypeMap(dataset, subject, map.getSubjectMap(), node);
+            if (subject == null) {
+                log.debug("[NodeRMLPerformer:perform] No subject was generated for " + map.getName() + "triple Map and row " + node.toString());
+            } else {
+                Set<GraphMap> graph = map.getSubjectMap().getGraphMaps();
+                for (PredicateObjectMap pom : map.getPredicateObjectMaps()) {
+                    processor.processPredicateObjectMap(dataset, subject, pom, node, map);
+                }
             }
+        }
+    }
+    
+    @Override
+    public void perform(Object node, SesameDataSet dataset, TriplesMap map, String splitCondition) {
+        List<String> list = processor.postProcessLogicalSource(splitCondition, node);
+        for (String item : list) {
+            node = item;
+            Resource subject = processor.processSubjectMap(dataset, map.getSubjectMap(), node);
+            processor.processSubjectTypeMap(dataset, subject, map.getSubjectMap(), node);
+            if (subject == null) {
+                log.debug("[NodeRMLPerformer:perform] No subject was generated for " + map.getName() + "triple Map and row " + node.toString());
+            } else {
+                Set<GraphMap> graph = map.getSubjectMap().getGraphMaps();
+                for (PredicateObjectMap pom : map.getPredicateObjectMaps()) {
+                    processor.processPredicateObjectMap(dataset, subject, pom, node, map);
+                }
+            }
+        }
         }
     
     /**
@@ -63,4 +87,4 @@ public class NodeRMLPerformer implements RMLPerformer{
         for (PredicateObjectMap pom : map.getPredicateObjectMaps()) 
             processor.processPredicateObjectMap(dataset, subject, pom, node, map);
     }
-}
+    }

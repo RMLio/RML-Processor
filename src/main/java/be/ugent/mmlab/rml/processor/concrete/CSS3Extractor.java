@@ -75,6 +75,11 @@ public class CSS3Extractor extends AbstractRMLProcessor{
         List<String> list = new ArrayList();
         String replacement = null;
         
+        if(expression.equals("*")){
+            list.add(node.toString());
+            return list;
+        }
+        
         if (expression.equals("#")) {
             list.add(Integer.toString(enumerator++));
             return list;

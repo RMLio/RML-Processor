@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.util.List;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
 import org.openrdf.model.Resource;
+import org.openrdf.model.Value;
 
 
 
@@ -68,4 +69,6 @@ public interface RMLProcessor {
      * @return
      */
     public String cleansing(String value);
+    
+    public List<String> postProcessLogicalSource(String split, Object node);
 }
