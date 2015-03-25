@@ -162,11 +162,11 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                     if (map.getSplit() != null
                             || map.getProcess() != null
                             || map.getReplace() != null) {
-                        List<Value> tempValueList = postProcessTermMap(map, node, value, null);
+                        List<String> tempValueList = postProcessTermMap(map, node, value, null);
                         if (tempValueList != null) {
-                            for (Value tempVal : tempValueList) {
+                            for (String tempVal : tempValueList) {
                                 //valueList = applyTermType(tempVal.stringValue(), valueList, map);
-                                valueList.add(tempVal.stringValue());
+                                valueList.add(tempVal);
                             }
                         }
                     } else {
@@ -196,9 +196,9 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                             String replacement = replacements.get(i);
                             if (replacement != null || !replacement.equals("")) {
                                 if (map.getSplit() != null || map.getProcess() != null || map.getReplace() != null) {
-                                    List<Value> list = postProcessTermMap(map, node, replacement, null);
-                                    for (Value val : list) {
-                                        String temp = processTemplate(map, expression, template, val.stringValue());
+                                    List<String> list = postProcessTermMap(map, node, replacement, null);
+                                    for (String val : list) {
+                                        String temp = processTemplate(map, expression, template, val);
                                         if (R2RMLToolkit.extractColumnNamesFromStringTemplate(temp).isEmpty()) {
                                             validValues.add(temp);
                                         }
@@ -485,12 +485,13 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
         return valueList;
     }
     
-    public List<Value> postProcessTermMap(
+    public List<String> postProcessTermMap(
             TermMap termMap, Object node, String value, List<Value> valueList) {
         String[] list ;
         String split = termMap.getSplit();
         String process = termMap.getProcess();
         String replace = termMap.getReplace();
+        List<String> stringList = null;
 
         if (split != null) {
             list = value.split(split);
@@ -502,19 +503,23 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                 } else {
                     value = null;
                 }
-                if (valueList == null) {
-                    valueList = new ArrayList<Value>();
+                if (stringList == null) {
+                    //valueList = new ArrayList<Value>();
+                    stringList = new ArrayList<String>();
                 }
                 if (value != null && !value.equals("")) {
-                    valueList.add(new LiteralImpl(cleansing(value)));
+                    //valueList.add(new LiteralImpl(cleansing(value)));
+                    stringList.add(cleansing(value));
                 }
             }
             else {
                 for (String item : list) {
-                    if (valueList == null) {
-                        valueList = new ArrayList<Value>();
+                    if (stringList == null) {
+                        //valueList = new ArrayList<Value>();
+                        stringList = new ArrayList<String>();
                     }
-                    valueList.add(new LiteralImpl(cleansing(item)));
+                    //valueList.add(new LiteralImpl(cleansing(item)));
+                    stringList.add(cleansing(item));
                 }
             }
         }
@@ -523,20 +528,23 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
             Pattern replacement = Pattern.compile(process);
             Matcher matcher = replacement.matcher(value);
             if (matcher.find()) {
-                if (valueList == null) {
-                    valueList = new ArrayList<Value>();
+                if (stringList == null) {
+                    //valueList = new ArrayList<Value>();
+                    stringList = new ArrayList<String>();
                 }
                 value = matcher.replaceAll(replace);
                 if (value != null && !value.equals("")) {
-                    valueList.add(new LiteralImpl(cleansing(value)));
+                    //valueList.add(new LiteralImpl(cleansing(value)));
+                    stringList.add(cleansing(value));
                 }
             }
             else{
-                valueList.add(new LiteralImpl(cleansing(value)));
-                log.error("no match found for " + process);
+                //valueList.add(new LiteralImpl(cleansing(value)));
+                //stringList.add(cleansing(value));
+                log.debug("no match found for " + process);
             }
         }
-        return valueList;
+        return stringList;
     }
     
     @Override
