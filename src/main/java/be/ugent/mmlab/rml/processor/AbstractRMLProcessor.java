@@ -205,8 +205,10 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                                     }
                                 } else {
                                     if (replacement != null & !replacement.isEmpty()) {
-                                        template = processTemplate(map, expression, template, replacement);
-                                        values.set(i, template.toString());
+                                        String temp = processTemplate(map, expression, template, replacement);
+                                        if (R2RMLToolkit.extractColumnNamesFromStringTemplate(temp).isEmpty()) {
+                                            validValues.add(temp);
+                                        }
                                     }
 
                                 }
@@ -330,7 +332,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                         }
                         else{
                             int end = map.getLogicalSource().getReference().length();
-                            log.info("RML:AbstractRMLProcessor " + parentTriplesMap.getLogicalSource().getReference().toString());
+                            //log.info("RML:AbstractRMLProcessor " + parentTriplesMap.getLogicalSource().getReference().toString());
                             String expression = "";
                             switch (parentTriplesMap.getLogicalSource().getReferenceFormulation().toString()) {
                                 case "XPath":
