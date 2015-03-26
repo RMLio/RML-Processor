@@ -171,7 +171,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                         }
                     } else {
                             //valueList = applyTermType(tempVal.stringValue(), valueList, map);
-                        valueList.add(value);
+                        valueList.add(value.trim().replace("\n", " "));
                     }
                         //valueList = applyTermType(value, valueList, map);
                     }
