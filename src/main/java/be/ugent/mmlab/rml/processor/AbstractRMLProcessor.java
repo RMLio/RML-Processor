@@ -500,7 +500,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
             if (replace != null && list != null) {
                 Integer replaceOrder = Integer.parseInt(replace.substring(1));
 
-                if ((replaceOrder - 1) < list.length) {
+                if ((replaceOrder - 1) > 0 && (replaceOrder - 1) < list.length) {
                     value = list[replaceOrder - 1];
                 } else {
                     value = null;
