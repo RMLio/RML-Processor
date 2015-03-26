@@ -34,6 +34,7 @@ public class RMLConfiguration {
         cliOptions.addOption("o", "file format", true, 
                 "the output format of the results: turtle, n3, ntriples (default), rdfxml (optional)");
         cliOptions.addOption("p", "parameter", true, "");
+        cliOptions.addOption("tm", "Triples Map", true, "Triples Map to be executed.");
         //cliOptions.addOption("p", 
         //        "arguments to pass if the rml:source of the mapping document is a URI template "
         //        + "and requires parameters (they should be comma separated)", false, 
@@ -53,6 +54,18 @@ public class RMLConfiguration {
         HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp("RML Processor", getCliOptions());
         System.exit(1);
+    }
+    
+    public static String[] processTriplesMap (String parameters,String map_doc){
+        if (parameters != null) {
+            String[] exeTriplesMap = parameters.split(",");
+            for(int i=0 ; i < exeTriplesMap.length ; i++)
+                //TODO:remove hardcoded file:
+                exeTriplesMap[i] = "file:" + map_doc + "#" + exeTriplesMap[i];
+            return exeTriplesMap;
+        } else {
+            return null;
+        }
     }
     
 }

@@ -70,7 +70,7 @@ public class RMLEngine {
     public SesameDataSet runRMLMapping(RMLMapping rmlMapping,
             String baseIRI) throws SQLException,
             R2RMLDataError, UnsupportedEncodingException, IOException {
-        return runRMLMapping(rmlMapping, baseIRI, null, "ntriples", null, false);
+        return runRMLMapping(rmlMapping, baseIRI, null, "ntriples", null, null, false);
     }
 
     /**
@@ -86,7 +86,7 @@ public class RMLEngine {
      */
     public SesameDataSet runRMLMapping(RMLMapping rmlMapping,
             String baseIRI, String pathToNativeStore, String outputFormat, 
-            String parameter, boolean filebased) 
+            String parameter,String[] exeTriplesMap, boolean filebased) 
             throws SQLException, R2RMLDataError, UnsupportedEncodingException, IOException {
         long startTime = System.nanoTime();
 
@@ -117,7 +117,7 @@ public class RMLEngine {
         }
         // Explore RML Mapping TriplesMap objects  
  
-        generateRDFTriples(sesameDataSet, rmlMapping, parameter, filebased);
+        generateRDFTriples(sesameDataSet, rmlMapping, parameter, exeTriplesMap, filebased);
                
         //TODO:add metadata this Triples Map started then, finished then and lasted that much
 	long endTime = System.nanoTime();
@@ -126,13 +126,14 @@ public class RMLEngine {
         return sesameDataSet;
     }
     
-    private boolean check_ReferencingObjectMap(RMLMapping mapping, TriplesMap map) {
+    private boolean check_ReferencingObjectMap(RMLMapping mapping, TriplesMap map, String[] exeTriplesMap) {
         for (TriplesMap triplesMap : mapping.getTriplesMaps()) 
             for (PredicateObjectMap predicateObjectMap : triplesMap.getPredicateObjectMaps()) 
                 if (predicateObjectMap.hasReferencingObjectMaps()) 
                     for (ReferencingObjectMap referencingObjectMap : predicateObjectMap.getReferencingObjectMaps()) 
                         if (!referencingObjectMap.getJoinConditions().isEmpty() 
-                                && referencingObjectMap.getParentTriplesMap().getName().equals(map.getName()))
+                                && referencingObjectMap.getParentTriplesMap().getName().equals(map.getName())
+                                && exeTriplesMap != null)
                                 //&& referencingObjectMap.getParentTriplesMap().getLogicalSource().getIdentifier().equals(triplesMap.getLogicalSource().getIdentifier())) 
                             return true;
         return false;
@@ -150,18 +151,29 @@ public class RMLEngine {
      * @throws UnsupportedEncodingException
      */
     private void generateRDFTriples(SesameDataSet sesameDataSet, 
-            RMLMapping rmlMapping, String parameter, boolean filebased) 
+            RMLMapping rmlMapping, String parameter, String[] exeTriplesMap, boolean filebased) 
             throws SQLException, R2RMLDataError, UnsupportedEncodingException, ProtocolException, IOException {
 
         log.debug("[RMLEngine:generateRDFTriples] Generate RDF triples... ");
         int delta = 0;
-
+        
         RMLProcessorFactory factory = new ConcreteRMLProcessorFactory();
-
+        
+        outerloop:
         for (TriplesMap triplesMap : rmlMapping.getTriplesMaps()) {
-            if (check_ReferencingObjectMap(rmlMapping, triplesMap)) 
-                continue;
-
+            if(exeTriplesMap != null){
+                boolean flag = false;
+                for(String exeTM : exeTriplesMap){
+                    if(triplesMap.getName().toString().equals(exeTM.toString())){
+                        flag = true;
+                    }
+                    //if (check_ReferencingObjectMap(rmlMapping, triplesMap, exeTriplesMap))
+                        //continue;
+                }
+                if(!flag)
+                    continue;
+            }
+            
             System.out.println("[RMLEngine:generateRDFTriples] Generating RDF triples for " + triplesMap.getName());
             //TODO: Add metadata that this Map Doc has that many Triples Maps
             

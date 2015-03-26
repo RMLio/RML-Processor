@@ -74,8 +74,15 @@ public class ConditionalJoinRMLPerformer extends NodeRMLPerformer{
                             + subject + " Predicate " + predicate + "Object " + object
                             + "was not created");
                 }
-                if(object != null )
-                    super.perform(node, dataset, map, (Resource) object);
+                //TODO: need to merge the following with the supoer.perform
+                processor.processSubjectTypeMap(dataset, (Resource) object, map.getSubjectMap(), node);
+                if (object == null) {
+                    log.debug("[NodeRMLPerformer:perform] No subject was generated for " + map.getName() + "triple Map and row " + node.toString());
+                } else {
+                    for (PredicateObjectMap pom : map.getPredicateObjectMaps()) {
+                        processor.processPredicateObjectMap(dataset, (Resource) object, pom, node, map);
+                    }
+                }
             }
         }       
     }

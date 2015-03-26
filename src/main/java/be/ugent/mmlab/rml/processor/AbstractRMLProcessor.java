@@ -206,6 +206,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                                 } else {
                                     if (replacement != null & !replacement.isEmpty()) {
                                         String temp = processTemplate(map, expression, template, replacement);
+                                        template = temp;
                                         if (R2RMLToolkit.extractColumnNamesFromStringTemplate(temp).isEmpty()) {
                                             validValues.add(temp);
                                         }

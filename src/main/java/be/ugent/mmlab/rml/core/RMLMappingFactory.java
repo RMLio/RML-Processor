@@ -18,11 +18,8 @@ import be.ugent.mmlab.rml.RMLextractor.RMLMappingExtractor;
 import be.ugent.mmlab.rml.RMLextractor.RMLUnValidatedMappingExtractor;
 import be.ugent.mmlab.rml.model.RMLMapping;
 import be.ugent.mmlab.rml.model.TriplesMap;
-import be.ugent.mmlab.rml.model.reference.ReferenceIdentifier;
-import be.ugent.mmlab.rml.model.reference.ReferenceIdentifierImpl;
 import be.ugent.mmlab.rml.sesame.RMLSesameDataSet;
 import be.ugent.mmlab.rml.vocabulary.RMLVocabulary;
-import be.ugent.mmlab.rml.vocabulary.RMLVocabulary.RMLTerm;
 import be.ugent.mmlab.rml.vocabulary.Vocab.R2RMLTerm;
 import java.io.IOException;
 import java.util.List;
@@ -129,7 +126,7 @@ public class RMLMappingFactory {
     }
 
 
-    private static ReferenceIdentifier extractReferenceIdentifier(SesameDataSet rmlMappingGraph, Resource resource) throws InvalidR2RMLStructureException {
+    /*private static ReferenceIdentifier extractReferenceIdentifier(SesameDataSet rmlMappingGraph, Resource resource) throws InvalidR2RMLStructureException {
         //MVS: look for a reference or column, prefer rr:column
         String columnValueStr = extractLiteralFromTermMap(rmlMappingGraph, resource, R2RMLTerm.COLUMN);
         String referenceValueStr = extractLiteralFromTermMap(rmlMappingGraph, resource, RMLTerm.REFERENCE);
@@ -147,7 +144,7 @@ public class RMLMappingFactory {
         }
 
         return ReferenceIdentifierImpl.buildFromR2RMLConfigFile(referenceValueStr);
-    }
+    }*/
     
 
     /**
