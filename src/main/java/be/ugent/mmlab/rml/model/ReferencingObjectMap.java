@@ -60,12 +60,18 @@ public interface ReferencingObjectMap {
         /*
          * Is this still relevant??
          */
-	public String getJointReference();
-	
-	/**
-	 * A object map knows in own Predicate Object container.
-	 */
-	public PredicateObjectMap getPredicateObjectMap();
+        public String getJointReference();
+
+        /**
+         *
+         * The effective reference of the Triples Map containing this Referencing Object Map
+         */
+        public TriplesMap getOwnTriplesMap();
+
+        /**
+         * A object map knows in own Predicate Object container.
+         */
+        public PredicateObjectMap getPredicateObjectMap();
         
 	public void setPredicateObjectMap(PredicateObjectMap predicateObjectMap);
         

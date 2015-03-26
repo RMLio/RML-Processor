@@ -131,9 +131,9 @@ public class RMLEngine {
             for (PredicateObjectMap predicateObjectMap : triplesMap.getPredicateObjectMaps()) 
                 if (predicateObjectMap.hasReferencingObjectMaps()) 
                     for (ReferencingObjectMap referencingObjectMap : predicateObjectMap.getReferencingObjectMaps()) 
-                        if (referencingObjectMap.getJoinConditions().isEmpty() 
-                                && referencingObjectMap.getParentTriplesMap() == map
-                                && referencingObjectMap.getParentTriplesMap().getLogicalSource().getIdentifier().equals(triplesMap.getLogicalSource().getIdentifier())) 
+                        if (!referencingObjectMap.getJoinConditions().isEmpty() 
+                                && referencingObjectMap.getParentTriplesMap().getName().equals(map.getName()))
+                                //&& referencingObjectMap.getParentTriplesMap().getLogicalSource().getIdentifier().equals(triplesMap.getLogicalSource().getIdentifier())) 
                             return true;
         return false;
     }

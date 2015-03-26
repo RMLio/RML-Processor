@@ -94,6 +94,11 @@ public class StdReferencingObjectMap implements ReferencingObjectMap {
 	}
 
         @Override
+	public TriplesMap getOwnTriplesMap() {
+		return ownTriplesMap;
+	}
+        
+        @Override
 	public TriplesMap getParentTriplesMap() {
 		return parentTriplesMap;
 	}

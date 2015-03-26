@@ -1,5 +1,6 @@
 package be.ugent.mmlab.rml.core;
 
+import be.ugent.mmlab.rml.model.PredicateObjectMap;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.RMLProcessor;
 import java.util.HashMap;
@@ -62,17 +63,19 @@ public class ConditionalJoinRMLPerformer extends NodeRMLPerformer{
                     }
                 }
             }
-            if(flag){
+            if (flag) {
                 object = processor.processSubjectMap(dataset, map.getSubjectMap(), node);
-                if (subject != null && object != null){
+                if (subject != null && object != null) {
                     dataset.add(subject, predicate, object);
                     log.debug("[ConditionalJoinRMLPerformer:addTriples] Subject "
-                                + subject + " Predicate " + predicate + "Object " + object.toString());
-                } 
-                else
+                            + subject + " Predicate " + predicate + "Object " + object.toString());
+                } else {
                     log.debug("[ConditionalJoinRMLPerformer:addTriples] triple for Subject "
-                                + subject + " Predicate " + predicate + "Object " + object
+                            + subject + " Predicate " + predicate + "Object " + object
                             + "was not created");
+                }
+                if(object != null )
+                    super.perform(node, dataset, map, (Resource) object);
             }
         }       
     }
