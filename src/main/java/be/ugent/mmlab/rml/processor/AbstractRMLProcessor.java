@@ -466,6 +466,11 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                     if (valueList == null) {
                         valueList = new ArrayList<Value>();
                     }
+                    try {
+                        new URIImpl(cleansing(value));
+                    } catch (Exception e) {
+                        return valueList;
+                    }
                     valueList.add(new URIImpl(cleansing(value)));
                 } 
                 break;
