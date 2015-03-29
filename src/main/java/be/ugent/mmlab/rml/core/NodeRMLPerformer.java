@@ -72,7 +72,7 @@ public class NodeRMLPerformer implements RMLPerformer{
                 }
             }
         }
-        }
+    }
     
     /**
      *

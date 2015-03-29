@@ -91,7 +91,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
         //Get the uri
         List<String> values = processTermMap(subjectMap, node);
         //log.info("Abstract RML Processor Graph Map" + subjectMap.getGraphMaps().toString());
-        if (values.isEmpty()) 
+        if (values == null || values.isEmpty()) 
             if(subjectMap.getTermType() != BLANK_NODE)
                 return null;
             
@@ -197,12 +197,13 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                             if (replacement != null || !replacement.equals("")) {
                                 if (map.getSplit() != null || map.getProcess() != null || map.getReplace() != null) {
                                     List<String> list = postProcessTermMap(map, node, replacement, null);
-                                    for (String val : list) {
-                                        String temp = processTemplate(map, expression, template, val);
-                                        if (R2RMLToolkit.extractColumnNamesFromStringTemplate(temp).isEmpty()) {
-                                            validValues.add(temp);
+                                    if (list != null)
+                                        for (String val : list) {
+                                            String temp = processTemplate(map, expression, template, val);
+                                            if (R2RMLToolkit.extractColumnNamesFromStringTemplate(temp).isEmpty()) {
+                                                validValues.add(temp);
+                                            }
                                         }
-                                    }
                                 } else {
                                     if (replacement != null & !replacement.isEmpty()) {
                                         String temp = processTemplate(map, expression, template, replacement);
