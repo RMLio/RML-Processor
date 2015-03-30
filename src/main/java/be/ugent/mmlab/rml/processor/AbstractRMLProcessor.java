@@ -285,7 +285,8 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
      * @param node      the current node
      */
     @Override
-    public void processPredicateObjectMap(SesameDataSet dataset, Resource subject, PredicateObjectMap pom, Object node, TriplesMap map) {
+    public void processPredicateObjectMap(
+            SesameDataSet dataset, Resource subject, PredicateObjectMap pom, Object node, TriplesMap map) {
 
         Set<PredicateMap> predicateMaps = pom.getPredicateMaps();
         //Go over each predicate map
@@ -293,112 +294,107 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
             //Get the predicate
             List<URI> predicates = processPredicateMap(predicateMap, node);
             //TODO:verify that it retrieves all predicates
+            URI predicate = predicates.get(0);
+            //for (URI predicate : predicates) {
+            //Process the joins first
+            Set<ReferencingObjectMap> referencingObjectMaps = pom.getReferencingObjectMaps();
+            for (ReferencingObjectMap referencingObjectMap : referencingObjectMaps) {
+                Set<JoinCondition> joinConditions = referencingObjectMap.getJoinConditions();
 
-            for (URI predicate : predicates) {
-                //Process the joins first
-                Set<ReferencingObjectMap> referencingObjectMaps = pom.getReferencingObjectMaps();
-                for (ReferencingObjectMap referencingObjectMap : referencingObjectMaps) {
-                    Set<JoinCondition> joinConditions = referencingObjectMap.getJoinConditions();
-                    
-                    TriplesMap parentTriplesMap = referencingObjectMap.getParentTriplesMap();
-                    
-                    //Create the processor based on the parent triples map to perform the join
-                    RMLProcessorFactory factory = new ConcreteRMLProcessorFactory();
-                    QLTerm referenceFormulation = parentTriplesMap.getLogicalSource().getReferenceFormulation();
-                    String source = parentTriplesMap.getLogicalSource().getIdentifier();
+                TriplesMap parentTriplesMap = referencingObjectMap.getParentTriplesMap();
 
-                    InputStream input = null;
-                    try {
-                        input = RMLEngine.getInputStream(source, parentTriplesMap);
-                    } catch (MalformedURLException ex) {
-                        Logger.getLogger(AbstractRMLProcessor.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (IOException ex) {
-                        Logger.getLogger(AbstractRMLProcessor.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                    RMLProcessor processor = factory.create(referenceFormulation);
+                //Create the processor based on the parent triples map to perform the join
+                RMLProcessorFactory factory = new ConcreteRMLProcessorFactory();
+                QLTerm referenceFormulation = parentTriplesMap.getLogicalSource().getReferenceFormulation();
+                String source = parentTriplesMap.getLogicalSource().getIdentifier();
 
-                    RMLPerformer performer ;
-                    //different Logical Source and no Conditions
-                    if (joinConditions.isEmpty() 
-                            & !parentTriplesMap.getLogicalSource().getIdentifier().equals(map.getLogicalSource().getIdentifier())) {
-                        performer = new JoinRMLPerformer(processor, subject, predicate);
-                        processor.execute(dataset, parentTriplesMap, performer, input);
-                    } 
-                    //same Logical Source and no Conditions
-                    else if (joinConditions.isEmpty() 
-                            & parentTriplesMap.getLogicalSource().getIdentifier().equals(map.getLogicalSource().getIdentifier())){
-                        performer = new SimpleReferencePerformer(processor, subject, predicate);
-                        if((parentTriplesMap.getLogicalSource().getReferenceFormulation().toString().equals("CSV")) 
-                                || (parentTriplesMap.getLogicalSource().getReference().equals(map.getLogicalSource().getReference()))){
-                            performer.perform(node, dataset, parentTriplesMap);
+                InputStream input = null;
+                try {
+                    input = RMLEngine.getInputStream(source, parentTriplesMap);
+                } catch (MalformedURLException ex) {
+                    Logger.getLogger(AbstractRMLProcessor.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    Logger.getLogger(AbstractRMLProcessor.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                RMLProcessor processor = factory.create(referenceFormulation);
+
+                RMLPerformer performer;
+                //different Logical Source and no Conditions
+                if (joinConditions.isEmpty()
+                        & !parentTriplesMap.getLogicalSource().getIdentifier().equals(map.getLogicalSource().getIdentifier())) {
+                    performer = new JoinRMLPerformer(processor, subject, predicate);
+                    processor.execute(dataset, parentTriplesMap, performer, input);
+                } //same Logical Source and no Conditions
+                else if (joinConditions.isEmpty()
+                        & parentTriplesMap.getLogicalSource().getIdentifier().equals(map.getLogicalSource().getIdentifier())) {
+                    performer = new SimpleReferencePerformer(processor, subject, predicate);
+                    if ((parentTriplesMap.getLogicalSource().getReferenceFormulation().toString().equals("CSV"))
+                            || (parentTriplesMap.getLogicalSource().getReference().equals(map.getLogicalSource().getReference()))) {
+                        performer.perform(node, dataset, parentTriplesMap);
+                    } else {
+                        int end = map.getLogicalSource().getReference().length();
+                        //log.info("RML:AbstractRMLProcessor " + parentTriplesMap.getLogicalSource().getReference().toString());
+                        String expression = "";
+                        switch (parentTriplesMap.getLogicalSource().getReferenceFormulation().toString()) {
+                            case "XPath":
+                                expression = parentTriplesMap.getLogicalSource().getReference().toString().substring(end);
+                                break;
+                            case "JSONPath":
+                                expression = parentTriplesMap.getLogicalSource().getReference().toString().substring(end + 1);
+                                break;
+                            case "CSS3":
+                                expression = parentTriplesMap.getLogicalSource().getReference().toString().substring(end);
+                                break;
                         }
-                        else{
-                            int end = map.getLogicalSource().getReference().length();
-                            //log.info("RML:AbstractRMLProcessor " + parentTriplesMap.getLogicalSource().getReference().toString());
-                            String expression = "";
-                            switch (parentTriplesMap.getLogicalSource().getReferenceFormulation().toString()) {
-                                case "XPath":
-                                    expression = parentTriplesMap.getLogicalSource().getReference().toString().substring(end);
-                                    break;
-                                case "JSONPath":
-                                    expression = parentTriplesMap.getLogicalSource().getReference().toString().substring(end+1);
-                                    break;
-                                case "CSS3":
-                                    expression = parentTriplesMap.getLogicalSource().getReference().toString().substring(end);
-                                    break;
-                            }
-                            processor.execute_node(dataset, expression, parentTriplesMap, performer, node, null);
-                        }
+                        processor.execute_node(dataset, expression, parentTriplesMap, performer, node, null);
                     }
-                    //Conditions
-                    else {
-                        //Build a join map where
-                        //  key: the parent expression
-                        //  value: the value extracted from the child
-                        HashMap<String, String> joinMap = new HashMap<>();
-                        
-                        for (JoinCondition joinCondition : joinConditions) {
-                            List<String> childValues = extractValueFromNode(node, joinCondition.getChild());
-                            
-                            //Allow multiple values as child - fits with RML's definition of multiple Object Maps
-                            for(String childValue : childValues){
-                                joinMap.put(joinCondition.getParent(), childValue);  
-                                if(joinMap.size() == joinConditions.size()){
-                                    performer = new ConditionalJoinRMLPerformer(processor, joinMap, subject, predicate);
-                                    processor.execute(dataset, parentTriplesMap, performer, input);
-                                }
+                } //Conditions
+                else {
+                    //Build a join map where
+                    //  key: the parent expression
+                    //  value: the value extracted from the child
+                    HashMap<String, String> joinMap = new HashMap<>();
+
+                    for (JoinCondition joinCondition : joinConditions) {
+                        List<String> childValues = extractValueFromNode(node, joinCondition.getChild());
+
+                        //Allow multiple values as child - fits with RML's definition of multiple Object Maps
+                        for (String childValue : childValues) {
+                            joinMap.put(joinCondition.getParent(), childValue);
+                            if (joinMap.size() == joinConditions.size()) {
+                                performer = new ConditionalJoinRMLPerformer(processor, joinMap, subject, predicate);
+                                processor.execute(dataset, parentTriplesMap, performer, input);
                             }
                         }
                     }
-
                 }
 
-                //process the objectmaps
-                Set<ObjectMap> objectMaps = pom.getObjectMaps();
-                for (ObjectMap objectMap : objectMaps) {
-                    //Get the one or more objects returned by the object map
-                    List<Value> objects = processObjectMap(objectMap, node);
-                    if (objects != null) {
-                        for (Value object : objects) {
-                            if (object.stringValue() != null) {
-                                Set<GraphMap> graphs = pom.getGraphMaps();
-                                if (graphs.isEmpty() && subject != null) {
-                                    dataset.add(subject, predicate, object);
-                                } else {
-                                    for (GraphMap graph : graphs) {
-                                        Resource graphResource = new URIImpl(graph.getConstantValue().toString());
-                                        dataset.add(subject, predicate, object, graphResource);
-                                    }
-                                }
-
-                            }
-                        }
-                    }
-                    else
-                        log.debug("No object created. No triple will be generated.");
-                }
             }
 
+            //process the objectmaps
+            Set<ObjectMap> objectMaps = pom.getObjectMaps();
+            for (ObjectMap objectMap : objectMaps) {
+                //Get the one or more objects returned by the object map
+                List<Value> objects = processObjectMap(objectMap, node);
+                if (objects != null) {
+                    for (Value object : objects) {
+                        if (object.stringValue() != null) {
+                            Set<GraphMap> graphs = pom.getGraphMaps();
+                            if (graphs.isEmpty() && subject != null) {
+                                dataset.add(subject, predicate, object);
+                            } else {
+                                for (GraphMap graph : graphs) {
+                                    Resource graphResource = new URIImpl(graph.getConstantValue().toString());
+                                    dataset.add(subject, predicate, object, graphResource);
+                                }
+                            }
+
+                        }
+                    }
+                } else {
+                    log.debug("No object created. No triple will be generated.");
+                }
+            }
         }
     }
 
@@ -411,8 +407,8 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
      */
     private List<URI> processPredicateMap(PredicateMap predicateMap, Object node) {
         // Get the value
+        
         List<String> values = processTermMap(predicateMap, node);
-
         List<URI> uris = new ArrayList<>();
         for (String value : values) {
             //TODO: add better control

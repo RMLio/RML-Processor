@@ -84,7 +84,7 @@ public class StdPredicateMap extends AbstractTermMap implements TermMap,
 	public PredicateObjectMap getPredicateObjectMap() {
 		return predicateObjectMap;
 	}
-
+        
         @Override
 	public void setPredicateObjectMap(PredicateObjectMap predicateObjectMap) {
 		/*

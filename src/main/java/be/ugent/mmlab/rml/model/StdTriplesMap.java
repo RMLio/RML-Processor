@@ -30,14 +30,22 @@ import java.util.Set;
 
 import net.antidot.semantic.rdf.rdb2rdf.r2rml.exception.InvalidR2RMLStructureException;
 
-public class StdTriplesMap implements TriplesMap {
+public final class StdTriplesMap implements TriplesMap {
 
 	private Set<PredicateObjectMap> predicateObjectMaps;
 	private SubjectMap subjectMap;
 	private LogicalSource logicalSource;
 	private String name;
 
-	public StdTriplesMap(LogicalSource logicalSource,
+	/**
+     *
+     * @param logicalSource
+     * @param predicateObjectMaps
+     * @param subjectMap
+     * @param name
+     * @throws InvalidR2RMLStructureException
+     */
+    public StdTriplesMap(LogicalSource logicalSource,
 			Set<StdPredicateObjectMap> predicateObjectMaps,
 			StdSubjectMap subjectMap, String name) throws InvalidR2RMLStructureException {
 		setSubjectMap(subjectMap);
@@ -69,32 +77,39 @@ public class StdTriplesMap implements TriplesMap {
 		}
 	}
 
+        @Override
 	public LogicalSource getLogicalSource() {
 		return logicalSource;
 	}
 
+        @Override
 	public Set<PredicateObjectMap> getPredicateObjectMaps() {
 		return predicateObjectMaps;
 	}
 
+        @Override
 	public SubjectMap getSubjectMap() {
 		return subjectMap;
 	}
 
+        @Override
 	public void setSubjectMap(SubjectMap subjectMap) throws InvalidR2RMLStructureException {
 		this.subjectMap = subjectMap;
 
 	}
 
+        @Override
 	public void addPredicateObjectMap(PredicateObjectMap predicateObjectMap) {
 		if (predicateObjectMap != null)
 			predicateObjectMaps.add(predicateObjectMap);
 	}
 
+        @Override
 	public String getName() {
 		return this.name;
 	}
 
+        @Override
 	public void setName(String name) {
 		if (name != null)
 			this.name = name;

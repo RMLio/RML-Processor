@@ -30,7 +30,8 @@ public class SimpleReferencePerformer extends NodeRMLPerformer {
     
     @Override
     public void perform(Object node, SesameDataSet dataset, TriplesMap map) {
-        if(map.getSubjectMap().getTermType() == be.ugent.mmlab.rml.model.TermType.BLANK_NODE || map.getSubjectMap().getTermType() == be.ugent.mmlab.rml.model.TermType.IRI){
+        if(map.getSubjectMap().getTermType() == be.ugent.mmlab.rml.model.TermType.BLANK_NODE 
+                || map.getSubjectMap().getTermType() == be.ugent.mmlab.rml.model.TermType.IRI){
             RMLProcessorFactory factory = new ConcreteRMLProcessorFactory();
             RMLProcessor subprocessor = factory.create(map.getLogicalSource().getReferenceFormulation());
             RMLPerformer performer = new NodeRMLPerformer(subprocessor);            
