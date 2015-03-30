@@ -537,10 +537,16 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                     //valueList = new ArrayList<Value>();
                     stringList = new ArrayList<String>();
                 }
-                value = matcher.replaceAll(replace);
+                try {
+                    value = matcher.replaceAll(replace);
+                } catch (Exception ex) {
+                    log.debug(ex);
+                    return stringList;
+                }
                 if (value != null && !value.equals("")) {
-                    //valueList.add(new LiteralImpl(cleansing(value)));
                     stringList.add(cleansing(value));
+                } else {
+                    return stringList;
                 }
             }
             else{
