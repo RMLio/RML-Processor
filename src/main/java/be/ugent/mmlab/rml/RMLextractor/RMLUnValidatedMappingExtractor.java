@@ -408,7 +408,12 @@ public class RMLUnValidatedMappingExtractor implements RMLMappingExtractor{
         List<Statement> statements = getStatements(rmlMappingGraph, triplesMapSubject,
                 RMLVocabulary.R2RML_NAMESPACE, RMLVocabulary.R2RMLTerm.SUBJECT_MAP, triplesMap);
         
-        Resource subjectMap = (Resource) statements.get(0).getObject();
+        Resource subjectMap ; 
+
+        if(statements != null && statements.size() > 0)
+            subjectMap = (Resource) statements.get(0).getObject();
+        else
+            return null;
         
         log.debug(
                 Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
@@ -526,7 +531,7 @@ public class RMLUnValidatedMappingExtractor implements RMLMappingExtractor{
             TriplesMap triplesMap) {
         URI p = rmlMappingGraph.URIref(RMLVocabulary.R2RML_NAMESPACE
                 + RMLVocabulary.R2RMLTerm.PREDICATE_MAP);
-
+        
         List<Statement> predicate_statements = rmlMappingGraph.tuplePattern(
                 predicateObject, p, null);
         Set<PredicateMap> predicateMaps = new HashSet<PredicateMap>();
@@ -591,7 +596,7 @@ public class RMLUnValidatedMappingExtractor implements RMLMappingExtractor{
                     rmlMappingGraph, (Resource) object_statements.get(0).getObject(),
                     savedGraphMaps, triplesMapResources, triplesMap);
             if (refObjectMap != null) {
-                refObjectMap.setOwnTriplesMap(triplesMapResources.get(triplesMapSubject));
+                //refObjectMap.setOwnTriplesMap(triplesMapResources.get(triplesMapSubject));
                 refObjectMaps.add(refObjectMap);
             }
             //} 
@@ -600,9 +605,9 @@ public class RMLUnValidatedMappingExtractor implements RMLMappingExtractor{
                     "[RMLMappingFactory:extractPredicateObjectMaps] "
                     + "A resource was expected in object of objectMap of "
                     + predicateObject.stringValue());
-        } catch (InvalidR2RMLStructureException ex) {
+        } /*catch (InvalidR2RMLStructureException ex) {
             java.util.logging.Logger.getLogger(RMLUnValidatedMappingExtractor.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        }*/
         return refObjectMaps;
     }
     

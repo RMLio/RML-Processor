@@ -84,6 +84,8 @@ public class XPathProcessor extends AbstractRMLProcessor {
        dnc.declarePrefix("xsi", "http://www.w3.org/2001/XMLSchema-instance");
        this.nsContext.addNamespace("tp", "http://www.plazi.org/taxpub");
        dnc.declarePrefix("tp", "http://www.plazi.org/taxpub");
+       this.nsContext.addNamespace("sparql", "http://www.w3.org/2005/sparql-results#");
+       dnc.declarePrefix("sparql", "http://www.w3.org/2005/sparql-results#");
     
        return dnc;
     }

@@ -531,9 +531,6 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
 
         if (process != null && replace != null) {
             Pattern replacement = Pattern.compile(process);
-            log.error("replace " + replace);
-            log.error("replacement " + replacement);
-            log.error("value " + value);
             Matcher matcher = replacement.matcher(value);
             if (matcher.find() && matcher.matches()) {
                 if (stringList == null) {
@@ -552,13 +549,12 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                     return stringList;
                 }
             }
-            else{
+            //else{
                 //valueList.add(new LiteralImpl(cleansing(value)));
                 //stringList.add(cleansing(value));
-                log.error("no match found for " + process);
-            }
+                //log.error("no match found for " + process);
+            //}
         }
-        log.error("string list " + stringList);
         return stringList;
     }
     
