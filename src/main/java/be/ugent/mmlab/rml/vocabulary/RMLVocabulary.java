@@ -22,6 +22,7 @@ public class RMLVocabulary {
     // prefix bindings unless otherwise stated:
     public static String RML_NAMESPACE = "http://semweb.mmlab.be/ns/rml#";
     public static String QL_NAMESPACE = "http://semweb.mmlab.be/ns/ql#";
+    public static String CRML_NAMESPACE = "http://semweb.mmlab.be/ns/rml/condition#";
     public static String R2RML_NAMESPACE = "http://www.w3.org/ns/r2rml#";
     public static String RDF_NAMESPACE = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
     public static String RDFS_NAMESPACE = "http://www.w3.org/2000/01/rdf-schema#";
@@ -86,6 +87,28 @@ public class RMLVocabulary {
         public String toString() {
             return displayName;
         }
+    }
+    
+    public enum cRMLTerm implements Term{
+
+        // RML CLASSES
+        EQUAL_CONDITION_CLASS("EqualCondition"),
+        // RPROPERTIES
+        EQUAL_CONDITION("equalCondition"),
+        CONDITION("condition"),
+        VALUE("value");
+        
+        private String displayName;
+
+        private cRMLTerm(String displayName) {
+            this.displayName = displayName;
+        }
+
+        @Override
+        public String toString() {
+            return displayName;
+        }
+        
     }
 
     public enum R2RMLTerm implements Term{

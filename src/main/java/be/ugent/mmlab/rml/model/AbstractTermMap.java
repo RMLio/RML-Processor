@@ -65,6 +65,7 @@ public abstract class AbstractTermMap implements TermMap {
         private String split;
         private String process;
         private String replace;
+        private HashSet<EqualCondition> equalConditions;
 
         protected AbstractTermMap(Value constantValue, URI dataType,
                 String languageTag, String stringTemplate, URI termType,
@@ -102,6 +103,28 @@ public abstract class AbstractTermMap implements TermMap {
                 setSplit(split);
                 setProcess(process);
                 setReplace(replace);
+        }
+        
+        protected AbstractTermMap(Value constantValue, URI dataType,
+                String languageTag, String stringTemplate, URI termType,
+                String inverseExpression, ReferenceIdentifier referenceValue,
+                String split, String process, String replace, Set<EqualCondition> equalConditions)
+                throws R2RMLDataError, InvalidR2RMLStructureException,
+                InvalidR2RMLSyntaxException {
+
+                setConstantValue(constantValue);
+                setReferenceValue(referenceValue);
+                setLanguageTag(languageTag);
+                setStringTemplate(stringTemplate);
+                setTermType(termType, dataType);
+                setDataType(dataType);
+                setInversionExpression(inverseExpression);
+                checkGlobalConsistency();
+                setOwnTriplesMap(ownTriplesMap);
+                setSplit(split);
+                setProcess(process);
+                setReplace(replace);
+                setEqualConditions(equalConditions);
         }
 
         /**
@@ -330,6 +353,11 @@ public abstract class AbstractTermMap implements TermMap {
 			throws InvalidR2RMLStructureException {               
 		this.ownTriplesMap = ownTriplesMap;
 	}
+        
+        private void setEqualConditions(Set<EqualCondition> equalConditions) {
+		this.equalConditions = new HashSet<EqualCondition>();
+		this.equalConditions.addAll(equalConditions);
+	}
 
         @Override
         public Value getConstantValue() {
@@ -466,5 +494,10 @@ public abstract class AbstractTermMap implements TermMap {
         @Override
         public String getReplace(){
             return this.replace;
+        }
+        
+        @Override
+        public HashSet<EqualCondition> getEqualConditions(){
+            return this.equalConditions;
         }
 }

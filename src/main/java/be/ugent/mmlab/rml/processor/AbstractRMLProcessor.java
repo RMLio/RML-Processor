@@ -5,6 +5,7 @@ import be.ugent.mmlab.rml.core.JoinRMLPerformer;
 import be.ugent.mmlab.rml.core.RMLEngine;
 import be.ugent.mmlab.rml.core.RMLPerformer;
 import be.ugent.mmlab.rml.core.SimpleReferencePerformer;
+import be.ugent.mmlab.rml.model.EqualCondition;
 import be.ugent.mmlab.rml.model.GraphMap;
 import be.ugent.mmlab.rml.model.JoinCondition;
 import be.ugent.mmlab.rml.model.LogicalSource;
@@ -28,6 +29,7 @@ import java.net.MalformedURLException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
@@ -159,21 +161,19 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                 ReferenceIdentifierImpl identifier = (ReferenceIdentifierImpl) map.getReferenceValue();
                 values = extractValueFromNode(node, identifier.toString().trim());
                 for (String value : values) {
+                    value = processEqualCondition(map, value);
                     if (map.getSplit() != null
                             || map.getProcess() != null
                             || map.getReplace() != null) {
                         List<String> tempValueList = postProcessTermMap(map, node, value, null);
                         if (tempValueList != null) {
                             for (String tempVal : tempValueList) {
-                                //valueList = applyTermType(tempVal.stringValue(), valueList, map);
                                 valueList.add(tempVal);
                             }
                         }
                     } else {
-                            //valueList = applyTermType(tempVal.stringValue(), valueList, map);
                         valueList.add(value.trim().replace("\n", " "));
                     }
-                        //valueList = applyTermType(value, valueList, map);
                     }
                 return valueList;
                 
@@ -188,22 +188,27 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                 Set<String> tokens = R2RMLToolkit.extractColumnNamesFromStringTemplate(template);
                 for (String expression : tokens) {
                     List<String> replacements = extractValueFromNode(node, expression);
-                    if (replacements != null || replacements.isEmpty() || replacements.size() == 0) {
+                    if (replacements != null) { // || replacements.isEmpty() || replacements.size() == 0) {
                         for (int i = 0; i < replacements.size(); i++) {
                             if (values.size() < (i + 1)) {
                                 values.add(template);
                             }
                             String replacement = replacements.get(i);
                             if (replacement != null || !replacement.equals("")) {
+                                //process equal conditions
+                                replacement = processEqualCondition(map, replacement);
+
+                                //process split, process and replace conditions
                                 if (map.getSplit() != null || map.getProcess() != null || map.getReplace() != null) {
                                     List<String> list = postProcessTermMap(map, node, replacement, null);
-                                    if (list != null)
+                                    if (list != null) {
                                         for (String val : list) {
                                             String temp = processTemplate(map, expression, template, val);
                                             if (R2RMLToolkit.extractColumnNamesFromStringTemplate(temp).isEmpty()) {
                                                 validValues.add(temp);
                                             }
                                         }
+                                    }
                                 } else {
                                     if (replacement != null & !replacement.isEmpty()) {
                                         String temp = processTemplate(map, expression, template, replacement);
@@ -552,7 +557,6 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
             //else{
                 //valueList.add(new LiteralImpl(cleansing(value)));
                 //stringList.add(cleansing(value));
-                //log.error("no match found for " + process);
             //}
         }
         return stringList;
@@ -576,5 +580,19 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
         }
 
         return valueList;
+    }
+    
+    public String processEqualCondition(TermMap map, String replacement) {
+        HashSet<EqualCondition> equalConditions = map.getEqualConditions();
+        if (equalConditions != null) {
+            for (EqualCondition equalCondition : equalConditions) {
+                String condition = equalCondition.getCondition();
+                String value = equalCondition.getValue();
+                if (replacement.equals(condition)) {
+                    replacement = value;
+                }
+            }
+        }
+        return replacement;
     }
 }

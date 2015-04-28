@@ -75,6 +75,19 @@ public class StdSubjectMap extends AbstractTermMap implements SubjectMap {
 		setGraphMaps(graphMaps);
 		setOwnTriplesMap(ownTriplesMap);
 	}
+        
+        public StdSubjectMap(TriplesMap ownTriplesMap, Value constantValue,
+			String stringTemplate, URI termType, String inverseExpression,
+			ReferenceIdentifier referenceValue, Set<URI> classIRIs, Set<GraphMap> graphMaps, 
+                        String split, String process, String replace, Set<EqualCondition> equalCondition) 
+                throws R2RMLDataError, InvalidR2RMLStructureException, InvalidR2RMLSyntaxException {
+		super(constantValue, null, null, stringTemplate, termType,
+				inverseExpression, referenceValue,
+                                split, process, replace, equalCondition);
+		setClassIRIs(classIRIs);
+		setGraphMaps(graphMaps);
+		setOwnTriplesMap(ownTriplesMap);
+	}
 
         @Override
 	public void setOwnTriplesMap(TriplesMap ownTriplesMap)

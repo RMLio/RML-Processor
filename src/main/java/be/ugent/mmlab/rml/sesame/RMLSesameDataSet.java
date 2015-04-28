@@ -216,6 +216,7 @@ public class RMLSesameDataSet extends SesameDataSet {
         try {
             con = currentRepository.getConnection();
             File file = new File(filepath);
+            log.error("file " + file);
             con.add(file, "", format);
             con.commit();
         } catch (RepositoryException ex) {

@@ -4,6 +4,7 @@
  */
 package be.ugent.mmlab.rml.RMLextractor;
 
+import be.ugent.mmlab.rml.model.EqualCondition;
 import be.ugent.mmlab.rml.model.GraphMap;
 import be.ugent.mmlab.rml.model.JoinCondition;
 import be.ugent.mmlab.rml.model.LogicalSource;
@@ -11,6 +12,7 @@ import be.ugent.mmlab.rml.model.ObjectMap;
 import be.ugent.mmlab.rml.model.PredicateMap;
 import be.ugent.mmlab.rml.model.PredicateObjectMap;
 import be.ugent.mmlab.rml.model.ReferencingObjectMap;
+import be.ugent.mmlab.rml.model.StdEqualCondition;
 import be.ugent.mmlab.rml.model.StdGraphMap;
 import be.ugent.mmlab.rml.model.StdJoinCondition;
 import be.ugent.mmlab.rml.model.StdLogicalSource;
@@ -441,6 +443,8 @@ public class RMLUnValidatedMappingExtractor implements RMLMappingExtractor{
         //TODO:Add check if the referenceValue is a valid reference according to the reference formulation
         ReferenceIdentifier referenceValue = 
                 extractReferenceIdentifier(rmlMappingGraph, subjectMap, triplesMap);
+        Set<EqualCondition> equalCondition = extractEqualCondition(
+                    rmlMappingGraph, subjectMap, triplesMap);
         
         //AD: The values of the rr:class property must be IRIs. 
         //AD: Would that mean that it can not be a reference to an extract of the input or a template?
@@ -461,10 +465,10 @@ public class RMLUnValidatedMappingExtractor implements RMLMappingExtractor{
         
         SubjectMap result = null;
         try {
-            if (split != null || process != null || replace != null) {
+            if (split != null || process != null || replace != null || equalCondition != null) {
                 result = new StdSubjectMap(triplesMap, constantValue,
                         stringTemplate, termType, inverseExpression,
-                        referenceValue, classIRIs, graphMaps, split, process, replace);
+                        referenceValue, classIRIs, graphMaps, split, process, replace, equalCondition);
             } else {
                 result = new StdSubjectMap(triplesMap, constantValue,
                         stringTemplate, termType, inverseExpression, referenceValue,
@@ -511,12 +515,12 @@ public class RMLUnValidatedMappingExtractor implements RMLMappingExtractor{
                 }
             }
         } catch (ClassCastException e) {
-            log.error(
-                    "[RMLMappingFactory:extractPredicateObjectMaps] "
-                    + "A resource was expected in object of predicateObjectMap of "
+            log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
+                    +  "A resource was expected in object of predicateObjectMap of "
                     + triplesMapSubject.stringValue());
         }
-        log.debug("[RMLMappingFactory:extractPredicateObjectMaps] Number of extracted predicate-object maps : "
+        log.debug(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
+                    + "extractPredicateObjectMaps] Number of extracted predicate-object maps : "
                 + predicateObjectMaps.size());
         return predicateObjectMaps;
     }
@@ -601,9 +605,8 @@ public class RMLUnValidatedMappingExtractor implements RMLMappingExtractor{
             }
             //} 
         } catch (ClassCastException e) {
-            log.error(
-                    "[RMLMappingFactory:extractPredicateObjectMaps] "
-                    + "A resource was expected in object of objectMap of "
+            log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
+                    +  "A resource was expected in object of objectMap of "
                     + predicateObject.stringValue());
         } /*catch (InvalidR2RMLStructureException ex) {
             java.util.logging.Logger.getLogger(RMLUnValidatedMappingExtractor.class.getName()).log(Level.SEVERE, null, ex);
@@ -678,8 +681,7 @@ public class RMLUnValidatedMappingExtractor implements RMLMappingExtractor{
             Set<JoinCondition> joinConditions = extractJoinConditions(
                     rmlMappingGraph, object, triplesMap);
             if (parentTriplesMap == null && !joinConditions.isEmpty()) {
-                log.error(
-                        "[RMLMappingFactory:extractReferencingObjectMap] "
+                log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
                         + object.stringValue()
                         + " has no parentTriplesMap map defined whereas one or more joinConditions exist"
                         + " : exactly one parentTripleMap is required.");
@@ -703,9 +705,8 @@ public class RMLUnValidatedMappingExtractor implements RMLMappingExtractor{
                 }
             }
             if (!contains) {
-                log.error(
-                        "[RMLMappingFactory:extractReferencingObjectMap] "
-                        + object.stringValue()
+                log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
+                        +  object.stringValue()
                         + " reference to parent triples maps is broken : "
                         + parentTriplesMap.stringValue() + " not found.");
             }
@@ -751,6 +752,8 @@ public class RMLUnValidatedMappingExtractor implements RMLMappingExtractor{
                     object, RMLVocabulary.RMLTerm.PROCESS, triplesMap);
             String replace = extractLiteralFromTermMap(rmlMappingGraph,
                     object, RMLVocabulary.RMLTerm.REPLACE, triplesMap);
+            Set<EqualCondition> equalCondition = extractEqualCondition(
+                    rmlMappingGraph, object, triplesMap);
             
             //MVS: Decide on ReferenceIdentifier
             ReferenceIdentifier referenceValue = 
@@ -760,16 +763,11 @@ public class RMLUnValidatedMappingExtractor implements RMLMappingExtractor{
 
             StdObjectMap result = new StdObjectMap(null, constantValue, dataType,
                     languageTag, stringTemplate, termType, inverseExpression,
-                    referenceValue, split, process, replace);
-                       //log.error("result " + result);
+                    referenceValue, split, process, replace, equalCondition);
             return result;
-        } catch (R2RMLDataError ex) {
+        } catch (Exception ex) {
             java.util.logging.Logger.getLogger(RMLUnValidatedMappingExtractor.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InvalidR2RMLStructureException ex) {
-            java.util.logging.Logger.getLogger(RMLUnValidatedMappingExtractor.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InvalidR2RMLSyntaxException ex) {
-            java.util.logging.Logger.getLogger(RMLUnValidatedMappingExtractor.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        } 
         return null;
     }
     
@@ -811,8 +809,8 @@ public class RMLUnValidatedMappingExtractor implements RMLMappingExtractor{
                         jc, RMLVocabulary.R2RMLTerm.PARENT, triplesMap);
                 if (parent == null || child == null) {
                     log.error(
-                            "[RMLMappingFactory:extractReferencingObjectMap] "
-                            + object.stringValue()
+                            Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
+                            +  object.stringValue()
                             + " must have exactly two properties child and parent. ");
                 }
                 try {
@@ -824,12 +822,58 @@ public class RMLUnValidatedMappingExtractor implements RMLMappingExtractor{
                 }
             }
         } catch (ClassCastException e) {
-            log.error(
-                    "[RMLMappingFactory:extractJoinConditions] "
+            log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
                     + "A resource was expected in object of predicateMap of "
                     + object.stringValue());
         } 
-        log.debug("[RMLMappingFactory:extractJoinConditions] Extract join conditions done.");
+        log.debug(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
+                    + " Extract join conditions done.");
+        return result;
+    }
+    
+    private Set<EqualCondition> extractEqualCondition(
+            RMLSesameDataSet rmlMappingGraph, Resource object, TriplesMap triplesMap){
+        log.debug(
+                Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
+                + "Extract equal conditions..");
+        Set<EqualCondition> result = new HashSet<EqualCondition>();
+        
+        // Extract equal condition
+        URI p = rmlMappingGraph.URIref(RMLVocabulary.CRML_NAMESPACE + RMLVocabulary.cRMLTerm.EQUAL_CONDITION);
+        List<Statement> statements = rmlMappingGraph.tuplePattern(object, p, null);
+
+        try {
+            for (Statement statement : statements) {
+                //assigns current equal condtion
+                Resource ec = (Resource) statement.getObject();
+                
+                //retrieves condition
+                p = rmlMappingGraph.URIref(RMLVocabulary.CRML_NAMESPACE + RMLVocabulary.cRMLTerm.CONDITION);
+                statements = rmlMappingGraph.tuplePattern(ec, p, null);
+                String condition = statements.get(0).getObject().stringValue();         
+                
+                //retrieves value
+                p = rmlMappingGraph.URIref(RMLVocabulary.CRML_NAMESPACE + RMLVocabulary.cRMLTerm.VALUE);
+                statements = rmlMappingGraph.tuplePattern(ec, p, null);
+                String value = statements.get(0).getObject().stringValue();         
+
+                if (value == null || condition == null) {
+                    log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
+                            + object.stringValue()
+                            + " must have exactly two properties condition and value. ");
+                }
+                try {
+                    result.add(new StdEqualCondition(condition, value));
+                } catch (Exception ex) {
+                    java.util.logging.Logger.getLogger(RMLUnValidatedMappingExtractor.class.getName()).log(Level.SEVERE, null, ex);
+                } 
+            }
+        } catch (ClassCastException e) {
+            log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
+                    + "A resource was expected in object of predicateMap of "
+                    + object.stringValue());
+        } 
+        log.debug("Extract join conditions done.");
         return result;
     }
     
@@ -861,8 +905,7 @@ public class RMLUnValidatedMappingExtractor implements RMLMappingExtractor{
                 rmlMappingGraph, resource, RMLVocabulary.RMLTerm.REFERENCE, triplesMap);
 
         if (columnValueStr != null && referenceValueStr != null) {
-            log.error(
-                    "[RMLMappingFactory:extractReferenceIdentifier] "
+            log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
                     + resource
                     + " has a reference and column defined.");
         }
@@ -888,7 +931,7 @@ public class RMLUnValidatedMappingExtractor implements RMLMappingExtractor{
         Set<URI> uris = new HashSet<URI>();
         for (Statement statement : statements) {
             URI uri = (URI) statement.getObject();
-            log.debug("[RMLMappingFactory:extractURIsFromTermMap] Extracted "
+            log.debug(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
                     + term + " : " + uri.stringValue());
             uris.add(uri);
         }
@@ -989,8 +1032,8 @@ public class RMLUnValidatedMappingExtractor implements RMLMappingExtractor{
         if (term instanceof RMLVocabulary.RMLTerm) {
             namespace = RMLVocabulary.RML_NAMESPACE;
         } else if (!(term instanceof RMLVocabulary.R2RMLTerm)) 
-            log.error(
-                    "[RMLMappingFactory:extractValueFromTermMap] " + term + " is not valid.");
+            log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
+                    + term + " is not valid.");
 
         return rmlMappingGraph
                 .URIref(namespace + term);

@@ -29,6 +29,7 @@
 package be.ugent.mmlab.rml.model;
 
 import be.ugent.mmlab.rml.model.reference.ReferenceIdentifier;
+import java.util.HashSet;
 import java.util.Set;
 
 import net.antidot.semantic.xmls.xsd.XSDLexicalTransformation;
@@ -150,6 +151,8 @@ public interface TermMap {
         public String getProcess();
 
         public String getReplace();
+        
+        public HashSet<EqualCondition> getEqualConditions();
         
         /*
          * 
