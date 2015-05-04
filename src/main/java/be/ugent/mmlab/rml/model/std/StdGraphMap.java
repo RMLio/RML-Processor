@@ -29,8 +29,11 @@
  * modified by mielvandersande
  *
  ****************************************************************************/
-package be.ugent.mmlab.rml.model;
+package be.ugent.mmlab.rml.model.std;
 
+import be.ugent.mmlab.rml.model.AbstractTermMap;
+import be.ugent.mmlab.rml.model.GraphMap;
+import be.ugent.mmlab.rml.model.TermType;
 import be.ugent.mmlab.rml.model.reference.ReferenceIdentifier;
 import net.antidot.semantic.rdf.model.tools.RDFDataValidator;
 import net.antidot.semantic.rdf.rdb2rdf.r2rml.exception.InvalidR2RMLStructureException;

@@ -1,4 +1,4 @@
-package be.ugent.mmlab.rml.model;
+package be.ugent.mmlab.rml.exception;
 
 /**
  *

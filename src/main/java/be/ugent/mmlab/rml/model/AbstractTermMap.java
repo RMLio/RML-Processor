@@ -28,6 +28,8 @@
  */
 package be.ugent.mmlab.rml.model;
 
+import be.ugent.mmlab.rml.model.std.StdObjectMap;
+import be.ugent.mmlab.rml.model.condition.EqualCondition;
 import be.ugent.mmlab.rml.model.reference.ReferenceIdentifier;
 import be.ugent.mmlab.rml.model.reference.ReferenceIdentifierImpl;
 import be.ugent.mmlab.rml.tools.CustomRDFDataValidator;

@@ -1,5 +1,6 @@
-package be.ugent.mmlab.rml.model;
+package be.ugent.mmlab.rml.model.std;
 
+import be.ugent.mmlab.rml.model.LogicalSource;
 import be.ugent.mmlab.rml.vocabulary.RMLVocabulary.QLTerm;
 
 /**

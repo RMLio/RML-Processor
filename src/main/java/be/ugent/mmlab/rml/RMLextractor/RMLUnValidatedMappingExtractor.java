@@ -4,7 +4,7 @@
  */
 package be.ugent.mmlab.rml.RMLextractor;
 
-import be.ugent.mmlab.rml.model.EqualCondition;
+import be.ugent.mmlab.rml.model.condition.EqualCondition;
 import be.ugent.mmlab.rml.model.GraphMap;
 import be.ugent.mmlab.rml.model.JoinCondition;
 import be.ugent.mmlab.rml.model.LogicalSource;
@@ -12,16 +12,16 @@ import be.ugent.mmlab.rml.model.ObjectMap;
 import be.ugent.mmlab.rml.model.PredicateMap;
 import be.ugent.mmlab.rml.model.PredicateObjectMap;
 import be.ugent.mmlab.rml.model.ReferencingObjectMap;
-import be.ugent.mmlab.rml.model.StdEqualCondition;
-import be.ugent.mmlab.rml.model.StdGraphMap;
-import be.ugent.mmlab.rml.model.StdJoinCondition;
-import be.ugent.mmlab.rml.model.StdLogicalSource;
-import be.ugent.mmlab.rml.model.StdObjectMap;
-import be.ugent.mmlab.rml.model.StdPredicateMap;
-import be.ugent.mmlab.rml.model.StdPredicateObjectMap;
-import be.ugent.mmlab.rml.model.StdReferencingObjectMap;
-import be.ugent.mmlab.rml.model.StdSubjectMap;
-import be.ugent.mmlab.rml.model.StdTriplesMap;
+import be.ugent.mmlab.rml.model.std.StdEqualCondition;
+import be.ugent.mmlab.rml.model.std.StdGraphMap;
+import be.ugent.mmlab.rml.model.std.StdJoinCondition;
+import be.ugent.mmlab.rml.model.std.StdLogicalSource;
+import be.ugent.mmlab.rml.model.std.StdObjectMap;
+import be.ugent.mmlab.rml.model.std.StdPredicateMap;
+import be.ugent.mmlab.rml.model.std.StdPredicateObjectMap;
+import be.ugent.mmlab.rml.model.std.StdReferencingObjectMap;
+import be.ugent.mmlab.rml.model.std.StdSubjectMap;
+import be.ugent.mmlab.rml.model.std.StdTriplesMap;
 import be.ugent.mmlab.rml.model.SubjectMap;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.model.reference.ReferenceIdentifier;
