@@ -90,7 +90,8 @@ public class RMLEngine {
             throws SQLException, R2RMLDataError, UnsupportedEncodingException, IOException {
         long startTime = System.nanoTime();
 
-        log.debug("[RMLEngine:runRMLMapping] Run RML mapping... ");
+        log.debug(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
+                + "[RMLEngine:runRMLMapping] Run RML mapping... ");
         if (rmlMapping == null) 
             throw new IllegalArgumentException(
                     "[RMLEngine:runRMLMapping] No RML Mapping object found.");
@@ -104,15 +105,18 @@ public class RMLEngine {
         //log.info("RMLEngine base IRI " + baseIRI);
 
         if (filebased) {
-            log.debug("[RMLEngine:runRMLMapping] Use direct file "
+            log.debug(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
+                    + "Use direct file "
                     + pathToNativeStore);
             sesameDataSet = new FileSesameDataset(pathToNativeStore, outputFormat);
         } else if (pathToNativeStore != null) { // Check if use of native store is required
-            log.debug("[RMLEngine:runRMLMapping] Use native store "
+            log.debug(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
+                    + "Use native store "
                     + pathToNativeStore);
             sesameDataSet = new SesameDataSet(pathToNativeStore, false);
         } else {
-            log.debug("[RMLEngine:runRMLMapping] Use default store (memory) ");
+            log.debug(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
+                    + "Use default store (memory) ");
             sesameDataSet = new RMLSesameDataSet();
         }
         // Explore RML Mapping TriplesMap objects  
@@ -122,7 +126,10 @@ public class RMLEngine {
         //TODO:add metadata this Triples Map started then, finished then and lasted that much
 	long endTime = System.nanoTime();
         long duration = endTime - startTime;
-        log.info("RML mapping done! Generated " + sesameDataSet.getSize() + " in " + ((double) duration) / 1000000000 + "s . ");
+        log.info(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
+                + "RML mapping done! Generated " 
+                + sesameDataSet.getSize() + " in " 
+                + ((double) duration) / 1000000000 + "s . ");
         return sesameDataSet;
     }
     
@@ -154,7 +161,8 @@ public class RMLEngine {
             RMLMapping rmlMapping, String parameter, String[] exeTriplesMap, boolean filebased) 
             throws SQLException, R2RMLDataError, UnsupportedEncodingException, ProtocolException, IOException {
 
-        log.debug("[RMLEngine:generateRDFTriples] Generate RDF triples... ");
+        log.debug(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
+                + "Generate RDF triples... ");
         int delta = 0;
         
         RMLProcessorFactory factory = new ConcreteRMLProcessorFactory();
@@ -174,14 +182,15 @@ public class RMLEngine {
                     continue;
             }
             
-            System.out.println("[RMLEngine:generateRDFTriples] Generating RDF triples for " + triplesMap.getName());
+            System.out.println("Generating RDF triples for " + triplesMap.getName());
             //TODO: Add metadata that this Map Doc has that many Triples Maps
             
             RMLProcessor processor = null;
             try {
                 processor = factory.create(triplesMap.getLogicalSource().getReferenceFormulation());
             } catch (Exception ex) {
-                log.error("There is no suitable processor for this reference formulation");
+                log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
+                        + "There is no suitable processor for this reference formulation");
             }
             
             String source = triplesMap.getLogicalSource().getIdentifier();
@@ -200,10 +209,11 @@ public class RMLEngine {
                 processor.execute(sesameDataSet, triplesMap, new NodeRMLPerformer(processor), input);
             } catch (Exception ex) {
                 log.error(ex);
-                log.error("The execution of the mapping failed.");
+                log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
+                        + "The execution of the mapping failed.");
             }
 
-            log.info("[RMLEngine:generateRDFTriples] "
+            log.info(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
                     + (sesameDataSet.getSize() - delta)
                     + " triples were generated for " + triplesMap.getName());
             //TODO: Add metadata that this Triples Map generatedthat many triples
@@ -212,15 +222,16 @@ public class RMLEngine {
             try {
                 input.close();
             } catch (IOException ex) {
-                log.error("Input file could not be closed.");
-                Logger.getLogger(RMLEngine.class.getName()).log(Level.SEVERE, null, ex);
+                log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
+                        + "Input file could not be closed.");
             }
         }
         if(filebased)
             try {
                 sesameDataSet.closeRepository();
             } catch (RepositoryException ex) {
-                log.error("[RMLEngine:generateRDFTriples] Cannot close output repository", ex);
+                log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
+                        + "Cannot close output repository", ex);
             }
     }
     
@@ -259,14 +270,17 @@ public class RMLEngine {
                             file  = new File(new File(source).getCanonicalPath());
                         }
                         if(!file.exists())
-                            log.error("[RMLEngine:generateRDFTriples] Input file not found. " );
+                            log.error(
+                                    Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
+                                    + "Input file not found. " );
                     }
                     input = new FileInputStream(file);
                 } catch (IOException ex) {
                     Logger.getLogger(RMLEngine.class.getName()).log(Level.SEVERE, null, ex);
                 } 
             else {
-                log.info("Input stream was not possible.");
+                log.info(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
+                        + "Input stream was not possible.");
                 return null;
             }
             return input;

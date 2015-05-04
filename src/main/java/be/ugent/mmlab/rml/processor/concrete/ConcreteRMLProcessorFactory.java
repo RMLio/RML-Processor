@@ -32,7 +32,8 @@ public class ConcreteRMLProcessorFactory implements RMLProcessorFactory{
             case CSS3_CLASS:
                 return new CSS3Extractor();
             default:
-                log.error("The term " + term + "was not defined.");
+                log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
+                        + "The term " + term + "was not defined.");
                 return null;
         }
     }

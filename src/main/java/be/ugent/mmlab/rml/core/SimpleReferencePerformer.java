@@ -38,7 +38,8 @@ public class SimpleReferencePerformer extends NodeRMLPerformer {
             Resource object = processor.processSubjectMap(dataset, map.getSubjectMap(), node); 
             if (object != null) {
                 dataset.add(subject, predicate, object);
-                log.debug("[SimpleReferencePerformer:addTriples] Subject "
+                log.debug(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
+                        + "[SimpleReferencePerformer:addTriples] Subject "
                         + subject + " Predicate " + predicate + "Object " + object.toString());
 
                 if ((map.getLogicalSource().getReferenceFormulation().toString().equals("CSV"))
@@ -46,7 +47,9 @@ public class SimpleReferencePerformer extends NodeRMLPerformer {
                     performer.perform(node, dataset, map, object);
                 } else {
                     int end = map.getLogicalSource().getReference().length();
-                    log.info("[SimpleReferencePerformer:perform] reference " + map.getLogicalSource().getReference().toString());
+                    log.info(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
+                            + "[SimpleReferencePerformer:perform] reference " 
+                            + map.getLogicalSource().getReference().toString());
                     String expression = "";
                     switch (map.getLogicalSource().getReferenceFormulation().toString()) {
                         case "XPath":
@@ -60,7 +63,9 @@ public class SimpleReferencePerformer extends NodeRMLPerformer {
                 }
             }
             else
-                log.debug("[SimpleReferencePerformer] object of " + map.getName() + " was null. ");
+                log.debug(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
+                        + "[SimpleReferencePerformer] object of " 
+                        + map.getName() + " was null. ");
         }
         else{
             List<String> values = processor.processTermMap(map.getSubjectMap(), node);    
@@ -68,7 +73,8 @@ public class SimpleReferencePerformer extends NodeRMLPerformer {
                 Resource object = new URIImpl(value);
 
                 dataset.add(subject, predicate, object);
-                log.debug("[SimpleReferencePerformer:addTriples] Subject "
+                log.debug(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
+                        + "[SimpleReferencePerformer:addTriples] Subject "
                         + subject + " Predicate " + predicate + "Object " + object.toString());
             }   
         }    

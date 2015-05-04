@@ -220,12 +220,14 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
 
                                 }
                             } else {
-                                log.debug("No suitable replacement for template " + template + ".");
+                                log.debug(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
+                                        + "No suitable replacement for template " + template + ".");
                                 return null;
                             }
                         }
                     } else {
-                        log.debug("No replacements found for template " + template + ".");
+                        log.debug(Thread.currentThread().getStackTrace()[1].getMethodName() + ": " 
+                                + "No replacements found for template " + template + ".");
                         return null;
                     }
                 }
@@ -397,7 +399,8 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                         }
                     }
                 } else {
-                    log.debug("No object created. No triple will be generated.");
+                    log.debug(Thread.currentThread().getStackTrace()[1].getMethodName() + ": " 
+                            + "No object created. No triple will be generated.");
                 }
             }
         }

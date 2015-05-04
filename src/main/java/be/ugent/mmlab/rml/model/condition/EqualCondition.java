@@ -8,12 +8,8 @@ package be.ugent.mmlab.rml.model.condition;
  *
  * @author andimou
  */
-public interface EqualCondition {
-    /**
-     *
-     * @return condition
-     */
-    public String getCondition();
+public interface EqualCondition extends Condition{
+
     /**
      *
      * @return value

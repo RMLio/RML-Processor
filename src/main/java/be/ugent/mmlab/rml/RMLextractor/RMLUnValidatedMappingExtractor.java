@@ -292,7 +292,8 @@ public class RMLUnValidatedMappingExtractor implements RMLMappingExtractor{
         try {
             result.setSubjectMap(subjectMap);
         } catch (InvalidR2RMLStructureException ex) {
-            java.util.logging.Logger.getLogger(RMLUnValidatedMappingExtractor.class.getName()).log(Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(
+                    RMLUnValidatedMappingExtractor.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         // Extract PredicateObjectMaps

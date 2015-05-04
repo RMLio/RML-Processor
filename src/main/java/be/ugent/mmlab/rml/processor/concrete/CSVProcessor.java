@@ -50,9 +50,7 @@ public class CSVProcessor extends AbstractRMLProcessor {
             while (reader.readRecord()) {
                 HashMap<String, String> row = new HashMap<>();
                for (String header : reader.getHeaders()) {
-                   //log.debug("[CSVProcessor:extractValueFromNode] header " + header);
                    row.put(new String(header.getBytes("iso8859-1"), UTF_8), reader.get(header));
-                    //row.put(header, reader.get(header));
                 }
                 //let the performer handle the rows
                 performer.perform(row, dataset, map);

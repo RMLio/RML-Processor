@@ -193,26 +193,30 @@ public abstract class AbstractTermMap implements TermMap {
 //							+ "value : " + termType);
 //	}
         protected void setTermType(URI termType, URI dataType)
-                throws InvalidR2RMLSyntaxException, R2RMLDataError,
-                InvalidR2RMLStructureException {
-                if (termType == null) {
-                        // If the term map does not have a rr:termType property :
-                        // rr:Literal by default, if it is an object map and at
-                        // least one of the following conditions is true
-                        if ((this instanceof StdObjectMap)
-                                && (getReferenceValue() != null || dataType != null
-                                || getLanguageTag() != null || constantValue instanceof Literal)) {
-                                this.termType = TermType.LITERAL;
-                                log.debug("[AbstractTermMap:setTermType] No term type specified : use Literal by default.");
-                        } else {
-                                // otherwise its term type is IRI
-                                this.termType = TermType.IRI;
-                                log.debug("[AbstractTermMap:setTermType] No term type specified : use IRI by default." + getReferenceValue());
-                        }
+            throws InvalidR2RMLSyntaxException, R2RMLDataError,
+            InvalidR2RMLStructureException {
+        if (termType == null) {
+            // If the term map does not have a rr:termType property :
+            // rr:Literal by default, if it is an object map and at
+            // least one of the following conditions is true
+            if ((this instanceof StdObjectMap)
+                    && (getReferenceValue() != null || dataType != null
+                    || getLanguageTag() != null || constantValue instanceof Literal)) {
+                this.termType = TermType.LITERAL;
+                log.debug(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
+                        + "[AbstractTermMap:setTermType] No term type specified : use Literal by default.");
+            } else {
+                // otherwise its term type is IRI
+                this.termType = TermType.IRI;
+                log.debug(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
+                        + "[AbstractTermMap:setTermType] No term type specified : use IRI by default." 
+                        + getReferenceValue());
+            }
 
-                } else 
-                    this.termType = checkTermType(termType);
+        } else {
+            this.termType = checkTermType(termType);
         }
+    }
 
         private TermType checkTermType(URI termType)
                 throws InvalidR2RMLSyntaxException, InvalidR2RMLStructureException,
@@ -425,7 +429,8 @@ public abstract class AbstractTermMap implements TermMap {
                         default:
                                 break;
                 }
-                log.debug("[AbstractTermMap:getReferencedSelectors] References are now : "
+                log.debug(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
+                        + "[AbstractTermMap:getReferencedSelectors] References are now : "
                         + references);
                 return references;
         }

@@ -70,7 +70,9 @@ public class FileSesameDataset extends SesameDataSet {
             writer.startRDF();
 
         } catch (IOException | RDFHandlerException ex) {
-            log.error("File not found.", ex);
+            log.error(
+                    Thread.currentThread().getStackTrace()[1].getMethodName() + ": " 
+                    + "File not found.", ex);
         }
 
     }
@@ -108,7 +110,8 @@ public class FileSesameDataset extends SesameDataSet {
             writer.startRDF();
 
         } catch (IOException | RDFHandlerException ex) {
-            log.error("File not found.", ex);
+            log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": " 
+                    + "File not found.", ex);
         }
 
     }
@@ -209,7 +212,8 @@ public class FileSesameDataset extends SesameDataSet {
     @Override
     public void add(Resource s, URI p, Value o, Resource... contexts) {
         if (log.isDebugEnabled()) {
-            log.debug("[FileSesameDataSet:add] Add triple (" + s.stringValue()
+            log.debug(Thread.currentThread().getStackTrace()[1].getMethodName() + ": " 
+                    + "[FileSesameDataSet:add] Add triple (" + s.stringValue()
                     + ", " + p.stringValue() + ", " + o.stringValue() + ").");
         }
 
@@ -446,7 +450,8 @@ public class FileSesameDataset extends SesameDataSet {
      */
     @Override
     public void closeRepository() throws RepositoryException {
-        log.debug("[FileSesameDataSet:add] Closing file.");
+        log.debug(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
+                + "[FileSesameDataSet:add] Closing file.");
         try {
             fw.flush();
             writer.endRDF();

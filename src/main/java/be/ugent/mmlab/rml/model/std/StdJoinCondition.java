@@ -32,7 +32,6 @@ package be.ugent.mmlab.rml.model.std;
 import be.ugent.mmlab.rml.model.JoinCondition;
 import net.antidot.semantic.rdf.rdb2rdf.r2rml.exception.InvalidR2RMLStructureException;
 import net.antidot.semantic.rdf.rdb2rdf.r2rml.exception.InvalidR2RMLSyntaxException;
-import net.antidot.sql.model.tools.SQLDataValidator;
 
 public class StdJoinCondition implements JoinCondition {
 

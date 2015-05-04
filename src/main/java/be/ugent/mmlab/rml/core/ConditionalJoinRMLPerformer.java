@@ -55,7 +55,7 @@ public class ConditionalJoinRMLPerformer extends NodeRMLPerformer{
             iter: for (String expr : conditions.keySet()) {
                 String cond = conditions.get(expr).trim();
                 List<String> values = processor.extractValueFromNode(node, expr);
-                //log.error("values" + values);
+
                 for(String value : values){
                     if(value == null || !value.toLowerCase().trim().equals(cond.toLowerCase())){
                             flag = false;
@@ -67,17 +67,20 @@ public class ConditionalJoinRMLPerformer extends NodeRMLPerformer{
                 object = processor.processSubjectMap(dataset, map.getSubjectMap(), node);
                 if (subject != null && object != null) {
                     dataset.add(subject, predicate, object);
-                    log.debug("[ConditionalJoinRMLPerformer:addTriples] Subject "
+                    log.debug(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
+                            + "[ConditionalJoinRMLPerformer:addTriples] Subject "
                             + subject + " Predicate " + predicate + "Object " + object.toString());
                 } else {
-                    log.debug("[ConditionalJoinRMLPerformer:addTriples] triple for Subject "
+                    log.debug(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
+                            + "[ConditionalJoinRMLPerformer:addTriples] triple for Subject "
                             + subject + " Predicate " + predicate + "Object " + object
                             + "was not created");
                 }
                 //TODO: need to merge the following with the supoer.perform
                 processor.processSubjectTypeMap(dataset, (Resource) object, map.getSubjectMap(), node);
                 if (object == null) {
-                    log.debug("[NodeRMLPerformer:perform] No subject was generated for " + map.getName() + "triple Map and row " + node.toString());
+                    log.debug(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
+                            + "[NodeRMLPerformer:perform] No subject was generated for " + map.getName() + "triple Map and row " + node.toString());
                 } else {
                     for (PredicateObjectMap pom : map.getPredicateObjectMaps()) {
                         processor.processPredicateObjectMap(dataset, (Resource) object, pom, node, map);

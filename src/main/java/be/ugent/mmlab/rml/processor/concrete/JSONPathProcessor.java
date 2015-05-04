@@ -64,7 +64,8 @@ public class JSONPathProcessor extends AbstractRMLProcessor {
         } catch (com.jayway.jsonpath.InvalidPathException ex) {
             return new ArrayList<>();
         } catch (Exception ex) {
-            log.debug("[JSONPathProcessor:extractValueFromNode]. Error: " + ex);
+            log.debug(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
+                    + "[JSONPathProcessor:extractValueFromNode]. Error: " + ex);
             return null;
         }
         

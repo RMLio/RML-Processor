@@ -143,10 +143,6 @@ public class XPathProcessor extends AbstractRMLProcessor {
                 @Override
                 public void onNodeHit(Expression expression, NodeItem nodeItem) {
                     Node node = (Node) nodeItem.xml;
-                    //if(!nodeItem.namespaceURI.isEmpty())
-                        //log.info("namespace? " + nodeItem.namespaceURI);
-                    //else
-                        //log.info("no namespace.");
                     //Let the performer do its thing
                     performer.perform(node, dataset, map);
                     //System.out.println("XPath: " + expression.getXPath() + " has hit: " + node.getTextContent());

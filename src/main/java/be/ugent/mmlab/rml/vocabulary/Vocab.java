@@ -130,6 +130,11 @@ public class Vocab {
             this.displayName = displayName;
         }
 
+        /**
+         *
+         * @return
+         */
+        @Override
         public String toString() {
             return displayName;
         }

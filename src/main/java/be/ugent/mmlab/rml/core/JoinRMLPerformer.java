@@ -40,7 +40,8 @@ public class JoinRMLPerformer extends NodeRMLPerformer{
         if (object == null){
             return;
         }       
-        log.debug("[JoinRMLPerformer:addTriples] Subject "
+        log.debug(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
+                + "[JoinRMLPerformer:addTriples] Subject "
                     + subject + " Predicate " + predicate + "Object " + object.toString());
         
         //add the join triple

@@ -74,7 +74,6 @@ public class RMLSesameDataSet extends SesameDataSet {
     public RMLSesameDataSet(boolean inferencing) {
         try {
             if (inferencing) {
-                log.debug("inference enabled");
 
                 String pre =
                           "PREFIX rml: <http://semweb.mmlab.be/ns/rml#>\n"
@@ -130,7 +129,8 @@ public class RMLSesameDataSet extends SesameDataSet {
                 currentRepository = new SailRepository(new CustomGraphQueryInferencer(
                         new MemoryStore(), QueryLanguage.SPARQL, rule, match));   
             } else {
-                log.debug("inference disabled");
+                log.debug(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
+                        + "inference disabled");
                 currentRepository = new SailRepository(new MemoryStore());
             }
                 currentRepository.initialize();
@@ -216,7 +216,6 @@ public class RMLSesameDataSet extends SesameDataSet {
         try {
             con = currentRepository.getConnection();
             File file = new File(filepath);
-            log.error("file " + file);
             con.add(file, "", format);
             con.commit();
         } catch (RepositoryException ex) {
@@ -351,10 +350,6 @@ public class RMLSesameDataSet extends SesameDataSet {
                 RepositoryResult<Statement> statements = con.getStatements(null, null, null, true);
                 Model model = Iterations.addAll(statements, new LinkedHashModel());
                 Rio.write(model, System.out, RDFFormat.TURTLE);
-                //con.export(w);
-                //String result = new String(out.toByteArray(), "UTF-8");
-                //log.info("write result " + result);
-                //return result;
                 return null;
             } finally {
                 con.close();
@@ -411,8 +406,8 @@ public class RMLSesameDataSet extends SesameDataSet {
                 BindingSet bindingSet = result.next();
                 Value valueOfX = bindingSet.getValue("x");
                 Value valueOfY = bindingSet.getValue("y");
-                log.debug(//Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
-                        "\n valueOfX "
+                log.debug(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
+                        + "\n valueOfX "
                         + valueOfX.stringValue()
                         + "\n valueOfY"
                         + valueOfY.stringValue());

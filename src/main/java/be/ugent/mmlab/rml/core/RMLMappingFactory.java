@@ -78,7 +78,8 @@ public class RMLMappingFactory {
         RMLDocExtractor inputExtractor = new RMLDocExtractor() ;
         rmlMappingGraph = inputExtractor.getMappingDoc(fileToRMLFile, RDFFormat.TURTLE);
 
-        log.debug("[RMLMappingFactory:extractRMLMapping] Number of RML triples in file "
+        log.debug(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
+                + "Number of RML triples in file "
                 + fileToRMLFile + " : " + rmlMappingGraph.getSize());
         // Transform RDF with replacement shortcuts
         rmlMappingGraph = extractor.replaceShortcuts(rmlMappingGraph);
@@ -88,7 +89,8 @@ public class RMLMappingFactory {
         // Construct RML Mapping object
         Map<Resource, TriplesMap> triplesMapResources = extractor.extractTriplesMapResources(rmlMappingGraph);
 
-        log.debug("[RMLMappingFactory:extractRMLMapping] Number of RML triples with "
+        log.debug(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
+                + "Number of RML triples with "
                 + " type "
                 + R2RMLTerm.TRIPLES_MAP_CLASS
                 + " in file "
@@ -174,7 +176,8 @@ public class RMLMappingFactory {
         }
         String result = statements.get(0).getObject().stringValue();
         if (log.isDebugEnabled()) {
-            log.debug("[RMLMappingFactory:extractLiteralFromTermMap] Extracted "
+            log.debug(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
+                    + "[RMLMappingFactory:extractLiteralFromTermMap] Extracted "
                     + term + " : " + result);
         }
         return result;
