@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.mmlab.rml.RMLextractor;
+package be.ugent.mmlab.rml.extractor.rml;
 
 import be.ugent.mmlab.rml.model.GraphMap;
 import be.ugent.mmlab.rml.model.ObjectMap;

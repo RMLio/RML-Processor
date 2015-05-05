@@ -34,6 +34,8 @@ import be.ugent.mmlab.rml.model.TermMap;
 import be.ugent.mmlab.rml.model.TermType;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.model.condition.EqualCondition;
+import be.ugent.mmlab.rml.model.condition.ProcessCondition;
+import be.ugent.mmlab.rml.model.condition.SplitCondition;
 import be.ugent.mmlab.rml.model.reference.ReferenceIdentifier;
 import java.util.HashSet;
 import java.util.Set;
@@ -76,11 +78,12 @@ public final class StdObjectMap extends AbstractTermMap implements TermMap, Obje
 			Value constantValue, URI dataType, String languageTag,
 			String stringTemplate, URI termType, String inverseExpression,
 			ReferenceIdentifier referenceValue, String split,
-                        String process, String replace, Set<EqualCondition> equalCondition) 
+                        String process, String replace, Set<EqualCondition> equalCondition, 
+                        Set<ProcessCondition> processCondition, Set<SplitCondition> splitCondition)
                 throws R2RMLDataError, InvalidR2RMLStructureException, InvalidR2RMLSyntaxException {
 		super(constantValue, dataType, languageTag, stringTemplate, termType,
-				inverseExpression, referenceValue,
-                                split, process, replace, equalCondition);
+				inverseExpression, referenceValue, split, process, replace, 
+                                equalCondition, processCondition, splitCondition);
 		setPredicateObjectMap(predicateObjectMap);
 	}
 

@@ -45,6 +45,10 @@
                             crml:condition "February" ;
                             crml:value "02"
                         ];
+                        crml:equalCondition [
+                            crml:condition "March" ;
+                            crml:value "03"
+                        ];
                         rr:termType rr:Literal;
 			rr:datatype xsd:gMonth
 		]

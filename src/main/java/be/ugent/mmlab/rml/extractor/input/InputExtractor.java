@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.mmlab.rml.InputExtractor;
+package be.ugent.mmlab.rml.extractor.input;
 
 import be.ugent.mmlab.rml.model.TriplesMap;
 import java.io.InputStream;

@@ -1,7 +1,7 @@
 package be.ugent.mmlab.rml.core;
 
-import be.ugent.mmlab.rml.InputExtractor.InputExtractor;
-import be.ugent.mmlab.rml.InputExtractor.LocalFileExtractor;
+import be.ugent.mmlab.rml.extractor.input.InputExtractor;
+import be.ugent.mmlab.rml.extractor.input.LocalFileExtractor;
 import be.ugent.mmlab.rml.dataset.FileSesameDataset;
 import be.ugent.mmlab.rml.model.LogicalSource;
 import be.ugent.mmlab.rml.model.PredicateObjectMap;

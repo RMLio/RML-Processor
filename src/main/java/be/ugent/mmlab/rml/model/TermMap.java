@@ -28,7 +28,10 @@
  ****************************************************************************/
 package be.ugent.mmlab.rml.model;
 
+import be.ugent.mmlab.rml.model.condition.Condition;
 import be.ugent.mmlab.rml.model.condition.EqualCondition;
+import be.ugent.mmlab.rml.model.condition.ProcessCondition;
+import be.ugent.mmlab.rml.model.condition.SplitCondition;
 import be.ugent.mmlab.rml.model.reference.ReferenceIdentifier;
 import java.util.HashSet;
 import java.util.Set;
@@ -154,6 +157,12 @@ public interface TermMap {
         public String getReplace();
         
         public HashSet<EqualCondition> getEqualConditions();
+        
+        public HashSet<ProcessCondition> getProcessConditions();
+        
+        public HashSet<SplitCondition> getSplitConditions();
+        
+        public Condition getCondition();
         
         /*
          * 

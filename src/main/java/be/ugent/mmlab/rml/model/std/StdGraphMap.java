@@ -60,6 +60,12 @@ public class StdGraphMap extends AbstractTermMap implements GraphMap {
 	}
 
 
+        /**
+     *
+     * @param tt
+     * @throws InvalidR2RMLStructureException
+     */
+    @Override
 	protected void checkSpecificTermType(TermType tt)
 			throws InvalidR2RMLStructureException {
 		// If the term map is a predicate map: rr:IRI
@@ -70,6 +76,7 @@ public class StdGraphMap extends AbstractTermMap implements GraphMap {
 		}
 	}
 
+        @Override
 	protected void checkConstantValue(Value constantValue)
 			throws R2RMLDataError {
 		// If the constant-valued term map is a graph map then its constant

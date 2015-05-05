@@ -93,10 +93,17 @@ public class RMLVocabulary {
 
         // RML CLASSES
         EQUAL_CONDITION_CLASS("EqualCondition"),
+        PROCESS_CONDITION_CLASS("ProcessCondition"),
+        SPLIT_CONDITION_CLASS("SplitCondition"),
         // RPROPERTIES
         EQUAL_CONDITION("equalCondition"),
+        PROCESS_CONDITION("processCondition"),
+        SPLIT_CONDITION("splitCondition"),
         CONDITION("condition"),
-        VALUE("value");
+        VALUE("value"),
+        //PROCESS("process"),
+        REPLACE("replace");
+        //SPLIT("split");
         
         private String displayName;
 

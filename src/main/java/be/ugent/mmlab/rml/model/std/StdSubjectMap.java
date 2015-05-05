@@ -34,6 +34,8 @@ import be.ugent.mmlab.rml.model.SubjectMap;
 import be.ugent.mmlab.rml.model.TermType;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.model.condition.EqualCondition;
+import be.ugent.mmlab.rml.model.condition.ProcessCondition;
+import be.ugent.mmlab.rml.model.condition.SplitCondition;
 import be.ugent.mmlab.rml.model.reference.ReferenceIdentifier;
 import java.util.HashSet;
 import java.util.Set;
@@ -85,11 +87,12 @@ public class StdSubjectMap extends AbstractTermMap implements SubjectMap {
         public StdSubjectMap(TriplesMap ownTriplesMap, Value constantValue,
 			String stringTemplate, URI termType, String inverseExpression,
 			ReferenceIdentifier referenceValue, Set<URI> classIRIs, Set<GraphMap> graphMaps, 
-                        String split, String process, String replace, Set<EqualCondition> equalCondition) 
+                        String split, String process, String replace, Set<EqualCondition> equalCondition,
+                        Set<ProcessCondition> processCondition, Set<SplitCondition> splitCondition) 
                 throws R2RMLDataError, InvalidR2RMLStructureException, InvalidR2RMLSyntaxException {
 		super(constantValue, null, null, stringTemplate, termType,
-				inverseExpression, referenceValue,
-                                split, process, replace, equalCondition);
+				inverseExpression, referenceValue, split, process, replace, 
+                                equalCondition, processCondition, splitCondition);
 		setClassIRIs(classIRIs);
 		setGraphMaps(graphMaps);
 		setOwnTriplesMap(ownTriplesMap);
@@ -173,7 +176,8 @@ public class StdSubjectMap extends AbstractTermMap implements SubjectMap {
 
         @Override
 	public String toString() {
-		String result = super.toString() + " [StdSubjectMap : classIRIs = [";
+		String result = super.toString() 
+                        + " [StdSubjectMap : classIRIs = [";
 		for (URI uri : classIRIs)
 			result += uri.getLocalName() + ",";
 		result += "], graphMaps = [";

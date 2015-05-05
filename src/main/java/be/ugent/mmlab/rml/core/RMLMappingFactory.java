@@ -13,9 +13,9 @@
  */
 package be.ugent.mmlab.rml.core;
 
-import be.ugent.mmlab.rml.RMLextractor.RMLDocExtractor;
-import be.ugent.mmlab.rml.RMLextractor.RMLMappingExtractor;
-import be.ugent.mmlab.rml.RMLextractor.RMLUnValidatedMappingExtractor;
+import be.ugent.mmlab.rml.extractor.rml.RMLDocExtractor;
+import be.ugent.mmlab.rml.extractor.rml.RMLMappingExtractor;
+import be.ugent.mmlab.rml.extractor.rml.RMLUnValidatedMappingExtractor;
 import be.ugent.mmlab.rml.model.RMLMapping;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.sesame.RMLSesameDataSet;
