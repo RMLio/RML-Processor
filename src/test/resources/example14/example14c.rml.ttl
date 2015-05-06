@@ -23,14 +23,14 @@
 
         rr:objectMap [ 
             rr:template "http://www.ex.com/author/{authors}" ;
-            crml:processCondition [ 
-                crml:condition " " ;
-                crml:value "" 
-            ] ;
 
-            crml:processCondition [ 
+            crml:splitCondition [ 
                 crml:condition "," ;
-                crml:value "_" 
+                crml:value "_" ;
+                crml:processCondition [ 
+                    crml:condition " " ;
+                    crml:value "" 
+                ] ;
             ] 
         ]
     ];

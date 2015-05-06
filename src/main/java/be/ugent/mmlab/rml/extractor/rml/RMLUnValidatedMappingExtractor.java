@@ -449,11 +449,11 @@ public class RMLUnValidatedMappingExtractor implements RMLMappingExtractor{
         //TODO:Add check if the referenceValue is a valid reference according to the reference formulation
         ReferenceIdentifier referenceValue = 
                 extractReferenceIdentifier(rmlMappingGraph, subjectMap, triplesMap);
-        Set<EqualCondition> equalCondition = EqualConditionExtractor.extractCondition(
+        Set<EqualCondition> equalCondition = EqualConditionExtractor.extractEqualCondition(
                     rmlMappingGraph, subjectMap, triplesMap);
         Set<ProcessCondition> processCondition = ProcessConditionExtractor.extractCondition(
                     rmlMappingGraph, subjectMap, triplesMap);
-        Set<SplitCondition> splitCondition = SplitConditionExtractor.extractCondition(
+        Set<SplitCondition> splitCondition = SplitConditionExtractor.extractSplitCondition(
                     rmlMappingGraph, subjectMap, triplesMap);
         
         //AD: The values of the rr:class property must be IRIs. 
@@ -756,11 +756,11 @@ public class RMLUnValidatedMappingExtractor implements RMLMappingExtractor{
                     object, RMLVocabulary.RMLTerm.PROCESS, triplesMap);
             String replace = extractLiteralFromTermMap(rmlMappingGraph,
                     object, RMLVocabulary.RMLTerm.REPLACE, triplesMap);
-            Set<EqualCondition> equalCondition = EqualConditionExtractor.extractCondition(
+            Set<EqualCondition> equalCondition = EqualConditionExtractor.extractEqualCondition(
                     rmlMappingGraph, object, triplesMap);
             Set<ProcessCondition> processCondition = ProcessConditionExtractor.extractCondition(
                     rmlMappingGraph, object, triplesMap);
-            Set<SplitCondition> splitCondition = SplitConditionExtractor.extractCondition(
+            Set<SplitCondition> splitCondition = SplitConditionExtractor.extractSplitCondition(
                     rmlMappingGraph, object, triplesMap);
             
             //MVS: Decide on ReferenceIdentifier
