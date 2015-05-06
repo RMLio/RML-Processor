@@ -28,15 +28,15 @@ public class ProcessConditionProcessor extends ConditionProcessor{
      * @param replacement
      * @return
      */
-    public static String processProcessConditions(TermMap map, String replacement) {
+    public static String processConditions(TermMap map, String replacement) {
         HashSet<ProcessCondition> processConditions = map.getProcessConditions();
         for (ProcessCondition processCondition : processConditions) {
-            processProcessCondition(processCondition,replacement);
+            processCondition(processCondition,replacement);
         }
         return replacement;
     }
     
-    public static String processProcessCondition(Condition processCondition, String replacement) {
+    public static String processCondition(Condition processCondition, String replacement) {
 
             String condition = processCondition.getCondition();
             String value = processCondition.getValue();

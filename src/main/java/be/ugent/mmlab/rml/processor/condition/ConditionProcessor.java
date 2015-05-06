@@ -12,6 +12,7 @@ import be.ugent.mmlab.rml.model.condition.SplitCondition;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.logging.Log;
@@ -89,28 +90,55 @@ public class ConditionProcessor {
         return stringList;
     }
     
-    public static List <String> processCondition(TermMap map, String value) {
+    public static List <String> processAllConditions(TermMap map, String value) {
         HashSet<ProcessCondition> processConditions = map.getProcessConditions();
         HashSet<SplitCondition> splitConditions = map.getSplitConditions();
         HashSet<EqualCondition> equalConditions = map.getEqualConditions();
         List <String> result = new ArrayList<>();
 
         if (equalConditions.size() > 0) {
-            value = EqualConditionProcessor.processEqualCondition(map, value);
+            value = EqualConditionProcessor.processConditions(map, value);
             result.add(value);
         }
         else if (processConditions.size() > 0){
-            value = ProcessConditionProcessor.processProcessConditions(map, value);
+            value = ProcessConditionProcessor.processConditions(map, value);
             result.add(value);
         }
         else if (splitConditions.size() > 0) {
-            String[] list = SplitConditionProcessor.processSplitCondition(map, value);
+            String[] list = SplitConditionProcessor.processConditions(map, value);
             for (String valueList : list) {
                 result.add(valueList);
             }
         }
 
         return result;
+    }
+    
+    public static String[] processNestedConditions(Set<Condition> nestedConditions, String[] list) {
+        for (int i = 0; i < list.length; i++) {
+            for (Condition nestedCondition : nestedConditions) {
+                list[i] = processNestedCondition(nestedCondition,list[i]);    
+            }
+        }
+        return list;
+    }
+    
+    public static String processNestedCondition(Condition nestedCondition, String value) {
+        String[] list;
+        switch (nestedCondition.getClass().getSimpleName()) {
+            case "StdProcessCondition":
+                value = ProcessConditionProcessor.processCondition(nestedCondition, value);
+                break;
+            case "StdSplitCondition":
+                list = SplitConditionProcessor.processCondition(nestedCondition, value);
+                break;
+            case "StdEqualCondition":
+                value = EqualConditionProcessor.processCondition(nestedCondition, value);
+                break;
+            default:
+                log.error("unknown condition");
+        }
+        return value;
     }
     
 }

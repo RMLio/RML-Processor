@@ -26,7 +26,7 @@
 
             crml:splitCondition [ 
                 crml:condition "," ;
-                crml:value "_" ;
+
                 crml:processCondition [ 
                     crml:condition " " ;
                     crml:value "" 

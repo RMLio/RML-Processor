@@ -159,7 +159,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                 ReferenceIdentifierImpl identifier = (ReferenceIdentifierImpl) map.getReferenceValue();
                 values = extractValueFromNode(node, identifier.toString().trim());
                 for (String value : values) {
-                    List<String> list = ConditionProcessor.processCondition(map, value);
+                    List<String> list = ConditionProcessor.processAllConditions(map, value);
 
                     for (String listValue : list) {
                         valueList.add(listValue);
@@ -216,7 +216,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                                         }
                                     }
                                 } else {
-                                    list = ConditionProcessor.processCondition(map, replacement);
+                                    list = ConditionProcessor.processAllConditions(map, replacement);
 
                                     if (!list.isEmpty()) {
                                         for (String value : list) {
