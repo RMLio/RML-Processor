@@ -36,8 +36,8 @@ public class EqualConditionExtractor extends ConditionExtractor{
                 Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
                 + "Extract equal conditions..");
         Set<EqualCondition> result = new HashSet<EqualCondition>();
-        List<String> listCondition = new ArrayList<String>(), 
-                listValue = new ArrayList<String>();
+        List<String> conditions = new ArrayList<String>(), 
+                values = new ArrayList<String>();
         
         // Extract equal condition
         URI p = rmlMappingGraph.URIref(
@@ -46,24 +46,11 @@ public class EqualConditionExtractor extends ConditionExtractor{
 
         try {
             for (Statement statement : statements) {
-                listCondition = extractCondition(rmlMappingGraph, object, statement);
-                listValue = extractValue(rmlMappingGraph, object, statement);
-                //assigns current equal condtion
-                /*Resource ec = (Resource) statement.getObject();
-                
-                //retrieves condition
-                p = rmlMappingGraph.URIref(
-                        RMLVocabulary.CRML_NAMESPACE + RMLVocabulary.cRMLTerm.CONDITION);
-                statements = rmlMappingGraph.tuplePattern(ec, p, null);
-                String condition = statements.get(0).getObject().stringValue();       */  
-                
-                //retrieves value
-                /*p = rmlMappingGraph.URIref(
-                        RMLVocabulary.CRML_NAMESPACE + RMLVocabulary.cRMLTerm.VALUE);
-                statements = rmlMappingGraph.tuplePattern(ec, p, null);
-                String value = statements.get(0).getObject().stringValue();         */
-                for (String condition : listCondition) {
-                    for (String value : listValue) {
+                conditions = extractCondition(rmlMappingGraph, object, statement);
+                values = extractValue(rmlMappingGraph, object, statement);
+
+                for (String condition : conditions) {
+                    for (String value : values) {
                         if (value == null || condition == null) {
                             log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
                                     + object.stringValue()

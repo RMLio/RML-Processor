@@ -4,11 +4,14 @@
  */
 package be.ugent.mmlab.rml.extractor.condition;
 
+import static be.ugent.mmlab.rml.extractor.condition.ConditionExtractor.extractCondition;
+import static be.ugent.mmlab.rml.extractor.condition.ConditionExtractor.extractValue;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.model.condition.ProcessCondition;
 import be.ugent.mmlab.rml.model.std.StdProcessCondition;
 import be.ugent.mmlab.rml.sesame.RMLSesameDataSet;
 import be.ugent.mmlab.rml.vocabulary.RMLVocabulary;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -29,12 +32,14 @@ public class ProcessConditionExtractor extends ConditionExtractor {
     private static final Logger log = LogManager.getLogger(ProcessConditionExtractor.class);
     
     public static Set<ProcessCondition> extractCondition(
-            RMLSesameDataSet rmlMappingGraph, Resource object, TriplesMap triplesMap){
+            RMLSesameDataSet rmlMappingGraph, Resource object, TriplesMap triplesMap) {
         log.debug(
                 Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
                 + "Extract process conditions..");
         Set<ProcessCondition> result = new HashSet<ProcessCondition>();
-        
+        List<String> conditions = new ArrayList<String>(),
+                values = new ArrayList<String>();
+
         // Extract equal condition
         URI p = rmlMappingGraph.URIref(
                 RMLVocabulary.CRML_NAMESPACE + RMLVocabulary.cRMLTerm.PROCESS_CONDITION);
@@ -42,38 +47,37 @@ public class ProcessConditionExtractor extends ConditionExtractor {
 
         try {
             for (Statement statement : statements) {
-                //assigns current equal condtion
-                Resource ec = (Resource) statement.getObject();
-                
-                //retrieves condition
-                p = rmlMappingGraph.URIref(
-                        RMLVocabulary.CRML_NAMESPACE + RMLVocabulary.cRMLTerm.CONDITION);
-                statements = rmlMappingGraph.tuplePattern(ec, p, null);
-                String condition = statements.get(0).getObject().stringValue();         
-                
-                //retrieves value
-                p = rmlMappingGraph.URIref(
-                        RMLVocabulary.CRML_NAMESPACE + RMLVocabulary.cRMLTerm.VALUE);
-                statements = rmlMappingGraph.tuplePattern(ec, p, null);
-                String value = statements.get(0).getObject().stringValue();         
+                conditions = extractCondition(rmlMappingGraph, object, statement);
+                values = extractValue(rmlMappingGraph, object, statement);
 
-                if (value == null || condition == null) {
-                    log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
-                            + object.stringValue()
-                            + " must have exactly two properties condition and value. ");
+                for (String condition : conditions) {
+                    for (String value : values) {
+                        if (value == null || condition == null) {
+                            log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
+                                    + object.stringValue()
+                                    + " must have exactly two properties condition and value. ");
+                        }
+
+                        if (value == null || condition == null) {
+                            log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
+                                    + object.stringValue()
+                                    + " must have exactly two properties condition and value. ");
+                        }
+
+                        try {
+                            result.add(new StdProcessCondition(condition, value));
+                        } catch (Exception ex) {
+                            java.util.logging.Logger.getLogger(
+                                    ProcessConditionExtractor.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
                 }
-                try {
-                    result.add(new StdProcessCondition(condition, value));
-                } catch (Exception ex) {
-                    java.util.logging.Logger.getLogger(
-                            ProcessConditionExtractor.class.getName()).log(Level.SEVERE, null, ex);
-                } 
             }
         } catch (ClassCastException e) {
             log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
                     + "A resource was expected in object of predicateMap of "
                     + object.stringValue());
-        } 
+        }
         log.debug("Extracting process condition done.");
         return result;
     }
