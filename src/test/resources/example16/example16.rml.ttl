@@ -31,13 +31,16 @@
 
             crml:splitCondition [ 
                 crml:condition "," ;
-
                 crml:processCondition [ 
-                    crml:condition " ", "-" ;
+                    crml:condition "(\\w*)";
+                    crml:value "\\L$1" 
+                ],
+                [ 
+                    crml:condition " ", "-";
                     crml:value "" 
                 ] ;
-            ] 
-        ]
+            ] ;
+        ] 
     ];
     
     rr:predicateObjectMap [

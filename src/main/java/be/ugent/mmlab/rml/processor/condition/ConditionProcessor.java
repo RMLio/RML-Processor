@@ -126,6 +126,7 @@ public class ConditionProcessor {
                 value = ProcessConditionProcessor.processCondition(nestedCondition, value);
                 break;
             case "StdSplitCondition":
+                //TODO: doesn't return anything now
                 list = SplitConditionProcessor.processCondition(nestedCondition, value);
                 break;
             case "StdEqualCondition":

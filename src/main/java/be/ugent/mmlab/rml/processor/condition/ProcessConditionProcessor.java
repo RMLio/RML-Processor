@@ -42,7 +42,11 @@ public class ProcessConditionProcessor extends ConditionProcessor{
             
             if (matcher.find() ) { //&& matcher.matches()) {
                 try {
-                    replacement = matcher.replaceAll(value);
+                    if(value.contains("\\L$")){
+                        replacement = replacement.toLowerCase();
+                    }
+                    else
+                        replacement = matcher.replaceAll(value);
                 } catch (Exception ex) {
                     log.debug(ex);
                     return replacement;
