@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package be.ugent.mmlab.rml.model.condition;
 
 /**
@@ -10,6 +6,7 @@ package be.ugent.mmlab.rml.model.condition;
  */
 public interface ProcessCondition extends Condition{
 
+    @Override
     public String getValue();
     
 }

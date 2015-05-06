@@ -1,12 +1,5 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package be.ugent.mmlab.rml.extractor.condition;
 
-import static be.ugent.mmlab.rml.extractor.condition.ConditionExtractor.extractCondition;
-import static be.ugent.mmlab.rml.extractor.condition.ConditionExtractor.extractValue;
-import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.model.condition.ProcessCondition;
 import be.ugent.mmlab.rml.model.std.StdProcessCondition;
 import be.ugent.mmlab.rml.sesame.RMLSesameDataSet;
@@ -31,14 +24,16 @@ public class ProcessConditionExtractor extends ConditionExtractor {
     //Log
     private static final Logger log = LogManager.getLogger(ProcessConditionExtractor.class);
     
-    public static Set<ProcessCondition> extractCondition(
-            RMLSesameDataSet rmlMappingGraph, Resource object, TriplesMap triplesMap) {
-        log.debug(
-                Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
-                + "Extract process conditions..");
+    public static Set<ProcessCondition> extractProcessCondition(
+            RMLSesameDataSet rmlMappingGraph, Resource object ) {
+        
         Set<ProcessCondition> result = new HashSet<ProcessCondition>();
         List<String> conditions = new ArrayList<String>(),
                 values = new ArrayList<String>();
+        
+        log.debug(
+                Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
+                + "Extract process conditions..");
 
         // Extract equal condition
         URI p = rmlMappingGraph.URIref(
@@ -52,12 +47,6 @@ public class ProcessConditionExtractor extends ConditionExtractor {
 
                 for (String condition : conditions) {
                     for (String value : values) {
-                        if (value == null || condition == null) {
-                            log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
-                                    + object.stringValue()
-                                    + " must have exactly two properties condition and value. ");
-                        }
-
                         if (value == null || condition == null) {
                             log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
                                     + object.stringValue()

@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package be.ugent.mmlab.rml.extractor.rml;
 
 import be.ugent.mmlab.rml.extractor.condition.EqualConditionExtractor;
@@ -450,11 +446,11 @@ public class RMLUnValidatedMappingExtractor implements RMLMappingExtractor{
         ReferenceIdentifier referenceValue = 
                 extractReferenceIdentifier(rmlMappingGraph, subjectMap, triplesMap);
         Set<EqualCondition> equalCondition = EqualConditionExtractor.extractEqualCondition(
-                    rmlMappingGraph, subjectMap, triplesMap);
-        Set<ProcessCondition> processCondition = ProcessConditionExtractor.extractCondition(
-                    rmlMappingGraph, subjectMap, triplesMap);
+                    rmlMappingGraph, subjectMap);
+        Set<ProcessCondition> processCondition = ProcessConditionExtractor.extractProcessCondition(
+                    rmlMappingGraph, subjectMap);
         Set<SplitCondition> splitCondition = SplitConditionExtractor.extractSplitCondition(
-                    rmlMappingGraph, subjectMap, triplesMap);
+                    rmlMappingGraph, subjectMap);
         
         //AD: The values of the rr:class property must be IRIs. 
         //AD: Would that mean that it can not be a reference to an extract of the input or a template?
@@ -757,11 +753,11 @@ public class RMLUnValidatedMappingExtractor implements RMLMappingExtractor{
             String replace = extractLiteralFromTermMap(rmlMappingGraph,
                     object, RMLVocabulary.RMLTerm.REPLACE, triplesMap);
             Set<EqualCondition> equalCondition = EqualConditionExtractor.extractEqualCondition(
-                    rmlMappingGraph, object, triplesMap);
-            Set<ProcessCondition> processCondition = ProcessConditionExtractor.extractCondition(
-                    rmlMappingGraph, object, triplesMap);
+                    rmlMappingGraph, object);
+            Set<ProcessCondition> processCondition = ProcessConditionExtractor.extractProcessCondition(
+                    rmlMappingGraph, object);
             Set<SplitCondition> splitCondition = SplitConditionExtractor.extractSplitCondition(
-                    rmlMappingGraph, object, triplesMap);
+                    rmlMappingGraph, object);
             
             //MVS: Decide on ReferenceIdentifier
             ReferenceIdentifier referenceValue = 

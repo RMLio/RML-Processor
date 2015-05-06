@@ -1,21 +1,12 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package be.ugent.mmlab.rml.extractor.condition;
 
-import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.model.condition.Condition;
-import be.ugent.mmlab.rml.model.condition.EqualCondition;
-import be.ugent.mmlab.rml.model.condition.SplitCondition;
-import be.ugent.mmlab.rml.model.std.StdSplitCondition;
 import be.ugent.mmlab.rml.sesame.RMLSesameDataSet;
 import be.ugent.mmlab.rml.vocabulary.RMLVocabulary;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.openrdf.model.Resource;
@@ -31,9 +22,44 @@ public class ConditionExtractor {
     //Log
     private static final Logger log = LogManager.getLogger(ConditionExtractor.class);
 
-    public static Set<Condition> extractNestedCondition(
+    public static Set<Condition> extractNestedConditions(
             RMLSesameDataSet rmlMappingGraph, Resource parentCondition) {
-        return null;
+        Set<Condition> conditions = new HashSet<Condition>();
+        try{
+            //retrieves nested equal conditions
+            URI p = rmlMappingGraph.URIref(
+                    RMLVocabulary.CRML_NAMESPACE + RMLVocabulary.cRMLTerm.EQUAL_CONDITION);
+            List<Statement> statements = rmlMappingGraph.tuplePattern(parentCondition, p, null);
+            
+            for(Statement statement : statements){
+                conditions.addAll(EqualConditionExtractor.extractEqualCondition(
+                        rmlMappingGraph, (Resource) statement.getObject()));
+            }    
+            
+            //retrieve nested process conditions
+            p = rmlMappingGraph.URIref(
+                    RMLVocabulary.CRML_NAMESPACE + RMLVocabulary.cRMLTerm.PROCESS_CONDITION);
+            statements = rmlMappingGraph.tuplePattern(parentCondition, p, null);
+            
+            for(Statement statement : statements){
+                conditions.addAll(ProcessConditionExtractor.extractProcessCondition(
+                        rmlMappingGraph, (Resource) statement.getSubject()));
+            }    
+            
+            //retrieve nested process conditions
+            p = rmlMappingGraph.URIref(
+                    RMLVocabulary.CRML_NAMESPACE + RMLVocabulary.cRMLTerm.SPLIT_CONDITION);
+            statements = rmlMappingGraph.tuplePattern(parentCondition, p, null);
+            
+            for(Statement statement : statements){
+                conditions.addAll(SplitConditionExtractor.extractSplitCondition(
+                        rmlMappingGraph, (Resource) statement.getObject()));
+            }  
+            
+        } catch(Exception ex){
+            log.error(ex);
+        }
+        return conditions;
     }
 
     public static List<String> extractCondition(

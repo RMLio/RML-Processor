@@ -129,7 +129,7 @@ public class RMLEngine {
                 + "RML mapping done! Generated " 
                 + sesameDataSet.getSize() + " in " 
                 + ((double) duration) / 1000000000 + "s . ");
-        log.error(sesameDataSet);
+        
         return sesameDataSet;
     }
     

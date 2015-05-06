@@ -1,10 +1,8 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package be.ugent.mmlab.rml.model.std;
 
+import be.ugent.mmlab.rml.model.condition.Condition;
 import be.ugent.mmlab.rml.model.condition.ProcessCondition;
+import java.util.Set;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
@@ -24,6 +22,12 @@ public class StdProcessCondition extends StdCondition implements ProcessConditio
         setValue(value);
     }
     
+    public StdProcessCondition(String condition, String value, Set<Condition> nestedConditions) 
+            throws Exception {
+        setCondition(condition);
+        setNestedConditions(nestedConditions);
+    }
+    
     private void setValue(String value) throws Exception {
         if (value == null) {
             throw new Exception(
@@ -35,8 +39,9 @@ public class StdProcessCondition extends StdCondition implements ProcessConditio
     }
     
 
-        public String getValue() {
-            return value;
+    @Override
+    public String getValue() {
+        return value;
     }
 
     

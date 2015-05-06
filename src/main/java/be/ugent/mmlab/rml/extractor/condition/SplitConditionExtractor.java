@@ -1,11 +1,5 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package be.ugent.mmlab.rml.extractor.condition;
 
-import static be.ugent.mmlab.rml.extractor.condition.ConditionExtractor.extractNestedCondition;
-import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.model.condition.Condition;
 import be.ugent.mmlab.rml.model.condition.SplitCondition;
 import be.ugent.mmlab.rml.model.std.StdSplitCondition;
@@ -32,7 +26,7 @@ public class SplitConditionExtractor extends ConditionExtractor {
     private static final Logger log = LogManager.getLogger(SplitConditionExtractor.class);
     
     public static Set<SplitCondition> extractSplitCondition(
-            RMLSesameDataSet rmlMappingGraph, Resource object, TriplesMap triplesMap){
+            RMLSesameDataSet rmlMappingGraph, Resource object){
         log.debug(
                 Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
                 + "Extract split conditions..");
@@ -46,11 +40,12 @@ public class SplitConditionExtractor extends ConditionExtractor {
         
         for (Statement statement : statements) {
             listCondition = extractCondition(rmlMappingGraph, object, statement);
-            //Set<Condition> nestedCondition = extractNestedCondition(rmlMappingGraph, splitCond);
+            Set<Condition> nestedConditions = 
+                    extractNestedConditions(rmlMappingGraph, (Resource) statement.getObject());
             
             for (String condition : listCondition) {
                 try {
-                    result.add(new StdSplitCondition(condition));
+                    result.add(new StdSplitCondition(condition, nestedConditions));
                 } catch (Exception ex) {
                     java.util.logging.Logger.getLogger(
                             ProcessConditionExtractor.class.getName()).log(Level.SEVERE, null, ex);

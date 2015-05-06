@@ -1,9 +1,7 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package be.ugent.mmlab.rml.model.std;
 
+import be.ugent.mmlab.rml.model.condition.Condition;
+import java.util.Set;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
@@ -14,9 +12,10 @@ import org.apache.log4j.Logger;
 public class StdCondition {
     
     // Log
-    private static final Logger log = LogManager.getLogger(StdEqualCondition.class);
+    private static final Logger log = LogManager.getLogger(StdCondition.class);
     
     protected String condition;
+    protected Set<Condition> nestedConditions ;
     
     protected void setCondition(String condition) throws Exception {
         if (condition == null) {
@@ -25,6 +24,14 @@ public class StdCondition {
                     + "have a condition value.");
         }
         this.condition = condition;
+    }
+    
+    protected void setNestedConditions(Set<Condition> nestedConditions) throws Exception {
+        this.nestedConditions = nestedConditions;
+    }
+    
+    public Set<Condition> getNestedConditions() {
+        return nestedConditions;
     }
     
     public String getCondition() {
