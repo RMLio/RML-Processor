@@ -24,9 +24,15 @@
         rr:objectMap [ 
             rr:template "http://www.ex.com/author/{authors}" ;
             crml:processCondition [ 
-                crml:condition "[.*( )]*" ;
-                crml:value "" ] ;
-            ]
+                crml:condition " " ;
+                crml:value "" 
+            ] ;
+
+            crml:processCondition [ 
+                crml:condition "," ;
+                crml:value "_" 
+            ] 
+        ]
     ];
     
     rr:predicateObjectMap [
