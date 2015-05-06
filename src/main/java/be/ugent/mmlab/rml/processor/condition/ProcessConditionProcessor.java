@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package be.ugent.mmlab.rml.processor.condition;
 
 import be.ugent.mmlab.rml.model.TermMap;
@@ -31,7 +27,7 @@ public class ProcessConditionProcessor extends ConditionProcessor{
     public static String processConditions(TermMap map, String replacement) {
         HashSet<ProcessCondition> processConditions = map.getProcessConditions();
         for (ProcessCondition processCondition : processConditions) {
-            processCondition(processCondition,replacement);
+            replacement = processCondition(processCondition,replacement);
         }
         return replacement;
     }
