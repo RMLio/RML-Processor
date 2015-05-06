@@ -102,7 +102,6 @@ public class RMLEngine {
         SesameDataSet sesameDataSet ;
         // Update baseIRI
         this.baseIRI = baseIRI;
-        //log.info("RMLEngine base IRI " + baseIRI);
 
         if (filebased) {
             log.debug(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
@@ -130,6 +129,7 @@ public class RMLEngine {
                 + "RML mapping done! Generated " 
                 + sesameDataSet.getSize() + " in " 
                 + ((double) duration) / 1000000000 + "s . ");
+        log.error(sesameDataSet);
         return sesameDataSet;
     }
     

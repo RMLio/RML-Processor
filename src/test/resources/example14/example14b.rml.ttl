@@ -22,6 +22,16 @@
         rr:predicate ex:author;
 
         rr:objectMap [ 
+            rr:template "http://www.ex.com/author/{authors}" ;
+            crml:splitCondition [ 
+                crml:condition "," ] ;
+            ]
+    ];
+    
+    rr:predicateObjectMap [
+        rr:predicate ex:author;
+
+        rr:objectMap [ 
             rml:reference "authors" ;
             crml:splitCondition [ 
                 crml:condition "," ] ;
