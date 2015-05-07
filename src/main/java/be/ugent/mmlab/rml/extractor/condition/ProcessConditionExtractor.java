@@ -1,5 +1,7 @@
 package be.ugent.mmlab.rml.extractor.condition;
 
+import static be.ugent.mmlab.rml.extractor.condition.ConditionExtractor.extractNestedConditions;
+import be.ugent.mmlab.rml.model.condition.Condition;
 import be.ugent.mmlab.rml.model.condition.ProcessCondition;
 import be.ugent.mmlab.rml.model.std.StdProcessCondition;
 import be.ugent.mmlab.rml.sesame.RMLSesameDataSet;
@@ -46,6 +48,9 @@ public class ProcessConditionExtractor extends ConditionExtractor {
                 values = extractValue(rmlMappingGraph, object, statement);
 
                 for (String condition : conditions) {
+                    Set<Condition> nestedConditions = 
+                    extractNestedConditions(rmlMappingGraph, (Resource) statement.getObject());
+                    
                     for (String value : values) {
                         if (value == null || condition == null) {
                             log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
@@ -54,7 +59,7 @@ public class ProcessConditionExtractor extends ConditionExtractor {
                         }
 
                         try {
-                            result.add(new StdProcessCondition(condition, value));
+                            result.add(new StdProcessCondition(condition, value,nestedConditions));
                         } catch (Exception ex) {
                             java.util.logging.Logger.getLogger(
                                     ProcessConditionExtractor.class.getName()).log(Level.SEVERE, null, ex);

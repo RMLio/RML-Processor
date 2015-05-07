@@ -97,8 +97,9 @@ public class ConditionProcessor {
             result.add(value);
         }
         else if (processConditions.size() > 0){
-            value = ProcessConditionProcessor.processConditions(map, value);
-            result.add(value);
+            String[] values = ProcessConditionProcessor.processConditions(map, value);
+            for(int i=0; i < values.length; i++)
+                result.add(values[i]);
         }
         else if (splitConditions.size() > 0) {
             String[] list = SplitConditionProcessor.processConditions(map, value);

@@ -25,6 +25,7 @@ public class StdProcessCondition extends StdCondition implements ProcessConditio
     public StdProcessCondition(String condition, String value, Set<Condition> nestedConditions) 
             throws Exception {
         setCondition(condition);
+        setValue(value);
         setNestedConditions(nestedConditions);
     }
     

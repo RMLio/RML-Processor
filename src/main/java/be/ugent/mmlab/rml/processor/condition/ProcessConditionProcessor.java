@@ -4,6 +4,7 @@ import be.ugent.mmlab.rml.model.TermMap;
 import be.ugent.mmlab.rml.model.condition.Condition;
 import be.ugent.mmlab.rml.model.condition.ProcessCondition;
 import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.logging.Log;
@@ -24,12 +25,19 @@ public class ProcessConditionProcessor extends ConditionProcessor{
      * @param replacement
      * @return
      */
-    public static String processConditions(TermMap map, String replacement) {
+    public static String[] processConditions(TermMap map, String replacement) {
         HashSet<ProcessCondition> processConditions = map.getProcessConditions();
+        String[] list = null;
+        
         for (ProcessCondition processCondition : processConditions) {
             replacement = processCondition(processCondition,replacement);
+            list = new String[]{replacement};
+            Set<Condition> nestedConditions = processCondition.getNestedConditions();
+            if(nestedConditions != null && nestedConditions.size() > 0){
+                list = processNestedConditions(nestedConditions, list); 
+            }
         }
-        return replacement;
+        return list;
     }
     
     public static String processCondition(Condition processCondition, String replacement) {
