@@ -70,6 +70,7 @@ public abstract class AbstractTermMap implements TermMap {
         private String split;
         private String process;
         private String replace;
+        private HashSet<Condition> conditions;
         private HashSet<EqualCondition> equalConditions;
         private HashSet<ProcessCondition> processConditions;
         private HashSet<SplitCondition> splitConditions;
@@ -527,7 +528,15 @@ public abstract class AbstractTermMap implements TermMap {
             return this.condition;
         }
         
-        @Override
+        public HashSet<Condition> getConditions(){
+            return this.conditions;
+        }
+        
+        /**
+     *
+     * @return
+     */
+    @Override
         public HashSet<EqualCondition> getEqualConditions(){
             return this.equalConditions;
         }

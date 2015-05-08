@@ -46,11 +46,11 @@ public class ProcessConditionExtractor extends ConditionExtractor {
             for (Statement statement : statements) {
                 conditions = extractCondition(rmlMappingGraph, object, statement);
                 values = extractValue(rmlMappingGraph, object, statement);
+                
+                Set<Condition> nestedConditions = 
+                    extractNestedConditions(rmlMappingGraph, (Resource) statement.getObject());
 
                 for (String condition : conditions) {
-                    Set<Condition> nestedConditions = 
-                    extractNestedConditions(rmlMappingGraph, (Resource) statement.getObject());
-                    
                     for (String value : values) {
                         if (value == null || condition == null) {
                             log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
@@ -59,7 +59,7 @@ public class ProcessConditionExtractor extends ConditionExtractor {
                         }
 
                         try {
-                            result.add(new StdProcessCondition(condition, value,nestedConditions));
+                            result.add(new StdProcessCondition(condition, value, nestedConditions));
                         } catch (Exception ex) {
                             java.util.logging.Logger.getLogger(
                                     ProcessConditionExtractor.class.getName()).log(Level.SEVERE, null, ex);

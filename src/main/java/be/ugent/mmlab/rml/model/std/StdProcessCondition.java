@@ -15,8 +15,6 @@ public class StdProcessCondition extends StdCondition implements ProcessConditio
     // Log
     private static final Logger log = LogManager.getLogger(StdProcessCondition.class);
     
-    private String value;
-    
     public StdProcessCondition(String condition, String value) throws Exception {
         setCondition(condition);
         setValue(value);
@@ -38,12 +36,5 @@ public class StdProcessCondition extends StdCondition implements ProcessConditio
         }
         this.value = value;
     }
-    
-
-    @Override
-    public String getValue() {
-        return value;
-    }
-
     
 }

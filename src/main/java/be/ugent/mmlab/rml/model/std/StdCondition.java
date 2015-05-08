@@ -15,6 +15,7 @@ public class StdCondition {
     private static final Logger log = LogManager.getLogger(StdCondition.class);
     
     protected String condition;
+    protected String value;
     protected Set<Condition> nestedConditions ;
     
     protected void setCondition(String condition) throws Exception {
@@ -38,4 +39,7 @@ public class StdCondition {
         return condition;
     }
     
+    public String getValue() {
+        return value;
+    }    
 }

@@ -15,8 +15,6 @@ public class StdSplitCondition extends StdCondition implements SplitCondition {
     // Log
     private static final Logger log = LogManager.getLogger(StdSplitCondition.class);
     
-    private String value;
-    
     public StdSplitCondition(String condition) throws Exception {
         setCondition(condition);
     }
@@ -26,10 +24,4 @@ public class StdSplitCondition extends StdCondition implements SplitCondition {
         setNestedConditions(nestedConditions);
     }
 
-    @Override
-    public String getValue() {
-        return value;
-    }
-
-    
 }

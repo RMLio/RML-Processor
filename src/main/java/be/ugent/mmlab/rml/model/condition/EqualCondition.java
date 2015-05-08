@@ -6,11 +6,5 @@ package be.ugent.mmlab.rml.model.condition;
  */
 public interface EqualCondition extends Condition{
 
-    /**
-     *
-     * @return value
-     */
-    @Override
-    public String getValue();
     
 }

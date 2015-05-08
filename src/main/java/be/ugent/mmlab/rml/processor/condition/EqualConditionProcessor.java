@@ -4,8 +4,9 @@ import be.ugent.mmlab.rml.model.TermMap;
 import be.ugent.mmlab.rml.model.condition.Condition;
 import be.ugent.mmlab.rml.model.condition.EqualCondition;
 import static be.ugent.mmlab.rml.processor.condition.ConditionProcessor.processNestedConditions;
+import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -18,28 +19,28 @@ public class EqualConditionProcessor extends ConditionProcessor{
     // Log
     private static Log log = LogFactory.getLog(EqualConditionProcessor.class);
     
-    public static String[] processConditions(TermMap map, String replacement) {
+    public static List<String> processConditions(TermMap map, String replacement) {
         HashSet<EqualCondition> equalConditions = map.getEqualConditions();
-        String[] list = null;
+        List<String> stringList, newStringList = null;
         
         if (equalConditions != null) {
             for (EqualCondition equalCondition : equalConditions) {
                 replacement = processCondition(equalCondition, replacement);
-                list = new String[]{replacement};
-                Set<Condition> nestedConditions = equalCondition.getNestedConditions();
-                if(nestedConditions != null & nestedConditions.size() > 0){
-                    list = processNestedConditions(nestedConditions, list);
-                }
+                newStringList = new  ArrayList<String>();
+                stringList = new  ArrayList<String>();
+                stringList.add(replacement);
+                newStringList.addAll(processNestedConditions(equalCondition, stringList));
+
             }
         }
-        return list;
+        return newStringList;
     }
     
     public static String processCondition(Condition equalCondition, String replacement) {
 
         String condition = equalCondition.getCondition();
         String value = equalCondition.getValue();
-        if (replacement.equals(condition)) {
+        if (replacement != null && replacement.equals(condition)) {
             replacement = value;
         }
         

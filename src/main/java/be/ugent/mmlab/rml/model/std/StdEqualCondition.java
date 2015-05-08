@@ -15,8 +15,6 @@ public class StdEqualCondition extends StdCondition implements EqualCondition {
     // Log
     private static final Logger log = LogManager.getLogger(StdEqualCondition.class);
     
-    private String value;
-    
     public StdEqualCondition(String condition, String value) throws Exception {
         setCondition(condition);
         setValue(value);
@@ -38,12 +36,5 @@ public class StdEqualCondition extends StdCondition implements EqualCondition {
         }
         this.value = value;
     }
-    
-
-    @Override
-    public String getValue() {
-        return value;
-    }
-
     
 }

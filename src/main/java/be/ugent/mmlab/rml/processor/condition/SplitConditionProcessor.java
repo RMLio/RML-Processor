@@ -4,8 +4,10 @@ import be.ugent.mmlab.rml.model.TermMap;
 import be.ugent.mmlab.rml.model.condition.Condition;
 import be.ugent.mmlab.rml.model.condition.SplitCondition;
 import static be.ugent.mmlab.rml.processor.condition.ConditionProcessor.processNestedConditions;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -18,42 +20,35 @@ public class SplitConditionProcessor extends ConditionProcessor{
     // Log
     private static Log log = LogFactory.getLog(SplitConditionProcessor.class);
     
-    public static String[] processConditions(TermMap map, String value) {
+    public static List <String> processConditions(TermMap map, String value) {
         HashSet<SplitCondition> splitConditions = map.getSplitConditions();
-        String[] list = null;
+        List<String> stringList = null, newStringList = new ArrayList<String>();
         
         if (splitConditions != null) {
             for (SplitCondition splitCondition : splitConditions) {
                 String condition = splitCondition.getCondition();
-                list = value.split(condition);
-                Set<Condition> nestedConditions = splitCondition.getNestedConditions();
-                if(nestedConditions != null & nestedConditions.size() > 0){
-                    list = processNestedConditions(nestedConditions, list);
-                        
-                }
-                //else
-                //    log.error("empty nested conditions");
+                stringList = new ArrayList<String>();
+                stringList.addAll(Arrays.asList(value.split(condition)));
+                
+                newStringList.addAll(processNestedConditions(splitCondition, stringList));
             }
         }
-        //else
-        //    log.error("no nested conditions found");
         
-        return list;
+        if(newStringList.size() > 0)
+            return newStringList;
+        else
+            return stringList;
     }
     
-    public static String[] processCondition(Condition nestedCondition, String value) {
-        String[] list = null;
-
+    public static List<String> processCondition(Condition nestedCondition, String value) {
+        List <String> stringList = new ArrayList<>();
         String condition = nestedCondition.getCondition();
-        list = value.split(condition);
-        Set<Condition> nestedConditions = nestedCondition.getNestedConditions();
-        if (nestedConditions != null & nestedConditions.size() > 0) {
-            list = processNestedConditions(nestedConditions, list);
-
-        }
-
-
-        return list;
+        
+        if(stringList.addAll(Arrays.asList(value.split(condition))))
+            return stringList;
+        
+        
+        return stringList;
     }
     
 }

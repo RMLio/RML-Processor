@@ -93,51 +93,59 @@ public class ConditionProcessor {
         List <String> result = new ArrayList<>();
 
         if (equalConditions.size() > 0) {
-            String[] values = EqualConditionProcessor.processConditions(map, value);
-            for(int i=0; i < values.length; i++)
-                result.add(values[i]);
+            HashSet<EqualCondition> Conditions = map.getEqualConditions();
+            result.addAll(EqualConditionProcessor.processConditions(map, value));
         }
         else if (processConditions.size() > 0){
-            String[] values = ProcessConditionProcessor.processConditions(map, value);
-            for(int i=0; i < values.length; i++)
-                result.add(values[i]);
+            result.addAll(ProcessConditionProcessor.processConditions(map, value));
         }
         else if (splitConditions.size() > 0) {
-            String[] list = SplitConditionProcessor.processConditions(map, value);
-            for (String valueList : list) {
-                result.add(valueList);
-            }
+            try{
+            result.addAll(SplitConditionProcessor.processConditions(map, value));
+            } catch(Exception ex){log.error(ex);}
         }
 
         return result;
     }
     
-    public static String[] processNestedConditions(Set<Condition> nestedConditions, String[] list) {
-        for (int i = 0; i < list.length; i++) {
-            for (Condition nestedCondition : nestedConditions) {
-                list[i] = processNestedCondition(nestedCondition,list[i]);    
-            }
+    public static List<String> processAllNestedConditions(Set<Condition> nestedConditions, String value) {
+        List<String> stringList = null;
+        for (Condition nestedCondition : nestedConditions) {
+            stringList = new ArrayList<String>();
+            stringList.addAll(processNestedCondition(nestedCondition, value));
         }
-        return list;
+        return stringList;
     }
     
-    public static String processNestedCondition(Condition nestedCondition, String value) {
-        String[] list;
+    public static List<String> processNestedCondition(Condition nestedCondition, String value) {
+        List<String> stringList = new ArrayList<String>();
+        
         switch (nestedCondition.getClass().getSimpleName()) {
             case "StdProcessCondition":
-                value = ProcessConditionProcessor.processCondition(nestedCondition, value);
+                stringList.add(ProcessConditionProcessor.processCondition(nestedCondition, value));
                 break;
             case "StdSplitCondition":
-                //TODO: doesn't return anything now
-                list = SplitConditionProcessor.processCondition(nestedCondition, value);
+                stringList.addAll(SplitConditionProcessor.processCondition(nestedCondition, value));
                 break;
             case "StdEqualCondition":
-                value = EqualConditionProcessor.processCondition(nestedCondition, value);
+                stringList.add(EqualConditionProcessor.processCondition(nestedCondition, value));
                 break;
             default:
                 log.error("unknown condition");
         }
-        return value;
+        return stringList;
     }
     
+    public static List<String> processNestedConditions(Condition condition, List<String> list) {
+        List<String> newStringList = new ArrayList<String>();
+        Set<Condition> nestedConditions = condition.getNestedConditions();
+        if (nestedConditions != null && nestedConditions.size() > 0) {
+            for(String value : list){
+                newStringList.addAll(processAllNestedConditions(nestedConditions, value));
+            }
+            }
+        else
+            newStringList.addAll(list);
+        return newStringList;
+    }
 }
