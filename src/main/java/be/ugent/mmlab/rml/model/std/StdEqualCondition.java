@@ -25,6 +25,7 @@ public class StdEqualCondition extends StdCondition implements EqualCondition {
     public StdEqualCondition(String condition, String value, Set<Condition> nestedConditions) 
             throws Exception {
         setCondition(condition);
+        setValue(value);
         setNestedConditions(nestedConditions);
     }
     

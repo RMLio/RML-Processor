@@ -1,5 +1,7 @@
 package be.ugent.mmlab.rml.extractor.condition;
 
+import static be.ugent.mmlab.rml.extractor.condition.ConditionExtractor.extractNestedConditions;
+import be.ugent.mmlab.rml.model.condition.Condition;
 import be.ugent.mmlab.rml.model.condition.EqualCondition;
 import be.ugent.mmlab.rml.model.std.StdEqualCondition;
 import be.ugent.mmlab.rml.sesame.RMLSesameDataSet;
@@ -46,6 +48,9 @@ public class EqualConditionExtractor extends ConditionExtractor{
                 values = extractValue(rmlMappingGraph, object, statement);
 
                 for (String condition : conditions) {
+                    Set<Condition> nestedConditions = 
+                    extractNestedConditions(rmlMappingGraph, (Resource) statement.getObject());
+                    
                     for (String value : values) {
                         if (value == null || condition == null) {
                             log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
@@ -53,7 +58,7 @@ public class EqualConditionExtractor extends ConditionExtractor{
                                     + " must have exactly two properties condition and value. ");
                         }
                         try {
-                            result.add(new StdEqualCondition(condition, value));
+                            result.add(new StdEqualCondition(condition, value, nestedConditions));
                         } catch (Exception ex) {
                             java.util.logging.Logger.getLogger(
                                     EqualConditionExtractor.class.getName()).log(Level.SEVERE, null, ex);

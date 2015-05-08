@@ -51,4 +51,29 @@
             crml:splitCondition [ 
                 crml:condition "," ] ;
             ]
-    ].
+    ];
+
+    rr:predicateObjectMap [
+        rr:predicate ex:conference;
+
+        rr:objectMap [ 
+            rml:reference "conference" ;
+
+            crml:equalCondition [ 
+                crml:condition "ESWC14" ;
+                crml:value "Extended Semantic Web Conference 2014" ;
+                crml:processCondition [ 
+                    crml:condition "([\\w\\s]*)(\\d{4})";
+                    crml:value "$1" 
+                ];
+            ],
+            [ 
+                crml:condition "WWW14" ;
+                crml:value "World Wide Web Conference 2014" ;
+                crml:processCondition [ 
+                    crml:condition "([\\w\\s]*)(\\d{4})";
+                    crml:value "$1" 
+                ];
+            ] ;
+        ] 
+    ];.

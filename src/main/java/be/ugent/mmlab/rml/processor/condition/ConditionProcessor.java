@@ -93,8 +93,9 @@ public class ConditionProcessor {
         List <String> result = new ArrayList<>();
 
         if (equalConditions.size() > 0) {
-            value = EqualConditionProcessor.processConditions(map, value);
-            result.add(value);
+            String[] values = EqualConditionProcessor.processConditions(map, value);
+            for(int i=0; i < values.length; i++)
+                result.add(values[i]);
         }
         else if (processConditions.size() > 0){
             String[] values = ProcessConditionProcessor.processConditions(map, value);
