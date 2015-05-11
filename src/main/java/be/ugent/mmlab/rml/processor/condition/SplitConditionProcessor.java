@@ -3,7 +3,6 @@ package be.ugent.mmlab.rml.processor.condition;
 import be.ugent.mmlab.rml.model.TermMap;
 import be.ugent.mmlab.rml.model.condition.Condition;
 import be.ugent.mmlab.rml.model.condition.SplitCondition;
-import static be.ugent.mmlab.rml.processor.condition.ConditionProcessor.processNestedConditions;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -23,7 +22,7 @@ public class SplitConditionProcessor extends ConditionProcessor{
     public static List <String> processConditions(TermMap map, String value) {
         HashSet<SplitCondition> splitConditions = map.getSplitConditions();
         List<String> stringList = null, newStringList = new ArrayList<String>();
-        
+
         if (splitConditions != null) {
             for (SplitCondition splitCondition : splitConditions) {
                 String condition = splitCondition.getCondition();
@@ -33,7 +32,7 @@ public class SplitConditionProcessor extends ConditionProcessor{
                 newStringList.addAll(processNestedConditions(splitCondition, stringList));
             }
         }
-        
+
         if(newStringList.size() > 0)
             return newStringList;
         else
@@ -44,11 +43,8 @@ public class SplitConditionProcessor extends ConditionProcessor{
         List <String> stringList = new ArrayList<>();
         String condition = nestedCondition.getCondition();
         
-        if(stringList.addAll(Arrays.asList(value.split(condition))))
+        stringList.addAll(Arrays.asList(value.split(condition)));
             return stringList;
-        
-        
-        return stringList;
     }
     
 }

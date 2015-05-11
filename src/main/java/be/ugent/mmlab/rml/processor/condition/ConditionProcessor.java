@@ -109,12 +109,16 @@ public class ConditionProcessor {
     }
     
     public static List<String> processAllNestedConditions(Set<Condition> nestedConditions, String value) {
-        List<String> stringList = null;
+        List<String> stringList = null, newStringList = new ArrayList<String>();
         for (Condition nestedCondition : nestedConditions) {
             stringList = new ArrayList<String>();
             stringList.addAll(processNestedCondition(nestedCondition, value));
+            newStringList.addAll(processNestedConditions(nestedCondition, stringList));
         }
-        return stringList;
+        if(newStringList.size() > 0)
+            return newStringList;
+        else
+            return stringList;
     }
     
     public static List<String> processNestedCondition(Condition nestedCondition, String value) {
@@ -140,12 +144,12 @@ public class ConditionProcessor {
         List<String> newStringList = new ArrayList<String>();
         Set<Condition> nestedConditions = condition.getNestedConditions();
         if (nestedConditions != null && nestedConditions.size() > 0) {
-            for(String value : list){
+            for (String value : list) {
                 newStringList.addAll(processAllNestedConditions(nestedConditions, value));
             }
-            }
-        else
+        } else {
             newStringList.addAll(list);
+        }
         return newStringList;
     }
 }
