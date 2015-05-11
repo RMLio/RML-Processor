@@ -37,7 +37,12 @@
                     crml:condition " ";
                     crml:value "";
                     crml:splitCondition [ 
-                        crml:condition "," ] ;
+                        crml:condition "," ;
+                        crml:processCondition [
+                            crml:condition "(\\w*)";
+                            crml:value "\\L$1";
+                          ] 
+                    ] ;
                 ]
             ] ;
         ] 
