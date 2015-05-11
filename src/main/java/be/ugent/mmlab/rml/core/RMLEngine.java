@@ -1,8 +1,9 @@
 package be.ugent.mmlab.rml.core;
 
 import be.ugent.mmlab.rml.extractor.input.InputExtractor;
-import be.ugent.mmlab.rml.extractor.input.LocalFileExtractor;
+import be.ugent.mmlab.rml.extractor.input.concrete.LocalFileExtractor;
 import be.ugent.mmlab.rml.dataset.FileSesameDataset;
+import be.ugent.mmlab.rml.extractor.input.concrete.ApiExtractor;
 import be.ugent.mmlab.rml.model.LogicalSource;
 import be.ugent.mmlab.rml.model.PredicateObjectMap;
 import be.ugent.mmlab.rml.model.RMLMapping;
@@ -68,8 +69,7 @@ public class RMLEngine {
      * @throws UnsupportedEncodingException
      */
     public SesameDataSet runRMLMapping(RMLMapping rmlMapping,
-            String baseIRI) throws SQLException,
-            R2RMLDataError, UnsupportedEncodingException, IOException {
+            String baseIRI) throws SQLException, UnsupportedEncodingException, IOException {
         return runRMLMapping(rmlMapping, baseIRI, null, "ntriples", null, null, false);
     }
 
@@ -87,7 +87,7 @@ public class RMLEngine {
     public SesameDataSet runRMLMapping(RMLMapping rmlMapping,
             String baseIRI, String pathToNativeStore, String outputFormat, 
             String parameter,String[] exeTriplesMap, boolean filebased) 
-            throws SQLException, R2RMLDataError, UnsupportedEncodingException, IOException {
+            throws SQLException, UnsupportedEncodingException, IOException {
         long startTime = System.nanoTime();
 
         log.debug(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
@@ -99,10 +99,28 @@ public class RMLEngine {
             throw new IllegalArgumentException(
                     "[RMLEngine:runRMLMapping] No base IRI found.");
 
-        SesameDataSet sesameDataSet ;
+        SesameDataSet sesameDataSet = chooseSesameDataSet(pathToNativeStore, outputFormat, filebased);
         // Update baseIRI
         this.baseIRI = baseIRI;
+        
+        // Explore RML Mapping TriplesMap objects  
+ 
+        generateRDFTriples(sesameDataSet, rmlMapping, parameter, exeTriplesMap, filebased);
+               
+        //TODO:add metadata this Triples Map started then, finished then and lasted that much
+	long endTime = System.nanoTime();
+        long duration = endTime - startTime;
+        log.info(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
+                + "RML mapping done! Generated " 
+                + sesameDataSet.getSize() + " in " 
+                + ((double) duration) / 1000000000 + "s . ");
 
+        return sesameDataSet;
+    }
+    
+    private SesameDataSet chooseSesameDataSet(
+            String pathToNativeStore, String outputFormat, boolean filebased){
+        SesameDataSet sesameDataSet;
         if (filebased) {
             log.debug(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
                     + "Use direct file "
@@ -118,19 +136,8 @@ public class RMLEngine {
                     + "Use default store (memory) ");
             sesameDataSet = new RMLSesameDataSet();
         }
-        // Explore RML Mapping TriplesMap objects  
- 
-        generateRDFTriples(sesameDataSet, rmlMapping, parameter, exeTriplesMap, filebased);
-               
-        //TODO:add metadata this Triples Map started then, finished then and lasted that much
-	long endTime = System.nanoTime();
-        long duration = endTime - startTime;
-        log.info(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
-                + "RML mapping done! Generated " 
-                + sesameDataSet.getSize() + " in " 
-                + ((double) duration) / 1000000000 + "s . ");
-        
         return sesameDataSet;
+        
     }
     
     private boolean check_ReferencingObjectMap(RMLMapping mapping, TriplesMap map, String[] exeTriplesMap) {
@@ -159,7 +166,7 @@ public class RMLEngine {
      */
     private void generateRDFTriples(SesameDataSet sesameDataSet, 
             RMLMapping rmlMapping, String parameter, String[] exeTriplesMap, boolean filebased) 
-            throws SQLException, R2RMLDataError, UnsupportedEncodingException, ProtocolException, IOException {
+            throws SQLException, UnsupportedEncodingException, ProtocolException, IOException {
 
         log.debug(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
                 + "Generate RDF triples... ");
@@ -194,7 +201,16 @@ public class RMLEngine {
             }
             
             String source = triplesMap.getLogicalSource().getIdentifier();
-            InputExtractor inputExtractor = new LocalFileExtractor();
+            
+            InputExtractor inputExtractor = null;
+            if (isLocalFile(source)) {
+                inputExtractor = new LocalFileExtractor();
+            } else if (!isLocalFile(source)) {
+                inputExtractor = new ApiExtractor();
+            } else {
+                log.info("Input stream was not identified.");
+            }
+            
             String[] splitParameter = null;
             if (parameter != null) {
                 splitParameter = parameter.split("=");

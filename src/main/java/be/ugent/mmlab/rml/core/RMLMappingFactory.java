@@ -71,8 +71,7 @@ public class RMLMappingFactory {
      * @throws RepositoryException
      */
     public RMLMapping extractRMLMapping(String fileToRMLFile)
-            throws InvalidR2RMLStructureException, InvalidR2RMLSyntaxException,
-            R2RMLDataError, RepositoryException, RDFParseException, IOException {
+            throws RepositoryException, RDFParseException, IOException, Exception {
         // Load RDF data from R2RML Mapping document
         RMLSesameDataSet rmlMappingGraph ;
         RMLDocExtractor inputExtractor = new RMLDocExtractor() ;
@@ -106,8 +105,7 @@ public class RMLMappingFactory {
         return result;
     }
 
-    private static void launchPreChecks(SesameDataSet rmlMappingGraph)
-            throws InvalidR2RMLStructureException {
+    private static void launchPreChecks(SesameDataSet rmlMappingGraph) throws Exception {
         // Pre-check 1 : test if a triplesMap with predicateObject map exists
         // without subject map
         URI p = rmlMappingGraph.URIref(RMLVocabulary.R2RML_NAMESPACE
@@ -120,7 +118,7 @@ public class RMLMappingFactory {
             List<Statement> otherStatements = rmlMappingGraph.tuplePattern(
                     s.getSubject(), p, null);
             if (otherStatements.isEmpty()) {
-                throw new InvalidR2RMLStructureException(
+                throw new Exception(
                         "[RMLMappingFactory:launchPreChecks] You have a triples map without subject map : "
                         + s.getSubject().stringValue() + ".");
             }

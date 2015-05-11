@@ -6,9 +6,8 @@ import be.ugent.mmlab.rml.core.RMLMappingFactory;
 import be.ugent.mmlab.rml.model.RMLMapping;
 import java.io.IOException;
 import java.sql.SQLException;
-import net.antidot.semantic.rdf.rdb2rdf.r2rml.exception.InvalidR2RMLStructureException;
-import net.antidot.semantic.rdf.rdb2rdf.r2rml.exception.InvalidR2RMLSyntaxException;
-import net.antidot.semantic.rdf.rdb2rdf.r2rml.exception.R2RMLDataError;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.ParseException;
 import org.apache.log4j.BasicConfigurator;
@@ -83,12 +82,14 @@ public class Main {
             System.out.println("");
             System.out.println("--------------------------------------------------------------------------------");
             //}
-        } catch (IOException | InvalidR2RMLStructureException | InvalidR2RMLSyntaxException | R2RMLDataError | RepositoryException | RDFParseException | SQLException ex) {
+        } catch (IOException | RepositoryException | RDFParseException | SQLException ex) {
             log.error(ex);
             RMLConfiguration.displayHelp();
         } catch (ParseException ex) {
             log.error(ex);
             RMLConfiguration.displayHelp();
+        } catch (Exception ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }

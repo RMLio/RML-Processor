@@ -4,6 +4,8 @@ import be.ugent.mmlab.rml.extractor.condition.EqualConditionExtractor;
 import be.ugent.mmlab.rml.extractor.condition.ProcessConditionExtractor;
 import be.ugent.mmlab.rml.model.condition.EqualCondition;
 import be.ugent.mmlab.rml.extractor.condition.SplitConditionExtractor;
+import be.ugent.mmlab.rml.extractor.input.InputExtractor;
+import be.ugent.mmlab.rml.extractor.input.concrete.ApiExtractor;
 import be.ugent.mmlab.rml.model.GraphMap;
 import be.ugent.mmlab.rml.model.JoinCondition;
 import be.ugent.mmlab.rml.model.LogicalSource;
@@ -46,6 +48,7 @@ import org.openrdf.model.URI;
 import org.openrdf.model.Value;
 import org.openrdf.model.ValueFactory;
 import org.openrdf.model.impl.ValueFactoryImpl;
+import org.openrdf.model.vocabulary.RDF;
 
 /**
  *
@@ -339,8 +342,13 @@ public class RMLUnValidatedMappingExtractor implements RMLMappingExtractor{
         if (!sourceStatements.isEmpty()) {
             //Extract the file identifier
             for (Statement sourceStatement : sourceStatements) {
-                String file = sourceStatement.getObject().stringValue();
-
+                String file = null;
+                if(sourceStatement.getObject().getClass().getSimpleName().equals("MemLiteral"))
+                    file = sourceStatement.getObject().stringValue();
+                else{
+                    file = chooseInput(rmlMappingGraph, (Resource) sourceStatement.getObject());
+                }
+                
                 if (!iterators.isEmpty()) {
                     if(!splitStatements.isEmpty())
                         logicalSource =
@@ -370,6 +378,30 @@ public class RMLUnValidatedMappingExtractor implements RMLMappingExtractor{
                 + "Logical source extracted : "
                 + logicalSource);
         return logicalSource;
+    }
+    
+    private String chooseInput(RMLSesameDataSet rmlMappingGraph, Resource resource){
+        InputExtractor input ;
+        String inputSource = null;
+        
+        List<Statement> inputStatement = rmlMappingGraph.tuplePattern(
+                        (Resource) resource, RDF.TYPE, null);
+        
+        switch(inputStatement.get(0).getObject().stringValue().toString()){
+            case ("http://www.w3.org/ns/hydra/core#APIDocumentation"):
+                input = new ApiExtractor();
+                inputSource = input.extractInput(rmlMappingGraph, resource);
+                break;
+            case ("http://www.w3.org/ns/sparql-service-description#Service"):
+                break;
+            case("http://www.wiwiss.fu-berlin.de/suhl/bizer/D2RQ/0.1#Database"):
+                break;
+            default:
+                log.error("Not identified input");
+        }
+        
+        return inputSource;
+        
     }
     
     protected Resource extractLogicalSource(

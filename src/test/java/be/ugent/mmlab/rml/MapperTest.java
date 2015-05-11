@@ -148,6 +148,12 @@ public class MapperTest
         assertTrue(desiredOutput(fileToOutputFile).isEqualTo(assertMap(fileToRMLFile)));
     }
     
+    public void testExample17() {
+        URL fileToRMLFile = getClass().getResource("/example17/example17.rml.ttl");
+        URL fileToOutputFile = getClass().getResource("/example17/example17.output.ttl");
+        assertTrue(desiredOutput(fileToOutputFile).isEqualTo(assertMap(fileToRMLFile)));
+    }
+    
     private RMLSesameDataSet desiredOutput (URL outputURL){
         RMLSesameDataSet desiredOutput = new RMLSesameDataSet();
         desiredOutput.addFile(outputURL.getFile(), RDFFormat.TURTLE);
@@ -178,6 +184,8 @@ public class MapperTest
         } catch (UnsupportedEncodingException ex) {
             Logger.getLogger(MapperTest.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
+            Logger.getLogger(MapperTest.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
             Logger.getLogger(MapperTest.class.getName()).log(Level.SEVERE, null, ex);
         }
 

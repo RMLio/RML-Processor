@@ -4,9 +4,12 @@
  */
 package be.ugent.mmlab.rml.extractor.input;
 
+import be.ugent.mmlab.rml.Input.API;
 import be.ugent.mmlab.rml.model.TriplesMap;
+import be.ugent.mmlab.rml.sesame.RMLSesameDataSet;
 import java.io.InputStream;
 import java.util.Set;
+import org.openrdf.model.Resource;
 
 /**
  *
@@ -16,7 +19,13 @@ public interface InputExtractor {
     
     InputStream getInputStream (String source, TriplesMap triplesMap);
     
-    boolean isLocalFile(String source);
+    /**
+     *
+     * @return
+     */
+    public String extractInput (RMLSesameDataSet rmlMappingGraph, Resource resource);
+    
+    //boolean isLocalFile(String source);
 
     public String getInputSource(String reference, TriplesMap map);
 
