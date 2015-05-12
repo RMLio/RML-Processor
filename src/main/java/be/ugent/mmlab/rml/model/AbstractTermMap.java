@@ -28,6 +28,7 @@
  */
 package be.ugent.mmlab.rml.model;
 
+import be.ugent.mmlab.rml.model.condition.BindCondition;
 import be.ugent.mmlab.rml.model.condition.Condition;
 import be.ugent.mmlab.rml.model.std.StdObjectMap;
 import be.ugent.mmlab.rml.model.condition.EqualCondition;
@@ -74,6 +75,7 @@ public abstract class AbstractTermMap implements TermMap {
         private HashSet<EqualCondition> equalConditions;
         private HashSet<ProcessCondition> processConditions;
         private HashSet<SplitCondition> splitConditions;
+        private HashSet<BindCondition> bindConditions;
         private Condition condition;
 
         protected AbstractTermMap(Value constantValue, URI dataType,
@@ -117,8 +119,9 @@ public abstract class AbstractTermMap implements TermMap {
         protected AbstractTermMap(Value constantValue, URI dataType,
                 String languageTag, String stringTemplate, URI termType,
                 String inverseExpression, ReferenceIdentifier referenceValue,
-                String split, String process, String replace, Set<EqualCondition> equalConditions,
-                Set<ProcessCondition> processConditions, Set<SplitCondition> splitConditions)
+                String split, String process, String replace, 
+                Set<EqualCondition> equalConditions, Set<ProcessCondition> processConditions, 
+                Set<SplitCondition> splitConditions, Set<BindCondition> bindConditions)
                 throws R2RMLDataError, InvalidR2RMLStructureException,
                 InvalidR2RMLSyntaxException {
 
@@ -137,6 +140,7 @@ public abstract class AbstractTermMap implements TermMap {
                 setEqualConditions(equalConditions);
                 setProcessConditions(processConditions);
                 setSplitConditions(splitConditions);
+                setBindConditions(bindConditions);
         }
 
         /**
@@ -384,6 +388,11 @@ public abstract class AbstractTermMap implements TermMap {
             this.splitConditions = new HashSet<SplitCondition>();
             this.splitConditions.addAll(splitConditions);
         }
+        
+        private void setBindConditions(Set<BindCondition> bindConditions) {
+            this.bindConditions = new HashSet<BindCondition>();
+            this.bindConditions.addAll(bindConditions);
+        }
 
         @Override
         public Value getConstantValue() {
@@ -537,26 +546,30 @@ public abstract class AbstractTermMap implements TermMap {
      * @return
      */
     @Override
-        public HashSet<EqualCondition> getEqualConditions(){
-            return this.equalConditions;
-        }
-        
-        /**
+    public HashSet<EqualCondition> getEqualConditions() {
+        return this.equalConditions;
+    }
+
+    /**
      *
      * @return this.processConditions
      */
     @Override
-        public HashSet<ProcessCondition> getProcessConditions(){
-            return this.processConditions;
-        }
-        
-        /**
+    public HashSet<ProcessCondition> getProcessConditions() {
+        return this.processConditions;
+    }
+
+    /**
      *
      * @return this.splitConditions
      */
     @Override
-        public HashSet<SplitCondition> getSplitConditions(){
-            return this.splitConditions;
-        }
+    public HashSet<SplitCondition> getSplitConditions() {
+        return this.splitConditions;
+    }
+
+    public HashSet<BindCondition> getBindConditions() {
+        return this.bindConditions;
+    }
 
 }

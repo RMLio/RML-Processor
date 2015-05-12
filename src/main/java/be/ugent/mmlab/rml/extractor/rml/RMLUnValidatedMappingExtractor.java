@@ -1,8 +1,8 @@
 package be.ugent.mmlab.rml.extractor.rml;
 
+import be.ugent.mmlab.rml.extractor.condition.BindConditionExtractor;
 import be.ugent.mmlab.rml.extractor.condition.EqualConditionExtractor;
 import be.ugent.mmlab.rml.extractor.condition.ProcessConditionExtractor;
-import be.ugent.mmlab.rml.model.condition.EqualCondition;
 import be.ugent.mmlab.rml.extractor.condition.SplitConditionExtractor;
 import be.ugent.mmlab.rml.extractor.input.InputExtractor;
 import be.ugent.mmlab.rml.extractor.input.concrete.ApiExtractor;
@@ -24,6 +24,8 @@ import be.ugent.mmlab.rml.model.std.StdSubjectMap;
 import be.ugent.mmlab.rml.model.std.StdTriplesMap;
 import be.ugent.mmlab.rml.model.SubjectMap;
 import be.ugent.mmlab.rml.model.TriplesMap;
+import be.ugent.mmlab.rml.model.condition.BindCondition;
+import be.ugent.mmlab.rml.model.condition.EqualCondition;
 import be.ugent.mmlab.rml.model.condition.ProcessCondition;
 import be.ugent.mmlab.rml.model.condition.SplitCondition;
 import be.ugent.mmlab.rml.model.reference.ReferenceIdentifier;
@@ -483,6 +485,8 @@ public class RMLUnValidatedMappingExtractor implements RMLMappingExtractor{
                     rmlMappingGraph, subjectMap);
         Set<SplitCondition> splitCondition = SplitConditionExtractor.extractSplitCondition(
                     rmlMappingGraph, subjectMap);
+        Set<BindCondition> bindCondition = BindConditionExtractor.extractBindCondition(
+                    rmlMappingGraph, subjectMap);
         
         //AD: The values of the rr:class property must be IRIs. 
         //AD: Would that mean that it can not be a reference to an extract of the input or a template?
@@ -506,7 +510,7 @@ public class RMLUnValidatedMappingExtractor implements RMLMappingExtractor{
             result = new StdSubjectMap(triplesMap, constantValue,
                     stringTemplate, termType, inverseExpression,
                     referenceValue, classIRIs, graphMaps, split, process, replace,
-                    equalCondition, processCondition, splitCondition);
+                    equalCondition, processCondition, splitCondition, bindCondition);
 
         } catch (R2RMLDataError ex) {
             log.error(ex);
@@ -712,6 +716,16 @@ public class RMLUnValidatedMappingExtractor implements RMLMappingExtractor{
                     object, RMLVocabulary.R2RMLTerm.PARENT_TRIPLES_MAP, triplesMap);
             Set<JoinCondition> joinConditions = extractJoinConditions(
                     rmlMappingGraph, object, triplesMap);
+            
+            Set<EqualCondition> equalConditions = EqualConditionExtractor.extractEqualCondition(
+                    rmlMappingGraph, object);
+            Set<ProcessCondition> processConditions = ProcessConditionExtractor.extractProcessCondition(
+                    rmlMappingGraph, object);
+            Set<SplitCondition> splitConditions = SplitConditionExtractor.extractSplitCondition(
+                    rmlMappingGraph, object);
+            Set<BindCondition> bindConditions = BindConditionExtractor.extractBindCondition(
+                    rmlMappingGraph, object);
+            
             if (parentTriplesMap == null && !joinConditions.isEmpty()) {
                 log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
                         + object.stringValue()
@@ -746,7 +760,8 @@ public class RMLUnValidatedMappingExtractor implements RMLMappingExtractor{
             // performed
             // at the end f treatment.
             ReferencingObjectMap refObjectMap = new StdReferencingObjectMap(null,
-                    parent, joinConditions);
+                    parent, joinConditions, equalConditions, processConditions,
+                    splitConditions, bindConditions);
             log.debug(
                     Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
                     + "Extract referencing object map done.");
@@ -790,6 +805,8 @@ public class RMLUnValidatedMappingExtractor implements RMLMappingExtractor{
                     rmlMappingGraph, object);
             Set<SplitCondition> splitCondition = SplitConditionExtractor.extractSplitCondition(
                     rmlMappingGraph, object);
+            Set<BindCondition> bindCondition = BindConditionExtractor.extractBindCondition(
+                    rmlMappingGraph, object);
             
             //MVS: Decide on ReferenceIdentifier
             ReferenceIdentifier referenceValue = 
@@ -800,7 +817,7 @@ public class RMLUnValidatedMappingExtractor implements RMLMappingExtractor{
             StdObjectMap result = new StdObjectMap(null, constantValue, dataType,
                     languageTag, stringTemplate, termType, inverseExpression,
                     referenceValue, split, process, replace, 
-                    equalCondition, processCondition, splitCondition);
+                    equalCondition, processCondition, splitCondition, bindCondition);
 
             return result;
         } catch (Exception ex) {

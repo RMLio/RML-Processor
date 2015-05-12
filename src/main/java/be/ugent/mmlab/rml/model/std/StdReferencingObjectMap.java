@@ -32,6 +32,10 @@ import be.ugent.mmlab.rml.model.JoinCondition;
 import be.ugent.mmlab.rml.model.PredicateObjectMap;
 import be.ugent.mmlab.rml.model.ReferencingObjectMap;
 import be.ugent.mmlab.rml.model.TriplesMap;
+import be.ugent.mmlab.rml.model.condition.BindCondition;
+import be.ugent.mmlab.rml.model.condition.EqualCondition;
+import be.ugent.mmlab.rml.model.condition.ProcessCondition;
+import be.ugent.mmlab.rml.model.condition.SplitCondition;
 import java.util.HashSet;
 import java.util.Set;
 import net.antidot.semantic.rdf.rdb2rdf.r2rml.exception.InvalidR2RMLStructureException;
@@ -42,6 +46,11 @@ public class StdReferencingObjectMap implements ReferencingObjectMap {
 	private HashSet<JoinCondition> joinConditions;
 	private PredicateObjectMap predicateObjectMap;
         protected TriplesMap ownTriplesMap;
+        
+        private HashSet<EqualCondition> equalConditions;
+        private HashSet<ProcessCondition> processConditions;
+        private HashSet<SplitCondition> splitConditions;
+        private HashSet<BindCondition> bindConditions;
 
 	public StdReferencingObjectMap(PredicateObjectMap predicateObjectMap,
 			TriplesMap parentTriplesMap, Set<JoinCondition> joinConditions) 
@@ -50,6 +59,22 @@ public class StdReferencingObjectMap implements ReferencingObjectMap {
 		this.parentTriplesMap = parentTriplesMap;
 		setJoinConditions(joinConditions);
                 setOwnTriplesMap(parentTriplesMap);
+
+	}
+        
+        public StdReferencingObjectMap(PredicateObjectMap predicateObjectMap,
+			TriplesMap parentTriplesMap, Set<JoinCondition> joinConditions, 
+                        Set<EqualCondition> equalConditions, Set<ProcessCondition> processConditions, 
+                        Set<SplitCondition> splitConditions, Set<BindCondition> bindConditions) 
+                throws InvalidR2RMLStructureException {
+		setPredicateObjectMap(predicateObjectMap);
+		this.parentTriplesMap = parentTriplesMap;
+		setJoinConditions(joinConditions);
+                setOwnTriplesMap(parentTriplesMap);
+                setEqualConditions(equalConditions);
+                setProcessConditions(processConditions);
+                setSplitConditions(splitConditions);
+                setBindConditions(bindConditions);
 
 	}
 
@@ -111,6 +136,42 @@ public class StdReferencingObjectMap implements ReferencingObjectMap {
 	public PredicateObjectMap getPredicateObjectMap() {
 		return predicateObjectMap;
 	}
+        
+        /**
+        *
+        * @return
+        */
+        @Override
+       public HashSet<EqualCondition> getEqualConditions() {
+           return this.equalConditions;
+       }
+        
+        /**
+        *
+        * @return this.processConditions
+        */
+        @Override
+       public HashSet<ProcessCondition> getProcessConditions() {
+           return this.processConditions;
+       }
+
+       /**
+        *
+        * @return this.splitConditions
+        */
+        @Override
+       public HashSet<SplitCondition> getSplitConditions() {
+           return this.splitConditions;
+       }
+
+       /**
+        *
+        * @return
+        */
+        @Override
+       public HashSet<BindCondition> getBindConditions() {
+              return this.bindConditions;
+       }
 
         @Override
 	public void setPredicateObjectMap(PredicateObjectMap predicateObjectMap) {
@@ -129,5 +190,25 @@ public class StdReferencingObjectMap implements ReferencingObjectMap {
 			throws InvalidR2RMLStructureException {
 		this.ownTriplesMap = ownTriplesMap;
 	}
+        
+        private void setEqualConditions(Set<EqualCondition> equalConditions) {
+            this.equalConditions = new HashSet<EqualCondition>();
+            this.equalConditions.addAll(equalConditions);
+        }
+
+        private void setProcessConditions(Set<ProcessCondition> processConditions) {
+            this.processConditions = new HashSet<ProcessCondition>();
+            this.processConditions.addAll(processConditions);
+        }
+
+        private void setSplitConditions(Set<SplitCondition> splitConditions) {
+            this.splitConditions = new HashSet<SplitCondition>();
+            this.splitConditions.addAll(splitConditions);
+        }
+        
+        private void setBindConditions(Set<BindCondition> bindConditions) {
+            this.bindConditions = new HashSet<BindCondition>();
+            this.bindConditions.addAll(bindConditions);
+        }
 
 }

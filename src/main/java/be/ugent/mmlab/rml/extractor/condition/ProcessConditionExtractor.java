@@ -1,6 +1,5 @@
 package be.ugent.mmlab.rml.extractor.condition;
 
-import static be.ugent.mmlab.rml.extractor.condition.ConditionExtractor.extractNestedConditions;
 import be.ugent.mmlab.rml.model.condition.Condition;
 import be.ugent.mmlab.rml.model.condition.ProcessCondition;
 import be.ugent.mmlab.rml.model.std.StdProcessCondition;

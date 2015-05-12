@@ -18,6 +18,7 @@ import be.ugent.mmlab.rml.model.TermType;
 import static be.ugent.mmlab.rml.model.TermType.BLANK_NODE;
 import static be.ugent.mmlab.rml.model.TermType.IRI;
 import be.ugent.mmlab.rml.model.TriplesMap;
+import be.ugent.mmlab.rml.model.condition.BindCondition;
 import be.ugent.mmlab.rml.model.reference.ReferenceIdentifierImpl;
 import be.ugent.mmlab.rml.processor.concrete.ConcreteRMLProcessorFactory;
 import be.ugent.mmlab.rml.processor.condition.ConditionProcessor;
@@ -29,6 +30,7 @@ import java.net.MalformedURLException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
@@ -323,7 +325,14 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                 Set<JoinCondition> joinConditions = referencingObjectMap.getJoinConditions();
 
                 TriplesMap parentTriplesMap = referencingObjectMap.getParentTriplesMap();
-
+                
+                HashSet<BindCondition> bindConditions = referencingObjectMap.getBindConditions();
+                for(BindCondition bindCondition : bindConditions){
+                    //TODO:Add implementation
+                    log.debug("bind value " + bindCondition.getValue());
+                    log.debug("bind reference " + bindCondition.getReference());
+                }
+                
                 //Create the processor based on the parent triples map to perform the join
                 RMLProcessorFactory factory = new ConcreteRMLProcessorFactory();
                 QLTerm referenceFormulation = parentTriplesMap.getLogicalSource().getReferenceFormulation();

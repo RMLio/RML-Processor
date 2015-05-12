@@ -92,10 +92,12 @@ public class RMLVocabulary {
     public enum cRMLTerm implements Term{
 
         // RML CLASSES
+        BIND_CONDITION_CLASS("BindCondition"),
         EQUAL_CONDITION_CLASS("EqualCondition"),
         PROCESS_CONDITION_CLASS("ProcessCondition"),
         SPLIT_CONDITION_CLASS("SplitCondition"),
         // RPROPERTIES
+        BIND_CONDITION("bindCondition"),
         EQUAL_CONDITION("equalCondition"),
         PROCESS_CONDITION("processCondition"),
         SPLIT_CONDITION("splitCondition"),

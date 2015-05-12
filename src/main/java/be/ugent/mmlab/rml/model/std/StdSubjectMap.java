@@ -33,6 +33,7 @@ import be.ugent.mmlab.rml.model.GraphMap;
 import be.ugent.mmlab.rml.model.SubjectMap;
 import be.ugent.mmlab.rml.model.TermType;
 import be.ugent.mmlab.rml.model.TriplesMap;
+import be.ugent.mmlab.rml.model.condition.BindCondition;
 import be.ugent.mmlab.rml.model.condition.EqualCondition;
 import be.ugent.mmlab.rml.model.condition.ProcessCondition;
 import be.ugent.mmlab.rml.model.condition.SplitCondition;
@@ -84,15 +85,37 @@ public class StdSubjectMap extends AbstractTermMap implements SubjectMap {
 		setOwnTriplesMap(ownTriplesMap);
 	}
         
-        public StdSubjectMap(TriplesMap ownTriplesMap, Value constantValue,
+        /**
+     *
+     * @param ownTriplesMap
+     * @param constantValue
+     * @param stringTemplate
+     * @param termType
+     * @param inverseExpression
+     * @param referenceValue
+     * @param classIRIs
+     * @param graphMaps
+     * @param split
+     * @param process
+     * @param replace
+     * @param equalCondition
+     * @param processCondition
+     * @param splitCondition
+     * @param bindCondition
+     * @throws R2RMLDataError
+     * @throws InvalidR2RMLStructureException
+     * @throws InvalidR2RMLSyntaxException
+     */
+    public StdSubjectMap(TriplesMap ownTriplesMap, Value constantValue,
 			String stringTemplate, URI termType, String inverseExpression,
 			ReferenceIdentifier referenceValue, Set<URI> classIRIs, Set<GraphMap> graphMaps, 
-                        String split, String process, String replace, Set<EqualCondition> equalCondition,
-                        Set<ProcessCondition> processCondition, Set<SplitCondition> splitCondition) 
+                        String split, String process, String replace, 
+                        Set<EqualCondition> equalCondition, Set<ProcessCondition> processCondition, 
+                        Set<SplitCondition> splitCondition, Set<BindCondition> bindCondition) 
                 throws R2RMLDataError, InvalidR2RMLStructureException, InvalidR2RMLSyntaxException {
 		super(constantValue, null, null, stringTemplate, termType,
 				inverseExpression, referenceValue, split, process, replace, 
-                                equalCondition, processCondition, splitCondition);
+                                equalCondition, processCondition, splitCondition, bindCondition);
 		setClassIRIs(classIRIs);
 		setGraphMaps(graphMaps);
 		setOwnTriplesMap(ownTriplesMap);

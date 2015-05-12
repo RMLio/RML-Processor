@@ -21,7 +21,7 @@ public class StdCondition {
     protected void setCondition(String condition) throws Exception {
         if (condition == null) {
             throw new Exception(
-                    "A equal condition must "
+                    "A condition must "
                     + "have a condition value.");
         }
         this.condition = condition;

@@ -68,9 +68,9 @@ public class RMLEngine {
      * @throws R2RMLDataError
      * @throws UnsupportedEncodingException
      */
-    public SesameDataSet runRMLMapping(RMLMapping rmlMapping,
-            String baseIRI) throws SQLException, UnsupportedEncodingException, IOException {
-        return runRMLMapping(rmlMapping, baseIRI, null, "ntriples", null, null, false);
+    public SesameDataSet runRMLMapping(RMLMapping rmlMapping, String baseIRI, String[] triplesMap) 
+            throws SQLException, UnsupportedEncodingException, IOException {
+        return runRMLMapping(rmlMapping, baseIRI, null, "ntriples", null, triplesMap, false);
     }
 
     /**
