@@ -93,7 +93,6 @@ public class ConditionProcessor {
         List <String> result = new ArrayList<>();
 
         if (equalConditions.size() > 0) {
-            HashSet<EqualCondition> Conditions = map.getEqualConditions();
             result.addAll(EqualConditionProcessor.processConditions(map, value));
         }
         else if (processConditions.size() > 0){

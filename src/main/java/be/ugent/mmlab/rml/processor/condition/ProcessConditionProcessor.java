@@ -41,25 +41,24 @@ public class ProcessConditionProcessor extends ConditionProcessor{
        
     public static String processCondition(Condition processCondition, String replacement) {
 
-            String condition = processCondition.getCondition();
-            String value = processCondition.getValue();
-            
-            Pattern pattern = Pattern.compile(condition);
-            Matcher matcher = pattern.matcher(replacement);
-            
-            if (matcher.find() ) { //&& matcher.matches()) {
-                try {
-                    if(value.contains("\\L$")){
-                        replacement = replacement.toLowerCase();
-                    }
-                    else
-                        replacement = matcher.replaceAll(value);
-                } catch (Exception ex) {
-                    log.debug(ex);
-                    return replacement;
+        String condition = processCondition.getCondition();
+        String value = processCondition.getValue();
+
+        Pattern pattern = Pattern.compile(condition);
+        Matcher matcher = pattern.matcher(replacement);
+
+        if (matcher.find()) { //&& matcher.matches()) {
+            try {
+                if (value.contains("\\L$")) {
+                    replacement = replacement.toLowerCase();
+                } else {
+                    replacement = matcher.replaceAll(value);
                 }
+            } catch (Exception ex) {
+                log.debug(ex);
+                return replacement;
             }
+        }
         return replacement;
     }
-    
 }

@@ -161,11 +161,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                 ReferenceIdentifierImpl identifier = (ReferenceIdentifierImpl) map.getReferenceValue();
                 values = extractValueFromNode(node, identifier.toString().trim());
                 for (String value : values) {
-                    List<String> list = ConditionProcessor.processAllConditions(map, value);
-
-                    for (String listValue : list) {
-                        valueList.add(listValue);
-                    }
+                    valueList.addAll(ConditionProcessor.processAllConditions(map, value));
 
                     if (valueList.isEmpty()) {
                         if (map.getSplit() != null
