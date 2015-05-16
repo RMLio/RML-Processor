@@ -24,6 +24,10 @@
     rr:subjectMap [
         rr:template "http://www.ex.com/author/{.}"; 
         rr:class ex:Author;
+        crml:processCondition [
+            crml:condition " ", " ";
+            crml:value "";
+        ];
     ];
 
     rr:predicateObjectMap [

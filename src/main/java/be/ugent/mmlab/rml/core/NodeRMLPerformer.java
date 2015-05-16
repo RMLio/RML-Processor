@@ -126,17 +126,20 @@ public class NodeRMLPerformer implements RMLPerformer{
 
         for (String item : list) {
             List<String> newList = new ArrayList<String>();
-            newList.add(item);
+            newList.add(item.replaceAll("<br>", ""));
             Set<String> tokens = R2RMLToolkit.extractColumnNamesFromStringTemplate(
                     map.getSubjectMap().getStringTemplate());
             for (String expression : tokens) {
                 finalList = processor.processTemplate(map.getSubjectMap(), newList, expression);
             }
 
-            URIImpl subject = new URIImpl(finalList.get(0));
-
-            for (PredicateObjectMap pom : map.getPredicateObjectMaps()) {
-                Element stringNode = new Element(item);
+            URIImpl subject = new URIImpl(finalList.get(0).replaceAll("<br>", ""));
+                
+            //TODO:find better solution for cleaning up
+            //item = item.replace(" ", "").replaceAll("<br>", "");
+            //Element stringNode = new Element(item);
+            
+            for (PredicateObjectMap pom : map.getPredicateObjectMaps()) {    
                 Set<PredicateMap> predicateMaps = pom.getPredicateMaps();
                 //Go over each predicate map
                 for (PredicateMap predicateMap : predicateMaps) {
@@ -146,10 +149,9 @@ public class NodeRMLPerformer implements RMLPerformer{
                     URI predicate = predicates.get(0);
                     List<Value> object;
                     for (ObjectMap om : pom.getObjectMaps()) {
-                        object = processor.applyTermType(item, valueList, om);
+                        object = processor.applyTermType(item.replaceAll("<br>", ""), valueList, om);
                         dataset.add(subject, predicate, object.get(0));
-                    }
-                    processor.processPredicateObjectMap_ObjMap(dataset, subject, predicate, pom, stringNode);
+                    }              
                 }
             }
         }

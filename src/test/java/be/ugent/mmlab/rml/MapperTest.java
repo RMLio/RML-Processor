@@ -167,11 +167,11 @@ public class MapperTest
         assertTrue(desiredOutput(fileToOutputFile).isEqualTo(assertMap(fileToRMLFile, null)));
     }
     
-    /*public void testExample19b() {
+    public void testExample19b() {
         URL fileToRMLFile = getClass().getResource("/example19/example19b.rml.ttl");
         URL fileToOutputFile = getClass().getResource("/example19/example19b.output.ttl");
         assertTrue(desiredOutput(fileToOutputFile).isEqualTo(assertMap(fileToRMLFile, null)));
-    }*/
+    }
     
     private RMLSesameDataSet desiredOutput (URL outputURL){
         RMLSesameDataSet desiredOutput = new RMLSesameDataSet();
