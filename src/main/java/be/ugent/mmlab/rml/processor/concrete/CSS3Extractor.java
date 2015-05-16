@@ -121,4 +121,4 @@ public class CSS3Extractor extends AbstractRMLProcessor{
             return value;
         }
     }
-}
+    }

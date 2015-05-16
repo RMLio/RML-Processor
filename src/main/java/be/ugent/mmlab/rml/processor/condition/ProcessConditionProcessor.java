@@ -1,11 +1,13 @@
 package be.ugent.mmlab.rml.processor.condition;
 
+import be.ugent.mmlab.rml.model.LogicalSource;
 import be.ugent.mmlab.rml.model.TermMap;
 import be.ugent.mmlab.rml.model.condition.Condition;
 import be.ugent.mmlab.rml.model.condition.ProcessCondition;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.logging.Log;
@@ -31,6 +33,19 @@ public class ProcessConditionProcessor extends ConditionProcessor{
         List<String> stringList = new  ArrayList<String>(), newStringList = new  ArrayList<String>();
         
         for (ProcessCondition processCondition : processConditions) {
+            replacement = processCondition(processCondition,replacement);
+            stringList = new  ArrayList<String>();
+            stringList.add(replacement);
+            newStringList = processNestedConditions(processCondition, stringList);
+        }
+        return newStringList;
+    }
+    
+    public static List<String> processConditions(LogicalSource source, String replacement) {
+        Set<ProcessCondition> processConditions = source.getProcessConditions();
+        List<String> stringList = new  ArrayList<String>(), newStringList = new  ArrayList<String>();
+        
+        for (Condition processCondition : processConditions) {
             replacement = processCondition(processCondition,replacement);
             stringList = new  ArrayList<String>();
             stringList.add(replacement);

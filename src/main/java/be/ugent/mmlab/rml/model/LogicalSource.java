@@ -1,6 +1,12 @@
 package be.ugent.mmlab.rml.model;
 
+import be.ugent.mmlab.rml.model.condition.BindCondition;
+import be.ugent.mmlab.rml.model.condition.Condition;
+import be.ugent.mmlab.rml.model.condition.EqualCondition;
+import be.ugent.mmlab.rml.model.condition.ProcessCondition;
+import be.ugent.mmlab.rml.model.condition.SplitCondition;
 import be.ugent.mmlab.rml.vocabulary.RMLVocabulary;
+import java.util.Set;
 
 /**
  *
@@ -27,4 +33,34 @@ public interface LogicalSource {
     public RMLVocabulary.QLTerm getReferenceFormulation();
     
     public String getSplitCondition();
+    
+    /**
+     *
+     * @return
+     */
+    public Set<EqualCondition> getEqualConditions();
+        
+    /**
+     *
+     * @return
+     */
+    public Set<ProcessCondition> getProcessConditions();
+        
+    /**
+     *
+     * @return
+     */
+    public Set<SplitCondition> getSplitConditions();
+        
+    /**
+     *
+     * @return
+     */
+    public Set<BindCondition> getBindConditions();
+    
+    /**
+     *
+     * @return
+     */
+    public Set<Condition> getConditions();
 }

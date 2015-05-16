@@ -1,5 +1,6 @@
 package be.ugent.mmlab.rml.processor.condition;
 
+import be.ugent.mmlab.rml.model.LogicalSource;
 import be.ugent.mmlab.rml.model.TermMap;
 import be.ugent.mmlab.rml.model.condition.Condition;
 import be.ugent.mmlab.rml.model.condition.EqualCondition;
@@ -25,7 +26,7 @@ public class ConditionProcessor {
     private static Log log = LogFactory.getLog(ConditionProcessor.class);
     
     public static List<String> postProcessTermMap(
-            TermMap termMap, Object node, String value, List<Value> valueList) {
+            TermMap termMap, String value, List<Value> valueList) {
         String[] list ;
         String split = termMap.getSplit();
         String process = termMap.getProcess();
@@ -101,6 +102,33 @@ public class ConditionProcessor {
         else if (splitConditions.size() > 0) {
             try{
             result.addAll(SplitConditionProcessor.processConditions(map, value));
+            } catch(Exception ex){log.error(ex);}
+        }
+
+        return result;
+    }
+    
+    /**
+     *
+     * @param map
+     * @param value
+     * @return
+     */
+    public static List <String> processAllConditions(LogicalSource source, String value) {
+        Set<ProcessCondition> processConditions = source.getProcessConditions();
+        Set<SplitCondition> splitConditions = source.getSplitConditions();
+        Set<EqualCondition> equalConditions = source.getEqualConditions();
+        List <String> result = new ArrayList<>();
+
+        if (equalConditions.size() > 0) {
+            result.addAll(EqualConditionProcessor.processConditions(source, value));
+        }
+        else if (processConditions.size() > 0){
+            result.addAll(ProcessConditionProcessor.processConditions(source, value));
+        }
+        else if (splitConditions.size() > 0) {
+            try{
+            result.addAll(SplitConditionProcessor.processConditions(source, value));
             } catch(Exception ex){log.error(ex);}
         }
 

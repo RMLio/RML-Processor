@@ -6,7 +6,7 @@ import java.util.Set;
  *
  * @author andimou
  */
-public interface Condition {
+abstract public interface Condition {
     
     /**
      *

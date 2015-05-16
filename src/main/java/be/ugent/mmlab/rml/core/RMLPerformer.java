@@ -8,7 +8,7 @@ import org.openrdf.model.Resource;
  *
  * Interface for executing context-dependent operations like a regular object map, or a join
  * 
- * @author mielvandersande
+ * @author mielvandersande, andimou
  */
 public interface RMLPerformer {
     /**
@@ -20,7 +20,21 @@ public interface RMLPerformer {
      */
     public void perform(Object node, SesameDataSet dataset, TriplesMap map);
     
+    /**
+     *
+     * @param node
+     * @param dataset
+     * @param map
+     * @param splitCondition
+     */
     public void perform(Object node, SesameDataSet dataset, TriplesMap map, String splitCondition);
     
+    /**
+     *
+     * @param node
+     * @param dataset
+     * @param map
+     * @param subject
+     */
     public void perform(Object node, SesameDataSet dataset, TriplesMap map, Resource subject);
 }

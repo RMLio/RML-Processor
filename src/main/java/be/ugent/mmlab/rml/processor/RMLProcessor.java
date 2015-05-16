@@ -1,6 +1,7 @@
 package be.ugent.mmlab.rml.processor;
 
 import be.ugent.mmlab.rml.core.RMLPerformer;
+import be.ugent.mmlab.rml.model.PredicateMap;
 import be.ugent.mmlab.rml.model.PredicateObjectMap;
 import be.ugent.mmlab.rml.model.SubjectMap;
 import be.ugent.mmlab.rml.model.TermMap;
@@ -9,6 +10,8 @@ import java.io.InputStream;
 import java.util.List;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
 import org.openrdf.model.Resource;
+import org.openrdf.model.URI;
+import org.openrdf.model.Value;
 
 
 
@@ -45,6 +48,16 @@ public interface RMLProcessor {
     public Resource processSubjectMap(SesameDataSet dataset, SubjectMap subjectMap, Object node);
     
     public void processSubjectTypeMap(SesameDataSet dataset, Resource subject, SubjectMap subjectMap, Object node);
+    
+    /**
+     *
+     * @param map
+     * @param replacements
+     * @param expression
+     * @return
+     */
+    public List<String> processTemplate(TermMap map, List<String> replacements, String expression);
+    
     /**
      * process a predicate object map
      * @param dataset
@@ -52,7 +65,25 @@ public interface RMLProcessor {
      * @param pom the predicate object map
      * @param node 
      */
-    public void processPredicateObjectMap(SesameDataSet dataset, Resource subject, PredicateObjectMap pom, Object node, TriplesMap map);
+    public void processPredicateObjectMap(
+            SesameDataSet dataset, Resource subject, 
+            PredicateObjectMap pom, Object node, TriplesMap map);
+    
+    public List<URI> processPredicateMap(PredicateMap predicateMap, Object node);
+    
+    /**
+     *
+     * @param dataset
+     * @param subject
+     * @param predicate
+     * @param pom
+     * @param node
+     */
+    public void processPredicateObjectMap_ObjMap(
+            SesameDataSet dataset, Resource subject, URI predicate,
+            PredicateObjectMap pom, Object node);
+    
+    public List<Value> applyTermType(String value, List<Value> valueList, TermMap termMap);
 
     /**
      *
@@ -69,5 +100,11 @@ public interface RMLProcessor {
      */
     public String cleansing(String value);
     
+    /**
+     *
+     * @param split
+     * @param node
+     * @return
+     */
     public List<String> postProcessLogicalSource(String split, Object node);
 }

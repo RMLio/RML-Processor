@@ -64,7 +64,7 @@ public class Main {
             RMLMappingFactory mappingFactory = new RMLMappingFactory();
 
             RMLMapping mapping = mappingFactory.extractRMLMapping(map_doc);
-
+            
             RMLEngine engine = new RMLEngine();
 
             engine.runRMLMapping(mapping, graphName, outputFile, outputFormat, parameter, exeTriplesMap, true);        

@@ -338,13 +338,23 @@ public class RMLUnValidatedMappingExtractor implements RMLMappingExtractor{
         List<Statement> splitStatements = getStatements(
                 rmlMappingGraph,blankLogicalSource,
                 RMLVocabulary.RML_NAMESPACE, RMLVocabulary.RMLTerm.SPLIT, triplesMap);
+        
+        //TODO: add separate function for all conditions extraction both for Term Maps and Logical Source
+        Set<EqualCondition> equalCondition = EqualConditionExtractor.extractEqualCondition(
+                    rmlMappingGraph, blankLogicalSource);
+        Set<ProcessCondition> processCondition = ProcessConditionExtractor.extractProcessCondition(
+                    rmlMappingGraph, blankLogicalSource);
+        Set<SplitCondition> splitCondition = SplitConditionExtractor.extractSplitCondition(
+                    rmlMappingGraph, blankLogicalSource);
+        Set<BindCondition> bindCondition = BindConditionExtractor.extractBindCondition(
+                    rmlMappingGraph, blankLogicalSource);
 
         LogicalSource logicalSource = null;
 
         if (!sourceStatements.isEmpty()) {
             //Extract the file identifier
             for (Statement sourceStatement : sourceStatements) {
-                String file = null;
+                String file ;
                 if(sourceStatement.getObject().getClass().getSimpleName().equals("MemLiteral"))
                     file = sourceStatement.getObject().stringValue();
                 else{
@@ -357,6 +367,14 @@ public class RMLUnValidatedMappingExtractor implements RMLMappingExtractor{
                             new StdLogicalSource(
                             iterators.get(0).getObject().stringValue(), file.toString(), 
                                 referenceFormulation, splitStatements.get(0).getObject().stringValue());
+                    else if(equalCondition != null || processCondition != null
+                            || splitCondition != null || bindCondition != null ){
+                        logicalSource = 
+                            new StdLogicalSource(
+                            iterators.get(0).getObject().stringValue(), file.toString(), 
+                                referenceFormulation,
+                                equalCondition, processCondition, splitCondition, bindCondition);
+                    }
                     else{
                     logicalSource =
                             new StdLogicalSource(

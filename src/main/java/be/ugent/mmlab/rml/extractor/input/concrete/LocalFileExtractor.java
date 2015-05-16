@@ -4,7 +4,6 @@
  */
 package be.ugent.mmlab.rml.extractor.input.concrete;
 
-import be.ugent.mmlab.rml.Input.API;
 import be.ugent.mmlab.rml.core.RMLEngine;
 import be.ugent.mmlab.rml.extractor.input.InputExtractor;
 import static be.ugent.mmlab.rml.core.RMLEngine.isLocalFile;

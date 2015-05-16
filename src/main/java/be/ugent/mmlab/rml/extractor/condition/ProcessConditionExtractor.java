@@ -36,7 +36,7 @@ public class ProcessConditionExtractor extends ConditionExtractor {
                 Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
                 + "Extract process conditions..");
 
-        // Extract equal condition
+        // Extract process condition
         URI p = rmlMappingGraph.URIref(
                 RMLVocabulary.CRML_NAMESPACE + RMLVocabulary.cRMLTerm.PROCESS_CONDITION);
         List<Statement> statements = rmlMappingGraph.tuplePattern(object, p, null);

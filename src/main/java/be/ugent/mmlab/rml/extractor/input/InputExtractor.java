@@ -4,7 +4,6 @@
  */
 package be.ugent.mmlab.rml.extractor.input;
 
-import be.ugent.mmlab.rml.Input.API;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.sesame.RMLSesameDataSet;
 import java.io.InputStream;

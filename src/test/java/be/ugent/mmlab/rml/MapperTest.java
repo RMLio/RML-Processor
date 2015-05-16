@@ -161,6 +161,12 @@ public class MapperTest
         assertTrue(desiredOutput(fileToOutputFile).isEqualTo(assertMap(fileToRMLFile, triplesMap)));
     }*/
     
+    public void testExample19() {
+        URL fileToRMLFile = getClass().getResource("/example19/example19.rml.ttl");
+        URL fileToOutputFile = getClass().getResource("/example19/example19.output.ttl");
+        assertTrue(desiredOutput(fileToOutputFile).isEqualTo(assertMap(fileToRMLFile, null)));
+    }
+    
     private RMLSesameDataSet desiredOutput (URL outputURL){
         RMLSesameDataSet desiredOutput = new RMLSesameDataSet();
         desiredOutput.addFile(outputURL.getFile(), RDFFormat.TURTLE);

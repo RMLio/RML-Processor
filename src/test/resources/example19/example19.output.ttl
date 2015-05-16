@@ -1,0 +1,9 @@
+<http://www.ex.com/author/AnastasiaDimou> <http://www.example.com/name> "AnastasiaDimou".
+<http://www.ex.com/author/Miel-Vander-Sande> <http://www.example.com/name> "Miel-Vander-Sande".
+<http://www.ex.com/author/PieterColpaert> <http://www.example.com/name> "PieterColpaert".
+<http://www.ex.com/author/RubenVerborgh> <http://www.example.com/name> "RubenVerborgh".
+<http://www.ex.com/author/ErikMannens> <http://www.example.com/name> "ErikMannens".
+<http://www.ex.com/author/Rik-Van-de-Walle> <http://www.example.com/name> "Rik-Van-de-Walle".
+<http://www.ex.com/author/MielVanderSande> <http://www.example.com/name> "MielVanderSande".
+<http://www.ex.com/author/LaurensDeVocht> <http://www.example.com/name> "LaurensDeVocht".
+<http://www.ex.com/author/RikVandeWalle> <http://www.example.com/name> "RikVandeWalle" .

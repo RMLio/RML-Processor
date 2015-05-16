@@ -1,5 +1,6 @@
 package be.ugent.mmlab.rml.processor.condition;
 
+import be.ugent.mmlab.rml.model.LogicalSource;
 import be.ugent.mmlab.rml.model.TermMap;
 import be.ugent.mmlab.rml.model.condition.Condition;
 import be.ugent.mmlab.rml.model.condition.SplitCondition;
@@ -7,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -25,6 +27,26 @@ public class SplitConditionProcessor extends ConditionProcessor{
 
         if (splitConditions != null) {
             for (SplitCondition splitCondition : splitConditions) {
+                String condition = splitCondition.getCondition();
+                stringList = new ArrayList<String>();
+                stringList.addAll(Arrays.asList(value.split(condition)));
+                
+                newStringList.addAll(processNestedConditions(splitCondition, stringList));
+            }
+        }
+
+        if(newStringList.size() > 0)
+            return newStringList;
+        else
+            return stringList;
+    }
+    
+    public static List <String> processConditions(LogicalSource source, String value) {
+        Set<SplitCondition> splitConditions = source.getSplitConditions();
+        List<String> stringList = null, newStringList = new ArrayList<String>();
+
+        if (splitConditions != null) {
+            for (Condition splitCondition : splitConditions) {
                 String condition = splitCondition.getCondition();
                 stringList = new ArrayList<String>();
                 stringList.addAll(Arrays.asList(value.split(condition)));

@@ -69,10 +69,6 @@
         rr:predicate transit:stop;
         rr:objectMap [
             rr:parentTriplesMap <#BusStopMapping>;
-#            rr:joinCondition [
-#		rr:child "route/stop/@id";
-#		rr:parent "@id";
-#	    ]
         ] 
     ] .
 
