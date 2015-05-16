@@ -20,6 +20,7 @@ import org.apache.commons.logging.LogFactory;
 import org.openrdf.model.URI;
 import org.openrdf.model.Value;
 import org.openrdf.model.impl.URIImpl;
+import org.openrdf.model.vocabulary.RDF;
 
 /**
  * Performs the normal handling of an object in the iteration.
@@ -134,7 +135,9 @@ public class NodeRMLPerformer implements RMLPerformer{
             }
 
             URIImpl subject = new URIImpl(finalList.get(0).replaceAll("<br>", ""));
-                
+            Set<org.openrdf.model.URI> classIRIs = map.getSubjectMap().getClassIRIs();
+            for (org.openrdf.model.URI classIRI : classIRIs)
+                dataset.add(subject, RDF.TYPE, classIRI);
             //TODO:find better solution for cleaning up
             //item = item.replace(" ", "").replaceAll("<br>", "");
             //Element stringNode = new Element(item);
