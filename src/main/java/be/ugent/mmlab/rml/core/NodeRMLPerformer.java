@@ -66,7 +66,7 @@ public class NodeRMLPerformer implements RMLPerformer{
                 
                 Resource subject = processor.processSubjectMap(dataset, map.getSubjectMap(), node);
                 processor.processSubjectTypeMap(dataset, subject, map.getSubjectMap(), node);
-                
+                log.error("subject " + subject);
                 if (subject == null) {
                     log.debug(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
                             + "[NodeRMLPerformer:perform] No subject was generated for "
@@ -112,8 +112,15 @@ public class NodeRMLPerformer implements RMLPerformer{
     }
     
     private void perform(Object node, SesameDataSet dataset, TriplesMap map, Set<Condition> conditions) {
-        List<String> values, list, finalList = new ArrayList<String>();
-        values = processor.extractValueFromNode(node, ".");
+        List<String> values = null, list, finalList = new ArrayList<String>();
+        switch(processor.getClass().getSimpleName()){
+            case "XPathProcessor":
+                values = processor.extractValueFromNode(node, ".");
+                break;
+            case "CSS3Extractor" :
+                values = processor.extractValueFromNode(node, "*");
+                break;
+        }
         list = ConditionProcessor.processAllConditions(
                 map.getLogicalSource(), values.get(0));
 
