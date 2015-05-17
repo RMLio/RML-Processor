@@ -1,11 +1,22 @@
-<http://www.ex.com/paper/1B2AC726-F0EE-11E1-A9DE-61C894A0A6B4> 
-    <http://www.example.com/author>  "Youri Maryn" .
+<http://www.ex.com/author/001998821103> 
+    <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.example.com/Author> ;
+    <http://www.example.com/name>  "Youri Maryn" .
 
-<http://www.ex.com/paper/F5A2F41A-F0ED-11E1-A9DE-61C894A0A6B4> 
-    <http://www.example.com/author> "Paul Corthals" .
+<http://www.ex.com/author/801001323297> 
+    <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.example.com/Author> ;
+    <http://www.example.com/name> "Paul Corthals" .
 
-<http://www.ex.com/paper/F9436D48-F0ED-11E1-A9DE-61C894A0A6B4> 
-    <http://www.example.com/author> "Paul Van Cauwenberge" .
+<http://www.ex.com/author/801000413319> 
+    <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.example.com/Author> ;
+    <http://www.example.com/name> "Paul Van Cauwenberge" .
 
-<http://www.ex.com/paper/F53F45D2-F0ED-11E1-A9DE-61C894A0A6B4> 
-    <http://www.example.com/author> "Marc De Bodt" .
+<http://www.ex.com/author/801001147889> 
+    <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.example.com/Author> ;
+    <http://www.example.com/name> "Marc De Bodt" .
+
+<http://www.ex.com/paper/780271> 
+    <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.example.com/Paper> ;
+    <http://www.example.com/author> <http://www.ex.com/author/001998821103> ;
+    <http://www.example.com/author> <http://www.ex.com/author/801001323297> ;
+    <http://www.example.com/author> <http://www.ex.com/author/801000413319> ;
+    <http://www.example.com/author> <http://www.ex.com/author/801001147889> .

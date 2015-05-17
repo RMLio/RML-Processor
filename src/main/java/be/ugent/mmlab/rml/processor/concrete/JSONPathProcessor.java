@@ -72,7 +72,9 @@ public class JSONPathProcessor extends AbstractRMLProcessor {
     }
 
     @Override
-    public void execute_node(SesameDataSet dataset, String expression, TriplesMap parentTriplesMap, RMLPerformer performer, Object node, Resource subject) {
+    public void execute_node(
+            SesameDataSet dataset, String expression, TriplesMap parentTriplesMap, 
+            RMLPerformer performer, Object node, Resource subject) {
        
         Object val = JsonPath.read(node, expression);
         
@@ -81,7 +83,8 @@ public class JSONPathProcessor extends AbstractRMLProcessor {
         //TODO: check if it's complete for sub-mappings
     }
     
-    private void execute (SesameDataSet dataset, TriplesMap parentTriplesMap, RMLPerformer performer, Object node){
+    private void execute (SesameDataSet dataset, TriplesMap parentTriplesMap, 
+            RMLPerformer performer, Object node){
         if (node instanceof JSONObject) 
             performer.perform(node, dataset, parentTriplesMap);
         else {

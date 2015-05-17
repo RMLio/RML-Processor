@@ -2,12 +2,12 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.mmlab.rml.extractor.input.concrete;
+package be.ugent.mmlab.rml.input.extractor.concrete;
 
 import be.ugent.mmlab.rml.core.RMLEngine;
-import be.ugent.mmlab.rml.extractor.input.InputExtractor;
+import be.ugent.mmlab.rml.input.extractor.InputExtractor;
 import static be.ugent.mmlab.rml.core.RMLEngine.isLocalFile;
-import be.ugent.mmlab.rml.extractor.input.AbstractInputExtractor;
+import be.ugent.mmlab.rml.input.extractor.AbstractInputExtractor;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.sesame.RMLSesameDataSet;
 import java.io.File;
@@ -18,10 +18,12 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.log4j.LogManager;
 import org.openrdf.model.Resource;
+import org.openrdf.model.Statement;
 
 /**
  *
@@ -32,6 +34,10 @@ public class LocalFileExtractor extends AbstractInputExtractor implements InputE
     // Log
     private static final org.apache.log4j.Logger log = LogManager.getLogger(LocalFileExtractor.class);
     
+    @Override
+    public List<Statement> getInput(RMLSesameDataSet rmlMappingGraph, String reference, TriplesMap map) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
     /**
      *
@@ -108,4 +114,5 @@ public class LocalFileExtractor extends AbstractInputExtractor implements InputE
     public String extractInput(RMLSesameDataSet rmlMappingGraph, Resource resource) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
 }

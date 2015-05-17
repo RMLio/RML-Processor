@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Set;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
 import net.antidot.semantic.rdf.rdb2rdf.r2rml.tools.R2RMLToolkit;
-import nu.xom.Element;
 import org.openrdf.model.Resource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -67,7 +66,7 @@ public class NodeRMLPerformer implements RMLPerformer{
                 
                 Resource subject = processor.processSubjectMap(dataset, map.getSubjectMap(), node);
                 processor.processSubjectTypeMap(dataset, subject, map.getSubjectMap(), node);
-                log.error("subject " + subject);
+
                 if (subject == null) {
                     log.debug(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
                             + "[NodeRMLPerformer:perform] No subject was generated for "
@@ -131,7 +130,7 @@ public class NodeRMLPerformer implements RMLPerformer{
             Set<String> tokens = R2RMLToolkit.extractColumnNamesFromStringTemplate(
                     map.getSubjectMap().getStringTemplate());
             for (String expression : tokens) {
-                finalList = processor.processTemplate(map.getSubjectMap(), newList, expression);
+                finalList = processor.processTemplate( map.getSubjectMap(), newList, expression);
             }
 
             URIImpl subject = new URIImpl(finalList.get(0).replaceAll("<br>", ""));

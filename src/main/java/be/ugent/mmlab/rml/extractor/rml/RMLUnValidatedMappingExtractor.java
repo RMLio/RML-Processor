@@ -4,8 +4,8 @@ import be.ugent.mmlab.rml.extractor.condition.BindConditionExtractor;
 import be.ugent.mmlab.rml.extractor.condition.EqualConditionExtractor;
 import be.ugent.mmlab.rml.extractor.condition.ProcessConditionExtractor;
 import be.ugent.mmlab.rml.extractor.condition.SplitConditionExtractor;
-import be.ugent.mmlab.rml.extractor.input.InputExtractor;
-import be.ugent.mmlab.rml.extractor.input.concrete.ApiExtractor;
+import be.ugent.mmlab.rml.input.extractor.InputExtractor;
+import be.ugent.mmlab.rml.input.extractor.concrete.ApiExtractor;
 import be.ugent.mmlab.rml.model.GraphMap;
 import be.ugent.mmlab.rml.model.JoinCondition;
 import be.ugent.mmlab.rml.model.LogicalSource;
@@ -288,6 +288,8 @@ public class RMLUnValidatedMappingExtractor implements RMLMappingExtractor{
         //Extracts at least one LogicalSource
         LogicalSource logicalSource =
                 extractLogicalSources(rmlMappingGraph, triplesMapSubject, result);
+        String input = extractInput(rmlMappingGraph,triplesMapSubject);
+        
         result.setLogicalSource(logicalSource);
         // Create a graph maps storage to save all met graph uri during parsing.
         Set<GraphMap> graphMaps = new HashSet<GraphMap>();
@@ -315,6 +317,17 @@ public class RMLUnValidatedMappingExtractor implements RMLMappingExtractor{
         log.info(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
                 + "Extract of TriplesMap subject : "
                 + triplesMapSubject.stringValue() + " done.");
+    }
+    
+    public String extractInput(RMLSesameDataSet rmlMappingGraph, Resource resource) {
+        
+        //URI predicate = rmlMappingGraph.URIref("http://www.w3.org/ns/hydra/core#template");
+        URI predicate = RDF.TYPE;
+         List<Statement> statements = rmlMappingGraph.tuplePattern(
+                        (Resource) resource, predicate, null);
+         
+         return statements.get(0).getObject().stringValue();
+         
     }
     
     protected LogicalSource extractLogicalSources(

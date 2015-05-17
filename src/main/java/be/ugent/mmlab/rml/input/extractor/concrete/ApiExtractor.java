@@ -2,14 +2,13 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.mmlab.rml.extractor.input.concrete;
+package be.ugent.mmlab.rml.input.extractor.concrete;
 
 import be.ugent.mmlab.rml.core.RMLEngine;
-import be.ugent.mmlab.rml.extractor.input.AbstractInputExtractor;
-import be.ugent.mmlab.rml.extractor.input.InputExtractor;
+import be.ugent.mmlab.rml.input.extractor.AbstractInputExtractor;
+import be.ugent.mmlab.rml.input.extractor.InputExtractor;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.sesame.RMLSesameDataSet;
-import be.ugent.mmlab.rml.vocabulary.RMLVocabulary;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -22,6 +21,8 @@ import org.apache.log4j.LogManager;
 import org.openrdf.model.Resource;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
+import org.openrdf.model.ValueFactory;
+import org.openrdf.model.impl.ValueFactoryImpl;
 
 /**
  *
@@ -30,7 +31,9 @@ import org.openrdf.model.URI;
 public class ApiExtractor extends AbstractInputExtractor implements InputExtractor {
     
     // Log
-    private static final org.apache.log4j.Logger log = LogManager.getLogger(LocalFileExtractor.class);
+    private static final org.apache.log4j.Logger log = LogManager.getLogger(ApiExtractor.class);
+    // Value factory
+    private static ValueFactory vf = new ValueFactoryImpl();
 
     @Override
     public InputStream getInputStream(String source, TriplesMap triplesMap) {

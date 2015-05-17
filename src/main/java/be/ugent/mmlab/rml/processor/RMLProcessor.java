@@ -6,6 +6,7 @@ import be.ugent.mmlab.rml.model.PredicateObjectMap;
 import be.ugent.mmlab.rml.model.SubjectMap;
 import be.ugent.mmlab.rml.model.TermMap;
 import be.ugent.mmlab.rml.model.TriplesMap;
+import be.ugent.mmlab.rml.vocabulary.RMLVocabulary;
 import java.io.InputStream;
 import java.util.List;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
@@ -57,6 +58,9 @@ public interface RMLProcessor {
      * @return
      */
     public List<String> processTemplate(TermMap map, List<String> replacements, String expression);
+    
+    public String processTemplate(String expression, String template, String termType,
+            RMLVocabulary.QLTerm referenceFormulation, String replacement);
     
     /**
      * process a predicate object map

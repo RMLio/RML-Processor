@@ -21,6 +21,7 @@
 
     rr:subjectMap [
         rr:template "http://www.ex.com/author/{ugent_id}"; 
+        rr:class ex:Author
     ];
 
     rr:predicateObjectMap [
@@ -39,7 +40,7 @@
 
     rr:subjectMap [
         rr:template "http://www.ex.com/paper/{id}"; 
-        rr:class ex:Conference;
+        rr:class ex:Paper;
     ];
 
     rr:predicateObjectMap [

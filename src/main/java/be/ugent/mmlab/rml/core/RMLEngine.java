@@ -1,9 +1,6 @@
 package be.ugent.mmlab.rml.core;
 
-import be.ugent.mmlab.rml.extractor.input.InputExtractor;
-import be.ugent.mmlab.rml.extractor.input.concrete.LocalFileExtractor;
 import be.ugent.mmlab.rml.dataset.FileSesameDataset;
-import be.ugent.mmlab.rml.extractor.input.concrete.ApiExtractor;
 import be.ugent.mmlab.rml.model.LogicalSource;
 import be.ugent.mmlab.rml.model.PredicateObjectMap;
 import be.ugent.mmlab.rml.model.RMLMapping;
@@ -24,7 +21,6 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.Properties;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
@@ -161,7 +157,6 @@ public class RMLEngine {
      * @param sesameDataSet
      * @param rmlMapping
      * @throws SQLException
-     * @throws R2RMLDataError
      * @throws UnsupportedEncodingException
      */
     private void generateRDFTriples(SesameDataSet sesameDataSet, 
@@ -202,7 +197,7 @@ public class RMLEngine {
             
             String source = triplesMap.getLogicalSource().getIdentifier();
             
-            InputExtractor inputExtractor = null;
+            /*InputExtractor inputExtractor = null;
             if (isLocalFile(source)) {
                 inputExtractor = new LocalFileExtractor();
             } else if (!isLocalFile(source)) {
@@ -219,8 +214,10 @@ public class RMLEngine {
             if (!variables.isEmpty()) {
                 source = source.replaceAll("\\{" + variables.iterator().next() + "\\}", splitParameter[1]);
             }
-            InputStream input = inputExtractor.getInputStream(source, triplesMap);
-            
+            InputStream input = inputExtractor.getInputStream(source, triplesMap);*/
+            //InputStream input = processInputExtractor(triplesMap, parameter);
+
+            InputStream input = getInputStream(source,triplesMap);
             try {
                 processor.execute(sesameDataSet, triplesMap, new NodeRMLPerformer(processor), input);
             } catch (Exception ex) {
@@ -301,4 +298,34 @@ public class RMLEngine {
             }
             return input;
     }
+    
+    /*public static InputStream processInputExtractor(TriplesMap triplesMap, String parameter) {
+        String source = triplesMap.getLogicalSource().getIdentifier();
+
+        InputExtractor inputExtractor = null;
+        if (isLocalFile(source)) {
+            inputExtractor = new LocalFileExtractor();
+        } else if (!isLocalFile(source)) {
+            inputExtractor = new ApiExtractor();
+        } else {
+            log.info("Input stream was not identified.");
+        }
+log.error("parameter " + parameter);
+        String[] splitParameter = null;
+        if (parameter != null && parameter.contains("=")) {
+            splitParameter = parameter.split("=");
+        }
+        log.error("split parameter " + splitParameter);
+        Set<String> variables = inputExtractor.extractStringTemplate(source);
+        log.error("variables " + variables);
+        if (!variables.isEmpty()) {
+            source = source.replaceAll("\\{" + variables.iterator().next() + "\\}", splitParameter[1]);
+        }
+        else
+            source = source.replaceAll("\\{" + variables.iterator().next() + "\\}", parameter);
+        log.error("source " + source);
+        InputStream input = inputExtractor.getInputStream(source, triplesMap);
+        log.error("input " + input);
+        return input;
+    }*/
 }
