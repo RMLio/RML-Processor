@@ -136,6 +136,7 @@ public class NodeRMLPerformer implements RMLPerformer{
 
             URIImpl subject = new URIImpl(finalList.get(0).replaceAll("<br>", ""));
             Set<org.openrdf.model.URI> classIRIs = map.getSubjectMap().getClassIRIs();
+            if(classIRIs != null & classIRIs.size() > 0)
             for (org.openrdf.model.URI classIRI : classIRIs)
                 dataset.add(subject, RDF.TYPE, classIRI);
             //TODO:find better solution for cleaning up
