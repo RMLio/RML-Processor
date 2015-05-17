@@ -6,7 +6,7 @@ import be.ugent.mmlab.rml.model.condition.Condition;
 import be.ugent.mmlab.rml.model.condition.EqualCondition;
 import be.ugent.mmlab.rml.model.condition.ProcessCondition;
 import be.ugent.mmlab.rml.model.condition.SplitCondition;
-import be.ugent.mmlab.rml.vocabulary.RMLVocabulary.QLTerm;
+import be.ugent.mmlab.rml.vocabulary.QLVocabulary.QLTerm;
 import java.util.HashSet;
 import java.util.Set;
 import org.apache.commons.logging.Log;

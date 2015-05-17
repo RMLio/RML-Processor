@@ -2,7 +2,7 @@ package be.ugent.mmlab.rml.extractor.condition;
 
 import be.ugent.mmlab.rml.model.condition.Condition;
 import be.ugent.mmlab.rml.sesame.RMLSesameDataSet;
-import be.ugent.mmlab.rml.vocabulary.RMLVocabulary;
+import be.ugent.mmlab.rml.vocabulary.CRMLVocabulary;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -29,7 +29,7 @@ public class ConditionExtractor {
         try{
             //retrieves nested equal conditions
             URI p = rmlMappingGraph.URIref(
-                    RMLVocabulary.CRML_NAMESPACE + RMLVocabulary.cRMLTerm.EQUAL_CONDITION);
+                    CRMLVocabulary.CRML_NAMESPACE + CRMLVocabulary.cRMLTerm.EQUAL_CONDITION);
             List<Statement> statements = rmlMappingGraph.tuplePattern(parentCondition, p, null);
             
             for(Statement statement : statements){
@@ -39,7 +39,7 @@ public class ConditionExtractor {
             
             //retrieve nested process conditions
             p = rmlMappingGraph.URIref(
-                    RMLVocabulary.CRML_NAMESPACE + RMLVocabulary.cRMLTerm.PROCESS_CONDITION);
+                    CRMLVocabulary.CRML_NAMESPACE + CRMLVocabulary.cRMLTerm.PROCESS_CONDITION);
             statements = rmlMappingGraph.tuplePattern(parentCondition, p, null);
             
             for(Statement statement : statements){
@@ -49,7 +49,7 @@ public class ConditionExtractor {
             
             //retrieve nested split conditions
             p = rmlMappingGraph.URIref(
-                    RMLVocabulary.CRML_NAMESPACE + RMLVocabulary.cRMLTerm.SPLIT_CONDITION);
+                    CRMLVocabulary.CRML_NAMESPACE + CRMLVocabulary.cRMLTerm.SPLIT_CONDITION);
             statements = rmlMappingGraph.tuplePattern(parentCondition, p, null);
             
             for(Statement statement : statements){
@@ -74,7 +74,7 @@ public class ConditionExtractor {
 
             //retrieves condition
             URI p = rmlMappingGraph.URIref(
-                    RMLVocabulary.CRML_NAMESPACE + RMLVocabulary.cRMLTerm.CONDITION);
+                    CRMLVocabulary.CRML_NAMESPACE + CRMLVocabulary.cRMLTerm.CONDITION);
 
             List<Statement> conditionStatements = rmlMappingGraph.tuplePattern(splitCond, p, null);
             if (conditionStatements.size() > 0) {
@@ -103,7 +103,7 @@ public class ConditionExtractor {
             
             //retrieves value
             URI p = rmlMappingGraph.URIref(
-                    RMLVocabulary.CRML_NAMESPACE + RMLVocabulary.cRMLTerm.VALUE);
+                    CRMLVocabulary.CRML_NAMESPACE + CRMLVocabulary.cRMLTerm.VALUE);
             
             List<Statement> statements = rmlMappingGraph.tuplePattern(values, p, null);
             if (statements.size() > 0) {

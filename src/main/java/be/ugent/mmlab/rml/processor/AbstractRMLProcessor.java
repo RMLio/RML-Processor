@@ -23,7 +23,7 @@ import be.ugent.mmlab.rml.model.condition.BindCondition;
 import be.ugent.mmlab.rml.model.reference.ReferenceIdentifierImpl;
 import be.ugent.mmlab.rml.processor.concrete.ConcreteRMLProcessorFactory;
 import be.ugent.mmlab.rml.processor.condition.ConditionProcessor;
-import be.ugent.mmlab.rml.vocabulary.RMLVocabulary.QLTerm;
+import be.ugent.mmlab.rml.vocabulary.QLVocabulary.QLTerm;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;

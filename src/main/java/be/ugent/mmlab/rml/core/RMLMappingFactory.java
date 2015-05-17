@@ -19,6 +19,7 @@ import be.ugent.mmlab.rml.extractor.rml.RMLUnValidatedMappingExtractor;
 import be.ugent.mmlab.rml.model.RMLMapping;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.sesame.RMLSesameDataSet;
+import be.ugent.mmlab.rml.vocabulary.R2RMLVocabulary;
 import be.ugent.mmlab.rml.vocabulary.RMLVocabulary;
 import be.ugent.mmlab.rml.vocabulary.Vocab.R2RMLTerm;
 import java.io.IOException;
@@ -108,12 +109,12 @@ public class RMLMappingFactory {
     private static void launchPreChecks(SesameDataSet rmlMappingGraph) throws Exception {
         // Pre-check 1 : test if a triplesMap with predicateObject map exists
         // without subject map
-        URI p = rmlMappingGraph.URIref(RMLVocabulary.R2RML_NAMESPACE
+        URI p = rmlMappingGraph.URIref(R2RMLVocabulary.R2RML_NAMESPACE
                 + R2RMLTerm.PREDICATE_OBJECT_MAP);
         List<Statement> statements = rmlMappingGraph.tuplePattern(null, p,
                 null);
         for (Statement s : statements) {
-            p = rmlMappingGraph.URIref(RMLVocabulary.R2RML_NAMESPACE
+            p = rmlMappingGraph.URIref(R2RMLVocabulary.R2RML_NAMESPACE
                     + R2RMLTerm.SUBJECT_MAP);
             List<Statement> otherStatements = rmlMappingGraph.tuplePattern(
                     s.getSubject(), p, null);
@@ -183,7 +184,7 @@ public class RMLMappingFactory {
 
     
     private static URI getTermURI(SesameDataSet rmlMappingGraph, Enum term) throws InvalidR2RMLStructureException {
-        String namespace = RMLVocabulary.R2RML_NAMESPACE;
+        String namespace = R2RMLVocabulary.R2RML_NAMESPACE;
 
         if (term instanceof RMLVocabulary.RMLTerm) {
             namespace = RMLVocabulary.RML_NAMESPACE;

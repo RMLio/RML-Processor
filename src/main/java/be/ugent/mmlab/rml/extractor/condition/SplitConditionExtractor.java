@@ -4,7 +4,7 @@ import be.ugent.mmlab.rml.model.condition.Condition;
 import be.ugent.mmlab.rml.model.condition.SplitCondition;
 import be.ugent.mmlab.rml.model.std.StdSplitCondition;
 import be.ugent.mmlab.rml.sesame.RMLSesameDataSet;
-import be.ugent.mmlab.rml.vocabulary.RMLVocabulary;
+import be.ugent.mmlab.rml.vocabulary.CRMLVocabulary;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -35,7 +35,7 @@ public class SplitConditionExtractor extends ConditionExtractor {
         
         // Extract split condition
         URI p = rmlMappingGraph.URIref(
-                RMLVocabulary.CRML_NAMESPACE + RMLVocabulary.cRMLTerm.SPLIT_CONDITION);
+                CRMLVocabulary.CRML_NAMESPACE + CRMLVocabulary.cRMLTerm.SPLIT_CONDITION);
         List<Statement> statements = rmlMappingGraph.tuplePattern(object, p, null);
         
         for (Statement statement : statements) {

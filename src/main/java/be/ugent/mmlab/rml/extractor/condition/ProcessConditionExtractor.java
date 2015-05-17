@@ -4,7 +4,7 @@ import be.ugent.mmlab.rml.model.condition.Condition;
 import be.ugent.mmlab.rml.model.condition.ProcessCondition;
 import be.ugent.mmlab.rml.model.std.StdProcessCondition;
 import be.ugent.mmlab.rml.sesame.RMLSesameDataSet;
-import be.ugent.mmlab.rml.vocabulary.RMLVocabulary;
+import be.ugent.mmlab.rml.vocabulary.CRMLVocabulary;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -38,7 +38,7 @@ public class ProcessConditionExtractor extends ConditionExtractor {
 
         // Extract process condition
         URI p = rmlMappingGraph.URIref(
-                RMLVocabulary.CRML_NAMESPACE + RMLVocabulary.cRMLTerm.PROCESS_CONDITION);
+                CRMLVocabulary.CRML_NAMESPACE + CRMLVocabulary.cRMLTerm.PROCESS_CONDITION);
         List<Statement> statements = rmlMappingGraph.tuplePattern(object, p, null);
 
         try {

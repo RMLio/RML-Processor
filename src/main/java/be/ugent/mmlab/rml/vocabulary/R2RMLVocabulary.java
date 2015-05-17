@@ -39,7 +39,7 @@ public class R2RMLVocabulary {
 	public static String XSD_NAMESPACE = "http://www.w3.org/2001/XMLSchema#";
 	public static String EX_NAMESPACE = "http://example.com/ns#"; // By convention
 	
-	public enum R2RMLTerm {
+	public enum R2RMLTerm implements Term {
 		// CLASSES
 		GRAPH_MAP_CLASS("GraphMap"),
 		JOIN_CLASS("Join"), 

@@ -5,7 +5,7 @@ import be.ugent.mmlab.rml.model.condition.Condition;
 import be.ugent.mmlab.rml.model.condition.EqualCondition;
 import be.ugent.mmlab.rml.model.std.StdEqualCondition;
 import be.ugent.mmlab.rml.sesame.RMLSesameDataSet;
-import be.ugent.mmlab.rml.vocabulary.RMLVocabulary;
+import be.ugent.mmlab.rml.vocabulary.CRMLVocabulary;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -39,7 +39,7 @@ public class EqualConditionExtractor extends ConditionExtractor{
         
         // Extract equal condition
         URI p = rmlMappingGraph.URIref(
-                RMLVocabulary.CRML_NAMESPACE + RMLVocabulary.cRMLTerm.EQUAL_CONDITION);
+                CRMLVocabulary.CRML_NAMESPACE + CRMLVocabulary.cRMLTerm.EQUAL_CONDITION);
         List<Statement> statements = rmlMappingGraph.tuplePattern(object, p, null);
 
         try {

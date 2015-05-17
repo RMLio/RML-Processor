@@ -5,7 +5,7 @@ import be.ugent.mmlab.rml.model.condition.Condition;
 import be.ugent.mmlab.rml.model.condition.EqualCondition;
 import be.ugent.mmlab.rml.model.condition.ProcessCondition;
 import be.ugent.mmlab.rml.model.condition.SplitCondition;
-import be.ugent.mmlab.rml.vocabulary.RMLVocabulary;
+import be.ugent.mmlab.rml.vocabulary.QLVocabulary;
 import java.util.Set;
 
 /**
@@ -30,7 +30,7 @@ public interface LogicalSource {
      * Every logical source can indicate how its expression should be
      * interpreted
      */
-    public RMLVocabulary.QLTerm getReferenceFormulation();
+    public QLVocabulary.QLTerm getReferenceFormulation();
     
     public String getSplitCondition();
     

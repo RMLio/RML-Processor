@@ -21,25 +21,11 @@ public class RMLVocabulary {
     // In this document, examples assume the following namespace 
     // prefix bindings unless otherwise stated:
     public static String RML_NAMESPACE = "http://semweb.mmlab.be/ns/rml#";
-    public static String QL_NAMESPACE = "http://semweb.mmlab.be/ns/ql#";
-    public static String CRML_NAMESPACE = "http://semweb.mmlab.be/ns/rml/condition#";
-    public static String R2RML_NAMESPACE = "http://www.w3.org/ns/r2rml#";
     public static String RDF_NAMESPACE = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
     public static String RDFS_NAMESPACE = "http://www.w3.org/2000/01/rdf-schema#";
     public static String XSD_NAMESPACE = "http://www.w3.org/2001/XMLSchema#";
-    public static String EX_NAMESPACE = "http://example.com/ns#"; // By convention
 
-    public static QLTerm getQLTerms(String stringValue) {
-        for (QLTerm term : QLTerm.values()){
-            if (stringValue.equals(QL_NAMESPACE + term)){
-                return term;
-            }
-        }
-        return null;
-    }
-
-    public interface Term {
-    }
+    
 
     public enum RMLTerm implements Term{
 
@@ -69,58 +55,8 @@ public class RMLVocabulary {
         
     }
 
-    public enum QLTerm {
-
-        XPATH_CLASS("XPath"),
-        SQL_CLASS("SQL"),
-        JSONPATH_CLASS("JSONPath"),
-        CSV_CLASS("CSV"),
-        CSS3_CLASS("CSS3");
-        
-        private String displayName;
-
-        private QLTerm(String displayName) {
-            this.displayName = displayName;
-        }
-
-        @Override
-        public String toString() {
-            return displayName;
-        }
-    }
-    
-    public enum cRMLTerm implements Term{
-
-        // RML CLASSES
-        BIND_CONDITION_CLASS("BindCondition"),
-        EQUAL_CONDITION_CLASS("EqualCondition"),
-        PROCESS_CONDITION_CLASS("ProcessCondition"),
-        SPLIT_CONDITION_CLASS("SplitCondition"),
-        // RPROPERTIES
-        BIND_CONDITION("bindCondition"),
-        EQUAL_CONDITION("equalCondition"),
-        PROCESS_CONDITION("processCondition"),
-        SPLIT_CONDITION("splitCondition"),
-        CONDITION("condition"),
-        VALUE("value"),
-        //PROCESS("process"),
-        REPLACE("replace");
-        //SPLIT("split");
-        
-        private String displayName;
-
-        private cRMLTerm(String displayName) {
-            this.displayName = displayName;
-        }
-
-        @Override
-        public String toString() {
-            return displayName;
-        }
-        
-    }
-
-    public enum R2RMLTerm implements Term{
+   
+    /*public enum R2RMLTerm implements Term{
         // CLASSES
 
         GRAPH_MAP_CLASS("GraphMap"),
@@ -177,5 +113,5 @@ public class RMLVocabulary {
             return displayName;
         }
         
-    }
+    }*/
 }

@@ -7,6 +7,7 @@ package be.ugent.mmlab.rml.extractor.condition;
 import be.ugent.mmlab.rml.model.condition.BindCondition;
 import be.ugent.mmlab.rml.model.std.StdBindCondition;
 import be.ugent.mmlab.rml.sesame.RMLSesameDataSet;
+import be.ugent.mmlab.rml.vocabulary.CRMLVocabulary;
 import be.ugent.mmlab.rml.vocabulary.RMLVocabulary;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -40,7 +41,7 @@ public class BindConditionExtractor extends ConditionExtractor {
 
         // Extract equal condition
         URI p = rmlMappingGraph.URIref(
-                RMLVocabulary.CRML_NAMESPACE + RMLVocabulary.cRMLTerm.BIND_CONDITION);
+                CRMLVocabulary.CRML_NAMESPACE + CRMLVocabulary.cRMLTerm.BIND_CONDITION);
         List<Statement> statements = rmlMappingGraph.tuplePattern(object, p, null);
 
         try {
