@@ -19,10 +19,10 @@ import be.ugent.mmlab.rml.model.TermType;
 import static be.ugent.mmlab.rml.model.TermType.BLANK_NODE;
 import static be.ugent.mmlab.rml.model.TermType.IRI;
 import be.ugent.mmlab.rml.model.TriplesMap;
-import be.ugent.mmlab.rml.model.condition.BindCondition;
+import be.ugent.mmlab.rml.condition.model.BindCondition;
 import be.ugent.mmlab.rml.model.reference.ReferenceIdentifierImpl;
 import be.ugent.mmlab.rml.processor.concrete.ConcreteRMLProcessorFactory;
-import be.ugent.mmlab.rml.processor.condition.ConditionProcessor;
+import be.ugent.mmlab.rml.condition.processor.ConditionProcessor;
 import be.ugent.mmlab.rml.vocabulary.QLVocabulary.QLTerm;
 import java.io.IOException;
 import java.io.InputStream;
@@ -429,7 +429,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
             if(bindConditions != null & bindConditions.size() > 0 )
                 template = processBindConditions(node, parentTriplesMap, bindConditions);
             else 
-                template = parentTriplesMap.getLogicalSource().getIdentifier();
+                template = parentTriplesMap.getLogicalSource().getSource();
             
             //Create the processor based on the parent triples map to perform the join
             RMLProcessorFactory factory = new ConcreteRMLProcessorFactory();
@@ -453,12 +453,12 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                 processor.execute(dataset, parentTriplesMap, performer, input);
             }
             else if (joinConditions.isEmpty()
-                    & !parentTriplesMap.getLogicalSource().getIdentifier().equals(map.getLogicalSource().getIdentifier())) {
+                    & !parentTriplesMap.getLogicalSource().getSource().equals(map.getLogicalSource().getSource())) {
                 performer = new JoinRMLPerformer(processor, subject, predicate);
                 processor.execute(dataset, parentTriplesMap, performer, input);
             } //same Logical Source and no Conditions
             else if (joinConditions.isEmpty()
-                    & parentTriplesMap.getLogicalSource().getIdentifier().equals(map.getLogicalSource().getIdentifier())) {
+                    & parentTriplesMap.getLogicalSource().getSource().equals(map.getLogicalSource().getSource())) {
                 performer = new SimpleReferencePerformer(processor, subject, predicate);
                 if ((parentTriplesMap.getLogicalSource().getReferenceFormulation().toString().equals("CSV"))
                         || (parentTriplesMap.getLogicalSource().getReference().equals(map.getLogicalSource().getReference()))) {
@@ -516,7 +516,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
         for (BindCondition bindCondition : bindConditions) {
             List<String> bindReferenceValues = extractValueFromNode(node, bindCondition.getReference());
             
-            String template = parentTriplesMap.getLogicalSource().getIdentifier();
+            String template = parentTriplesMap.getLogicalSource().getSource();
             String termType = TermType.IRI.toString();
             QLTerm referenceFormulation = parentTriplesMap.getLogicalSource().getReferenceFormulation();
             finalTemplate = processTemplate(bindCondition.getValue(), template, termType,

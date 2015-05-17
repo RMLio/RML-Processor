@@ -4,8 +4,8 @@
  */
 package be.ugent.mmlab.rml.model.std;
 
-import be.ugent.mmlab.rml.model.condition.BindCondition;
-import be.ugent.mmlab.rml.model.condition.Condition;
+import be.ugent.mmlab.rml.condition.model.BindCondition;
+import be.ugent.mmlab.rml.condition.model.Condition;
 import java.util.Set;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;

@@ -100,7 +100,7 @@ public class XPathProcessor extends AbstractRMLProcessor {
             XPathCompiler xpath = proc.newXPathCompiler();
             DocumentBuilder builder = proc.newDocumentBuilder();
 
-            String source = getClass().getResource(map.getLogicalSource().getIdentifier()).getFile();
+            String source = getClass().getResource(map.getLogicalSource().getSource()).getFile();
 
             XdmNode doc = builder.build(new File(source));
             String expre = replace(node, expression);

@@ -2,9 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.mmlab.rml.extractor.condition;
+package be.ugent.mmlab.rml.condition.extractor;
 
-import be.ugent.mmlab.rml.model.condition.BindCondition;
+import be.ugent.mmlab.rml.condition.model.BindCondition;
 import be.ugent.mmlab.rml.model.std.StdBindCondition;
 import be.ugent.mmlab.rml.sesame.RMLSesameDataSet;
 import be.ugent.mmlab.rml.vocabulary.CRMLVocabulary;

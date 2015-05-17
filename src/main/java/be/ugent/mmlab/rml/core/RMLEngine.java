@@ -51,7 +51,7 @@ public class RMLEngine {
     
     
     protected String getIdentifier(LogicalSource ls) {
-        return RMLEngine.getFileMap().getProperty(ls.getIdentifier());
+        return RMLEngine.getFileMap().getProperty(ls.getSource());
     }
 
     /**
@@ -82,7 +82,7 @@ public class RMLEngine {
      */
     public SesameDataSet runRMLMapping(RMLMapping rmlMapping,
             String baseIRI, String pathToNativeStore, String outputFormat, 
-            String parameter,String[] exeTriplesMap, boolean filebased) 
+            String parameter, String[] exeTriplesMap, boolean filebased) 
             throws SQLException, UnsupportedEncodingException, IOException {
         long startTime = System.nanoTime();
 
@@ -101,7 +101,7 @@ public class RMLEngine {
         
         // Explore RML Mapping TriplesMap objects  
  
-        generateRDFTriples(sesameDataSet, rmlMapping, parameter, exeTriplesMap, filebased);
+        generateRDFTriples(sesameDataSet, rmlMapping, exeTriplesMap, filebased);
                
         //TODO:add metadata this Triples Map started then, finished then and lasted that much
 	long endTime = System.nanoTime();
@@ -160,7 +160,7 @@ public class RMLEngine {
      * @throws UnsupportedEncodingException
      */
     private void generateRDFTriples(SesameDataSet sesameDataSet, 
-            RMLMapping rmlMapping, String parameter, String[] exeTriplesMap, boolean filebased) 
+            RMLMapping rmlMapping, String[] exeTriplesMap, boolean filebased) 
             throws SQLException, UnsupportedEncodingException, ProtocolException, IOException {
 
         log.debug(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
@@ -195,7 +195,7 @@ public class RMLEngine {
                         + "There is no suitable processor for this reference formulation");
             }
             
-            String source = triplesMap.getLogicalSource().getIdentifier();
+            String source = triplesMap.getLogicalSource().getSource();
             
             /*InputExtractor inputExtractor = null;
             if (isLocalFile(source)) {
@@ -257,6 +257,10 @@ public class RMLEngine {
         }
     }
     
+    public void getInputExtractor (String source, TriplesMap triplesMap) throws IOException{
+        
+    }
+    
     public static InputStream getInputStream (String source, TriplesMap triplesMap) throws IOException{
         InputStream input = null;
             if(!isLocalFile(source))
@@ -274,12 +278,12 @@ public class RMLEngine {
                     File file  = new File(new File(source).getAbsolutePath());
                     
                     if(!file.exists()){
-                        if(RMLEngine.class.getResource(triplesMap.getLogicalSource().getIdentifier()) == null){
-                            source = triplesMap.getLogicalSource().getIdentifier();
+                        if(RMLEngine.class.getResource(triplesMap.getLogicalSource().getSource()) == null){
+                            source = triplesMap.getLogicalSource().getSource();
                             file  = new File(new File(source).getAbsolutePath());
                         }
                         else{
-                            source = RMLEngine.class.getResource(triplesMap.getLogicalSource().getIdentifier()).getFile();
+                            source = RMLEngine.class.getResource(triplesMap.getLogicalSource().getSource()).getFile();
                             file  = new File(new File(source).getCanonicalPath());
                         }
                         if(!file.exists())

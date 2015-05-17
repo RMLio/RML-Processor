@@ -1,9 +1,9 @@
-package be.ugent.mmlab.rml.processor.condition;
+package be.ugent.mmlab.rml.condition.processor;
 
 import be.ugent.mmlab.rml.model.LogicalSource;
 import be.ugent.mmlab.rml.model.TermMap;
-import be.ugent.mmlab.rml.model.condition.Condition;
-import be.ugent.mmlab.rml.model.condition.SplitCondition;
+import be.ugent.mmlab.rml.condition.model.Condition;
+import be.ugent.mmlab.rml.condition.model.SplitCondition;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;

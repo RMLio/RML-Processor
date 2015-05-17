@@ -28,7 +28,7 @@ public class CSVProcessor extends AbstractRMLProcessor {
     private static Log log = LogFactory.getLog(CSVProcessor.class);
     
     private char getDelimiter(LogicalSource ls) {
-        String d = RMLEngine.getFileMap().getProperty(ls.getIdentifier() + ".delimiter");
+        String d = RMLEngine.getFileMap().getProperty(ls.getSource() + ".delimiter");
         if (d == null) {
             return ',';
         }

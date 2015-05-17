@@ -34,7 +34,8 @@
 
 <#Paper>
     rml:logicalSource [ 
-	rml:source "/example18/example18.csv";
+	#rml:source "/example18/example18.csv";
+        rml:source "/home/andimou/Desktop/RMLProcessor/src/test/resources/example18/example18.csv";
         rml:referenceFormulation ql:CSV;
     ];
 

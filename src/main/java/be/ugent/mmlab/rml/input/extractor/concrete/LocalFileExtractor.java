@@ -86,11 +86,11 @@ public class LocalFileExtractor extends AbstractInputExtractor implements InputE
                 File file = new File(new File(source).getAbsolutePath());
 
                 if (!file.exists()) {
-                    if (RMLEngine.class.getResource(triplesMap.getLogicalSource().getIdentifier()) == null) {
-                        source = triplesMap.getLogicalSource().getIdentifier();
+                    if (RMLEngine.class.getResource(triplesMap.getLogicalSource().getSource()) == null) {
+                        source = triplesMap.getLogicalSource().getSource();
                         file = new File(new File(source).getAbsolutePath());
                     } else {
-                        source = RMLEngine.class.getResource(triplesMap.getLogicalSource().getIdentifier()).getFile();
+                        source = RMLEngine.class.getResource(triplesMap.getLogicalSource().getSource()).getFile();
                         file = new File(new File(source).getCanonicalPath());
                     }
                     if (!file.exists()) {

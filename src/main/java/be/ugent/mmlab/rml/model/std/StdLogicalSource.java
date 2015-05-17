@@ -1,16 +1,18 @@
 package be.ugent.mmlab.rml.model.std;
 
+import be.ugent.mmlab.rml.input.InputSource;
 import be.ugent.mmlab.rml.model.LogicalSource;
-import be.ugent.mmlab.rml.model.condition.BindCondition;
-import be.ugent.mmlab.rml.model.condition.Condition;
-import be.ugent.mmlab.rml.model.condition.EqualCondition;
-import be.ugent.mmlab.rml.model.condition.ProcessCondition;
-import be.ugent.mmlab.rml.model.condition.SplitCondition;
+import be.ugent.mmlab.rml.condition.model.BindCondition;
+import be.ugent.mmlab.rml.condition.model.Condition;
+import be.ugent.mmlab.rml.condition.model.EqualCondition;
+import be.ugent.mmlab.rml.condition.model.ProcessCondition;
+import be.ugent.mmlab.rml.condition.model.SplitCondition;
 import be.ugent.mmlab.rml.vocabulary.QLVocabulary.QLTerm;
 import java.util.HashSet;
 import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 
 /**
  *  Concrete implementation of a Logical Source
@@ -23,8 +25,10 @@ public class StdLogicalSource implements LogicalSource {
 
     private String iterator;
     private QLTerm referenceFormulation = QLTerm.SQL_CLASS;
-    private String identifier;
     private String splitCondition;
+    
+    private String source;
+    private InputSource inputSource;
     
     private Set<EqualCondition>     equalConditions;
     private Set<ProcessCondition>   processConditions;
@@ -33,12 +37,12 @@ public class StdLogicalSource implements LogicalSource {
 
     public StdLogicalSource(String identifier, QLTerm referenceFormulation) {
         this.referenceFormulation = referenceFormulation;
-        this.identifier = identifier;
+        this.source = identifier;
     }
     
     public StdLogicalSource(String identifier, QLTerm referenceFormulation, String splitCondition) {
         this.referenceFormulation = referenceFormulation;
-        this.identifier = identifier;
+        this.source = identifier;
         this.splitCondition = splitCondition;
     }
 
@@ -48,14 +52,14 @@ public class StdLogicalSource implements LogicalSource {
 
     public StdLogicalSource(String iterator, String identifier, QLTerm referenceFormulation) {
         this.iterator = iterator;
-        this.identifier = identifier;
+        this.source = identifier;
         this.referenceFormulation = referenceFormulation;
     }
     
     public StdLogicalSource(String iterator, String identifier, 
             QLTerm referenceFormulation, String splitCondition) {
         this.iterator = iterator;
-        this.identifier = identifier;
+        this.source = identifier;
         this.referenceFormulation = referenceFormulation;
         this.splitCondition = splitCondition;
     }
@@ -64,7 +68,7 @@ public class StdLogicalSource implements LogicalSource {
             Set<EqualCondition> equalCondition, Set<ProcessCondition> processCondition,
             Set<SplitCondition> splitCondition, Set<BindCondition> bindCondition) {
         this.iterator = iterator;
-        this.identifier = identifier;
+        this.source = identifier;
         this.referenceFormulation = referenceFormulation;
         setEqualConditions(equalCondition);
         setProcessConditions(processCondition);
@@ -83,14 +87,14 @@ public class StdLogicalSource implements LogicalSource {
     }
 
     @Override
-    public String getIdentifier() {
-        return identifier;
+    public String getSource() {
+        return source;
     }
 
     @Override
     public String toString() {
         return "[StdLogicalSource : iterator = " + iterator
-                + "; identifier" + identifier + "; referenceFormulation = " + referenceFormulation 
+                + "; source " + source + "; referenceFormulation = " + referenceFormulation 
                 + "; splitCondition = " + splitCondition + "]";
     }
     

@@ -1,11 +1,10 @@
-package be.ugent.mmlab.rml.extractor.rml;
+package be.ugent.mmlab.rml.extractor;
 
-import be.ugent.mmlab.rml.extractor.condition.BindConditionExtractor;
-import be.ugent.mmlab.rml.extractor.condition.EqualConditionExtractor;
-import be.ugent.mmlab.rml.extractor.condition.ProcessConditionExtractor;
-import be.ugent.mmlab.rml.extractor.condition.SplitConditionExtractor;
-import be.ugent.mmlab.rml.input.extractor.InputExtractor;
-import be.ugent.mmlab.rml.input.extractor.concrete.ApiExtractor;
+import be.ugent.mmlab.rml.condition.extractor.BindConditionExtractor;
+import be.ugent.mmlab.rml.condition.extractor.EqualConditionExtractor;
+import be.ugent.mmlab.rml.condition.extractor.ProcessConditionExtractor;
+import be.ugent.mmlab.rml.condition.extractor.SplitConditionExtractor;
+import be.ugent.mmlab.rml.input.extractor.concrete.ConcreteInputFactory;
 import be.ugent.mmlab.rml.model.GraphMap;
 import be.ugent.mmlab.rml.model.JoinCondition;
 import be.ugent.mmlab.rml.model.LogicalSource;
@@ -24,12 +23,14 @@ import be.ugent.mmlab.rml.model.std.StdSubjectMap;
 import be.ugent.mmlab.rml.model.std.StdTriplesMap;
 import be.ugent.mmlab.rml.model.SubjectMap;
 import be.ugent.mmlab.rml.model.TriplesMap;
-import be.ugent.mmlab.rml.model.condition.BindCondition;
-import be.ugent.mmlab.rml.model.condition.EqualCondition;
-import be.ugent.mmlab.rml.model.condition.ProcessCondition;
-import be.ugent.mmlab.rml.model.condition.SplitCondition;
+import be.ugent.mmlab.rml.condition.model.BindCondition;
+import be.ugent.mmlab.rml.condition.model.EqualCondition;
+import be.ugent.mmlab.rml.condition.model.ProcessCondition;
+import be.ugent.mmlab.rml.condition.model.SplitCondition;
 import be.ugent.mmlab.rml.model.reference.ReferenceIdentifier;
 import be.ugent.mmlab.rml.model.reference.ReferenceIdentifierImpl;
+import be.ugent.mmlab.rml.processor.RMLProcessorFactory;
+import be.ugent.mmlab.rml.processor.concrete.ConcreteRMLProcessorFactory;
 import be.ugent.mmlab.rml.sesame.RMLSesameDataSet;
 import be.ugent.mmlab.rml.vocabulary.HydraVocabulary;
 import be.ugent.mmlab.rml.vocabulary.QLVocabulary;
@@ -292,7 +293,7 @@ public class RMLUnValidatedMappingExtractor implements RMLMappingExtractor{
         //Extracts at least one LogicalSource
         LogicalSource logicalSource =
                 extractLogicalSources(rmlMappingGraph, triplesMapSubject, result);
-        String input = extractInput(rmlMappingGraph,triplesMapSubject);
+        //String input = extractInput(rmlMappingGraph,triplesMapSubject);
         
         result.setLogicalSource(logicalSource);
         // Create a graph maps storage to save all met graph uri during parsing.
@@ -377,7 +378,9 @@ public class RMLUnValidatedMappingExtractor implements RMLMappingExtractor{
                     source = sourceStatement.getObject().stringValue();
                 //object input
                 else{
-                    source = chooseInput(rmlMappingGraph, (Resource) sourceStatement.getObject());
+                    ConcreteInputFactory inputFactory = new ConcreteInputFactory();
+                    source = inputFactory.chooseInput(
+                            rmlMappingGraph, (Resource) sourceStatement.getObject());
                 }
                 
                 if (!iterators.isEmpty()) {
@@ -420,13 +423,13 @@ public class RMLUnValidatedMappingExtractor implements RMLMappingExtractor{
         return logicalSource;
     }
     
-    private String chooseInput(RMLSesameDataSet rmlMappingGraph, Resource resource){
+    /*private String chooseInput(RMLSesameDataSet rmlMappingGraph, Resource resource){
         InputExtractor input ;
         String inputSource = null;
         
         List<Statement> inputStatement = rmlMappingGraph.tuplePattern(
                         (Resource) resource, RDF.TYPE, null);
-        log.error("hydra " + HydraVocabulary.HydraTerm.API_DOCUMENTATION_CLASS);
+        log.error("hydra " + HydraVocabulary.HYDRA_NAMESPACE + HydraVocabulary.HydraTerm.API_DOCUMENTATION_CLASS);
         switch(inputStatement.get(0).getObject().stringValue().toString()){
             case ("http://www.w3.org/ns/hydra/core#APIDocumentation"):
             //case (HydraVocabulary.HYDRA_NAMESPACE + HydraVocabulary.HydraTerm.API_DOCUMENTATION_CLASS):
@@ -443,7 +446,7 @@ public class RMLUnValidatedMappingExtractor implements RMLMappingExtractor{
         
         return inputSource;
         
-    }
+    }*/
     
     protected Resource extractLogicalSource(
             RMLSesameDataSet rmlMappingGraph, Resource triplesMapSubject, TriplesMap triplesMap) {

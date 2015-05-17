@@ -1,6 +1,6 @@
-package be.ugent.mmlab.rml.extractor.condition;
+package be.ugent.mmlab.rml.condition.extractor;
 
-import be.ugent.mmlab.rml.model.condition.Condition;
+import be.ugent.mmlab.rml.condition.model.Condition;
 import be.ugent.mmlab.rml.sesame.RMLSesameDataSet;
 import be.ugent.mmlab.rml.vocabulary.CRMLVocabulary;
 import java.util.ArrayList;

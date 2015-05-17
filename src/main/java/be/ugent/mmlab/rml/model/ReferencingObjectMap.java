@@ -28,10 +28,10 @@
  ****************************************************************************/
 package be.ugent.mmlab.rml.model;
 
-import be.ugent.mmlab.rml.model.condition.BindCondition;
-import be.ugent.mmlab.rml.model.condition.EqualCondition;
-import be.ugent.mmlab.rml.model.condition.ProcessCondition;
-import be.ugent.mmlab.rml.model.condition.SplitCondition;
+import be.ugent.mmlab.rml.condition.model.BindCondition;
+import be.ugent.mmlab.rml.condition.model.EqualCondition;
+import be.ugent.mmlab.rml.condition.model.ProcessCondition;
+import be.ugent.mmlab.rml.condition.model.SplitCondition;
 import java.util.HashSet;
 import java.util.Set;
 import net.antidot.semantic.rdf.rdb2rdf.r2rml.exception.InvalidR2RMLStructureException;

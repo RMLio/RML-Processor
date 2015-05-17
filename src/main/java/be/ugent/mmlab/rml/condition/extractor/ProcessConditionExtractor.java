@@ -1,9 +1,8 @@
-package be.ugent.mmlab.rml.extractor.condition;
+package be.ugent.mmlab.rml.condition.extractor;
 
-import static be.ugent.mmlab.rml.extractor.condition.ConditionExtractor.extractNestedConditions;
-import be.ugent.mmlab.rml.model.condition.Condition;
-import be.ugent.mmlab.rml.model.condition.EqualCondition;
-import be.ugent.mmlab.rml.model.std.StdEqualCondition;
+import be.ugent.mmlab.rml.condition.model.Condition;
+import be.ugent.mmlab.rml.condition.model.ProcessCondition;
+import be.ugent.mmlab.rml.model.std.StdProcessCondition;
 import be.ugent.mmlab.rml.sesame.RMLSesameDataSet;
 import be.ugent.mmlab.rml.vocabulary.CRMLVocabulary;
 import java.util.ArrayList;
@@ -21,47 +20,48 @@ import org.openrdf.model.URI;
  *
  * @author andimou
  */
-public class EqualConditionExtractor extends ConditionExtractor{
+public class ProcessConditionExtractor extends ConditionExtractor {
     
     //Log
-    private static final Logger log = LogManager.getLogger(EqualConditionExtractor.class);
+    private static final Logger log = LogManager.getLogger(ProcessConditionExtractor.class);
     
-    public static Set<EqualCondition> extractEqualCondition(
-            RMLSesameDataSet rmlMappingGraph, Resource object){
+    public static Set<ProcessCondition> extractProcessCondition(
+            RMLSesameDataSet rmlMappingGraph, Resource object ) {
         
-        Set<EqualCondition> result = new HashSet<EqualCondition>();
-        List<String> conditions = new ArrayList<String>(), 
+        Set<ProcessCondition> result = new HashSet<ProcessCondition>();
+        List<String> conditions = new ArrayList<String>(),
                 values = new ArrayList<String>();
         
         log.debug(
                 Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
-                + "Extract equal conditions..");
-        
-        // Extract equal condition
+                + "Extract process conditions..");
+
+        // Extract process condition
         URI p = rmlMappingGraph.URIref(
-                CRMLVocabulary.CRML_NAMESPACE + CRMLVocabulary.cRMLTerm.EQUAL_CONDITION);
+                CRMLVocabulary.CRML_NAMESPACE + CRMLVocabulary.cRMLTerm.PROCESS_CONDITION);
         List<Statement> statements = rmlMappingGraph.tuplePattern(object, p, null);
 
         try {
             for (Statement statement : statements) {
                 conditions = extractCondition(rmlMappingGraph, object, statement);
                 values = extractValue(rmlMappingGraph, object, statement);
+                
+                Set<Condition> nestedConditions = 
+                    extractNestedConditions(rmlMappingGraph, (Resource) statement.getObject());
 
                 for (String condition : conditions) {
-                    Set<Condition> nestedConditions = 
-                    extractNestedConditions(rmlMappingGraph, (Resource) statement.getObject());
-                    
                     for (String value : values) {
                         if (value == null || condition == null) {
                             log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
                                     + object.stringValue()
                                     + " must have exactly two properties condition and value. ");
                         }
+
                         try {
-                            result.add(new StdEqualCondition(condition, value, nestedConditions));
+                            result.add(new StdProcessCondition(condition, value, nestedConditions));
                         } catch (Exception ex) {
                             java.util.logging.Logger.getLogger(
-                                    EqualConditionExtractor.class.getName()).log(Level.SEVERE, null, ex);
+                                    ProcessConditionExtractor.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
                 }
@@ -70,8 +70,8 @@ public class EqualConditionExtractor extends ConditionExtractor{
             log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
                     + "A resource was expected in object of predicateMap of "
                     + object.stringValue());
-        } 
-        log.debug("Extract equal condition done.");
+        }
+        log.debug("Extracting process condition done.");
         return result;
     }
     

@@ -1,4 +1,4 @@
-package be.ugent.mmlab.rml.model.condition;
+package be.ugent.mmlab.rml.condition.model;
 
 import java.util.Set;
 

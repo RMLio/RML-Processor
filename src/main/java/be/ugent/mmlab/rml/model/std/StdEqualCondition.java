@@ -1,7 +1,7 @@
 package be.ugent.mmlab.rml.model.std;
 
-import be.ugent.mmlab.rml.model.condition.Condition;
-import be.ugent.mmlab.rml.model.condition.EqualCondition;
+import be.ugent.mmlab.rml.condition.model.Condition;
+import be.ugent.mmlab.rml.condition.model.EqualCondition;
 import java.util.Set;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
