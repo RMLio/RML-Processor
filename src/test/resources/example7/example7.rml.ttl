@@ -14,7 +14,7 @@
 
 <#AirportMapping>
     rml:logicalSource [
-	rml:source "/example3/Airport.csv";
+	rml:source "src/test/resources/example3/Airport.csv";
         rml:referenceFormulation ql:CSV
     ];
     rr:subjectMap [

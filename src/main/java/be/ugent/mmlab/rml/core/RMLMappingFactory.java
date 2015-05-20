@@ -26,15 +26,10 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
-import net.antidot.semantic.rdf.rdb2rdf.r2rml.exception.InvalidR2RMLStructureException;
-import net.antidot.semantic.rdf.rdb2rdf.r2rml.exception.InvalidR2RMLSyntaxException;
-import net.antidot.semantic.rdf.rdb2rdf.r2rml.exception.R2RMLDataError;
 import org.apache.log4j.LogManager;
 import org.openrdf.model.Resource;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
-import org.openrdf.model.ValueFactory;
-import org.openrdf.model.impl.ValueFactoryImpl;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.rio.RDFFormat;
 import org.openrdf.rio.RDFParseException;
@@ -43,8 +38,6 @@ public class RMLMappingFactory {
 
     // Log
     private static final org.apache.log4j.Logger log = LogManager.getLogger(RMLMappingFactory.class);
-    // Value factory
-    private static ValueFactory vf = new ValueFactoryImpl();
     
     private RMLMappingExtractor extractor;
     
@@ -64,9 +57,6 @@ public class RMLMappingFactory {
      *
      * @param fileToRMLFile
      * @return
-     * @throws InvalidR2RMLSyntaxException
-     * @throws InvalidR2RMLStructureException
-     * @throws R2RMLDataError
      * @throws IOException
      * @throws RDFParseException
      * @throws RepositoryException
@@ -75,8 +65,9 @@ public class RMLMappingFactory {
             throws RepositoryException, RDFParseException, IOException, Exception {
         // Load RDF data from R2RML Mapping document
         RMLSesameDataSet rmlMappingGraph ;
-        RMLDocExtractor inputExtractor = new RMLDocExtractor() ;
-        rmlMappingGraph = inputExtractor.getMappingDoc(fileToRMLFile, RDFFormat.TURTLE);
+        
+        RMLDocExtractor mapDocExtractor = new RMLDocExtractor() ;
+        rmlMappingGraph = mapDocExtractor.getMappingDoc(fileToRMLFile, RDFFormat.TURTLE);
 
         log.debug(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
                 + "Number of RML triples in file "
@@ -88,7 +79,7 @@ public class RMLMappingFactory {
                
         // Construct RML Mapping object
         Map<Resource, TriplesMap> triplesMapResources = extractor.extractTriplesMapResources(rmlMappingGraph);
-
+               
         log.debug(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
                 + "Number of RML triples with "
                 + " type "
@@ -119,8 +110,8 @@ public class RMLMappingFactory {
             List<Statement> otherStatements = rmlMappingGraph.tuplePattern(
                     s.getSubject(), p, null);
             if (otherStatements.isEmpty()) {
-                throw new Exception(
-                        "[RMLMappingFactory:launchPreChecks] You have a triples map without subject map : "
+                log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
+                        + "You have a triples map without subject map : "
                         + s.getSubject().stringValue() + ".");
             }
         }
@@ -158,8 +149,7 @@ public class RMLMappingFactory {
      * @throws InvalidR2RMLStructureException
      */
     private static String extractLiteralFromTermMap(
-            SesameDataSet rmlMappingGraph, Resource termType, Enum term)
-            throws InvalidR2RMLStructureException {
+            SesameDataSet rmlMappingGraph, Resource termType, Enum term) {
 
         URI p = getTermURI(rmlMappingGraph, term);
 
@@ -169,7 +159,7 @@ public class RMLMappingFactory {
             return null;
         }
         if (statements.size() > 1) {
-            throw new InvalidR2RMLStructureException(
+            log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": " + 
                     "[RMLMappingFactory:extractValueFromTermMap] " + termType
                     + " has too many " + term + " predicate defined.");
         }
@@ -183,14 +173,14 @@ public class RMLMappingFactory {
     }
 
     
-    private static URI getTermURI(SesameDataSet rmlMappingGraph, Enum term) throws InvalidR2RMLStructureException {
+    private static URI getTermURI(SesameDataSet rmlMappingGraph, Enum term) {
         String namespace = R2RMLVocabulary.R2RML_NAMESPACE;
 
         if (term instanceof RMLVocabulary.RMLTerm) {
             namespace = RMLVocabulary.RML_NAMESPACE;
         } else if (!(term instanceof R2RMLTerm)) {
-            throw new InvalidR2RMLStructureException(
-                    "[RMLMappingFactory:extractValueFromTermMap] " + term + " is not valid.");
+            log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": " +
+                    term + " is not valid.");
         }
 
         return rmlMappingGraph

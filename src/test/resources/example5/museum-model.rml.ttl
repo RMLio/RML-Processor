@@ -9,7 +9,7 @@
 
  <#SitterMapping>
   rml:logicalSource [
-    rml:source "museum.json";
+    rml:source "src/test/resources/example5/museum.json";
     rml:referenceFormulation ql:JSONPath;
     rml:iterator "$.Sitter";
   ];
@@ -29,7 +29,7 @@
 
 <#ProductionMapping>
   rml:logicalSource [
-    rml:source "/example5/museum.json";
+    rml:source "src/test/resources/example5/museum.json";
     rml:referenceFormulation ql:JSONPath;
     rml:iterator "$.[*]";
   ];
@@ -66,7 +66,7 @@
 
 <#ArtworkMapping>
   rml:logicalSource [
-    rml:source "/example5/museum.json";
+    rml:source "src/test/resources/example5/museum.json";
     rml:referenceFormulation ql:JSONPath;
     rml:iterator "$.[*]";
   ];
@@ -139,7 +139,7 @@
 
 <#MoonWalkersMapping>
   rml:logicalSource [
-    rml:source "/example5/museum.json";
+    rml:source "src/test/resources/example5/museum.json";
     rml:referenceFormulation ql:JSONPath;
     rml:iterator "$.[*].Sitter[*]";
   ];
@@ -161,7 +161,7 @@
 
 <#WikipediaExportMapping>
   rml:logicalSource [
-    rml:source "/example5/moon-walkers.csv";
+    rml:source "src/test/resources/example5/moon-walkers.csv";
     rml:referenceFormulation ql:CSV;
   ];
   rr:subjectMap [

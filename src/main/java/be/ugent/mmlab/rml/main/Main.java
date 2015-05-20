@@ -27,10 +27,12 @@ public class Main {
     public static void main(String[] args) {
         // Log
         org.apache.log4j.Logger log = LogManager.getLogger(Main.class);
-        String map_doc = null, parameter = null, triplesMap = null;
+        String map_doc = null, parameter = null, triplesMap ;
         String[] exeTriplesMap = null;
         BasicConfigurator.configure();
         CommandLine commandLine;
+        RMLMappingFactory mappingFactory = new RMLMappingFactory();
+        RMLEngine engine = new RMLEngine();
         
         try {
             commandLine = RMLConfiguration.parseArguments(args);
@@ -43,15 +45,15 @@ public class Main {
             if (commandLine.hasOption("f")) {
                 outputFile = commandLine.getOptionValue("f", null);
             }
-            if (commandLine.hasOption("o")) {
-                outputFormat = commandLine.getOptionValue("o", null);
-            }
             if (commandLine.hasOption("g")) {
                 graphName = commandLine.getOptionValue("g", "");
             }
             if (commandLine.hasOption("m")) {
                 map_doc = commandLine.getOptionValue("m", null);
             }
+            
+            RMLMapping mapping = mappingFactory.extractRMLMapping(map_doc);
+            
             if (commandLine.hasOption("p")) {
                 parameter = commandLine.getOptionValue("p", null);
             }
@@ -60,14 +62,11 @@ public class Main {
                 if(triplesMap != null)
                     exeTriplesMap = RMLConfiguration.processTriplesMap(triplesMap,map_doc);
             }
+            if (commandLine.hasOption("o")) {
+                outputFormat = commandLine.getOptionValue("o", null);
+            }
             
-            RMLMappingFactory mappingFactory = new RMLMappingFactory();
-
-            RMLMapping mapping = mappingFactory.extractRMLMapping(map_doc);
-            
-            RMLEngine engine = new RMLEngine();
-
-            engine.runRMLMapping(mapping, graphName, outputFile, outputFormat, parameter, exeTriplesMap, true);        
+            engine.runRMLMapping(mapping, graphName, outputFile, outputFormat, parameter, exeTriplesMap);        
             
             System.out.println("--------------------------------------------------------------------------------");
             System.out.println("RML Processor");

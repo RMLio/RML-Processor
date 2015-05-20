@@ -9,7 +9,7 @@
 
 <#Author>
     rml:logicalSource [ 
-	rml:source "/example19/example19.xml";
+	rml:source "src/test/resources/example19/example19.xml";
         rml:referenceFormulation ql:XPath;
 	rml:iterator "/papers/paper/authors";
         crml:processCondition [

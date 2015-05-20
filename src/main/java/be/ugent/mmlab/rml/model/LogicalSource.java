@@ -5,6 +5,7 @@ import be.ugent.mmlab.rml.condition.model.Condition;
 import be.ugent.mmlab.rml.condition.model.EqualCondition;
 import be.ugent.mmlab.rml.condition.model.ProcessCondition;
 import be.ugent.mmlab.rml.condition.model.SplitCondition;
+import be.ugent.mmlab.rml.input.model.InputSource;
 import be.ugent.mmlab.rml.vocabulary.QLVocabulary;
 import java.util.Set;
 
@@ -25,6 +26,7 @@ public interface LogicalSource {
      * pointing at a source.
      */
     public String getSource();
+    public InputSource getInputSource();
 
     /**
      * Every logical source can indicate how its expression should be

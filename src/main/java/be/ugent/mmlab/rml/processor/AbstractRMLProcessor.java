@@ -3,7 +3,6 @@ package be.ugent.mmlab.rml.processor;
 import be.ugent.mmlab.rml.core.BindRMLPerformer;
 import be.ugent.mmlab.rml.core.ConditionalJoinRMLPerformer;
 import be.ugent.mmlab.rml.core.JoinRMLPerformer;
-import be.ugent.mmlab.rml.core.RMLEngine;
 import be.ugent.mmlab.rml.core.RMLPerformer;
 import be.ugent.mmlab.rml.core.SimpleReferencePerformer;
 import be.ugent.mmlab.rml.model.GraphMap;
@@ -23,11 +22,11 @@ import be.ugent.mmlab.rml.condition.model.BindCondition;
 import be.ugent.mmlab.rml.model.reference.ReferenceIdentifierImpl;
 import be.ugent.mmlab.rml.processor.concrete.ConcreteRMLProcessorFactory;
 import be.ugent.mmlab.rml.condition.processor.ConditionProcessor;
+import be.ugent.mmlab.rml.input.processor.AbstractInputProcessor;
+import be.ugent.mmlab.rml.input.processor.InputProcessor;
 import be.ugent.mmlab.rml.vocabulary.QLVocabulary.QLTerm;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -261,7 +260,6 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                 return values;
         }
 
-        //return value;
     }
     
     @Override
@@ -429,36 +427,32 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
             if(bindConditions != null & bindConditions.size() > 0 )
                 template = processBindConditions(node, parentTriplesMap, bindConditions);
             else 
-                template = parentTriplesMap.getLogicalSource().getSource();
-            
+                template = parentTriplesMap.getLogicalSource().getInputSource().getSource();
+
             //Create the processor based on the parent triples map to perform the join
             RMLProcessorFactory factory = new ConcreteRMLProcessorFactory();
             QLTerm referenceFormulation = parentTriplesMap.getLogicalSource().getReferenceFormulation();
-            //String source = parentTriplesMap.getLogicalSource().getIdentifier();
 
-            InputStream input = null;
-            try {
-                input = RMLEngine.getInputStream(template, parentTriplesMap);
-            } catch (MalformedURLException ex) {
-                Logger.getLogger(AbstractRMLProcessor.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
-                Logger.getLogger(AbstractRMLProcessor.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            InputProcessor inputProcessor = new AbstractInputProcessor();
+            InputStream input = inputProcessor.getInputStream(parentTriplesMap, template);
+            
             RMLProcessor processor = factory.create(referenceFormulation);
-
             RMLPerformer performer = null;
+            
             //different Logical Source and no Conditions
             if(bindConditions != null & bindConditions.size() > 0 ){
                 performer = new BindRMLPerformer(processor, subject, predicate);
                 processor.execute(dataset, parentTriplesMap, performer, input);
             }
             else if (joinConditions.isEmpty()
-                    & !parentTriplesMap.getLogicalSource().getSource().equals(map.getLogicalSource().getSource())) {
+                    & !parentTriplesMap.getLogicalSource().getInputSource().getSource().equals(
+                    map.getLogicalSource().getInputSource().getSource())) {
                 performer = new JoinRMLPerformer(processor, subject, predicate);
                 processor.execute(dataset, parentTriplesMap, performer, input);
             } //same Logical Source and no Conditions
             else if (joinConditions.isEmpty()
-                    & parentTriplesMap.getLogicalSource().getSource().equals(map.getLogicalSource().getSource())) {
+                    & parentTriplesMap.getLogicalSource().getInputSource().getSource().equals(
+                    map.getLogicalSource().getInputSource().getSource())) {
                 performer = new SimpleReferencePerformer(processor, subject, predicate);
                 if ((parentTriplesMap.getLogicalSource().getReferenceFormulation().toString().equals("CSV"))
                         || (parentTriplesMap.getLogicalSource().getReference().equals(map.getLogicalSource().getReference()))) {
@@ -467,6 +461,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                     int end = map.getLogicalSource().getReference().length();
                     //log.info("RML:AbstractRMLProcessor " + parentTriplesMap.getLogicalSource().getReference().toString());
                     String expression = "";
+                    //TODO:merge it with the performer's switch-case
                     switch (parentTriplesMap.getLogicalSource().getReferenceFormulation().toString()) {
                         case "XPath":
                             expression = parentTriplesMap.getLogicalSource().getReference().toString().substring(end);
@@ -515,8 +510,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
         
         for (BindCondition bindCondition : bindConditions) {
             List<String> bindReferenceValues = extractValueFromNode(node, bindCondition.getReference());
-            
-            String template = parentTriplesMap.getLogicalSource().getSource();
+            String template = parentTriplesMap.getLogicalSource().getInputSource().getSource();
             String termType = TermType.IRI.toString();
             QLTerm referenceFormulation = parentTriplesMap.getLogicalSource().getReferenceFormulation();
             finalTemplate = processTemplate(bindCondition.getValue(), template, termType,

@@ -15,7 +15,7 @@
 <#Results1Mapping>
   rml:logicalSource 
   [
-    rml:sourceName "/example10/amazon.html" ;
+    rml:sourceName "src/test/resources/example10/amazon.html" ;
     rml:iterator "div.fstRowGrid.prod.celwidget";
     rml:queryLanguage ql:CSS3 ;
   ];
@@ -47,7 +47,7 @@
 <#Results2Mapping>
   rml:logicalSource 
   [
-    rml:sourceName "/example10/amazon.html" ;
+    rml:sourceName "src/test/resources/example10/amazon.html" ;
     rml:iterator "div.rsltGrid.prod.celwidget";
     rml:queryLanguage ql:CSS3 ;
   ];

@@ -1,6 +1,6 @@
 package be.ugent.mmlab.rml.model.std;
 
-import be.ugent.mmlab.rml.input.InputSource;
+import be.ugent.mmlab.rml.input.model.InputSource;
 import be.ugent.mmlab.rml.model.LogicalSource;
 import be.ugent.mmlab.rml.condition.model.BindCondition;
 import be.ugent.mmlab.rml.condition.model.Condition;
@@ -20,29 +20,27 @@ import org.apache.commons.logging.LogFactory;
  * @author mielvandersande, andimou
  */
 public class StdLogicalSource implements LogicalSource {
-    
-    private static Log log = LogFactory.getLog(StdLogicalSource.class);
 
+    private static Log log = LogFactory.getLog(StdLogicalSource.class);
+    
     private String iterator;
     private QLTerm referenceFormulation = QLTerm.SQL_CLASS;
     private String splitCondition;
-    
     private String source;
     private InputSource inputSource;
-    
-    private Set<EqualCondition>     equalConditions;
-    private Set<ProcessCondition>   processConditions;
-    private Set<SplitCondition>     splitConditions;
-    private Set<BindCondition>      bindConditions;
+    private Set<EqualCondition> equalConditions;
+    private Set<ProcessCondition> processConditions;
+    private Set<SplitCondition> splitConditions;
+    private Set<BindCondition> bindConditions;
 
-    public StdLogicalSource(String identifier, QLTerm referenceFormulation) {
+    public StdLogicalSource(InputSource inputSource, QLTerm referenceFormulation) {
         this.referenceFormulation = referenceFormulation;
-        this.source = identifier;
+        this.inputSource = inputSource;
     }
-    
-    public StdLogicalSource(String identifier, QLTerm referenceFormulation, String splitCondition) {
+
+    public StdLogicalSource(String source, QLTerm referenceFormulation, String splitCondition) {
         this.referenceFormulation = referenceFormulation;
-        this.source = identifier;
+        this.source = source;
         this.splitCondition = splitCondition;
     }
 
@@ -50,32 +48,32 @@ public class StdLogicalSource implements LogicalSource {
         this.iterator = reference;
     }
 
-    public StdLogicalSource(String iterator, String identifier, QLTerm referenceFormulation) {
+    public StdLogicalSource(String iterator, InputSource inputSource, QLTerm referenceFormulation) {
         this.iterator = iterator;
-        this.source = identifier;
+        this.inputSource = inputSource;
         this.referenceFormulation = referenceFormulation;
     }
-    
-    public StdLogicalSource(String iterator, String identifier, 
+
+    public StdLogicalSource(String iterator, InputSource inputSource,
             QLTerm referenceFormulation, String splitCondition) {
         this.iterator = iterator;
-        this.source = identifier;
+        this.inputSource = inputSource;
         this.referenceFormulation = referenceFormulation;
         this.splitCondition = splitCondition;
     }
-    
-    public StdLogicalSource(String iterator, String identifier, QLTerm referenceFormulation,
+
+    public StdLogicalSource(String iterator, InputSource inputSource, QLTerm referenceFormulation,
             Set<EqualCondition> equalCondition, Set<ProcessCondition> processCondition,
             Set<SplitCondition> splitCondition, Set<BindCondition> bindCondition) {
         this.iterator = iterator;
-        this.source = identifier;
+        this.inputSource = inputSource;
         this.referenceFormulation = referenceFormulation;
         setEqualConditions(equalCondition);
         setProcessConditions(processCondition);
         setSplitConditions(splitCondition);
         setBindConditions(bindCondition);
     }
-    
+
     @Override
     public String getReference() {
         return iterator;
@@ -90,38 +88,42 @@ public class StdLogicalSource implements LogicalSource {
     public String getSource() {
         return source;
     }
+    
+    public InputSource getInputSource() {
+        return inputSource;
+    }
 
     @Override
     public String toString() {
         return "[StdLogicalSource : iterator = " + iterator
-                + "; source " + source + "; referenceFormulation = " + referenceFormulation 
+                + "; source " + source + "; referenceFormulation = " + referenceFormulation
                 + "; splitCondition = " + splitCondition + "]";
     }
-    
+
     @Override
     public String getSplitCondition() {
         return splitCondition;
     }
-    
+
     private void setEqualConditions(Set<EqualCondition> equalConditions) {
-            this.equalConditions = new HashSet<EqualCondition>();
-            this.equalConditions.addAll(equalConditions);
-        }
+        this.equalConditions = new HashSet<EqualCondition>();
+        this.equalConditions.addAll(equalConditions);
+    }
 
-        private void setProcessConditions(Set<ProcessCondition> processConditions) {
-            this.processConditions = new HashSet<ProcessCondition>();
-            this.processConditions.addAll(processConditions);
-        }
+    private void setProcessConditions(Set<ProcessCondition> processConditions) {
+        this.processConditions = new HashSet<ProcessCondition>();
+        this.processConditions.addAll(processConditions);
+    }
 
-        private void setSplitConditions(Set<SplitCondition> splitConditions) {
-            this.splitConditions = new HashSet<SplitCondition>();
-            this.splitConditions.addAll(splitConditions);
-        }
-        
-        private void setBindConditions(Set<BindCondition> bindConditions) {
-            this.bindConditions = new HashSet<BindCondition>();
-            this.bindConditions.addAll(bindConditions);
-        }
+    private void setSplitConditions(Set<SplitCondition> splitConditions) {
+        this.splitConditions = new HashSet<SplitCondition>();
+        this.splitConditions.addAll(splitConditions);
+    }
+
+    private void setBindConditions(Set<BindCondition> bindConditions) {
+        this.bindConditions = new HashSet<BindCondition>();
+        this.bindConditions.addAll(bindConditions);
+    }
 
     /**
      *
@@ -158,7 +160,7 @@ public class StdLogicalSource implements LogicalSource {
     public Set<BindCondition> getBindConditions() {
         return this.bindConditions;
     }
-    
+
     @Override
     public Set<Condition> getConditions() {
         Set<Condition> conditions = new HashSet<Condition>();

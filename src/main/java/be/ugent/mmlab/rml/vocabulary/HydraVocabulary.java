@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package be.ugent.mmlab.rml.vocabulary;
 
 import org.apache.log4j.LogManager;
@@ -21,7 +17,7 @@ public class HydraVocabulary {
         // RML CLASSES
         API_DOCUMENTATION_CLASS("APIDocumentation"),
         // RPROPERTIES
-        REFERENCE_FORMULATION("template");
+        TEMPLATE("template");
         
         private String displayName;
 

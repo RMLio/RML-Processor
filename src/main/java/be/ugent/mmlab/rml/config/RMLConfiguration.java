@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package be.ugent.mmlab.rml.config;
 
 import static be.ugent.mmlab.rml.config.RMLConfiguration.getCliOptions;

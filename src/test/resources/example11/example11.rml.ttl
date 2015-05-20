@@ -10,7 +10,7 @@
        
 <#DateTime>
     rml:logicalSource [ 
-	rml:source "/example11/example11.xml";
+	rml:source "src/test/resources/example11/example11.xml";
 	rml:iterator "/notes/note";
 	rml:referenceFormulation ql:XPath;
 	];

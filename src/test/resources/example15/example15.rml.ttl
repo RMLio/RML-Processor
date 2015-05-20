@@ -9,7 +9,7 @@
 
 <#PaperAuthor>
     rml:logicalSource [ 
-	rml:source "/example15/example15.xml";
+	rml:source "src/test/resources/example15/example15.xml";
         rml:referenceFormulation ql:XPath;
 	rml:iterator "/papers/paper";
     ];

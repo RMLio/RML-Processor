@@ -17,7 +17,7 @@
 
 <#cultureel-per-gemeente>
     rml:logicalSource [
-        rml:source "/example13/bevolking-naar-socio-economische-positie-2011-1-csv.csv";
+        rml:source "src/test/resources/example13/bevolking-naar-socio-economische-positie-2011-1-csv.csv";
         rml:referenceFormulation ql:CSV
     ];
     rr:subjectMap [
@@ -36,7 +36,7 @@
 
 <#demography-gemeentes>
     rml:logicalSource [
-        rml:source "/example13/1_Bevolking_en_bevolkingsdichtheid_gemeente-1-xls.csv";
+        rml:source "src/test/resources/example13/1_Bevolking_en_bevolkingsdichtheid_gemeente-1-xls.csv";
         rml:referenceFormulation ql:CSV
     ];
     rr:subjectMap [

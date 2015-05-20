@@ -1,6 +1,8 @@
 package be.ugent.mmlab.rml.core;
 
 import be.ugent.mmlab.rml.dataset.FileSesameDataset;
+import be.ugent.mmlab.rml.input.processor.AbstractInputProcessor;
+import be.ugent.mmlab.rml.input.processor.InputProcessor;
 import be.ugent.mmlab.rml.model.LogicalSource;
 import be.ugent.mmlab.rml.model.PredicateObjectMap;
 import be.ugent.mmlab.rml.model.RMLMapping;
@@ -10,21 +12,13 @@ import be.ugent.mmlab.rml.processor.RMLProcessor;
 import be.ugent.mmlab.rml.processor.RMLProcessorFactory;
 import be.ugent.mmlab.rml.processor.concrete.ConcreteRMLProcessorFactory;
 import be.ugent.mmlab.rml.sesame.RMLSesameDataSet;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.ProtocolException;
-import java.net.URL;
 import java.sql.SQLException;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
-import net.antidot.semantic.rdf.rdb2rdf.r2rml.exception.R2RMLDataError;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openrdf.repository.RepositoryException;
@@ -66,7 +60,7 @@ public class RMLEngine {
      */
     public SesameDataSet runRMLMapping(RMLMapping rmlMapping, String baseIRI, String[] triplesMap) 
             throws SQLException, UnsupportedEncodingException, IOException {
-        return runRMLMapping(rmlMapping, baseIRI, null, "ntriples", null, triplesMap, false);
+        return runRMLMapping(rmlMapping, baseIRI, null, "ntriples", null, triplesMap);
     }
 
     /**
@@ -82,26 +76,31 @@ public class RMLEngine {
      */
     public SesameDataSet runRMLMapping(RMLMapping rmlMapping,
             String baseIRI, String pathToNativeStore, String outputFormat, 
-            String parameter, String[] exeTriplesMap, boolean filebased) 
-            throws SQLException, UnsupportedEncodingException, IOException {
+            String parameter, String[] exeTriplesMap) 
+            throws SQLException, UnsupportedEncodingException {
         long startTime = System.nanoTime();
 
         log.debug(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
                 + "[RMLEngine:runRMLMapping] Run RML mapping... ");
         if (rmlMapping == null) 
-            throw new IllegalArgumentException(
-                    "[RMLEngine:runRMLMapping] No RML Mapping object found.");
+            log.info(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
+                    + "No RML Mapping object found.");
         if (baseIRI == null) 
-            throw new IllegalArgumentException(
-                    "[RMLEngine:runRMLMapping] No base IRI found.");
+            log.info(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
+                    + "[RMLEngine:runRMLMapping] No base IRI found.");
 
-        SesameDataSet sesameDataSet = chooseSesameDataSet(pathToNativeStore, outputFormat, filebased);
+        SesameDataSet sesameDataSet = chooseSesameDataSet(pathToNativeStore, outputFormat);
         // Update baseIRI
         this.baseIRI = baseIRI;
-        
-        // Explore RML Mapping TriplesMap objects  
- 
-        generateRDFTriples(sesameDataSet, rmlMapping, exeTriplesMap, filebased);
+        try {
+            // Explore RML Mapping TriplesMap objects  
+            if(pathToNativeStore != null)
+                generateRDFTriples(sesameDataSet, rmlMapping, exeTriplesMap, true);
+            else
+                generateRDFTriples(sesameDataSet, rmlMapping, exeTriplesMap, false);
+        } catch (ProtocolException ex) {
+            log.info(Thread.currentThread().getStackTrace()[1].getMethodName() + ": " + ex);
+        }
                
         //TODO:add metadata this Triples Map started then, finished then and lasted that much
 	long endTime = System.nanoTime();
@@ -115,18 +114,13 @@ public class RMLEngine {
     }
     
     private SesameDataSet chooseSesameDataSet(
-            String pathToNativeStore, String outputFormat, boolean filebased){
+            String pathToNativeStore, String outputFormat){
         SesameDataSet sesameDataSet;
-        if (filebased) {
+        if (pathToNativeStore != null) {
             log.debug(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
                     + "Use direct file "
                     + pathToNativeStore);
             sesameDataSet = new FileSesameDataset(pathToNativeStore, outputFormat);
-        } else if (pathToNativeStore != null) { // Check if use of native store is required
-            log.debug(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
-                    + "Use native store "
-                    + pathToNativeStore);
-            sesameDataSet = new SesameDataSet(pathToNativeStore, false);
         } else {
             log.debug(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
                     + "Use default store (memory) ");
@@ -161,7 +155,7 @@ public class RMLEngine {
      */
     private void generateRDFTriples(SesameDataSet sesameDataSet, 
             RMLMapping rmlMapping, String[] exeTriplesMap, boolean filebased) 
-            throws SQLException, UnsupportedEncodingException, ProtocolException, IOException {
+            throws SQLException, UnsupportedEncodingException, ProtocolException {
 
         log.debug(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
                 + "Generate RDF triples... ");
@@ -169,6 +163,7 @@ public class RMLEngine {
         
         RMLProcessorFactory factory = new ConcreteRMLProcessorFactory();
         
+        //TODO:put it in a separate function
         outerloop:
         for (TriplesMap triplesMap : rmlMapping.getTriplesMaps()) {
             if(exeTriplesMap != null){
@@ -177,8 +172,6 @@ public class RMLEngine {
                     if(triplesMap.getName().toString().equals(exeTM.toString())){
                         flag = true;
                     }
-                    //if (check_ReferencingObjectMap(rmlMapping, triplesMap, exeTriplesMap))
-                        //continue;
                 }
                 if(!flag)
                     continue;
@@ -191,33 +184,14 @@ public class RMLEngine {
             try {
                 processor = factory.create(triplesMap.getLogicalSource().getReferenceFormulation());
             } catch (Exception ex) {
-                log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
+                log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": " + ex 
                         + "There is no suitable processor for this reference formulation");
             }
             
-            String source = triplesMap.getLogicalSource().getSource();
+            String source = triplesMap.getLogicalSource().getInputSource().getSource();
+            InputProcessor inputProcessor = new AbstractInputProcessor();
+            InputStream input = inputProcessor.getInputStream(triplesMap, source);
             
-            /*InputExtractor inputExtractor = null;
-            if (isLocalFile(source)) {
-                inputExtractor = new LocalFileExtractor();
-            } else if (!isLocalFile(source)) {
-                inputExtractor = new ApiExtractor();
-            } else {
-                log.info("Input stream was not identified.");
-            }
-            
-            String[] splitParameter = null;
-            if (parameter != null) {
-                splitParameter = parameter.split("=");
-            }
-            Set<String> variables = inputExtractor.extractStringTemplate(source);
-            if (!variables.isEmpty()) {
-                source = source.replaceAll("\\{" + variables.iterator().next() + "\\}", splitParameter[1]);
-            }
-            InputStream input = inputExtractor.getInputStream(source, triplesMap);*/
-            //InputStream input = processInputExtractor(triplesMap, parameter);
-
-            InputStream input = getInputStream(source,triplesMap);
             try {
                 processor.execute(sesameDataSet, triplesMap, new NodeRMLPerformer(processor), input);
             } catch (Exception ex) {
@@ -235,6 +209,7 @@ public class RMLEngine {
             try {
                 input.close();
             } catch (IOException ex) {
+                log.error(ex);
                 log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
                         + "Input file could not be closed.");
             }
@@ -247,89 +222,4 @@ public class RMLEngine {
                         + "Cannot close output repository", ex);
             }
     }
-    
-    public static boolean isLocalFile(String source) {
-        try {
-            new URL(source);
-            return false;
-        } catch (MalformedURLException e) {
-            return true;
-        }
-    }
-    
-    public void getInputExtractor (String source, TriplesMap triplesMap) throws IOException{
-        
-    }
-    
-    public static InputStream getInputStream (String source, TriplesMap triplesMap) throws IOException{
-        InputStream input = null;
-            if(!isLocalFile(source))
-                try {
-                    HttpURLConnection con = (HttpURLConnection) new URL(source).openConnection();
-                    con.setRequestMethod("HEAD");
-                    if (con.getResponseCode() == HttpURLConnection.HTTP_OK) 
-                        input = new URL(source).openStream();
-                } catch (MalformedURLException ex) {
-                    Logger.getLogger(RMLEngine.class.getName()).log(Level.SEVERE, null, ex);
-                } 
-            else if(isLocalFile(source))
-                try {
-                    //File file  = new File(new File(source).getCanonicalPath());
-                    File file  = new File(new File(source).getAbsolutePath());
-                    
-                    if(!file.exists()){
-                        if(RMLEngine.class.getResource(triplesMap.getLogicalSource().getSource()) == null){
-                            source = triplesMap.getLogicalSource().getSource();
-                            file  = new File(new File(source).getAbsolutePath());
-                        }
-                        else{
-                            source = RMLEngine.class.getResource(triplesMap.getLogicalSource().getSource()).getFile();
-                            file  = new File(new File(source).getCanonicalPath());
-                        }
-                        if(!file.exists())
-                            log.error(
-                                    Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
-                                    + "Input file not found. " );
-                    }
-                    input = new FileInputStream(file);
-                } catch (IOException ex) {
-                    Logger.getLogger(RMLEngine.class.getName()).log(Level.SEVERE, null, ex);
-                } 
-            else {
-                log.info(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
-                        + "Input stream was not possible.");
-                return null;
-            }
-            return input;
-    }
-    
-    /*public static InputStream processInputExtractor(TriplesMap triplesMap, String parameter) {
-        String source = triplesMap.getLogicalSource().getIdentifier();
-
-        InputExtractor inputExtractor = null;
-        if (isLocalFile(source)) {
-            inputExtractor = new LocalFileExtractor();
-        } else if (!isLocalFile(source)) {
-            inputExtractor = new ApiExtractor();
-        } else {
-            log.info("Input stream was not identified.");
-        }
-log.error("parameter " + parameter);
-        String[] splitParameter = null;
-        if (parameter != null && parameter.contains("=")) {
-            splitParameter = parameter.split("=");
-        }
-        log.error("split parameter " + splitParameter);
-        Set<String> variables = inputExtractor.extractStringTemplate(source);
-        log.error("variables " + variables);
-        if (!variables.isEmpty()) {
-            source = source.replaceAll("\\{" + variables.iterator().next() + "\\}", splitParameter[1]);
-        }
-        else
-            source = source.replaceAll("\\{" + variables.iterator().next() + "\\}", parameter);
-        log.error("source " + source);
-        InputStream input = inputExtractor.getInputStream(source, triplesMap);
-        log.error("input " + input);
-        return input;
-    }*/
 }

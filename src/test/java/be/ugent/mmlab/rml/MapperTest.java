@@ -158,8 +158,8 @@ public class MapperTest
         URL fileToRMLFile = getClass().getResource("/example18/example18.rml.ttl");
         URL fileToOutputFile = getClass().getResource("/example18/example18.output.ttl");
         String[] triplesMap = {"http://example.com/base#Paper"} ;
-        //assertTrue(desiredOutput(fileToOutputFile).isEqualTo(assertMap(fileToRMLFile, triplesMap)));
-        assertTrue(desiredOutput(fileToOutputFile).isEqualTo(assertMap(fileToRMLFile, null)));
+        assertTrue(desiredOutput(fileToOutputFile).isEqualTo(assertMap(fileToRMLFile, triplesMap)));
+        //assertTrue(desiredOutput(fileToOutputFile).isEqualTo(assertMap(fileToRMLFile, null)));
     }
     
     public void testExample19() {

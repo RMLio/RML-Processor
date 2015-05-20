@@ -31,10 +31,14 @@ import be.ugent.mmlab.rml.model.SubjectMap;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import java.util.HashSet;
 import java.util.Set;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 
-import net.antidot.semantic.rdf.rdb2rdf.r2rml.exception.InvalidR2RMLStructureException;
 
 public final class StdTriplesMap implements TriplesMap {
+    
+    // Log
+    private static final Logger log = LogManager.getLogger(StdTriplesMap.class);
 
 	private Set<PredicateObjectMap> predicateObjectMaps;
 	private SubjectMap subjectMap;
@@ -47,39 +51,42 @@ public final class StdTriplesMap implements TriplesMap {
      * @param predicateObjectMaps
      * @param subjectMap
      * @param name
-     * @throws InvalidR2RMLStructureException
      */
     public StdTriplesMap(LogicalSource logicalSource,
 			Set<StdPredicateObjectMap> predicateObjectMaps,
-			StdSubjectMap subjectMap, String name) throws InvalidR2RMLStructureException {
+			StdSubjectMap subjectMap, String name) { //throws InvalidR2RMLStructureException {
 		setSubjectMap(subjectMap);
 		setLogicalSource(logicalSource);
 		setPredicateObjectMap(predicateObjectMaps);
 		setName(name);
 	}
 
-        @Override
+    @Override
 	public void setLogicalSource(LogicalSource logicalSource) {
 		this.logicalSource = logicalSource;
 	}
 
-	public void setPredicateObjectMap(
-			Set<StdPredicateObjectMap> predicateObjectMaps) {
-		this.predicateObjectMaps = new HashSet<PredicateObjectMap>();
-		if (predicateObjectMaps == null) return;
-		this.predicateObjectMaps.addAll(predicateObjectMaps);
-		// Update prediacte object map
-		for (PredicateObjectMap pom : predicateObjectMaps) {
-			if (pom.getOwnTriplesMap() != null) {
-				if (pom.getOwnTriplesMap() != this)
-					throw new IllegalStateException(
-							"[StdTriplesMap:setPredicateObjectMap] "
-									+ "The predicateObject map child "
-									+ "already contains another triples Map !");
-			} else
-				pom.setOwnTriplesMap(this);
-		}
-	}
+    public void setPredicateObjectMap(
+            Set<StdPredicateObjectMap> predicateObjectMaps) {
+        this.predicateObjectMaps = new HashSet<PredicateObjectMap>();
+        if (predicateObjectMaps == null) {
+            return;
+        }
+        this.predicateObjectMaps.addAll(predicateObjectMaps);
+        // Update prediacte object map
+        for (PredicateObjectMap pom : predicateObjectMaps) {
+            if (pom.getOwnTriplesMap() != null) {
+                if (pom.getOwnTriplesMap() != this) {
+                    log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
+                            //throw new IllegalStateException(
+                            + "The predicateObject map child "
+                            + "already contains another triples Map !");
+                }
+            } else {
+                pom.setOwnTriplesMap(this);
+            }
+        }
+    }
 
         @Override
 	public LogicalSource getLogicalSource() {
@@ -97,7 +104,7 @@ public final class StdTriplesMap implements TriplesMap {
 	}
 
         @Override
-	public void setSubjectMap(SubjectMap subjectMap) throws InvalidR2RMLStructureException {
+	public void setSubjectMap(SubjectMap subjectMap) { //throws InvalidR2RMLStructureException {
 		this.subjectMap = subjectMap;
 
 	}

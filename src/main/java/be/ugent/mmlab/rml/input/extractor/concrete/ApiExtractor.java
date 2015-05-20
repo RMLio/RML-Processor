@@ -1,22 +1,13 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package be.ugent.mmlab.rml.input.extractor.concrete;
 
-import be.ugent.mmlab.rml.core.RMLEngine;
+import be.ugent.mmlab.rml.input.model.InputSource;
 import be.ugent.mmlab.rml.input.extractor.AbstractInputExtractor;
-import be.ugent.mmlab.rml.input.extractor.InputExtractor;
-import be.ugent.mmlab.rml.model.TriplesMap;
+import be.ugent.mmlab.rml.input.model.std.ApiInputSource;
 import be.ugent.mmlab.rml.sesame.RMLSesameDataSet;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
+import be.ugent.mmlab.rml.vocabulary.HydraVocabulary;
+import java.util.HashSet;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Set;
 import org.apache.log4j.LogManager;
 import org.openrdf.model.Resource;
 import org.openrdf.model.Statement;
@@ -28,46 +19,28 @@ import org.openrdf.model.impl.ValueFactoryImpl;
  *
  * @author andimou
  */
-public class ApiExtractor extends AbstractInputExtractor implements InputExtractor {
+public class ApiExtractor extends AbstractInputExtractor {
     
     // Log
     private static final org.apache.log4j.Logger log = LogManager.getLogger(ApiExtractor.class);
     // Value factory
     private static ValueFactory vf = new ValueFactoryImpl();
 
-    @Override
-    public InputStream getInputStream(String source, TriplesMap triplesMap) {
-        InputStream input = null;
-
-        try {
-            HttpURLConnection con = (HttpURLConnection) new URL(source).openConnection();
-            con.setRequestMethod("HEAD");
-            if (con.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                input = new URL(source).openStream();
-            }
-        } catch (MalformedURLException ex) {
-            Logger.getLogger(RMLEngine.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(LocalFileExtractor.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        return input;
-    }
 
     @Override
-    public String getInputSource(String reference, TriplesMap map) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public String extractInput(RMLSesameDataSet rmlMappingGraph, Resource resource) {
-        
-        URI predicate = rmlMappingGraph.URIref("http://www.w3.org/ns/hydra/core#template");
+    public Set<InputSource> extractInput(RMLSesameDataSet rmlMappingGraph, Resource resource) {
+        Set<InputSource> inputSources = new HashSet<InputSource>();
+        URI predicate = rmlMappingGraph.URIref(
+                HydraVocabulary.HYDRA_NAMESPACE + HydraVocabulary.HydraTerm.TEMPLATE);
         
          List<Statement> statements = rmlMappingGraph.tuplePattern(
                         (Resource) resource, predicate, null);
          
-         return statements.get(0).getObject().stringValue();
+         for(Statement statement : statements)
+              inputSources.add(
+                      new ApiInputSource(resource.stringValue(), statement.getObject().stringValue()));
+         
+         return inputSources;
          
     }
     

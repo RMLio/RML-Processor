@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package be.ugent.mmlab.rml.xml;
 
 import com.sun.org.apache.xml.internal.utils.PrefixResolver;
