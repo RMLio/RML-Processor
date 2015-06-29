@@ -1,23 +1,24 @@
 package be.ugent.mmlab.rml.processor;
 
 import be.ugent.mmlab.rml.core.RMLPerformer;
-import be.ugent.mmlab.rml.model.PredicateMap;
+import be.ugent.mmlab.rml.model.RDFTerm.PredicateMap;
 import be.ugent.mmlab.rml.model.PredicateObjectMap;
-import be.ugent.mmlab.rml.model.SubjectMap;
-import be.ugent.mmlab.rml.model.TermMap;
+import be.ugent.mmlab.rml.model.RDFTerm.SubjectMap;
+import be.ugent.mmlab.rml.model.RDFTerm.TermMap;
 import be.ugent.mmlab.rml.model.TriplesMap;
+import be.ugent.mmlab.rml.sesame.RMLSesameDataSet;
 import be.ugent.mmlab.rml.vocabulary.QLVocabulary;
 import java.io.InputStream;
 import java.util.List;
-import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
 import org.openrdf.model.Resource;
 import org.openrdf.model.URI;
 import org.openrdf.model.Value;
 
-
-
 /**
+ * RMLProcessor 
+ * 
  * Interface for processing a certain term map
+ * 
  * @author mielvandersande, andimou
  */
 public interface RMLProcessor {
@@ -28,17 +29,12 @@ public interface RMLProcessor {
      * @param map the triplemap
      * @param performer the performer handling the action done on the triplemap
      */
-    public void execute(SesameDataSet dataset, TriplesMap map, RMLPerformer performer, InputStream input);
+    public void execute(RMLSesameDataSet dataset, TriplesMap map, RMLPerformer performer, InputStream input);
     
-    public void execute_node(SesameDataSet dataset, String expression, TriplesMap parentTriplesMap, RMLPerformer performer, Object node, Resource subject);
+    public void execute_node(
+            RMLSesameDataSet dataset, String expression, TriplesMap parentTriplesMap, 
+            RMLPerformer performer, Object node, Resource subject);
 
-    /**
-     * Resolve an expression and extract a single string value from a node
-     * @param node current object
-     * @param expression reference to value
-     * @return extracted value
-     */
-    public List<String> extractValueFromNode(Object node, String expression);
     /**
      * process a subject map
      * @param dataset
@@ -46,9 +42,9 @@ public interface RMLProcessor {
      * @param node
      * @return 
      */
-    public Resource processSubjectMap(SesameDataSet dataset, SubjectMap subjectMap, Object node);
+    public Resource processSubjectMap(RMLSesameDataSet dataset, SubjectMap subjectMap, Object node);
     
-    public void processSubjectTypeMap(SesameDataSet dataset, Resource subject, 
+    public void processSubjectTypeMap(RMLSesameDataSet dataset, Resource subject, 
             SubjectMap subjectMap, Object node);
     
     /**
@@ -71,9 +67,15 @@ public interface RMLProcessor {
      * @param node 
      */
     public void processPredicateObjectMap(
-            SesameDataSet dataset, Resource subject, 
+            RMLSesameDataSet dataset, Resource subject, 
             PredicateObjectMap pom, Object node, TriplesMap map);
     
+    /**
+     *
+     * @param predicateMap
+     * @param node
+     * @return
+     */
     public List<URI> processPredicateMap(PredicateMap predicateMap, Object node);
     
     /**
@@ -85,18 +87,17 @@ public interface RMLProcessor {
      * @param node
      */
     public void processPredicateObjectMap_ObjMap(
-            SesameDataSet dataset, Resource subject, URI predicate,
+            RMLSesameDataSet dataset, Resource subject, URI predicate,
             PredicateObjectMap pom, Object node);
     
-    public List<Value> applyTermType(String value, List<Value> valueList, TermMap termMap);
-
     /**
      *
-     * @param map
-     * @param node
+     * @param value
+     * @param valueList
+     * @param termMap
      * @return
      */
-    public List<String> processTermMap(TermMap map, Object node);
+    public List<Value> applyTermType(String value, List<Value> valueList, TermMap termMap);
     
     /**
      *
@@ -105,11 +106,4 @@ public interface RMLProcessor {
      */
     public String cleansing(String value);
     
-    /**
-     *
-     * @param split
-     * @param node
-     * @return
-     */
-    public List<String> postProcessLogicalSource(String split, Object node);
 }

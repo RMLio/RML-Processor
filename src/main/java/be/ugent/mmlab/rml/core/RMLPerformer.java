@@ -1,10 +1,11 @@
 package be.ugent.mmlab.rml.core;
 
 import be.ugent.mmlab.rml.model.TriplesMap;
-import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
+import be.ugent.mmlab.rml.sesame.RMLSesameDataSet;
 import org.openrdf.model.Resource;
 
 /**
+ * RML Processor
  *
  * Interface for executing context-dependent operations like a regular object map, or a join
  * 
@@ -18,16 +19,7 @@ public interface RMLPerformer {
      * @param dataset dataset for endresult
      * @param map current triple map that is being processed
      */
-    public void perform(Object node, SesameDataSet dataset, TriplesMap map);
-    
-    /**
-     *
-     * @param node
-     * @param dataset
-     * @param map
-     * @param splitCondition
-     */
-    public void perform(Object node, SesameDataSet dataset, TriplesMap map, String splitCondition);
+    public void perform(Object node, RMLSesameDataSet dataset, TriplesMap map);
     
     /**
      *
@@ -36,5 +28,5 @@ public interface RMLPerformer {
      * @param map
      * @param subject
      */
-    public void perform(Object node, SesameDataSet dataset, TriplesMap map, Resource subject);
+    public void perform(Object node, RMLSesameDataSet dataset, TriplesMap map, Resource subject);
 }

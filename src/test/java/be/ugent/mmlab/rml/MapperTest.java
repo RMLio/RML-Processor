@@ -4,24 +4,15 @@ import be.ugent.mmlab.rml.core.RMLEngine;
 import be.ugent.mmlab.rml.core.RMLMappingFactory;
 import be.ugent.mmlab.rml.model.RMLMapping;
 import be.ugent.mmlab.rml.sesame.RMLSesameDataSet;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URL;
-import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import static junit.framework.TestCase.assertTrue;
 import junit.framework.TestSuite;
-import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
-import net.antidot.semantic.rdf.rdb2rdf.r2rml.exception.InvalidR2RMLStructureException;
-import net.antidot.semantic.rdf.rdb2rdf.r2rml.exception.InvalidR2RMLSyntaxException;
-import net.antidot.semantic.rdf.rdb2rdf.r2rml.exception.R2RMLDataError;
+
 import org.apache.log4j.LogManager;
-import org.openrdf.repository.RepositoryException;
 import org.openrdf.rio.RDFFormat;
-import org.openrdf.rio.RDFParseException;
 
 /**
  * Unit test for simple App.
@@ -51,7 +42,7 @@ public class MapperTest
     /**
      * Tests
      */
-    public void testExample1() {
+   public void testExample1() {
         URL fileToRMLFile = getClass().getResource("/example1/example.rml.ttl");
         URL fileToOutputFile = getClass().getResource("/example1/example.output.ttl");
         assertTrue(desiredOutput(fileToOutputFile).isEqualTo(assertMap(fileToRMLFile, null)));
@@ -78,8 +69,7 @@ public class MapperTest
     /*public void testExample5() {
         URL fileToRMLFile = getClass().getResource("/example5/museum-model.rml.ttl");
         URL fileToOutputFile = getClass().getResource("/example5/museum.output.ttl");
-        assertTrue(desiredOutput(fileToOutputFile).isEqualTo(assertMap(fileToRMLFile)));
-    }
+        assertTrue(desiredOutput(fileToOutputFile).isEqualTo(assertMap(fileToRMLFile, null)));
     }*/
     
     public void testExample6() {
@@ -92,9 +82,21 @@ public class MapperTest
         URL fileToRMLFile = getClass().getResource("/example7/example7.rml.ttl");
         URL fileToOutputFile = getClass().getResource("/example7/example7.output.ttl");
         assertTrue(desiredContextOutput(fileToOutputFile).isEqualTo(assertMap(fileToRMLFile, null)));
-    } 
+    }
     
-    public void testExample11() {
+    /*public void testExample8() {
+        URL fileToRMLFile = getClass().getResource("/example8/simergy.rml.ttl");
+        URL fileToOutputFile = getClass().getResource("/example8/simergy.output.ttl");
+        assertTrue(desiredOutput(fileToOutputFile).isEqualTo(assertMap(fileToRMLFile, null)));
+    }
+    
+    public void testExample8() {
+        URL fileToRMLFile = getClass().getResource("/example8/symergy.rml.ttl");
+        URL fileToOutputFile = getClass().getResource("/example8/symergy.output.ttl");
+        assertTrue(desiredOutput(fileToOutputFile).isEqualTo(assertMap(fileToRMLFile, null)));
+    }
+    
+    /*public void testExample11() {
         URL fileToRMLFile = getClass().getResource("/example11/example11.rml.ttl");
         URL fileToOutputFile = getClass().getResource("/example11/example11.output.ttl");
         assertTrue(desiredOutput(fileToOutputFile).isEqualTo(assertMap(fileToRMLFile, null)));
@@ -172,41 +174,33 @@ public class MapperTest
         URL fileToRMLFile = getClass().getResource("/example19/example19b.rml.ttl");
         URL fileToOutputFile = getClass().getResource("/example19/example19b.output.ttl");
         assertTrue(desiredOutput(fileToOutputFile).isEqualTo(assertMap(fileToRMLFile, null)));
-    }
+    }*/
     
     private RMLSesameDataSet desiredOutput (URL outputURL){
-        RMLSesameDataSet desiredOutput = new RMLSesameDataSet();
+        RMLSesameDataSet desiredOutput = new RMLSesameDataSet(false);
         desiredOutput.addFile(outputURL.getFile(), RDFFormat.TURTLE);
         return desiredOutput;
     }
     
     private RMLSesameDataSet desiredContextOutput (URL outputURL){
-        RMLSesameDataSet desiredOutput = new RMLSesameDataSet();
+        RMLSesameDataSet desiredOutput = new RMLSesameDataSet(false);
         desiredOutput.addFile(outputURL.getFile(), RDFFormat.NQUADS);
         return desiredOutput;
     }
     
-    private SesameDataSet assertMap(URL mappingURL, String[] triplesMap) {
+    private RMLSesameDataSet assertMap(URL mappingURL, String[] triplesMap) {
         try {
             RMLMappingFactory mappingFactory = new RMLMappingFactory();
             RMLMapping mapping = mappingFactory.extractRMLMapping(mappingURL.getFile());
 
             RMLEngine engine = new RMLEngine();
-            SesameDataSet output = engine.runRMLMapping(mapping, "http://example.com", triplesMap);
-
+            RMLSesameDataSet output = engine.runRMLMapping(mapping, "http://example.com", triplesMap);
             output.dumpRDF(System.out, RDFFormat.TURTLE);
 
             return output;
 
-        } catch (SQLException | InvalidR2RMLStructureException | InvalidR2RMLSyntaxException |
-                R2RMLDataError | RepositoryException | RDFParseException ex) {
-            Logger.getLogger(MapperTest.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (UnsupportedEncodingException ex) {
-            Logger.getLogger(MapperTest.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(MapperTest.class.getName()).log(Level.SEVERE, null, ex);
         } catch (Exception ex) {
-            Logger.getLogger(MapperTest.class.getName()).log(Level.SEVERE, null, ex);
+            log.error(ex);
         }
 
         return null;

@@ -24,7 +24,7 @@
     ];
     rr:subjectMap [
      rr:template "http://loc.example.com/city/{city}";
-     crml:equalCondition [
+     crml:booleanCondition [
         crml:condition "Gent" ;
         crml:value "Ghent"
      ];
@@ -35,7 +35,7 @@
       rr:predicate ex:continent;
       rr:objectMap [ 
         rml:reference "continent" ;
-        crml:equalCondition [
+        crml:booleanCondition [
             crml:condition "EU" ;
             crml:value "Europe"
          ];
@@ -46,11 +46,11 @@
       rr:predicate ex:country;
       rr:objectMap [ 
         rml:reference "country" ;
-        crml:equalCondition [
+        crml:booleanCondition [
             crml:condition "BE" ;
             crml:value "Belgium"
         ];
-        crml:equalCondition [
+        crml:booleanCondition [
             crml:condition "GR" ;
             crml:value "Greece"
          ];

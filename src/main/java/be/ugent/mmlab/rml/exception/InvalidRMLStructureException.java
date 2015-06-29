@@ -1,6 +1,7 @@
 package be.ugent.mmlab.rml.exception;
 
 /**
+ * RML Processor
  *
  * @author mielvandersande
  */

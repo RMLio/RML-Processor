@@ -5,27 +5,35 @@ import be.ugent.mmlab.rml.core.RMLPerformer;
 import be.ugent.mmlab.rml.model.LogicalSource;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.AbstractRMLProcessor;
+import be.ugent.mmlab.rml.processor.termmap.TermMapProcessorFactory;
+import be.ugent.mmlab.rml.processor.termmap.concrete.ConcreteTermMapFactory;
+import be.ugent.mmlab.rml.sesame.RMLSesameDataSet;
+import be.ugent.mmlab.rml.vocabulary.QLVocabulary;
 import com.csvreader.CsvReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.openrdf.model.Resource;
 
 /**
+ * RML Processor
  *
  * @author mielvandersande, andimou
  */
 public class CSVProcessor extends AbstractRMLProcessor {
 
-    private static Log log = LogFactory.getLog(CSVProcessor.class);
+    // Log
+    private static final Logger log = LogManager.getLogger(CSVProcessor.class);
+    
+    CSVProcessor(){
+        TermMapProcessorFactory factory = new ConcreteTermMapFactory();
+        this.termMapProcessor = factory.create(QLVocabulary.QLTerm.CSV_CLASS);
+    }
     
     private char getDelimiter(LogicalSource ls) {
         String d = RMLEngine.getFileMap().getProperty(ls.getSource() + ".delimiter");
@@ -36,8 +44,8 @@ public class CSVProcessor extends AbstractRMLProcessor {
     }
 
     @Override
-    public void execute(SesameDataSet dataset, TriplesMap map, RMLPerformer performer, InputStream input) {
-        //InputStream fis = null;
+    public void execute(RMLSesameDataSet dataset, TriplesMap map, RMLPerformer performer, InputStream input) {
+
         try {
             char delimiter = getDelimiter(map.getLogicalSource());
 
@@ -64,23 +72,11 @@ public class CSVProcessor extends AbstractRMLProcessor {
     }
 
     @Override
-    public List<String> extractValueFromNode(Object node, String expression) {
-        HashMap<String, String> row = (HashMap<String, String>) node;
-        for(String key : row.keySet())
-            key = new String(key.getBytes(), UTF_8);
-        //call the right header in the row
-        List<String> list = new ArrayList();
-        if (row.containsKey(expression)){
-            list.add(row.get(expression));
-        }
-        return list;
-    }
-
-    @Override
     public void execute_node(
-            SesameDataSet dataset, String expression, TriplesMap parentTriplesMap, 
+            RMLSesameDataSet dataset, String expression, TriplesMap parentTriplesMap, 
             RMLPerformer performer, Object node, Resource subject) {
-        throw new UnsupportedOperationException("Not applicable for CSV sources."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not applicable for CSV sources."); 
+        //TODO: implement this
     }
 
     @Override

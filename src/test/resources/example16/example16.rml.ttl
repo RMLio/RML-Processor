@@ -39,7 +39,7 @@
         rr:objectMap [ 
             rml:reference "conference" ;
 
-            crml:equalCondition [ 
+            crml:booleanCondition [ 
                 crml:condition "ESWC14" ;
                 crml:value "Extended Semantic Web Conference 2014" ;
                 crml:processCondition [ 

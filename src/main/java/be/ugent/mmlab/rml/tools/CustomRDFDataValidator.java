@@ -1,8 +1,7 @@
 package be.ugent.mmlab.rml.tools;
 
-import net.antidot.semantic.rdf.model.tools.RDFDataValidator;
-
 /**
+ * RML Processor
  *
  * This class customizes the implementation by db2triples
  * 

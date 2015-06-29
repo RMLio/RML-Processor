@@ -13,11 +13,12 @@
  */
 package be.ugent.mmlab.rml.core;
 
-import be.ugent.mmlab.rml.extractor.RMLDocExtractor;
-import be.ugent.mmlab.rml.extractor.RMLMappingExtractor;
-import be.ugent.mmlab.rml.extractor.RMLUnValidatedMappingExtractor;
+import be.ugent.mmlab.rml.extraction.RMLMappingExtractor;
+import be.ugent.mmlab.rml.extraction.RMLUnValidatedMappingExtractor;
+import be.ugent.mmlab.rml.extraction.concrete.TriplesMapExtractor;
 import be.ugent.mmlab.rml.model.RMLMapping;
 import be.ugent.mmlab.rml.model.TriplesMap;
+import be.ugent.mmlab.rml.retrieval.RMLDocRetrieval;
 import be.ugent.mmlab.rml.sesame.RMLSesameDataSet;
 import be.ugent.mmlab.rml.vocabulary.R2RMLVocabulary;
 import be.ugent.mmlab.rml.vocabulary.RMLVocabulary;
@@ -25,7 +26,6 @@ import be.ugent.mmlab.rml.vocabulary.Vocab.R2RMLTerm;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
 import org.apache.log4j.LogManager;
 import org.openrdf.model.Resource;
 import org.openrdf.model.Statement;
@@ -63,22 +63,23 @@ public class RMLMappingFactory {
      */
     public RMLMapping extractRMLMapping(String fileToRMLFile)
             throws RepositoryException, RDFParseException, IOException, Exception {
-        // Load RDF data from R2RML Mapping document
         RMLSesameDataSet rmlMappingGraph ;
         
-        RMLDocExtractor mapDocExtractor = new RMLDocExtractor() ;
-        rmlMappingGraph = mapDocExtractor.getMappingDoc(fileToRMLFile, RDFFormat.TURTLE);
+        //Retrieve the Mapping Document
+        RMLDocRetrieval mapDocRetrieval = new RMLDocRetrieval() ;        
+        rmlMappingGraph = mapDocRetrieval.getMappingDoc(fileToRMLFile, RDFFormat.TURTLE);
 
         log.debug(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
                 + "Number of RML triples in file "
-                + fileToRMLFile + " : " + rmlMappingGraph.getSize());
+                + fileToRMLFile + " : " + rmlMappingGraph.getSize());        
         // Transform RDF with replacement shortcuts
         rmlMappingGraph = extractor.replaceShortcuts(rmlMappingGraph);
         // Run few tests to help user in its RDF syntax
         launchPreChecks(rmlMappingGraph);
                
         // Construct RML Mapping object
-        Map<Resource, TriplesMap> triplesMapResources = extractor.extractTriplesMapResources(rmlMappingGraph);
+        Map<Resource, TriplesMap> triplesMapResources = 
+                extractor.extractTriplesMapResources(rmlMappingGraph);
                
         log.debug(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
                 + "Number of RML triples with "
@@ -89,7 +90,8 @@ public class RMLMappingFactory {
         // Fill each triplesMap object
         for (Resource triplesMapResource : triplesMapResources.keySet()) // Extract each triplesMap
         {
-            extractor.extractTriplesMap(rmlMappingGraph, triplesMapResource,
+            TriplesMapExtractor triplesMapExtractor = new TriplesMapExtractor();
+            triplesMapExtractor.extractTriplesMap(rmlMappingGraph, triplesMapResource,
                     triplesMapResources);
         }
         // Generate RMLMapping object
@@ -97,7 +99,7 @@ public class RMLMappingFactory {
         return result;
     }
 
-    private static void launchPreChecks(SesameDataSet rmlMappingGraph) throws Exception {
+    private static void launchPreChecks(RMLSesameDataSet rmlMappingGraph) throws Exception {
         // Pre-check 1 : test if a triplesMap with predicateObject map exists
         // without subject map
         URI p = rmlMappingGraph.URIref(R2RMLVocabulary.R2RML_NAMESPACE
@@ -116,28 +118,7 @@ public class RMLMappingFactory {
             }
         }
     }
-
-
-    /*private static ReferenceIdentifier extractReferenceIdentifier(SesameDataSet rmlMappingGraph, Resource resource) throws InvalidR2RMLStructureException {
-        //MVS: look for a reference or column, prefer rr:column
-        String columnValueStr = extractLiteralFromTermMap(rmlMappingGraph, resource, R2RMLTerm.COLUMN);
-        String referenceValueStr = extractLiteralFromTermMap(rmlMappingGraph, resource, RMLTerm.REFERENCE);
-
-        if (columnValueStr != null && referenceValueStr != null) {
-            throw new InvalidR2RMLStructureException(
-                    "[RMLMappingFactory:extractReferenceIdentifier] "
-                    + resource
-                    + " has a reference and column defined.");
-        }
-
-        //MVS: use the generic ReferenceIdentifier to represent rr:column or rml:reference
-        if (columnValueStr != null) {
-            return ReferenceIdentifierImpl.buildFromR2RMLConfigFile(columnValueStr);
-        }
-
-        return ReferenceIdentifierImpl.buildFromR2RMLConfigFile(referenceValueStr);
-    }*/
-    
+   
 
     /**
      * Extract content literal from a term type resource.
@@ -146,10 +127,9 @@ public class RMLMappingFactory {
      * @param termType
      * @param term
      * @return
-     * @throws InvalidR2RMLStructureException
      */
     private static String extractLiteralFromTermMap(
-            SesameDataSet rmlMappingGraph, Resource termType, Enum term) {
+            RMLSesameDataSet rmlMappingGraph, Resource termType, Enum term) {
 
         URI p = getTermURI(rmlMappingGraph, term);
 
@@ -173,7 +153,7 @@ public class RMLMappingFactory {
     }
 
     
-    private static URI getTermURI(SesameDataSet rmlMappingGraph, Enum term) {
+    private static URI getTermURI(RMLSesameDataSet rmlMappingGraph, Enum term) {
         String namespace = R2RMLVocabulary.R2RML_NAMESPACE;
 
         if (term instanceof RMLVocabulary.RMLTerm) {

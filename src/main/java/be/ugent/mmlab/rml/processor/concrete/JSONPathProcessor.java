@@ -3,32 +3,38 @@ package be.ugent.mmlab.rml.processor.concrete;
 import be.ugent.mmlab.rml.core.RMLPerformer;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.AbstractRMLProcessor;
+import be.ugent.mmlab.rml.processor.termmap.TermMapProcessorFactory;
+import be.ugent.mmlab.rml.processor.termmap.concrete.ConcreteTermMapFactory;
+import be.ugent.mmlab.rml.sesame.RMLSesameDataSet;
+import be.ugent.mmlab.rml.vocabulary.QLVocabulary;
 import com.jayway.jsonpath.JsonPath;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.LogManager;
 import org.openrdf.model.Resource;
 
 /**
+ * RML Processor
  *
  * @author mielvandersande, andimou
  */
 public class JSONPathProcessor extends AbstractRMLProcessor {
 
-    private static Log log = LogFactory.getLog(JSONPathProcessor.class);
+    // Log
+    private static final org.apache.log4j.Logger log = LogManager.getLogger(JSONPathProcessor.class);
+    
+    JSONPathProcessor(){
+        TermMapProcessorFactory factory = new ConcreteTermMapFactory();
+        this.termMapProcessor = factory.create(QLVocabulary.QLTerm.JSONPATH_CLASS);
+    }
 
     @Override
-    public void execute(SesameDataSet dataset, TriplesMap map, RMLPerformer performer, InputStream input) {
+    public void execute(RMLSesameDataSet dataset, TriplesMap map, RMLPerformer performer, InputStream input) {
 
         try {
             String reference = getReference(map.getLogicalSource());
@@ -39,37 +45,15 @@ public class JSONPathProcessor extends AbstractRMLProcessor {
             execute(dataset, map, performer, val);
 
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(JSONPathProcessor.class.getName()).log(Level.SEVERE, null, ex);
+            log.error(ex);
         } catch (IOException ex) {
-            Logger.getLogger(JSONPathProcessor.class.getName()).log(Level.SEVERE, null, ex);
+            log.error(ex);
         } 
     }
 
     @Override
-    public List<String> extractValueFromNode(Object node, String expression) {
-        
-        try {
-            Object val = JsonPath.read(node, expression);
-            List<String> list = new ArrayList<>();
-            if (val instanceof JSONArray) {
-                JSONArray arr = (JSONArray) val;
-                return Arrays.asList(arr.toArray(new String[0]));
-            }
-            list.add((String) val.toString());
-            return list;
-        } catch (com.jayway.jsonpath.InvalidPathException ex) {
-            return new ArrayList<>();
-        } catch (Exception ex) {
-            log.debug(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
-                    + "[JSONPathProcessor:extractValueFromNode]. Error: " + ex);
-            return null;
-        }
-        
-    }
-
-    @Override
     public void execute_node(
-            SesameDataSet dataset, String expression, TriplesMap parentTriplesMap, 
+            RMLSesameDataSet dataset, String expression, TriplesMap parentTriplesMap, 
             RMLPerformer performer, Object node, Resource subject) {
        
         Object val = JsonPath.read(node, expression);
@@ -79,7 +63,7 @@ public class JSONPathProcessor extends AbstractRMLProcessor {
         //TODO: check if it's complete for sub-mappings
     }
     
-    private void execute (SesameDataSet dataset, TriplesMap parentTriplesMap, 
+    private void execute (RMLSesameDataSet dataset, TriplesMap parentTriplesMap, 
             RMLPerformer performer, Object node){
         if (node instanceof JSONObject) 
             performer.perform(node, dataset, parentTriplesMap);

@@ -7,11 +7,69 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
 
 
+
+
+
+<#ArtistMapping>
+  rml:logicalSource [
+    rml:source "src/test/resources/example5/museum.json";
+    rml:referenceFormulation ql:JSONPath;
+    rml:iterator "$.[*]";
+  ];
+
+  rr:subjectMap [
+    rr:template "http://ex.com/{Artist}";
+    rr:class crm:E21_Person ;
+  ];
+  
+  rr:predicateObjectMap 
+  [
+    rr:predicate rdfs:label;
+    rr:objectMap 
+    [
+      rml:reference "Artist" ;
+    ]
+  ];
+
+  rr:predicateObjectMap 
+  [
+    rr:predicate crm:P143_carried_out_by;
+	rr:objectMap [ 
+            rr:parentTriplesMap <#MoonWalkersMapping> ;
+            rr:joinCondition [
+                rr:child "Artist";
+                rr:parent "Name";
+            ];
+        ];
+    ].    
+
+
+<#MoonWalkersMapping>
+  rml:logicalSource [
+    rml:source "src/test/resources/example5/museum.json";
+    rml:referenceFormulation ql:JSONPath;
+    rml:iterator "$.[*].Sitter[*]";
+  ];
+  rr:subjectMap [
+    rr:template "http://ex.com/{Name}";
+    rr:class crm:E21_Person ;
+  ];
+
+  rr:predicateObjectMap 
+  [
+    rr:predicate rdfs:label;
+    rr:objectMap 
+    [
+      rml:reference "$Name"
+    ]
+  ].
+
+
  <#SitterMapping>
   rml:logicalSource [
     rml:source "src/test/resources/example5/museum.json";
     rml:referenceFormulation ql:JSONPath;
-    rml:iterator "$.Sitter";
+    rml:iterator "$.[*].Sitter";
   ];
   rr:subjectMap [
     rr:template "http://ex.com/{Name}";
@@ -103,62 +161,8 @@
   ].
 
 
-<#ArtistMapping>
-  rml:logicalSource [
-    rml:source "/example5/museum.json";
-    rml:referenceFormulation ql:JSONPath;
-    rml:iterator "$.[*]";
-  ];
 
-  rr:subjectMap [
-    rr:template "http://ex.com/{Artist}";
-    rr:class crm:E21_Person ;
-  ];
   
-  rr:predicateObjectMap 
-  [
-    rr:predicate rdfs:label;
-    rr:objectMap 
-    [
-      rml:reference "Artist" ;
-    ]
-  ];
-
-  rr:predicateObjectMap 
-  [
-    rr:predicate crm:P14_carried_out_by;
-	rr:objectMap [ 
-            rr:parentTriplesMap <#MoonWalkersMapping> ;
-            rr:joinCondition [
-                rr:child "Artist";
-                rr:parent "Name";
-            ];
-        ];
-    ].    
-
-
-<#MoonWalkersMapping>
-  rml:logicalSource [
-    rml:source "src/test/resources/example5/museum.json";
-    rml:referenceFormulation ql:JSONPath;
-    rml:iterator "$.[*].Sitter[*]";
-  ];
-  rr:subjectMap [
-    #rr:template "http://ex.com/{Sitter[0].Name}";
-    rr:template "http://ex.com/{Name}";
-    rr:class crm:E21_Person ;
-  ];
-
-  rr:predicateObjectMap 
-  [
-    rr:predicate rdfs:label;
-    rr:objectMap 
-    [
-      #rml:reference "$.Sitter[0].Name"
-      rml:reference "$Name"
-    ]
-  ].
-
 <#WikipediaExportMapping>
   rml:logicalSource [
     rml:source "src/test/resources/example5/moon-walkers.csv";
@@ -207,3 +211,4 @@
       rml:reference "Service" 
     ]
   ].
+

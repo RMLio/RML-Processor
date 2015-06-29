@@ -4,9 +4,7 @@ import be.ugent.mmlab.rml.dataset.FileSesameDataset;
 import be.ugent.mmlab.rml.input.processor.AbstractInputProcessor;
 import be.ugent.mmlab.rml.input.processor.InputProcessor;
 import be.ugent.mmlab.rml.model.LogicalSource;
-import be.ugent.mmlab.rml.model.PredicateObjectMap;
 import be.ugent.mmlab.rml.model.RMLMapping;
-import be.ugent.mmlab.rml.model.ReferencingObjectMap;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.RMLProcessor;
 import be.ugent.mmlab.rml.processor.RMLProcessorFactory;
@@ -15,15 +13,15 @@ import be.ugent.mmlab.rml.sesame.RMLSesameDataSet;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.ProtocolException;
 import java.sql.SQLException;
 import java.util.Properties;
-import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.openrdf.repository.RepositoryException;
 
 /**
+ * RML Processor
+ * 
  * Engine that will perform the mapping starting from the TermMaps
  * 
  * @author mielvandersande, andimou
@@ -31,7 +29,7 @@ import org.openrdf.repository.RepositoryException;
 public class RMLEngine {
 
     // Log
-    private static Log log = LogFactory.getLog(RMLEngine.class);
+    private static final Logger log = LogManager.getLogger(RMLEngine.class);
     // A base IRI used in resolving relative IRIs produced by the R2RML mapping.
     private String baseIRI;
     //private static boolean source_properties;
@@ -55,10 +53,9 @@ public class RMLEngine {
      * @param baseIRI base URI of the resulting RDF
      * @return dataset containing the triples
      * @throws SQLException
-     * @throws R2RMLDataError
      * @throws UnsupportedEncodingException
      */
-    public SesameDataSet runRMLMapping(RMLMapping rmlMapping, String baseIRI, String[] triplesMap) 
+    public RMLSesameDataSet runRMLMapping(RMLMapping rmlMapping, String baseIRI, String[] triplesMap) 
             throws SQLException, UnsupportedEncodingException, IOException {
         return runRMLMapping(rmlMapping, baseIRI, null, "ntriples", null, triplesMap);
     }
@@ -71,13 +68,11 @@ public class RMLEngine {
      * triple store instead of memory
      * @return
      * @throws SQLException
-     * @throws R2RMLDataError
      * @throws UnsupportedEncodingException
      */
-    public SesameDataSet runRMLMapping(RMLMapping rmlMapping,
+    public RMLSesameDataSet runRMLMapping(RMLMapping rmlMapping,
             String baseIRI, String pathToNativeStore, String outputFormat, 
-            String parameter, String[] exeTriplesMap) 
-            throws SQLException, UnsupportedEncodingException {
+            String parameter, String[] exeTriplesMap) {
         long startTime = System.nanoTime();
 
         log.debug(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
@@ -89,17 +84,15 @@ public class RMLEngine {
             log.info(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
                     + "[RMLEngine:runRMLMapping] No base IRI found.");
 
-        SesameDataSet sesameDataSet = chooseSesameDataSet(pathToNativeStore, outputFormat);
+        RMLSesameDataSet sesameDataSet = chooseSesameDataSet(pathToNativeStore, outputFormat);
         // Update baseIRI
         this.baseIRI = baseIRI;
-        try {
-            // Explore RML Mapping TriplesMap objects  
-            if(pathToNativeStore != null)
-                generateRDFTriples(sesameDataSet, rmlMapping, exeTriplesMap, true);
-            else
-                generateRDFTriples(sesameDataSet, rmlMapping, exeTriplesMap, false);
-        } catch (ProtocolException ex) {
-            log.info(Thread.currentThread().getStackTrace()[1].getMethodName() + ": " + ex);
+
+        // Explore RML Mapping TriplesMap objects  
+        if (pathToNativeStore != null) {
+            generateRDFTriples(sesameDataSet, rmlMapping, exeTriplesMap, true);
+        } else {
+            generateRDFTriples(sesameDataSet, rmlMapping, exeTriplesMap, false);
         }
                
         //TODO:add metadata this Triples Map started then, finished then and lasted that much
@@ -113,9 +106,9 @@ public class RMLEngine {
         return sesameDataSet;
     }
     
-    private SesameDataSet chooseSesameDataSet(
+    private RMLSesameDataSet chooseSesameDataSet(
             String pathToNativeStore, String outputFormat){
-        SesameDataSet sesameDataSet;
+        RMLSesameDataSet sesameDataSet;
         if (pathToNativeStore != null) {
             log.debug(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
                     + "Use direct file "
@@ -130,7 +123,7 @@ public class RMLEngine {
         
     }
     
-    private boolean check_ReferencingObjectMap(RMLMapping mapping, TriplesMap map, String[] exeTriplesMap) {
+    /*private boolean check_ReferencingObjectMap(RMLMapping mapping, TriplesMap map, String[] exeTriplesMap) {
         for (TriplesMap triplesMap : mapping.getTriplesMaps()) 
             for (PredicateObjectMap predicateObjectMap : triplesMap.getPredicateObjectMaps()) 
                 if (predicateObjectMap.hasReferencingObjectMaps()) 
@@ -141,7 +134,7 @@ public class RMLEngine {
                                 //&& referencingObjectMap.getParentTriplesMap().getLogicalSource().getIdentifier().equals(triplesMap.getLogicalSource().getIdentifier())) 
                             return true;
         return false;
-    }
+    }*/
 
     /**
      * This process adds RDF triples to the output dataset. Each generated
@@ -150,13 +143,10 @@ public class RMLEngine {
      *
      * @param sesameDataSet
      * @param rmlMapping
-     * @throws SQLException
-     * @throws UnsupportedEncodingException
      */
-    private void generateRDFTriples(SesameDataSet sesameDataSet, 
-            RMLMapping rmlMapping, String[] exeTriplesMap, boolean filebased) 
-            throws SQLException, UnsupportedEncodingException, ProtocolException {
-
+    private void generateRDFTriples(RMLSesameDataSet sesameDataSet, 
+            RMLMapping rmlMapping, String[] exeTriplesMap, boolean filebased) {
+        
         log.debug(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
                 + "Generate RDF triples... ");
         int delta = 0;

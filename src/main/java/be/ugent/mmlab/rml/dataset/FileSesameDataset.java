@@ -1,10 +1,6 @@
-/*
- * 
- * @author andimou
- * 
- */
 package be.ugent.mmlab.rml.dataset;
 
+import be.ugent.mmlab.rml.sesame.RMLSesameDataSet;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
@@ -19,12 +15,10 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import net.antidot.semantic.rdf.model.impl.sesame.SesameDataSet;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+
 import org.openrdf.model.BNode;
 import org.openrdf.model.Resource;
 import org.openrdf.model.Statement;
@@ -43,13 +37,14 @@ import org.openrdf.rio.RDFWriter;
 import org.openrdf.rio.Rio;
 
 /**
+ * RML Processor
  *
- * @author mielvandersande
+ * @author mielvandersande, andimou
  */
-public class FileSesameDataset extends SesameDataSet {
+public class FileSesameDataset extends RMLSesameDataSet {
 
     // Log
-    private static Log log = LogFactory.getLog(FileSesameDataset.class);
+    private static final Logger log = LogManager.getLogger(FileSesameDataset.class);
     private File target;
     private BufferedWriter fw;
     private RDFWriter writer;
@@ -211,7 +206,7 @@ public class FileSesameDataset extends SesameDataSet {
     public void add(Resource s, URI p, Value o, Resource... contexts) {
         if (log.isDebugEnabled()) {
             log.debug(Thread.currentThread().getStackTrace()[1].getMethodName() + ": " 
-                    + "[FileSesameDataSet:add] Add triple (" + s.stringValue()
+                    + "Add triple (" + s.stringValue()
                     + ", " + p.stringValue() + ", " + o.stringValue() + ").");
         }
 
@@ -277,12 +272,12 @@ public class FileSesameDataset extends SesameDataSet {
             instream = uricon.getInputStream();
             IOUtils.copy(instream, new FileOutputStream(target));
         } catch (IOException ex) {
-            Logger.getLogger(FileSesameDataset.class.getName()).log(Level.SEVERE, null, ex);
+            log.error(ex);
         } finally {
             try {
                 instream.close();
             } catch (IOException ex) {
-                Logger.getLogger(FileSesameDataset.class.getName()).log(Level.SEVERE, null, ex);
+                log.error(ex);
             }
         }
 
@@ -449,7 +444,7 @@ public class FileSesameDataset extends SesameDataSet {
     @Override
     public void closeRepository() throws RepositoryException {
         log.debug(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
-                + "[FileSesameDataSet:add] Closing file.");
+                + "Closing file.");
         try {
             fw.flush();
             writer.endRDF();
@@ -457,13 +452,13 @@ public class FileSesameDataset extends SesameDataSet {
         } catch (RDFHandlerException ex) {
             log.error(ex);
         } catch (IOException ex) {
-            Logger.getLogger(FileSesameDataset.class.getName()).log(Level.SEVERE, null, ex);
+            log.error(ex);
         } 
     }
 
     @Override
     public String toString() {
-        String result = "{[SimpleGraph:toString] triples = ";
+        String result = "{triples = ";
         List<Statement> triples = tuplePattern(null, null, null);
         for (Object o : triples) {
             result += o + System.getProperty("line.separator");

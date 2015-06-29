@@ -16,11 +16,11 @@
 	];
 	rr:subjectMap [
 		rr:template "http://www.example.com/DateTime/{@year}{@month}{@day}";
-                crml:equalCondition [
+                crml:booleanCondition [
                     crml:condition "January" ;
                     crml:value "01"
                 ];
-                crml:equalCondition [
+                crml:booleanCondition [
                     crml:condition "February" ;
                     crml:value "02"
                 ];
@@ -37,15 +37,15 @@
                 rr:predicate ex:month;
                 rr:objectMap [
 			rr:template "--{@month}";
-                        crml:equalCondition [
+                        crml:booleanCondition [
                             crml:condition "January" ;
                             crml:value "01"
                         ];
-                        crml:equalCondition [
+                        crml:booleanCondition [
                             crml:condition "February" ;
                             crml:value "02"
                         ];
-                        crml:equalCondition [
+                        crml:booleanCondition [
                             crml:condition "March" ;
                             crml:value "03"
                         ];

@@ -9,6 +9,9 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 /**
+ * RML Processor
+ * 
+ * Configuration file
  *
  * @author andimou
  */
@@ -26,15 +29,15 @@ public class RMLConfiguration {
         
         cliOptions.addOption("h", "help", false, "show this help message");
         cliOptions.addOption("m", "mapping document", true, "the URI of the mapping file (required)");
-        cliOptions.addOption("f", "output file", true, "the URI of the output file (required)");
-        cliOptions.addOption("o", "file format", true, 
+        cliOptions.addOption("o", "output file", true, "the URI of the output file (required)");
+        cliOptions.addOption("f", "file format", true, 
                 "the output format of the results: turtle, n3, ntriples (default), rdfxml (optional)");
-        cliOptions.addOption("p", "parameter", true, "");
+        //cliOptions.addOption("p", "parameter", true, "");
         cliOptions.addOption("tm", "Triples Map", true, "Triples Map to be executed.");
-        //cliOptions.addOption("p", 
-        //        "arguments to pass if the rml:source of the mapping document is a URI template "
-        //        + "and requires parameters (they should be comma separated)", false, 
-        //        "arguments for the source template");
+        cliOptions.addOption("p", 
+                "arguments to pass if the rml:source of the mapping document is a URI template "
+                + "and requires parameters (they should be comma separated)", true, 
+                "arguments for the source template");
         cliOptions.addOption("g", "graph", false, "the graph to use");
         cliOptions.addOption("prov", "prov", false, "the provenance graph");
         cliOptions.addOption("s", "schemas", false, "schemas");
