@@ -41,8 +41,8 @@ import org.openrdf.model.impl.LiteralImpl;
 import org.openrdf.model.impl.URIImpl;
 import org.openrdf.model.vocabulary.RDF;
 import java.util.regex.Pattern;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * RML Processor
@@ -64,7 +64,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
      */
     
     // Log
-    private static final Logger log = LogManager.getLogger(AbstractRMLProcessor.class);
+    private static final Logger log = LoggerFactory.getLogger(AbstractRMLProcessor.class);
 
     /**
      * gets the expression specified in the logical source
@@ -211,7 +211,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                 template = template.replaceAll("\\{" + expression + "\\}", replacement);
             }
         } catch (UnsupportedEncodingException ex) {
-            log.error(ex);
+            log.error("UnsupportedEncodingException " + ex);
         }
         return template.toString();
     }

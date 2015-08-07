@@ -9,8 +9,8 @@ import be.ugent.mmlab.rml.processor.termmap.TermMapProcessorFactory;
 import be.ugent.mmlab.rml.processor.termmap.concrete.ConcreteTermMapFactory;
 import be.ugent.mmlab.rml.sesame.RMLSesameDataSet;
 import java.util.List;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.openrdf.model.Resource;
 import org.openrdf.model.URI;
@@ -24,7 +24,7 @@ import org.openrdf.model.impl.URIImpl;
 public class SimpleReferencePerformer extends NodeRMLPerformer {
     
     // Log
-    private static final Logger log = LogManager.getLogger(SimpleReferencePerformer.class);
+    private static final Logger log = LoggerFactory.getLogger(SimpleReferencePerformer.class);
     
     private Resource subject;
     private URI predicate;

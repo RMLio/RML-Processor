@@ -16,8 +16,8 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import java.util.HashMap;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.openrdf.model.Resource;
 
 /**
@@ -28,7 +28,7 @@ import org.openrdf.model.Resource;
 public class CSVProcessor extends AbstractRMLProcessor {
 
     // Log
-    private static final Logger log = LogManager.getLogger(CSVProcessor.class);
+    private static final Logger log = LoggerFactory.getLogger(CSVProcessor.class);
     
     CSVProcessor(){
         TermMapProcessorFactory factory = new ConcreteTermMapFactory();
@@ -65,9 +65,9 @@ public class CSVProcessor extends AbstractRMLProcessor {
             }
 
         } catch (FileNotFoundException ex) {
-            log.error(ex);
+            log.error("FileNotFoundException " + ex);
         } catch (IOException ex) {
-            log.error(ex);
+            log.error("IOException " + ex);
         } 
     }
 

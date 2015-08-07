@@ -1,7 +1,8 @@
 package be.ugent.mmlab.rml;
 
 import be.ugent.mmlab.rml.core.RMLEngine;
-import be.ugent.mmlab.rml.core.RMLMappingFactory;
+import be.ugent.mmlab.rml.mapdochandler.extraction.StdRMLMappingFactory;
+import be.ugent.mmlab.rml.mapdochandler.retrieval.RMLDocRetrieval;
 import be.ugent.mmlab.rml.model.RMLMapping;
 import be.ugent.mmlab.rml.sesame.RMLSesameDataSet;
 import java.net.URL;
@@ -12,6 +13,7 @@ import static junit.framework.TestCase.assertTrue;
 import junit.framework.TestSuite;
 
 import org.apache.log4j.LogManager;
+import org.openrdf.repository.Repository;
 import org.openrdf.rio.RDFFormat;
 
 /**
@@ -154,7 +156,7 @@ public class MapperTest
         URL fileToRMLFile = getClass().getResource("/example17/example17.rml.ttl");
         URL fileToOutputFile = getClass().getResource("/example17/example17.output.ttl");
         assertTrue(desiredOutput(fileToOutputFile).isEqualTo(assertMap(fileToRMLFile, null)));
-    }
+    }*/
     
     public void testExample18() {
         URL fileToRMLFile = getClass().getResource("/example18/example18.rml.ttl");
@@ -164,7 +166,7 @@ public class MapperTest
         //assertTrue(desiredOutput(fileToOutputFile).isEqualTo(assertMap(fileToRMLFile, null)));
     }
     
-    public void testExample19() {
+    /*public void testExample19() {
         URL fileToRMLFile = getClass().getResource("/example19/example19.rml.ttl");
         URL fileToOutputFile = getClass().getResource("/example19/example19.output.ttl");
         assertTrue(desiredOutput(fileToOutputFile).isEqualTo(assertMap(fileToRMLFile, null)));
@@ -190,10 +192,14 @@ public class MapperTest
     
     private RMLSesameDataSet assertMap(URL mappingURL, String[] triplesMap) {
         try {
-            RMLMappingFactory mappingFactory = new RMLMappingFactory();
-            RMLMapping mapping = mappingFactory.extractRMLMapping(mappingURL.getFile());
+            StdRMLMappingFactory mappingFactory = new StdRMLMappingFactory();
+            //Retrieve the Mapping Document
+            log.info("Retrieving the Mapping Document..");
+            RMLDocRetrieval mapDocRetrieval = new RMLDocRetrieval();
+            Repository repository = mapDocRetrieval.getMappingDoc(mappingURL.getFile(), RDFFormat.TURTLE);
 
             RMLEngine engine = new RMLEngine();
+            RMLMapping mapping = mappingFactory.extractRMLMapping(repository);
             RMLSesameDataSet output = engine.runRMLMapping(mapping, "http://example.com", triplesMap);
             output.dumpRDF(System.out, RDFFormat.TURTLE);
 

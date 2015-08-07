@@ -31,3 +31,26 @@
             rml:reference "name" ;
             ]
     ].
+
+<#Paper>
+    rml:logicalSource [ 
+	rml:source "src/test/resources/example18/example18.csv";        
+        rml:referenceFormulation ql:CSV;
+    ];
+
+    rr:subjectMap [
+        rr:template "http://www.ex.com/paper/{id}"; 
+        rr:class ex:Paper;
+    ];
+
+    rr:predicateObjectMap [
+        rr:predicate ex:author;
+
+        rr:objectMap [ 
+            rr:parentTriplesMap <#Author> ;
+            crml:bindCondition [
+                rml:reference "id" ;
+                crml:value "publication_id"
+                ]
+            ]
+    ].

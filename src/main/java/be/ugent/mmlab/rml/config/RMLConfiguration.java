@@ -7,6 +7,8 @@ import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * RML Processor
@@ -16,6 +18,9 @@ import org.apache.commons.cli.ParseException;
  * @author andimou
  */
 public class RMLConfiguration {
+    
+    // Log
+    private static final Logger log = LoggerFactory.getLogger(RMLConfiguration.class);
     private static final Options cliOptions = generateCLIOptions();
     
     public static CommandLine parseArguments(String[] args) throws ParseException {
@@ -55,12 +60,14 @@ public class RMLConfiguration {
         System.exit(1);
     }
     
-    public static String[] processTriplesMap (String parameters,String map_doc){
+    public static String[] processTriplesMap (String parameters, String map_doc){
         if (parameters != null) {
             String[] exeTriplesMap = parameters.split(",");
-            for(int i=0 ; i < exeTriplesMap.length ; i++)
+            for(int i=0 ; i < exeTriplesMap.length ; i++){
                 //TODO:remove hardcoded file:
                 exeTriplesMap[i] = "file:" + map_doc + "#" + exeTriplesMap[i];
+            log.error("exeTriplesMap[i] " + exeTriplesMap[i]);
+            }
             return exeTriplesMap;
         } else {
             return null;

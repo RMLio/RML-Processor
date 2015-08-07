@@ -15,9 +15,10 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 import java.util.Properties;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.openrdf.repository.RepositoryException;
+import org.openrdf.rio.RDFFormat;
 
 /**
  * RML Processor
@@ -29,7 +30,7 @@ import org.openrdf.repository.RepositoryException;
 public class RMLEngine {
 
     // Log
-    private static final Logger log = LogManager.getLogger(RMLEngine.class);
+    private static final Logger log = LoggerFactory.getLogger(RMLEngine.class);
     // A base IRI used in resolving relative IRIs produced by the R2RML mapping.
     private String baseIRI;
     //private static boolean source_properties;
@@ -66,9 +67,8 @@ public class RMLEngine {
      * @param baseIRI base URI of the resulting RDF
      * @param pathToNativeStore path if triples have to be stored in sesame
      * triple store instead of memory
-     * @return
-     * @throws SQLException
-     * @throws UnsupportedEncodingException
+     * @return RMLSesameDataSet
+     * 
      */
     public RMLSesameDataSet runRMLMapping(RMLMapping rmlMapping,
             String baseIRI, String pathToNativeStore, String outputFormat, 
@@ -88,12 +88,7 @@ public class RMLEngine {
         // Update baseIRI
         this.baseIRI = baseIRI;
 
-        // Explore RML Mapping TriplesMap objects  
-        if (pathToNativeStore != null) {
-            generateRDFTriples(sesameDataSet, rmlMapping, exeTriplesMap, true);
-        } else {
-            generateRDFTriples(sesameDataSet, rmlMapping, exeTriplesMap, false);
-        }
+        generateRDFTriples(sesameDataSet, rmlMapping, exeTriplesMap);
                
         //TODO:add metadata this Triples Map started then, finished then and lasted that much
 	long endTime = System.nanoTime();
@@ -122,19 +117,6 @@ public class RMLEngine {
         return sesameDataSet;
         
     }
-    
-    /*private boolean check_ReferencingObjectMap(RMLMapping mapping, TriplesMap map, String[] exeTriplesMap) {
-        for (TriplesMap triplesMap : mapping.getTriplesMaps()) 
-            for (PredicateObjectMap predicateObjectMap : triplesMap.getPredicateObjectMaps()) 
-                if (predicateObjectMap.hasReferencingObjectMaps()) 
-                    for (ReferencingObjectMap referencingObjectMap : predicateObjectMap.getReferencingObjectMaps()) 
-                        if (!referencingObjectMap.getJoinConditions().isEmpty() 
-                                && referencingObjectMap.getParentTriplesMap().getName().equals(map.getName())
-                                && exeTriplesMap != null)
-                                //&& referencingObjectMap.getParentTriplesMap().getLogicalSource().getIdentifier().equals(triplesMap.getLogicalSource().getIdentifier())) 
-                            return true;
-        return false;
-    }*/
 
     /**
      * This process adds RDF triples to the output dataset. Each generated
@@ -144,72 +126,96 @@ public class RMLEngine {
      * @param sesameDataSet
      * @param rmlMapping
      */
-    private void generateRDFTriples(RMLSesameDataSet sesameDataSet, 
-            RMLMapping rmlMapping, String[] exeTriplesMap, boolean filebased) {
-        
+    private void generateRDFTriples(RMLSesameDataSet sesameDataSet,
+            RMLMapping rmlMapping, String[] exeTriplesMap) {
+
         log.debug(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
                 + "Generate RDF triples... ");
-        int delta = 0;
-        
-        RMLProcessorFactory factory = new ConcreteRMLProcessorFactory();
-        
-        //TODO:put it in a separate function
-        outerloop:
+
         for (TriplesMap triplesMap : rmlMapping.getTriplesMaps()) {
-            if(exeTriplesMap != null){
-                boolean flag = false;
-                for(String exeTM : exeTriplesMap){
-                    if(triplesMap.getName().toString().equals(exeTM.toString())){
-                        flag = true;
-                    }
+            sesameDataSet = generateTriplesMapTriples(triplesMap, exeTriplesMap, sesameDataSet);
+        }
+        log.info("sesameDataSet " + sesameDataSet.printRDF(RDFFormat.TURTLE));
+        try {
+            sesameDataSet.closeRepository();
+        } catch (RepositoryException ex) {
+            log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
+                    + "Cannot close output repository", ex);
+        }
+    }
+    
+    private RMLSesameDataSet generateTriplesMapTriples(
+            TriplesMap triplesMap, String[] exeTriplesMap, RMLSesameDataSet sesameDataSet) {
+        int delta = 0;
+
+        if (exeTriplesMap != null) {
+            boolean flag = false;
+            for (String exeTM : exeTriplesMap) {
+                if (triplesMap.getName().toString().equals(exeTM.toString())) {
+                    flag = true;
                 }
-                if(!flag)
-                    continue;
             }
-            
-            System.out.println("Generating RDF triples for " + triplesMap.getName());
-            //TODO: Add metadata that this Map Doc has that many Triples Maps
-            
-            RMLProcessor processor = null;
-            try {
-                processor = factory.create(triplesMap.getLogicalSource().getReferenceFormulation());
-            } catch (Exception ex) {
-                log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": " + ex 
-                        + "There is no suitable processor for this reference formulation");
+            if (!flag) {
+                log.error("not to be executed");
+                return null;
             }
-            
-            String source = triplesMap.getLogicalSource().getInputSource().getSource();
-            InputProcessor inputProcessor = new AbstractInputProcessor();
-            InputStream input = inputProcessor.getInputStream(triplesMap, source);
-            
-            try {
-                processor.execute(sesameDataSet, triplesMap, new NodeRMLPerformer(processor), input);
-            } catch (Exception ex) {
-                log.error(ex);
-                log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
-                        + "The execution of the mapping failed.");
-            }
+        }
+
+        System.out.println("Generating RDF triples for " + triplesMap.getName());
+        //TODO: Add metadata that this Map Doc has that many Triples Maps
+
+        log.info("Generating RML Processor..");
+        RMLProcessor processor = generateRMLProcessor(triplesMap);
+        
+        log.info("Generating Input Processor..");
+        InputStream input = generateInputStream(triplesMap);
+
+        try {
+            processor.execute(sesameDataSet, triplesMap, new NodeRMLPerformer(processor), input);
 
             log.info(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
                     + (sesameDataSet.getSize() - delta)
                     + " triples were generated for " + triplesMap.getName());
             //TODO: Add metadata that this Triples Map generatedthat many triples
             delta = sesameDataSet.getSize();
-                        
-            try {
-                input.close();
-            } catch (IOException ex) {
-                log.error(ex);
-                log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
-                        + "Input file could not be closed.");
-            }
+        } catch (Exception ex) {
+            log.error("Exception " + ex);
+            log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
+                    + "The execution of the mapping failed.");
         }
-        if(filebased)
-            try {
-                sesameDataSet.closeRepository();
-            } catch (RepositoryException ex) {
-                log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
-                        + "Cannot close output repository", ex);
-            }
+
+        try {
+            input.close();
+        } catch (IOException ex) {
+            log.error("IOException " + ex);
+            log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
+                    + "Input file could not be closed.");
+        }
+        return sesameDataSet;
+    }
+    
+    private RMLProcessor generateRMLProcessor(TriplesMap triplesMap) {
+        RMLProcessor processor = null;
+        RMLProcessorFactory factory = new ConcreteRMLProcessorFactory();
+
+        try {
+            log.debug("Reference formulation: " 
+                    + triplesMap.getLogicalSource().getReferenceFormulation());
+            processor = factory.create(triplesMap.getLogicalSource().getReferenceFormulation());
+        } catch (Exception ex) {
+            log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": " + ex
+                    + "There is no suitable processor for this reference formulation");
+        }
+
+        return processor;
+    }
+    
+    private InputStream generateInputStream(TriplesMap triplesMap) {
+        InputProcessor inputProcessor = new AbstractInputProcessor();
+
+        String source = triplesMap.getLogicalSource().getInputSource().getSource();
+
+        InputStream input = inputProcessor.getInputStream(triplesMap, source);
+        return input;
     }
 }

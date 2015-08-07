@@ -3,8 +3,8 @@ package be.ugent.mmlab.rml.processor.concrete;
 import be.ugent.mmlab.rml.processor.RMLProcessor;
 import be.ugent.mmlab.rml.processor.RMLProcessorFactory;
 import be.ugent.mmlab.rml.vocabulary.QLVocabulary.QLTerm;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * RML Processor
@@ -17,7 +17,7 @@ import org.apache.log4j.Logger;
 public class ConcreteRMLProcessorFactory implements RMLProcessorFactory{
     
     // Log
-    private static final Logger log = LogManager.getLogger(ConcreteRMLProcessorFactory.class);
+    private static final Logger log = LoggerFactory.getLogger(ConcreteRMLProcessorFactory.class);
 
     /**
      * Create the language-dependent processor based on the given language

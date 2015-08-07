@@ -16,8 +16,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.openrdf.model.BNode;
 import org.openrdf.model.Resource;
@@ -44,7 +44,7 @@ import org.openrdf.rio.Rio;
 public class FileSesameDataset extends RMLSesameDataSet {
 
     // Log
-    private static final Logger log = LogManager.getLogger(FileSesameDataset.class);
+    private static final Logger log = LoggerFactory.getLogger(FileSesameDataset.class);
     private File target;
     private BufferedWriter fw;
     private RDFWriter writer;
@@ -135,7 +135,6 @@ public class FileSesameDataset extends RMLSesameDataSet {
 
     }
 
-    @Override
     public void loadDataFromURL(String stringURL) throws RepositoryException, RDFParseException, IOException {
 
         URL url = new URL(stringURL);
@@ -215,7 +214,7 @@ public class FileSesameDataset extends RMLSesameDataSet {
             writer.handleStatement(st);
             size++;
         } catch (RDFHandlerException ex) {
-            log.fatal(o);
+            log.error("RDFHandlerException " + o);
         }
 
     }
@@ -272,12 +271,12 @@ public class FileSesameDataset extends RMLSesameDataSet {
             instream = uricon.getInputStream();
             IOUtils.copy(instream, new FileOutputStream(target));
         } catch (IOException ex) {
-            log.error(ex);
+            log.error("IOException " + ex);
         } finally {
             try {
                 instream.close();
             } catch (IOException ex) {
-                log.error(ex);
+                log.error("IOException " + ex);
             }
         }
 
@@ -315,7 +314,7 @@ public class FileSesameDataset extends RMLSesameDataSet {
             FileInputStream fis = new FileInputStream(target);
             return fis.toString();
         } catch (IOException ex) {
-            log.error(ex);
+            log.error("IOException " + ex);
         }
         return null;
     }
@@ -343,16 +342,16 @@ public class FileSesameDataset extends RMLSesameDataSet {
                 rdfParser.parse(fis, target.getAbsolutePath());
             } catch (IOException | RDFParseException | RDFHandlerException e) {
                 // handle IO problems (e.g. the file could not be read)
-                log.error(e);
+                log.error("Exception " + e);
             }
             return new ArrayList<>(statements.getStatements());
         } catch (FileNotFoundException ex) {
-            log.error(ex);
+            log.error("FileNotFoundException " + ex);
         } finally {
             try {
                 fis.close();
             } catch (IOException ex) {
-                log.error(ex);
+                log.error("IOException " + ex);
             }
         }
         return new ArrayList<> ();
@@ -450,9 +449,9 @@ public class FileSesameDataset extends RMLSesameDataSet {
             writer.endRDF();
             fw.close();
         } catch (RDFHandlerException ex) {
-            log.error(ex);
+            log.error("RDFHandlerException " + ex);
         } catch (IOException ex) {
-            log.error(ex);
+            log.error("IOException " + ex);
         } 
     }
 

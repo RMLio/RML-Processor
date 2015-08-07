@@ -13,20 +13,19 @@
     a sd:Service ;
     sd:endpoint <http://dbpedia.org/sparql> ;
     sd:supportedLanguage sd:SPARQL11Query ;
-    sd:resultFormat <http://www.w3.org/ns/formats/SPARQL_Results_XML> ;
-
-    sd:sparqlQueryTemplate "
-        SELECT ?resource_uri 
-        WHERE {
-            ?resource_uri a <http://dbpedia.org/ontology/Country> ;
-            rdfs:label \"%%country%%\"@en .
-        }. " .
+    sd:resultFormat <http://www.w3.org/ns/formats/SPARQL_Results_XML> .
 
 <#Author>
     rml:logicalSource [ 
-	rml:source <#InputSPARQL>;
+        rml:source <#InputSPARQL>;
         rml:referenceFormulation ql:JSONPath;
 	rml:iterator "$.author[*]";
+        rml:query """
+            SELECT ?resource_uri 
+            WHERE {
+                ?resource_uri a <http://dbpedia.org/ontology/Country> ;
+                rdfs:label \"%%country%%\"@en .
+            }. """
     ];
 
     rr:subjectMap [
@@ -44,8 +43,7 @@
 
 <#Paper>
     rml:logicalSource [ 
-	#rml:source "src/test/resources/example18/example18.csv";
-        rml:source "/home/andimou/Desktop/RMLProcessor/src/test/resources/example18/example18.csv";
+        rml:source "src/test/resources/example18/example18.csv";
         rml:referenceFormulation ql:CSV;
     ];
 

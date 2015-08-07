@@ -15,7 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
-import org.apache.log4j.LogManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.openrdf.model.Resource;
 
 /**
@@ -26,7 +27,7 @@ import org.openrdf.model.Resource;
 public class JSONPathProcessor extends AbstractRMLProcessor {
 
     // Log
-    private static final org.apache.log4j.Logger log = LogManager.getLogger(JSONPathProcessor.class);
+    static final Logger log = LoggerFactory.getLogger(JSONPathProcessor.class);
     
     JSONPathProcessor(){
         TermMapProcessorFactory factory = new ConcreteTermMapFactory();
@@ -45,9 +46,9 @@ public class JSONPathProcessor extends AbstractRMLProcessor {
             execute(dataset, map, performer, val);
 
         } catch (FileNotFoundException ex) {
-            log.error(ex);
+            log.error("FileNotFoundException " + ex);
         } catch (IOException ex) {
-            log.error(ex);
+            log.error("IOException " + ex);
         } 
     }
 

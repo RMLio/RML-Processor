@@ -15,8 +15,8 @@ import jodd.jerry.Jerry;
 import jodd.lagarto.dom.Node;
 import jodd.lagarto.dom.NodeSelector;
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.openrdf.model.Resource;
 
 
@@ -28,7 +28,7 @@ import org.openrdf.model.Resource;
 public class CSS3Extractor extends AbstractRMLProcessor {
 
     // Log
-    private static final Logger log = LogManager.getLogger(CSS3Extractor.class);
+    private static final Logger log = LoggerFactory.getLogger(CSS3Extractor.class);
     private int enumerator;
 
     public CSS3Extractor() {
@@ -46,7 +46,7 @@ public class CSS3Extractor extends AbstractRMLProcessor {
         try {
             doc = Jerry.jerry(IOUtils.toString(input, "UTF-8"));
         } catch (IOException ex) {
-            log.error(ex);
+            log.error("IOException " + ex);
         }
         NodeSelector nodeSelector ;
         nodeSelector = new NodeSelector(doc.get(0));

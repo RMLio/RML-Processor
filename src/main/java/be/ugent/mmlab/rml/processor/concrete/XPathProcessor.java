@@ -13,9 +13,7 @@ import be.ugent.mmlab.rml.vocabulary.QLVocabulary;
 import be.ugent.mmlab.rml.xml.XOMBuilder;
 import java.io.File;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import javax.xml.xpath.XPathException;
 import jlibs.xml.DefaultNamespaceContext;
 import jlibs.xml.Namespaces;
@@ -35,8 +33,8 @@ import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.XPathCompiler;
 import net.sf.saxon.s9api.XPathSelector;
 import net.sf.saxon.s9api.XdmNode;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.openrdf.model.Resource;
 
 /**
@@ -49,7 +47,7 @@ public class XPathProcessor extends AbstractRMLProcessor {
     private TriplesMap map;
     
     // Log
-    private static final Logger log = LogManager.getLogger(XPathProcessor.class);
+    static final Logger log = LoggerFactory.getLogger(XPathProcessor.class);
     
     public XPathProcessor(){
         TermMapProcessorFactory factory = new ConcreteTermMapFactory();
@@ -140,6 +138,7 @@ public class XPathProcessor extends AbstractRMLProcessor {
                 //When an XPath expression matches
                 @Override
                 public void onNodeHit(Expression expression, NodeItem nodeItem) {
+                    log.debug("Expression " + expression);
                     Node node = (Node) nodeItem.xml;
                     //Let the performer do its thing
                     performer.perform(node, dataset, map);
@@ -163,9 +162,9 @@ public class XPathProcessor extends AbstractRMLProcessor {
             //dog.sniff(event, new InputSource(new FileInputStream(fileName)));
             dog.sniff(event, new InputSource(input));
         } catch (SAXPathException ex) {
-            log.error(ex);
+            log.error("SAXPathException " + ex);
         } catch (XPathException ex) {
-            log.error(ex);
+            log.error("XPathException " + ex);
         } 
 
     }
