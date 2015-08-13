@@ -1,7 +1,7 @@
 
 package be.ugent.mmlab.rml.processor;
 
-import be.ugent.mmlab.rml.vocabulary.QLVocabulary;
+import be.ugent.mmlab.rml.vocabularies.QLVocabulary;
 
 /**
  * RML Processor

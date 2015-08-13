@@ -18,13 +18,13 @@ import static be.ugent.mmlab.rml.model.RDFTerm.TermType.IRI;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.concrete.ConcreteRMLProcessorFactory;
 import be.ugent.mmlab.rml.input.processor.AbstractInputProcessor;
-import be.ugent.mmlab.rml.input.processor.InputProcessor;
+import be.ugent.mmlab.rml.input.processor.SourceProcessor;
 import be.ugent.mmlab.rml.model.std.StdTemplateMap;
 import be.ugent.mmlab.rml.processor.termmap.TermMapProcessor;
 import be.ugent.mmlab.rml.processor.termmap.TermMapProcessorFactory;
 import be.ugent.mmlab.rml.processor.termmap.concrete.ConcreteTermMapFactory;
 import be.ugent.mmlab.rml.sesame.RMLSesameDataSet;
-import be.ugent.mmlab.rml.vocabulary.QLVocabulary.QLTerm;
+import be.ugent.mmlab.rml.vocabularies.QLVocabulary.QLTerm;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -251,33 +251,38 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
         String template ;
         Set<ReferencingObjectMap> referencingObjectMaps = pom.getReferencingObjectMaps();
         for (ReferencingObjectMap referencingObjectMap : referencingObjectMaps) {
+            log.debug("Referencing Object Map " + referencingObjectMap);
             Set<JoinCondition> joinConditions = referencingObjectMap.getJoinConditions();
             
             TriplesMap parentTriplesMap = referencingObjectMap.getParentTriplesMap();
+            log.debug("Parent Triples Map to be processed: " + parentTriplesMap.getName());
             
-            template = parentTriplesMap.getLogicalSource().getInputSource().getSource();
+            template = parentTriplesMap.getLogicalSource().getSource().getTemplate();
+            log.debug("template " + template);
 
             //Create the processor based on the parent triples map to perform the join
             RMLProcessorFactory factory = new ConcreteRMLProcessorFactory();
             QLTerm referenceFormulation = parentTriplesMap.getLogicalSource().getReferenceFormulation();
 
-            InputProcessor inputProcessor = new AbstractInputProcessor();
-            InputStream input = inputProcessor.getInputStream(parentTriplesMap, template);
+            SourceProcessor inputProcessor = new AbstractInputProcessor();
+            InputStream input = inputProcessor.getInputStream(parentTriplesMap.getLogicalSource().getSource());
             
             RMLProcessor processor = factory.create(referenceFormulation);
             RMLPerformer performer = null;
             
             //different Logical Source and no Conditions
             if (joinConditions.isEmpty()
-                    & !parentTriplesMap.getLogicalSource().getInputSource().getSource().equals(
-                    map.getLogicalSource().getInputSource().getSource())) {
+                    & !parentTriplesMap.getLogicalSource().getSource().getTemplate().equals(
+                    map.getLogicalSource().getSource().getTemplate())) {
+                log.debug("Referencing Object Map with Logical Source without conditions.");
                 performer = new JoinRMLPerformer(processor, subject, predicate);
                 processor.execute(dataset, parentTriplesMap, performer, input);
             } 
             //same Logical Source and no Conditions
             else if (joinConditions.isEmpty()
-                    & parentTriplesMap.getLogicalSource().getInputSource().getSource().equals(
-                    map.getLogicalSource().getInputSource().getSource())) {
+                    & parentTriplesMap.getLogicalSource().getSource().getTemplate().equals(
+                    map.getLogicalSource().getSource().getTemplate())) {
+                log.debug("Referencing Object Map with Logical Source without conditions.");
                 performer = new SimpleReferencePerformer(processor, subject, predicate);
                 if ((parentTriplesMap.getLogicalSource().getReferenceFormulation().toString().equals("CSV"))
                         || (parentTriplesMap.getLogicalSource().getIterator().equals(map.getLogicalSource().getIterator()))) {
@@ -289,19 +294,26 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                     //TODO:merge it with the performer's switch-case
                     switch (parentTriplesMap.getLogicalSource().getReferenceFormulation().toString()) {
                         case "XPath":
-                            expression = parentTriplesMap.getLogicalSource().getIterator().toString().substring(end);
+                            expression = 
+                                    parentTriplesMap.getLogicalSource()
+                                    .getIterator().toString().substring(end);
                             break;
                         case "JSONPath":
-                            expression = parentTriplesMap.getLogicalSource().getIterator().toString().substring(end + 1);
+                            expression = 
+                                    parentTriplesMap.getLogicalSource().
+                                    getIterator().toString().substring(end + 1);
                             break;
                         case "CSS3":
-                            expression = parentTriplesMap.getLogicalSource().getIterator().toString().substring(end);
+                            expression = 
+                                    parentTriplesMap.getLogicalSource().
+                                    getIterator().toString().substring(end);
                             break;
                     }
                     processor.execute_node(dataset, expression, parentTriplesMap, performer, node, null);
                 }
             } //Conditions
             else {
+                log.debug("Referencing Object Map with Logical Source with conditions.");
                 //Build a join map where
                 //  key: the parent expression
                 //  value: the value extracted from the child

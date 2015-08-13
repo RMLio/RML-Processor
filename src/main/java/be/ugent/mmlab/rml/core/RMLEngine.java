@@ -1,8 +1,8 @@
 package be.ugent.mmlab.rml.core;
 
 import be.ugent.mmlab.rml.dataset.FileSesameDataset;
-import be.ugent.mmlab.rml.input.processor.AbstractInputProcessor;
-import be.ugent.mmlab.rml.input.processor.InputProcessor;
+import be.ugent.mmlab.rml.input.ConcreteLogicalSourceProcessorFactory;
+import be.ugent.mmlab.rml.input.processor.SourceProcessor;
 import be.ugent.mmlab.rml.model.LogicalSource;
 import be.ugent.mmlab.rml.model.RMLMapping;
 import be.ugent.mmlab.rml.model.TriplesMap;
@@ -17,8 +17,6 @@ import java.sql.SQLException;
 import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.openrdf.repository.RepositoryException;
-import org.openrdf.rio.RDFFormat;
 
 /**
  * RML Processor
@@ -44,7 +42,7 @@ public class RMLEngine {
     
     
     protected String getIdentifier(LogicalSource ls) {
-        return RMLEngine.getFileMap().getProperty(ls.getSource());
+        return RMLEngine.getFileMap().getProperty(ls.getSource().getTemplate());
     }
 
     /**
@@ -88,7 +86,7 @@ public class RMLEngine {
         // Update baseIRI
         this.baseIRI = baseIRI;
 
-        generateRDFTriples(sesameDataSet, rmlMapping, exeTriplesMap);
+        sesameDataSet = generateRDFTriples(sesameDataSet, rmlMapping, exeTriplesMap);
                
         //TODO:add metadata this Triples Map started then, finished then and lasted that much
 	long endTime = System.nanoTime();
@@ -126,7 +124,7 @@ public class RMLEngine {
      * @param sesameDataSet
      * @param rmlMapping
      */
-    private void generateRDFTriples(RMLSesameDataSet sesameDataSet,
+    private RMLSesameDataSet generateRDFTriples(RMLSesameDataSet sesameDataSet,
             RMLMapping rmlMapping, String[] exeTriplesMap) {
 
         log.debug(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
@@ -135,20 +133,21 @@ public class RMLEngine {
         for (TriplesMap triplesMap : rmlMapping.getTriplesMaps()) {
             sesameDataSet = generateTriplesMapTriples(triplesMap, exeTriplesMap, sesameDataSet);
         }
-        log.info("sesameDataSet " + sesameDataSet.printRDF(RDFFormat.TURTLE));
-        try {
+        //log.info("sesameDataSet " + sesameDataSet.printRDF(RDFFormat.TURTLE));
+        /*try {
             sesameDataSet.closeRepository();
         } catch (RepositoryException ex) {
             log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
                     + "Cannot close output repository", ex);
-        }
+        }*/
+        return sesameDataSet;
     }
     
     private RMLSesameDataSet generateTriplesMapTriples(
             TriplesMap triplesMap, String[] exeTriplesMap, RMLSesameDataSet sesameDataSet) {
         int delta = 0;
 
-        if (exeTriplesMap != null) {
+        /*if (exeTriplesMap != null) {
             boolean flag = false;
             for (String exeTM : exeTriplesMap) {
                 if (triplesMap.getName().toString().equals(exeTM.toString())) {
@@ -159,7 +158,7 @@ public class RMLEngine {
                 log.error("not to be executed");
                 return null;
             }
-        }
+        }*/
 
         System.out.println("Generating RDF triples for " + triplesMap.getName());
         //TODO: Add metadata that this Map Doc has that many Triples Maps
@@ -197,25 +196,33 @@ public class RMLEngine {
     private RMLProcessor generateRMLProcessor(TriplesMap triplesMap) {
         RMLProcessor processor = null;
         RMLProcessorFactory factory = new ConcreteRMLProcessorFactory();
-
-        try {
-            log.debug("Reference formulation: " 
+        
+        log.debug("Logical Source: " 
+                    + triplesMap.getLogicalSource());
+        log.debug("Reference formulation: " 
                     + triplesMap.getLogicalSource().getReferenceFormulation());
+        try {
             processor = factory.create(triplesMap.getLogicalSource().getReferenceFormulation());
         } catch (Exception ex) {
             log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": " + ex
-                    + "There is no suitable processor for this reference formulation");
+                    + " There is no suitable processor for this reference formulation");
         }
 
         return processor;
     }
     
+    //TODO: Check if it's needed here or if I should take it to the DataRetrieval
     private InputStream generateInputStream(TriplesMap triplesMap) {
-        InputProcessor inputProcessor = new AbstractInputProcessor();
+        ConcreteLogicalSourceProcessorFactory logicalSourceProcessorFactory = 
+                new ConcreteLogicalSourceProcessorFactory();
+        //SourceProcessor inputProcessor = new AbstractInputProcessor();
+        SourceProcessor inputProcessor = 
+                logicalSourceProcessorFactory.
+                createSourceProcessor(triplesMap.getLogicalSource().getSource());
 
-        String source = triplesMap.getLogicalSource().getInputSource().getSource();
+        String source = triplesMap.getLogicalSource().getSource().getTemplate();
 
-        InputStream input = inputProcessor.getInputStream(triplesMap, source);
+        InputStream input = inputProcessor.getInputStream(triplesMap.getLogicalSource().getSource());
         return input;
     }
 }

@@ -6,7 +6,7 @@ import be.ugent.mmlab.rml.processor.AbstractRMLProcessor;
 import be.ugent.mmlab.rml.processor.termmap.TermMapProcessorFactory;
 import be.ugent.mmlab.rml.processor.termmap.concrete.ConcreteTermMapFactory;
 import be.ugent.mmlab.rml.sesame.RMLSesameDataSet;
-import be.ugent.mmlab.rml.vocabulary.QLVocabulary.QLTerm;
+import be.ugent.mmlab.rml.vocabularies.QLVocabulary.QLTerm;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;

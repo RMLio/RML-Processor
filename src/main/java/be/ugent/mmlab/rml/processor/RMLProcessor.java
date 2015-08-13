@@ -7,7 +7,7 @@ import be.ugent.mmlab.rml.model.RDFTerm.SubjectMap;
 import be.ugent.mmlab.rml.model.RDFTerm.TermMap;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.sesame.RMLSesameDataSet;
-import be.ugent.mmlab.rml.vocabulary.QLVocabulary;
+import be.ugent.mmlab.rml.vocabularies.QLVocabulary.QLTerm;
 import java.io.InputStream;
 import java.util.List;
 import org.openrdf.model.Resource;
@@ -56,8 +56,17 @@ public interface RMLProcessor {
      */
     public List<String> processTemplate(TermMap map, List<String> replacements, String expression);
     
+    /**
+     *
+     * @param expression
+     * @param template
+     * @param termType
+     * @param referenceFormulation
+     * @param replacement
+     * @return
+     */
     public String processTemplate(String expression, String template, String termType,
-            QLVocabulary.QLTerm referenceFormulation, String replacement);
+            QLTerm referenceFormulation, String replacement);
     
     /**
      * process a predicate object map

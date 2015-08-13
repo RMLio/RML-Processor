@@ -201,6 +201,7 @@ public class MapperTest
             RMLEngine engine = new RMLEngine();
             RMLMapping mapping = mappingFactory.extractRMLMapping(repository);
             RMLSesameDataSet output = engine.runRMLMapping(mapping, "http://example.com", triplesMap);
+            
             output.dumpRDF(System.out, RDFFormat.TURTLE);
 
             return output;

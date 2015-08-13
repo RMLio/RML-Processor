@@ -9,7 +9,7 @@ import be.ugent.mmlab.rml.processor.RMLProcessorFactory;
 import be.ugent.mmlab.rml.processor.termmap.TermMapProcessorFactory;
 import be.ugent.mmlab.rml.processor.termmap.concrete.ConcreteTermMapFactory;
 import be.ugent.mmlab.rml.sesame.RMLSesameDataSet;
-import be.ugent.mmlab.rml.vocabulary.QLVocabulary;
+import be.ugent.mmlab.rml.vocabularies.QLVocabulary.QLTerm;
 import be.ugent.mmlab.rml.xml.XOMBuilder;
 import java.io.File;
 import java.io.InputStream;
@@ -51,7 +51,7 @@ public class XPathProcessor extends AbstractRMLProcessor {
     
     public XPathProcessor(){
         TermMapProcessorFactory factory = new ConcreteTermMapFactory();
-        this.termMapProcessor = factory.create(QLVocabulary.QLTerm.XPATH_CLASS);
+        this.termMapProcessor = factory.create(QLTerm.XPATH_CLASS);
     }
 
     public XPathContext nsContext = new XPathContext();
@@ -67,7 +67,7 @@ public class XPathProcessor extends AbstractRMLProcessor {
         try {
             Expression xpath = dog.addXPath("/*/namespace::*[name()]");
             if (map != null) {
-                String source = map.getLogicalSource().getInputSource().getSource().toString();
+                String source = map.getLogicalSource().getSource().getTemplate();
                 XPathResults results = dog.sniff(new InputSource(source));
                 if (results != null) {
                     Collection<NodeItem> result3 = (Collection<NodeItem>) results.getResult(xpath);
@@ -78,9 +78,9 @@ public class XPathProcessor extends AbstractRMLProcessor {
                 }
             }
         } catch (SAXPathException ex) {
-            log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": " + ex );
+            log.error("SAXPathException: " + ex );
         } catch (XPathException ex) {
-            log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": " + ex );
+            log.error("SAXPathException: " + ex );
         }
         return dnc;
     }
@@ -96,11 +96,13 @@ public class XPathProcessor extends AbstractRMLProcessor {
             XPathCompiler xpath = proc.newXPathCompiler();
             DocumentBuilder builder = proc.newDocumentBuilder();
 
-            String source = getClass().getResource(map.getLogicalSource().getSource()).getFile();
+            String source = 
+                    getClass().getResource(map.getLogicalSource().getSource().getTemplate()).getFile();
 
             XdmNode doc = builder.build(new File(source));
             String expre = replace(node, expression);
-            expression = expression.replaceAll("\\{" + expression.split("\\{")[1].split("\\}")[0] + "\\}", "'" + expre + "'");
+            expression = expression.
+                    replaceAll("\\{" + expression.split("\\{")[1].split("\\}")[0] + "\\}", "'" + expre + "'");
 
             XPathSelector selector = xpath.compile(expression).load();
             selector.setContextItem(doc);
@@ -175,6 +177,7 @@ public class XPathProcessor extends AbstractRMLProcessor {
             RMLPerformer performer, Object node, Resource subject) {
         //still need to make it work with more nore-results 
         //currently it handles only one
+        log.debug("Execute node..");
     
         if(expression.startsWith("/"))
             expression = expression.substring(1);

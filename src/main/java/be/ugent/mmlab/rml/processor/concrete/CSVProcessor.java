@@ -8,7 +8,7 @@ import be.ugent.mmlab.rml.processor.AbstractRMLProcessor;
 import be.ugent.mmlab.rml.processor.termmap.TermMapProcessorFactory;
 import be.ugent.mmlab.rml.processor.termmap.concrete.ConcreteTermMapFactory;
 import be.ugent.mmlab.rml.sesame.RMLSesameDataSet;
-import be.ugent.mmlab.rml.vocabulary.QLVocabulary;
+import be.ugent.mmlab.rml.vocabularies.QLVocabulary.QLTerm;
 import com.csvreader.CsvReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -32,7 +32,7 @@ public class CSVProcessor extends AbstractRMLProcessor {
     
     CSVProcessor(){
         TermMapProcessorFactory factory = new ConcreteTermMapFactory();
-        this.termMapProcessor = factory.create(QLVocabulary.QLTerm.CSV_CLASS);
+        this.termMapProcessor = factory.create(QLTerm.CSV_CLASS);
     }
     
     private char getDelimiter(LogicalSource ls) {

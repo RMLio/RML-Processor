@@ -6,7 +6,7 @@ import be.ugent.mmlab.rml.processor.AbstractRMLProcessor;
 import be.ugent.mmlab.rml.processor.termmap.TermMapProcessorFactory;
 import be.ugent.mmlab.rml.processor.termmap.concrete.ConcreteTermMapFactory;
 import be.ugent.mmlab.rml.sesame.RMLSesameDataSet;
-import be.ugent.mmlab.rml.vocabulary.QLVocabulary;
+import be.ugent.mmlab.rml.vocabularies.QLVocabulary.QLTerm;
 import com.jayway.jsonpath.JsonPath;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -31,7 +31,7 @@ public class JSONPathProcessor extends AbstractRMLProcessor {
     
     JSONPathProcessor(){
         TermMapProcessorFactory factory = new ConcreteTermMapFactory();
-        this.termMapProcessor = factory.create(QLVocabulary.QLTerm.JSONPATH_CLASS);
+        this.termMapProcessor = factory.create(QLTerm.JSONPATH_CLASS);
     }
 
     @Override
