@@ -96,6 +96,12 @@ public class MapperTest
         URL fileToRMLFile = getClass().getResource("/example8/symergy.rml.ttl");
         URL fileToOutputFile = getClass().getResource("/example8/symergy.output.ttl");
         assertTrue(desiredOutput(fileToOutputFile).isEqualTo(assertMap(fileToRMLFile, null)));
+    }*/
+    
+    public void testExample10() {
+        URL fileToRMLFile = getClass().getResource("/example10/exampleAirport.rml.ttl");
+        URL fileToOutputFile = getClass().getResource("/example10/exampleAirport.output.ttl");
+        assertTrue(desiredOutput(fileToOutputFile).isEqualTo(assertMap(fileToRMLFile, null)));
     }
     
     /*public void testExample11() {
@@ -158,13 +164,13 @@ public class MapperTest
         assertTrue(desiredOutput(fileToOutputFile).isEqualTo(assertMap(fileToRMLFile, null)));
     }*/
     
-    public void testExample18() {
+    /*public void testExample18() {
         URL fileToRMLFile = getClass().getResource("/example18/example18.rml.ttl");
         URL fileToOutputFile = getClass().getResource("/example18/example18.output.ttl");
         String[] triplesMap = {"http://example.com/base#Paper"} ;
         assertTrue(desiredOutput(fileToOutputFile).isEqualTo(assertMap(fileToRMLFile, triplesMap)));
         //assertTrue(desiredOutput(fileToOutputFile).isEqualTo(assertMap(fileToRMLFile, null)));
-    }
+    }*/
     
     /*public void testExample19() {
         URL fileToRMLFile = getClass().getResource("/example19/example19.rml.ttl");

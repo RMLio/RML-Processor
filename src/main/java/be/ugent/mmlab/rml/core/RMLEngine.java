@@ -222,7 +222,8 @@ public class RMLEngine {
 
         String source = triplesMap.getLogicalSource().getSource().getTemplate();
 
-        InputStream input = inputProcessor.getInputStream(triplesMap.getLogicalSource().getSource());
+        InputStream input = inputProcessor.
+                getInputStream(triplesMap.getLogicalSource().getSource());
         return input;
     }
 }
