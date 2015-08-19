@@ -3,6 +3,7 @@ package be.ugent.mmlab.rml.processor.concrete;
 import be.ugent.mmlab.rml.processor.RMLProcessor;
 import be.ugent.mmlab.rml.processor.RMLProcessorFactory;
 import be.ugent.mmlab.rml.vocabularies.QLVocabulary.QLTerm;
+import static be.ugent.mmlab.rml.vocabularies.QLVocabulary.QLTerm.CSV_CLASS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,6 +31,12 @@ public class ConcreteRMLProcessorFactory implements RMLProcessorFactory{
             case XPATH_CLASS:
                 return new XPathProcessor();
             case CSV_CLASS:
+                return new CSVProcessor();
+            case SQL_CLASS:
+                //TODO: optimize the following 
+                //TODO: no reference formulations implies 
+                //SQL reference formulation
+                //but check first if custom defined one
                 return new CSVProcessor();
             case JSONPATH_CLASS:
                 return new JSONPathProcessor();

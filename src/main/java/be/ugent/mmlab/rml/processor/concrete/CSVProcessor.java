@@ -1,9 +1,9 @@
 package be.ugent.mmlab.rml.processor.concrete;
 
-import be.ugent.mmlab.rml.core.RMLEngine;
 import be.ugent.mmlab.rml.core.RMLPerformer;
 import be.ugent.mmlab.rml.model.LogicalSource;
 import be.ugent.mmlab.rml.model.TriplesMap;
+import be.ugent.mmlab.rml.model.std.CsvwReferenceFormulation;
 import be.ugent.mmlab.rml.processor.AbstractRMLProcessor;
 import be.ugent.mmlab.rml.processor.termmap.TermMapProcessorFactory;
 import be.ugent.mmlab.rml.processor.termmap.concrete.ConcreteTermMapFactory;
@@ -36,9 +36,17 @@ public class CSVProcessor extends AbstractRMLProcessor {
     }
     
     private char getDelimiter(LogicalSource ls) {
-        String d = RMLEngine.getFileMap().getProperty(ls.getSource() + ".delimiter");
-        if (d == null) {
+        //String d = RMLEngine.getFileMap().getProperty(ls.getSource() + ".delimiter");
+        String d = null;
+        CsvwReferenceFormulation refForm =
+                (CsvwReferenceFormulation) ls.getCustomReferenceFormulation();
+        if (refForm == null) {
             return ',';
+        } else {
+            d = refForm.getDelimiter();
+            if (d == null) {
+                return ',';
+            }
         }
         return d.charAt(0);
     }

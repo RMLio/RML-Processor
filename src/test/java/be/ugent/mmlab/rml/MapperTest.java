@@ -1,7 +1,7 @@
 package be.ugent.mmlab.rml;
 
 import be.ugent.mmlab.rml.core.RMLEngine;
-import be.ugent.mmlab.rml.mapdochandler.extraction.StdRMLMappingFactory;
+import be.ugent.mmlab.rml.mapdochandler.extraction.std.StdRMLMappingFactory;
 import be.ugent.mmlab.rml.mapdochandler.retrieval.RMLDocRetrieval;
 import be.ugent.mmlab.rml.model.RMLMapping;
 import be.ugent.mmlab.rml.sesame.RMLSesameDataSet;

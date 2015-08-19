@@ -54,7 +54,8 @@ public class RMLEngine {
      * @throws SQLException
      * @throws UnsupportedEncodingException
      */
-    public RMLSesameDataSet runRMLMapping(RMLMapping rmlMapping, String baseIRI, String[] triplesMap) 
+    public RMLSesameDataSet runRMLMapping(
+            RMLMapping rmlMapping, String baseIRI, String[] triplesMap) 
             throws SQLException, UnsupportedEncodingException, IOException {
         return runRMLMapping(rmlMapping, baseIRI, null, "ntriples", null, triplesMap);
     }
@@ -170,7 +171,11 @@ public class RMLEngine {
         InputStream input = generateInputStream(triplesMap);
 
         try {
-            processor.execute(sesameDataSet, triplesMap, new NodeRMLPerformer(processor), input);
+            log.debug("Generating Performer..");
+            NodeRMLPerformer performer = new NodeRMLPerformer(processor);
+            
+            log.debug("Executing Mapping Processor..");
+            processor.execute(sesameDataSet, triplesMap, performer, input);
 
             log.info(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
                     + (sesameDataSet.getSize() - delta)
