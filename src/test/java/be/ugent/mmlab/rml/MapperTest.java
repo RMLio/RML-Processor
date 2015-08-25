@@ -6,6 +6,8 @@ import be.ugent.mmlab.rml.mapdochandler.retrieval.RMLDocRetrieval;
 import be.ugent.mmlab.rml.model.RMLMapping;
 import be.ugent.mmlab.rml.sesame.RMLSesameDataSet;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -47,25 +49,29 @@ public class MapperTest
    public void testExample1() {
         URL fileToRMLFile = getClass().getResource("/example1/example.rml.ttl");
         URL fileToOutputFile = getClass().getResource("/example1/example.output.ttl");
-        assertTrue(desiredOutput(fileToOutputFile).isEqualTo(assertMap(fileToRMLFile, null)));
+        assertTrue(desiredOutput(fileToOutputFile).isEqualTo(
+                assertMap(fileToRMLFile, null, null)));
     }
 
     public void testExample2() {
         URL fileToRMLFile = getClass().getResource("/example2/example.rml.ttl");
         URL fileToOutputFile = getClass().getResource("/example2/example.output.ttl");
-        assertTrue(desiredOutput(fileToOutputFile).isEqualTo(assertMap(fileToRMLFile, null)));
+        assertTrue(desiredOutput(fileToOutputFile).isEqualTo(
+                assertMap(fileToRMLFile, null, null)));
     }
 
     public void testExample3() {
         URL fileToRMLFile = getClass().getResource("/example3/example3.rml.ttl");
         URL fileToOutputFile = getClass().getResource("/example3/example3.output.ttl");
-        assertTrue(desiredOutput(fileToOutputFile).isEqualTo(assertMap(fileToRMLFile, null)));
+        assertTrue(desiredOutput(fileToOutputFile).isEqualTo(
+                assertMap(fileToRMLFile, null, null)));
     }
 
     public void testExample4() {
         URL fileToRMLFile = getClass().getResource("/example4/example4_Venue.rml.ttl");
         URL fileToOutputFile = getClass().getResource("/example4/example4_Venue.output.ttl");
-        assertTrue(desiredOutput(fileToOutputFile).isEqualTo(assertMap(fileToRMLFile, null)));
+        assertTrue(desiredOutput(fileToOutputFile).isEqualTo(
+                assertMap(fileToRMLFile, null, null)));
     } 
 
     /*public void testExample5() {
@@ -77,13 +83,15 @@ public class MapperTest
     public void testExample6() {
         URL fileToRMLFile = getClass().getResource("/example6/example.rml.ttl");
         URL fileToOutputFile = getClass().getResource("/example6/example.output.ttl");
-        assertTrue(desiredOutput(fileToOutputFile).isEqualTo(assertMap(fileToRMLFile, null)));
+        assertTrue(desiredOutput(fileToOutputFile).isEqualTo(
+                assertMap(fileToRMLFile, null, null)));
     }
     
     public void testExample7() {
         URL fileToRMLFile = getClass().getResource("/example7/example7.rml.ttl");
         URL fileToOutputFile = getClass().getResource("/example7/example7.output.ttl");
-        assertTrue(desiredContextOutput(fileToOutputFile).isEqualTo(assertMap(fileToRMLFile, null)));
+        assertTrue(desiredContextOutput(fileToOutputFile).isEqualTo(
+                assertMap(fileToRMLFile, null, null)));
     }
     
     /*public void testExample8() {
@@ -101,7 +109,8 @@ public class MapperTest
     public void testExample10() {
         URL fileToRMLFile = getClass().getResource("/example10/exampleAirport.rml.ttl");
         URL fileToOutputFile = getClass().getResource("/example10/exampleAirport.output.ttl");
-        assertTrue(desiredOutput(fileToOutputFile).isEqualTo(assertMap(fileToRMLFile, null)));
+        assertTrue(desiredOutput(fileToOutputFile).isEqualTo(
+                assertMap(fileToRMLFile, null, null)));
     }
     
     /*public void testExample11() {
@@ -164,13 +173,16 @@ public class MapperTest
         assertTrue(desiredOutput(fileToOutputFile).isEqualTo(assertMap(fileToRMLFile, null)));
     }*/
     
-    /*public void testExample18() {
+    public void testExample18() {
         URL fileToRMLFile = getClass().getResource("/example18/example18.rml.ttl");
         URL fileToOutputFile = getClass().getResource("/example18/example18.output.ttl");
-        String[] triplesMap = {"http://example.com/base#Paper"} ;
-        assertTrue(desiredOutput(fileToOutputFile).isEqualTo(assertMap(fileToRMLFile, triplesMap)));
+        Map<String, String> parameters = new HashMap<String, String>();
+        parameters.put("publication_id","4384220");
+        //String[] triplesMap = {"http://example.com/base#Author"} ;
+        assertTrue(desiredOutput(fileToOutputFile).isEqualTo(
+                assertMap(fileToRMLFile, parameters, null)));
         //assertTrue(desiredOutput(fileToOutputFile).isEqualTo(assertMap(fileToRMLFile, null)));
-    }*/
+    }
     
     /*public void testExample19() {
         URL fileToRMLFile = getClass().getResource("/example19/example19.rml.ttl");
@@ -196,19 +208,22 @@ public class MapperTest
         return desiredOutput;
     }
     
-    private RMLSesameDataSet assertMap(URL mappingURL, String[] triplesMap) {
+    private RMLSesameDataSet assertMap(URL mappingURL, 
+            Map<String, String> parameters, String[] triplesMap) {
         try {
             StdRMLMappingFactory mappingFactory = new StdRMLMappingFactory();
             //Retrieve the Mapping Document
             log.info("Retrieving the Mapping Document..");
             RMLDocRetrieval mapDocRetrieval = new RMLDocRetrieval();
-            Repository repository = mapDocRetrieval.getMappingDoc(mappingURL.getFile(), RDFFormat.TURTLE);
+            Repository repository = mapDocRetrieval.getMappingDoc(
+                    mappingURL.getFile(), RDFFormat.TURTLE);
 
             RMLEngine engine = new RMLEngine();
             RMLMapping mapping = mappingFactory.extractRMLMapping(repository);
-            RMLSesameDataSet output = engine.runRMLMapping(mapping, "http://example.com", triplesMap);
-            
-            output.dumpRDF(System.out, RDFFormat.TURTLE);
+            RMLSesameDataSet output = engine.runRMLMapping(
+                    mapping, "http://example.com", parameters, triplesMap);
+            if(output != null)
+                output.dumpRDF(System.out, RDFFormat.TURTLE);
 
             return output;
 

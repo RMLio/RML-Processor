@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
+import java.util.Map;
 import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,9 +56,11 @@ public class RMLEngine {
      * @throws UnsupportedEncodingException
      */
     public RMLSesameDataSet runRMLMapping(
-            RMLMapping rmlMapping, String baseIRI, String[] triplesMap) 
+            RMLMapping rmlMapping, String baseIRI, 
+            Map<String, String> parameters, String[] triplesMap) 
             throws SQLException, UnsupportedEncodingException, IOException {
-        return runRMLMapping(rmlMapping, baseIRI, null, "ntriples", null, triplesMap);
+        return runRMLMapping(
+                rmlMapping, baseIRI, null, "ntriples", parameters, triplesMap);
     }
 
     /**
@@ -71,32 +74,26 @@ public class RMLEngine {
      */
     public RMLSesameDataSet runRMLMapping(RMLMapping rmlMapping,
             String baseIRI, String pathToNativeStore, String outputFormat, 
-            String parameter, String[] exeTriplesMap) {
+            Map<String, String> parameters, String[] exeTriplesMap) {
         long startTime = System.nanoTime();
 
-        log.debug(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
-                + "[RMLEngine:runRMLMapping] Run RML mapping... ");
+        log.debug("Running RML mapping... ");
         if (rmlMapping == null) 
-            log.info(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
-                    + "No RML Mapping object found.");
+            log.info("No RML Mapping object found.");
         if (baseIRI == null) 
-            log.info(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
-                    + "[RMLEngine:runRMLMapping] No base IRI found.");
+            log.info("No base IRI found.");
 
-        RMLSesameDataSet sesameDataSet = chooseSesameDataSet(pathToNativeStore, outputFormat);
+        RMLSesameDataSet sesameDataSet = 
+                chooseSesameDataSet(pathToNativeStore, outputFormat);
         // Update baseIRI
         this.baseIRI = baseIRI;
 
-        sesameDataSet = generateRDFTriples(sesameDataSet, rmlMapping, exeTriplesMap);
+        sesameDataSet = generateRDFTriples(
+                sesameDataSet, rmlMapping, parameters, exeTriplesMap);
+        
+        //TODO:improve/replace metadata generator
+        generateMetaData(sesameDataSet, startTime);
                
-        //TODO:add metadata this Triples Map started then, finished then and lasted that much
-	long endTime = System.nanoTime();
-        long duration = endTime - startTime;
-        log.info(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
-                + "RML mapping done! Generated " 
-                + sesameDataSet.getSize() + " in " 
-                + ((double) duration) / 1000000000 + "s . ");
-
         return sesameDataSet;
     }
     
@@ -125,18 +122,20 @@ public class RMLEngine {
      * @param sesameDataSet
      * @param rmlMapping
      */
-    private RMLSesameDataSet generateRDFTriples(RMLSesameDataSet sesameDataSet,
-            RMLMapping rmlMapping, String[] exeTriplesMap) {
+    private RMLSesameDataSet generateRDFTriples(
+            RMLSesameDataSet sesameDataSet, RMLMapping rmlMapping, 
+            Map<String, String> parameters, String[] exeTriplesMap) {
 
         log.debug(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
                 + "Generate RDF triples... ");
 
         for (TriplesMap triplesMap : rmlMapping.getTriplesMaps()) {
-            sesameDataSet = generateTriplesMapTriples(triplesMap, exeTriplesMap, sesameDataSet);
+            sesameDataSet = generateTriplesMapTriples(triplesMap, parameters, 
+                    exeTriplesMap, sesameDataSet);
         }
         //log.info("sesameDataSet " + sesameDataSet.printRDF(RDFFormat.TURTLE));
         /*try {
-            sesameDataSet.closeRepository();
+            sesameDataSet.closeRepository(generateRDFTriples);
         } catch (RepositoryException ex) {
             log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
                     + "Cannot close output repository", ex);
@@ -145,57 +144,62 @@ public class RMLEngine {
     }
     
     private RMLSesameDataSet generateTriplesMapTriples(
-            TriplesMap triplesMap, String[] exeTriplesMap, RMLSesameDataSet sesameDataSet) {
+            TriplesMap triplesMap, Map<String, String> parameters,
+            String[] exeTriplesMap, RMLSesameDataSet sesameDataSet) {
+        boolean flag = true;
         int delta = 0;
 
-        /*if (exeTriplesMap != null) {
-            boolean flag = false;
-            for (String exeTM : exeTriplesMap) {
-                if (triplesMap.getName().toString().equals(exeTM.toString())) {
-                    flag = true;
-                }
-            }
-            if (!flag) {
-                log.error("not to be executed");
-                return null;
-            }
-        }*/
-
-        System.out.println("Generating RDF triples for " + triplesMap.getName());
-        //TODO: Add metadata that this Map Doc has that many Triples Maps
-
-        log.info("Generating RML Processor..");
-        RMLProcessor processor = generateRMLProcessor(triplesMap);
-        
-        log.info("Generating Input Processor..");
-        InputStream input = generateInputStream(triplesMap);
-
-        try {
-            log.debug("Generating Performer..");
-            NodeRMLPerformer performer = new NodeRMLPerformer(processor);
-            
-            log.debug("Executing Mapping Processor..");
-            processor.execute(sesameDataSet, triplesMap, performer, input);
-
-            log.info(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
-                    + (sesameDataSet.getSize() - delta)
-                    + " triples were generated for " + triplesMap.getName());
-            //TODO: Add metadata that this Triples Map generatedthat many triples
-            delta = sesameDataSet.getSize();
-        } catch (Exception ex) {
-            log.error("Exception " + ex);
-            log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
-                    + "The execution of the mapping failed.");
+        if (exeTriplesMap != null) {
+            flag = checkExecutionList(triplesMap, exeTriplesMap);
         }
+        if (flag) {
+            System.out.println("Generating RDF triples for " + triplesMap.getName());
+            //TODO: Add metadata that this Map Doc has that many Triples Maps
 
-        try {
-            input.close();
-        } catch (IOException ex) {
-            log.error("IOException " + ex);
-            log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
-                    + "Input file could not be closed.");
+            log.info("Generating RML Processor..");
+            RMLProcessor processor = generateRMLProcessor(triplesMap);
+
+            log.info("Generating Input Processor..");
+            InputStream input = generateInputStream(triplesMap, parameters);
+
+            try {
+                log.debug("Generating Performer..");
+                NodeRMLPerformer performer = new NodeRMLPerformer(processor);
+
+                log.debug("Executing Mapping Processor..");
+                processor.execute(sesameDataSet, triplesMap, performer, input);
+
+                log.info(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
+                        + (sesameDataSet.getSize() - delta)
+                        + " triples were generated for " + triplesMap.getName());
+                //TODO: Add metadata that this Triples Map generatedthat many triples
+                delta = sesameDataSet.getSize();
+            } catch (Exception ex) {
+                log.error("Exception " + ex);
+                log.error("The execution of the mapping failed.");
+            }
+
+            try {
+                input.close();
+            } catch (IOException ex) {
+                log.error("IOException " + ex);
+            }
         }
         return sesameDataSet;
+    }
+    
+    private boolean checkExecutionList(TriplesMap triplesMap, String[] exeTriplesMap) {
+        boolean flag = false;
+
+        for (String exeTM : exeTriplesMap) {
+            flag = false;
+
+            if (triplesMap.getName().toString().equals(exeTM.toString())) {
+                flag = true;
+            }
+        }
+
+        return flag;
     }
     
     private RMLProcessor generateRMLProcessor(TriplesMap triplesMap) {
@@ -217,18 +221,27 @@ public class RMLEngine {
     }
     
     //TODO: Check if it's needed here or if I should take it to the DataRetrieval
-    private InputStream generateInputStream(TriplesMap triplesMap) {
+    private InputStream generateInputStream(
+            TriplesMap triplesMap, Map<String, String> parameters) {
         ConcreteLogicalSourceProcessorFactory logicalSourceProcessorFactory = 
                 new ConcreteLogicalSourceProcessorFactory();
-        //SourceProcessor inputProcessor = new AbstractInputProcessor();
+        
         SourceProcessor inputProcessor = 
                 logicalSourceProcessorFactory.
                 createSourceProcessor(triplesMap.getLogicalSource().getSource());
 
-        String source = triplesMap.getLogicalSource().getSource().getTemplate();
-
-        InputStream input = inputProcessor.
-                getInputStream(triplesMap.getLogicalSource().getSource());
+        InputStream input = inputProcessor.getInputStream(
+                triplesMap.getLogicalSource().getSource(), parameters);
         return input;
+    }
+    
+    private void generateMetaData(
+            RMLSesameDataSet sesameDataSet, long startTime) {
+        //TODO:add metadata this Triples Map started then, finished then and lasted that much
+        long endTime = System.nanoTime();
+        long duration = endTime - startTime;
+        log.info("RML mapping done! Generated "
+                + sesameDataSet.getSize() + " in "
+                + ((double) duration) / 1000000000 + "s . ");
     }
 }

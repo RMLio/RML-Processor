@@ -35,7 +35,9 @@ public class JSONPathProcessor extends AbstractRMLProcessor {
     }
 
     @Override
-    public void execute(RMLSesameDataSet dataset, TriplesMap map, RMLPerformer performer, InputStream input) {
+    public void execute(
+            RMLSesameDataSet dataset, TriplesMap map, 
+            RMLPerformer performer, InputStream input) {
 
         try {
             String reference = getReference(map.getLogicalSource());
@@ -54,8 +56,9 @@ public class JSONPathProcessor extends AbstractRMLProcessor {
 
     @Override
     public void execute_node(
-            RMLSesameDataSet dataset, String expression, TriplesMap parentTriplesMap, 
-            RMLPerformer performer, Object node, Resource subject) {
+            RMLSesameDataSet dataset, String expression, 
+            TriplesMap parentTriplesMap, RMLPerformer performer, 
+            Object node, Resource subject) {
        
         Object val = JsonPath.read(node, expression);
         

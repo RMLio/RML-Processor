@@ -265,7 +265,10 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
             QLTerm referenceFormulation = parentTriplesMap.getLogicalSource().getReferenceFormulation();
 
             SourceProcessor inputProcessor = new AbstractInputProcessor();
-            InputStream input = inputProcessor.getInputStream(parentTriplesMap.getLogicalSource().getSource());
+            
+            //TODO: Replace null with Bind Condition results
+            InputStream input = inputProcessor.getInputStream(
+                    parentTriplesMap.getLogicalSource().getSource(), null);
             
             RMLProcessor processor = factory.create(referenceFormulation);
             RMLPerformer performer = null;

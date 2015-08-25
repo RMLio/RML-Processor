@@ -5,6 +5,8 @@ import be.ugent.mmlab.rml.core.RMLEngine;
 import be.ugent.mmlab.rml.mapdochandler.extraction.std.StdRMLMappingFactory;
 import be.ugent.mmlab.rml.mapdochandler.retrieval.RMLDocRetrieval;
 import be.ugent.mmlab.rml.model.RMLMapping;
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.commons.cli.CommandLine;
 import org.apache.log4j.BasicConfigurator;
 import org.openrdf.repository.Repository;
@@ -27,6 +29,7 @@ public class Main {
         Logger log = LoggerFactory.getLogger(Main.class);
         String map_doc = null, parameter = null, triplesMap ;
         String[] exeTriplesMap = null;
+        Map<String, String> parameters = null;
         BasicConfigurator.configure();
         CommandLine commandLine;
         StdRMLMappingFactory mappingFactory = new StdRMLMappingFactory();
@@ -52,7 +55,7 @@ public class Main {
                 graphName = commandLine.getOptionValue("g", "");
             }
             if (commandLine.hasOption("p")) {
-                parameter = commandLine.getOptionValue("p", null);
+                parameters = retrieveParameters(commandLine);
             }
             if (commandLine.hasOption("f")) {
                 outputFormat = commandLine.getOptionValue("f", null);
@@ -83,7 +86,8 @@ public class Main {
             System.out.println("--------------------------------------------------------------------------------");
             System.out.println("");
             
-            engine.runRMLMapping(mapping, graphName, outputFile, outputFormat, parameter, exeTriplesMap);  
+            engine.runRMLMapping(mapping, graphName, outputFile, 
+                    outputFormat, parameters, exeTriplesMap);  
             
             System.exit(0);
             
@@ -107,5 +111,23 @@ public class Main {
             RMLConfiguration.displayHelp();
         } 
 
+    }
+    
+    /**
+     *
+     * @param commandLine
+     * @return
+     */
+    public static Map<String, String> retrieveParameters(CommandLine commandLine){
+        Map<String, String> parameters = new HashMap<String, String>();
+        
+        String parameter = commandLine.getOptionValue("p", null);
+        String[] parameterKeyValue = parameter.split(parameter);
+        String key = parameterKeyValue[0];
+        String value = parameterKeyValue[1];
+        
+        parameters.put(key, value);
+        
+        return parameters;
     }
 }
