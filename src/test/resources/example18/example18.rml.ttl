@@ -10,7 +10,7 @@
 
 <#InputAPI>
     a hydra:APIDocumentation ;
-    hydra:template "https://biblio.ugent.be/publication/{publication_id}.json" .
+    hydra:template "https://biblio.ugent.be/publication/{publication_id}.{format}" .
 
 <#Author>
     rml:logicalSource [ 

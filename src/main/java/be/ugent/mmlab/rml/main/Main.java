@@ -118,16 +118,21 @@ public class Main {
      * @param commandLine
      * @return
      */
-    public static Map<String, String> retrieveParameters(CommandLine commandLine){
+    public static Map<String, String> retrieveParameters(CommandLine commandLine) {
         Map<String, String> parameters = new HashMap<String, String>();
-        
+        String[] parameterKeyValue;
+
         String parameter = commandLine.getOptionValue("p", null);
-        String[] parameterKeyValue = parameter.split(parameter);
-        String key = parameterKeyValue[0];
-        String value = parameterKeyValue[1];
-        
-        parameters.put(key, value);
-        
+        String[] subParameters = parameter.split(",");
+        for (String subParameter : subParameters) {
+            parameterKeyValue = subParameter.split("=");
+
+            String key = parameterKeyValue[0];
+            String value = parameterKeyValue[1];
+
+            parameters.put(key, value);
+        }
+
         return parameters;
     }
 }

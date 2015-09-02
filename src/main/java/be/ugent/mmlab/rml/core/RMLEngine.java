@@ -153,13 +153,14 @@ public class RMLEngine {
             flag = checkExecutionList(triplesMap, exeTriplesMap);
         }
         if (flag) {
-            System.out.println("Generating RDF triples for " + triplesMap.getName());
+            System.out.println("Generating RDF triples for " 
+                    + triplesMap.getName());
             //TODO: Add metadata that this Map Doc has that many Triples Maps
 
             log.info("Generating RML Processor..");
             RMLProcessor processor = generateRMLProcessor(triplesMap);
 
-            log.info("Generating Input Processor..");
+            log.info("Generating Data Retrieval Processor..");
             InputStream input = generateInputStream(triplesMap, parameters);
 
             try {
@@ -169,9 +170,9 @@ public class RMLEngine {
                 log.debug("Executing Mapping Processor..");
                 processor.execute(sesameDataSet, triplesMap, performer, input);
 
-                log.info(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
-                        + (sesameDataSet.getSize() - delta)
-                        + " triples were generated for " + triplesMap.getName());
+                log.info((sesameDataSet.getSize() - delta)
+                        + " triples were generated for " 
+                        + triplesMap.getName());
                 //TODO: Add metadata that this Triples Map generatedthat many triples
                 delta = sesameDataSet.getSize();
             } catch (Exception ex) {

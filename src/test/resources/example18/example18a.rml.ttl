@@ -1,6 +1,6 @@
 @prefix rr:     <http://www.w3.org/ns/r2rml#>.
 @prefix rml:    <http://semweb.mmlab.be/ns/rml#> .
-@prefix crml:   <http://semweb.mmlab.be/ns/rml/condition#> .
+@prefix crml:   <http://semweb.mmlab.be/ns/crml#> .
 @prefix ql:     <http://semweb.mmlab.be/ns/ql#> .
 @prefix mail:   <http://example.com/mail#>.
 @prefix xsd:    <http://www.w3.org/2001/XMLSchema#>.
@@ -48,7 +48,7 @@
 
         rr:objectMap [ 
             rr:parentTriplesMap <#Author> ;
-            crml:bindCondition [
+            crml:bindingCondition [
                 rml:reference "id" ;
                 crml:value "publication_id"
                 ]

@@ -91,17 +91,17 @@
         </dependency>
         <dependency>
             <groupId>be.ugent.mmlab.rml</groupId>
+            <artifactId>RML-BindingCondition</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>be.ugent.mmlab.rml</groupId>
             <artifactId>RML-MapDocHandler</artifactId>
             <version>1.0</version>
         </dependency>
         <dependency>
             <groupId>be.ugent.mmlab.rml</groupId>
             <artifactId>RML-DataRetrieval</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>be.ugent.mmlab.rml</groupId>
-            <artifactId>RML-BindCondition</artifactId>
             <version>1.0</version>
         </dependency>
         <dependency>

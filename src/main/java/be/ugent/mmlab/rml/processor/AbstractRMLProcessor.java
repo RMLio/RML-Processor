@@ -1,5 +1,7 @@
 package be.ugent.mmlab.rml.processor;
 
+import be.ugent.mmlab.rml.condition.model.BindingCondition;
+import be.ugent.mmlab.rml.condition.model.std.BindingReferencingObjectMap;
 import be.ugent.mmlab.rml.core.JoinRMLPerformer;
 import be.ugent.mmlab.rml.core.RMLPerformer;
 import be.ugent.mmlab.rml.core.SimpleReferencePerformer;
@@ -19,6 +21,7 @@ import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.concrete.ConcreteRMLProcessorFactory;
 import be.ugent.mmlab.rml.input.processor.AbstractInputProcessor;
 import be.ugent.mmlab.rml.input.processor.SourceProcessor;
+import be.ugent.mmlab.rml.input.processor.TemplateProcessor;
 import be.ugent.mmlab.rml.model.std.StdTemplateMap;
 import be.ugent.mmlab.rml.processor.termmap.TermMapProcessor;
 import be.ugent.mmlab.rml.processor.termmap.TermMapProcessorFactory;
@@ -31,6 +34,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.openrdf.model.Resource;
@@ -109,8 +113,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
             value = values.get(0);
 
             if ((value == null) || (value.equals(""))) {
-                log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
-                        + "No subject was generated for " + subjectMap.toString());
+                log.error("No subject was generated for " + subjectMap.toString());
                 return null;
             }
         }
@@ -249,26 +252,45 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
             RMLSesameDataSet dataset, Resource subject, URI predicate,
             PredicateObjectMap pom, Object node, TriplesMap map) {
         String template ;
-        Set<ReferencingObjectMap> referencingObjectMaps = pom.getReferencingObjectMaps();
+        Map<String, String> parameters = null;
+        
+        Set<ReferencingObjectMap> referencingObjectMaps = 
+                pom.getReferencingObjectMaps();
         for (ReferencingObjectMap referencingObjectMap : referencingObjectMaps) {
             log.debug("Referencing Object Map " + referencingObjectMap);
-            Set<JoinCondition> joinConditions = referencingObjectMap.getJoinConditions();
+            Set<JoinCondition> joinConditions = 
+                    referencingObjectMap.getJoinConditions();
             
-            TriplesMap parentTriplesMap = referencingObjectMap.getParentTriplesMap();
-            log.debug("Parent Triples Map to be processed: " + parentTriplesMap.getName());
+            TriplesMap parentTriplesMap = 
+                    referencingObjectMap.getParentTriplesMap();
+            log.debug("Parent Triples Map to be processed: " 
+                    + parentTriplesMap.getName());
             
-            template = parentTriplesMap.getLogicalSource().getSource().getTemplate();
-            log.debug("template " + template);
+            template = parentTriplesMap.
+                    getLogicalSource().getSource().getTemplate();
+            
+            if(referencingObjectMap.getClass().getSimpleName().
+                    equals("BindingReferencingObjectMap")){
+                log.debug("Processing Referencing Object Map "
+                        + "with Binding Condition..");
+                BindingReferencingObjectMap bindingReferencingObjectMap = 
+                        (BindingReferencingObjectMap) referencingObjectMap;
+                Set<BindingCondition> bindingConditions =
+                        bindingReferencingObjectMap.getBindingConditions();
+                parameters = 
+                        processBindingConditions(node, bindingConditions);
+            }
 
             //Create the processor based on the parent triples map to perform the join
             RMLProcessorFactory factory = new ConcreteRMLProcessorFactory();
-            QLTerm referenceFormulation = parentTriplesMap.getLogicalSource().getReferenceFormulation();
+            QLTerm referenceFormulation = 
+                    parentTriplesMap.getLogicalSource().getReferenceFormulation();
 
             SourceProcessor inputProcessor = new AbstractInputProcessor();
-            
+                       
             //TODO: Replace null with Bind Condition results
             InputStream input = inputProcessor.getInputStream(
-                    parentTriplesMap.getLogicalSource().getSource(), null);
+                    parentTriplesMap.getLogicalSource().getSource(), parameters);
             
             RMLProcessor processor = factory.create(referenceFormulation);
             RMLPerformer performer = null;
@@ -326,14 +348,32 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
         }
     }
     
+    public Map<String, String> processBindingConditions(
+            Object node, Set<BindingCondition> bindingConditions){
+        Map<String, String> parameters = new HashMap<String, String>();
+        for(BindingCondition bindingCondition : bindingConditions){
+            List<String> childValues = termMapProcessor.
+                    extractValueFromNode(node, bindingCondition.getReference());
+            
+            for (String childValue : childValues) {    
+                parameters.put(
+                    bindingCondition.getValue(), childValue);
+            }
+        }
+        
+        return parameters;
+    }
+    
     public void processJoinConditions(Object node, RMLPerformer performer, RMLProcessor processor, 
             Resource subject, URI predicate, RMLSesameDataSet dataset, InputStream input, 
             TriplesMap parentTriplesMap, Set<JoinCondition> joinConditions) {
         HashMap<String, String> joinMap = new HashMap<>();
 
         for (JoinCondition joinCondition : joinConditions) {
-            List<String> childValues = termMapProcessor.extractValueFromNode(node, joinCondition.getChild());
-            //Allow multiple values as child - fits with RML's definition of multiple Object Maps
+            List<String> childValues = termMapProcessor.extractValueFromNode(
+                    node, joinCondition.getChild());
+            //Allow multiple values as child - 
+            //fits with RML's definition of multiple Object Maps
             for (String childValue : childValues) {    
                 joinMap.put(joinCondition.getParent(), childValue);
                 if (joinMap.size() == joinConditions.size()) {

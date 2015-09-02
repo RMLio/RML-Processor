@@ -178,9 +178,19 @@ public class MapperTest
         URL fileToOutputFile = getClass().getResource("/example18/example18.output.ttl");
         Map<String, String> parameters = new HashMap<String, String>();
         parameters.put("publication_id","4384220");
-        //String[] triplesMap = {"http://example.com/base#Author"} ;
+        parameters.put("format","json");
         assertTrue(desiredOutput(fileToOutputFile).isEqualTo(
                 assertMap(fileToRMLFile, parameters, null)));
+        //assertTrue(desiredOutput(fileToOutputFile).isEqualTo(assertMap(fileToRMLFile, null)));
+    }
+    
+    public void testExample18a() {
+        URL fileToRMLFile = getClass().getResource("/example18/example18a.rml.ttl");
+        URL fileToOutputFile = getClass().getResource("/example18/example18a.output.ttl");
+        String[] triplesMap = {"http://example.com/base#Paper"};
+        
+        assertTrue(desiredOutput(fileToOutputFile).isEqualTo(
+                assertMap(fileToRMLFile, null, triplesMap)));
         //assertTrue(desiredOutput(fileToOutputFile).isEqualTo(assertMap(fileToRMLFile, null)));
     }
     
