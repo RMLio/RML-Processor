@@ -116,7 +116,7 @@ public class XPathProcessor extends AbstractRMLProcessor {
     
     @Override
     public void execute(final RMLSesameDataSet dataset, final TriplesMap map, 
-    final RMLPerformer performer, InputStream input) {
+    final RMLPerformer performer, InputStream input, final boolean pomExecution) {
         try {
             this.map = map;
             String reference = getReference(map.getLogicalSource());
@@ -143,7 +143,7 @@ public class XPathProcessor extends AbstractRMLProcessor {
                     log.debug("Expression " + expression);
                     Node node = (Node) nodeItem.xml;
                     //Let the performer do its thing
-                    performer.perform(node, dataset, map);
+                    performer.perform(node, dataset, map, pomExecution);
                     //System.out.println("XPath: " + expression.getXPath() + " has hit: " + node.getTextContent());
                 }
 
@@ -173,8 +173,9 @@ public class XPathProcessor extends AbstractRMLProcessor {
     
     @Override
     public void execute_node(
-            RMLSesameDataSet dataset, String expression, TriplesMap parentTriplesMap, 
-            RMLPerformer performer, Object node, Resource subject) {
+            RMLSesameDataSet dataset, String expression, 
+            TriplesMap parentTriplesMap, RMLPerformer performer, Object node, 
+            Resource subject, boolean pomExecution) {
         //still need to make it work with more nore-results 
         //currently it handles only one
         log.debug("Execute node..");
@@ -188,7 +189,7 @@ public class XPathProcessor extends AbstractRMLProcessor {
         for (int i = 0; i < nodes.size(); i++) {
             Node n = nodes.get(i);
             if(subject == null)
-                performer.perform(n, dataset, parentTriplesMap);
+                performer.perform(n, dataset, parentTriplesMap, pomExecution);
             else{
                 RMLProcessorFactory factory = new ConcreteRMLProcessorFactory();
                 RMLProcessor subprocessor = factory.create(map.getLogicalSource().getReferenceFormulation());

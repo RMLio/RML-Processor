@@ -52,7 +52,8 @@ public class CSVProcessor extends AbstractRMLProcessor {
     }
 
     @Override
-    public void execute(RMLSesameDataSet dataset, TriplesMap map, RMLPerformer performer, InputStream input) {
+    public void execute(RMLSesameDataSet dataset, TriplesMap map, 
+    RMLPerformer performer, InputStream input, boolean pomExecution) {
 
         try {
             char delimiter = getDelimiter(map.getLogicalSource());
@@ -69,7 +70,7 @@ public class CSVProcessor extends AbstractRMLProcessor {
                    row.put(new String(header.getBytes("iso8859-1"), UTF_8), reader.get(header));
                 }
                 //let the performer handle the rows
-                performer.perform(row, dataset, map);
+                performer.perform(row, dataset, map, pomExecution);
             }
 
         } catch (FileNotFoundException ex) {
@@ -81,8 +82,9 @@ public class CSVProcessor extends AbstractRMLProcessor {
 
     @Override
     public void execute_node(
-            RMLSesameDataSet dataset, String expression, TriplesMap parentTriplesMap, 
-            RMLPerformer performer, Object node, Resource subject) {
+            RMLSesameDataSet dataset, String expression, 
+            TriplesMap parentTriplesMap, RMLPerformer performer, Object node, 
+            Resource subject, boolean pomExecution) {
         throw new UnsupportedOperationException("Not applicable for CSV sources."); 
         //TODO: implement this
     }

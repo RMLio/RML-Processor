@@ -21,7 +21,6 @@ import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.concrete.ConcreteRMLProcessorFactory;
 import be.ugent.mmlab.rml.input.processor.AbstractInputProcessor;
 import be.ugent.mmlab.rml.input.processor.SourceProcessor;
-import be.ugent.mmlab.rml.input.processor.TemplateProcessor;
 import be.ugent.mmlab.rml.model.std.StdTemplateMap;
 import be.ugent.mmlab.rml.processor.termmap.TermMapProcessor;
 import be.ugent.mmlab.rml.processor.termmap.TermMapProcessorFactory;
@@ -257,7 +256,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
         Set<ReferencingObjectMap> referencingObjectMaps = 
                 pom.getReferencingObjectMaps();
         for (ReferencingObjectMap referencingObjectMap : referencingObjectMaps) {
-            log.debug("Referencing Object Map " + referencingObjectMap);
+            Set<BindingCondition> bindingConditions = null;
             Set<JoinCondition> joinConditions = 
                     referencingObjectMap.getJoinConditions();
             
@@ -275,7 +274,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                         + "with Binding Condition..");
                 BindingReferencingObjectMap bindingReferencingObjectMap = 
                         (BindingReferencingObjectMap) referencingObjectMap;
-                Set<BindingCondition> bindingConditions =
+                bindingConditions =
                         bindingReferencingObjectMap.getBindingConditions();
                 parameters = 
                         processBindingConditions(node, bindingConditions);
@@ -298,11 +297,26 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
             //different Logical Source and no Conditions
             if (joinConditions.isEmpty()
                     & !parentTriplesMap.getLogicalSource().getSource().getTemplate().equals(
-                    map.getLogicalSource().getSource().getTemplate())) {
-                log.debug("Referencing Object Map with Logical Source without conditions.");
+                    map.getLogicalSource().getSource().getTemplate())
+                    & bindingConditions == null) {
+                log.debug("Referencing Object Map with Logical Source "
+                        + "without join and binding conditions.");
                 performer = new JoinRMLPerformer(processor, subject, predicate);
-                processor.execute(dataset, parentTriplesMap, performer, input);
-            } 
+                processor.execute(dataset, parentTriplesMap, performer, input, false);
+            }
+            
+            //different Logical Source AND 
+            //no join Conditions but with Binding Conditions
+            if (joinConditions.isEmpty()
+                    & !parentTriplesMap.getLogicalSource().getSource().getTemplate().equals(
+                    map.getLogicalSource().getSource().getTemplate())
+                    & (bindingConditions != null)) {
+                log.debug("Referencing Object Map with Logical Source "
+                        + "without join conditions but with bind conditions.");
+                performer = new JoinRMLPerformer(processor, subject, predicate);
+                processor.execute(dataset, parentTriplesMap, performer, input, true);
+            }
+            
             //same Logical Source and no Conditions
             else if (joinConditions.isEmpty()
                     & parentTriplesMap.getLogicalSource().getSource().getTemplate().equals(
@@ -311,7 +325,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                 performer = new SimpleReferencePerformer(processor, subject, predicate);
                 if ((parentTriplesMap.getLogicalSource().getReferenceFormulation().toString().equals("CSV"))
                         || (parentTriplesMap.getLogicalSource().getIterator().equals(map.getLogicalSource().getIterator()))) {
-                    performer.perform(node, dataset, parentTriplesMap);
+                    performer.perform(node, dataset, parentTriplesMap, false);
                 } else {
                     int end = map.getLogicalSource().getIterator().length();
                     
@@ -334,7 +348,9 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                                     getIterator().toString().substring(end);
                             break;
                     }
-                    processor.execute_node(dataset, expression, parentTriplesMap, performer, node, null);
+                    processor.execute_node(
+                            dataset, expression, parentTriplesMap, 
+                            performer, node, null, false);
                 }
             } //Conditions
             else {
@@ -378,7 +394,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                 joinMap.put(joinCondition.getParent(), childValue);
                 if (joinMap.size() == joinConditions.size()) {
                     performer = new JoinRMLPerformer(processor, subject, predicate);
-                    processor.execute(dataset, parentTriplesMap, performer, input);
+                    processor.execute(dataset, parentTriplesMap, performer, input, false);
                 }
             }
         }

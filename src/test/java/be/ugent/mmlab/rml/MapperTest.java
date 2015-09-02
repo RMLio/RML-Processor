@@ -191,7 +191,6 @@ public class MapperTest
         
         assertTrue(desiredOutput(fileToOutputFile).isEqualTo(
                 assertMap(fileToRMLFile, null, triplesMap)));
-        //assertTrue(desiredOutput(fileToOutputFile).isEqualTo(assertMap(fileToRMLFile, null)));
     }
     
     /*public void testExample19() {

@@ -29,11 +29,13 @@ public interface RMLProcessor {
      * @param map the triplemap
      * @param performer the performer handling the action done on the triplemap
      */
-    public void execute(RMLSesameDataSet dataset, TriplesMap map, RMLPerformer performer, InputStream input);
+    public void execute(RMLSesameDataSet dataset, TriplesMap map, 
+            RMLPerformer performer, InputStream input, boolean pomExecution);
     
     public void execute_node(
-            RMLSesameDataSet dataset, String expression, TriplesMap parentTriplesMap, 
-            RMLPerformer performer, Object node, Resource subject);
+            RMLSesameDataSet dataset, String expression, 
+            TriplesMap parentTriplesMap, RMLPerformer performer, Object node, 
+            Resource subject, boolean pomExecution);
 
     /**
      * process a subject map
@@ -42,7 +44,8 @@ public interface RMLProcessor {
      * @param node
      * @return 
      */
-    public Resource processSubjectMap(RMLSesameDataSet dataset, SubjectMap subjectMap, Object node);
+    public Resource processSubjectMap(RMLSesameDataSet dataset, 
+            SubjectMap subjectMap, Object node);
     
     public void processSubjectTypeMap(RMLSesameDataSet dataset, Resource subject, 
             SubjectMap subjectMap, Object node);

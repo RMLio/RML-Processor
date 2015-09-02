@@ -24,7 +24,8 @@ import org.openrdf.model.impl.URIImpl;
 public class SimpleReferencePerformer extends NodeRMLPerformer {
     
     // Log
-    private static final Logger log = LoggerFactory.getLogger(SimpleReferencePerformer.class);
+    private static final Logger log = 
+            LoggerFactory.getLogger(SimpleReferencePerformer.class);
     
     private Resource subject;
     private URI predicate;
@@ -36,7 +37,8 @@ public class SimpleReferencePerformer extends NodeRMLPerformer {
     }
     
     @Override
-    public void perform(Object node, RMLSesameDataSet dataset, TriplesMap map) {
+    public void perform(Object node, RMLSesameDataSet dataset, 
+    TriplesMap map, boolean pomExecution) {
         if(map.getSubjectMap().getTermType() == be.ugent.mmlab.rml.model.RDFTerm.TermType.BLANK_NODE 
                 || map.getSubjectMap().getTermType() == be.ugent.mmlab.rml.model.RDFTerm.TermType.IRI){
             RMLProcessorFactory factory = new ConcreteRMLProcessorFactory();
@@ -45,9 +47,9 @@ public class SimpleReferencePerformer extends NodeRMLPerformer {
             Resource object = processor.processSubjectMap(dataset, map.getSubjectMap(), node); 
             if (object != null) {
                 dataset.add(subject, predicate, object);
-                log.debug(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
-                        + "[SimpleReferencePerformer:addTriples] Subject "
-                        + subject + " Predicate " + predicate + "Object " + object.toString());
+                log.debug("Subject " + subject 
+                        + " Predicate " + predicate 
+                        + "Object " + object.toString());
 
                 if ((map.getLogicalSource().getReferenceFormulation().toString().equals("CSV"))
                         || (map.getLogicalSource().getIterator().equals(map.getLogicalSource().getIterator()))) {
@@ -66,13 +68,13 @@ public class SimpleReferencePerformer extends NodeRMLPerformer {
                             expression = map.getLogicalSource().getIterator().toString().substring(end + 1);
                             break;
                     }
-                    processor.execute_node(dataset, expression, map, performer, node, object);
+                    processor.execute_node(
+                            dataset, expression, map, performer, 
+                            node, object, pomExecution);
                 }
             }
             else
-                log.debug(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
-                        + "[SimpleReferencePerformer] object of " 
-                        + map.getName() + " was null. ");
+                log.debug("Object of " + map.getName() + " was null. ");
         }
         else{
             TermMapProcessorFactory factory = new ConcreteTermMapFactory();
@@ -85,9 +87,9 @@ public class SimpleReferencePerformer extends NodeRMLPerformer {
                 Resource object = new URIImpl(value);
 
                 dataset.add(subject, predicate, object);
-                log.debug(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
-                        + "[SimpleReferencePerformer:addTriples] Subject "
-                        + subject + " Predicate " + predicate + "Object " + object.toString());
+                log.debug("Subject " + subject 
+                        + " Predicate " + predicate 
+                        + "Object " + object.toString());
             }   
         }    
     }

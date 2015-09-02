@@ -38,7 +38,8 @@ public class CSS3Extractor extends AbstractRMLProcessor {
     }
 
     @Override
-    public void execute(RMLSesameDataSet dataset, TriplesMap map, RMLPerformer performer, InputStream input) {
+    public void execute(RMLSesameDataSet dataset, TriplesMap map, 
+    RMLPerformer performer, InputStream input, boolean pomExecution) {
         //this should not be needed to be defined within the extractor
         String reference = getReference(map.getLogicalSource());
         // more configuration...
@@ -53,15 +54,17 @@ public class CSS3Extractor extends AbstractRMLProcessor {
 
         List<Node> selectedNodes = nodeSelector.select(reference);
         for (int i = 0; i < selectedNodes.size(); i++) {
-            performer.perform(selectedNodes.get(i).getHtml(), dataset, map);
+            performer.perform(
+                    selectedNodes.get(i).getHtml(), dataset, map, pomExecution);
         }
 
     }
 
     @Override
     public void execute_node(
-            RMLSesameDataSet dataset, String expression, TriplesMap parentTriplesMap,
-            RMLPerformer performer, Object node, Resource subject) {
+            RMLSesameDataSet dataset, String expression, 
+            TriplesMap parentTriplesMap, RMLPerformer performer, Object node, 
+            Resource subject, boolean pomExecution) {
         if (expression.startsWith("+")) {
             expression = expression.substring(1);
         }
@@ -71,7 +74,7 @@ public class CSS3Extractor extends AbstractRMLProcessor {
 
         List<Node> selectedNodes = nodeSelector.select(expression.trim());
         for (Node selectNode : selectedNodes) {
-            performer.perform(selectNode.getHtml(), dataset, parentTriplesMap);
+            performer.perform(selectNode.getHtml(), dataset, parentTriplesMap, false);
         }
     }
 

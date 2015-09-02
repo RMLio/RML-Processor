@@ -37,7 +37,7 @@ public class JSONPathProcessor extends AbstractRMLProcessor {
     @Override
     public void execute(
             RMLSesameDataSet dataset, TriplesMap map, 
-            RMLPerformer performer, InputStream input) {
+            RMLPerformer performer, InputStream input, boolean pomExecution) {
 
         try {
             String reference = getReference(map.getLogicalSource());
@@ -45,7 +45,7 @@ public class JSONPathProcessor extends AbstractRMLProcessor {
             JsonPath path = JsonPath.compile(reference);
             
             Object val = path.read(input);
-            execute(dataset, map, performer, val);
+            execute(dataset, map, performer, val, pomExecution);
 
         } catch (FileNotFoundException ex) {
             log.error("FileNotFoundException " + ex);
@@ -58,19 +58,19 @@ public class JSONPathProcessor extends AbstractRMLProcessor {
     public void execute_node(
             RMLSesameDataSet dataset, String expression, 
             TriplesMap parentTriplesMap, RMLPerformer performer, 
-            Object node, Resource subject) {
+            Object node, Resource subject, boolean pomExecution) {
        
         Object val = JsonPath.read(node, expression);
         
-        execute(dataset, parentTriplesMap, performer, val);
+        execute(dataset, parentTriplesMap, performer, val, pomExecution);
         
         //TODO: check if it's complete for sub-mappings
     }
     
     private void execute (RMLSesameDataSet dataset, TriplesMap parentTriplesMap, 
-            RMLPerformer performer, Object node){
+            RMLPerformer performer, Object node, boolean pomExecution){
         if (node instanceof JSONObject) 
-            performer.perform(node, dataset, parentTriplesMap);
+            performer.perform(node, dataset, parentTriplesMap, pomExecution);
         else {
             List<Object> nodes;
 
@@ -87,7 +87,7 @@ public class JSONPathProcessor extends AbstractRMLProcessor {
                 
             //iterate over all the objects
             for (Object object : nodes) 
-                performer.perform(object, dataset, parentTriplesMap);
+                performer.perform(object, dataset, parentTriplesMap, pomExecution);
         }
     }
 
