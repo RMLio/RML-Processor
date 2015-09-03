@@ -97,14 +97,18 @@ public class MapperTest
     /*public void testExample8() {
         URL fileToRMLFile = getClass().getResource("/example8/simergy.rml.ttl");
         URL fileToOutputFile = getClass().getResource("/example8/simergy.output.ttl");
-        assertTrue(desiredOutput(fileToOutputFile).isEqualTo(assertMap(fileToRMLFile, null)));
-    }
-    
-    public void testExample8() {
-        URL fileToRMLFile = getClass().getResource("/example8/symergy.rml.ttl");
-        URL fileToOutputFile = getClass().getResource("/example8/symergy.output.ttl");
-        assertTrue(desiredOutput(fileToOutputFile).isEqualTo(assertMap(fileToRMLFile, null)));
+        assertTrue(desiredOutput(fileToOutputFile).isEqualTo(
+                assertMap(fileToRMLFile, null, null)));
     }*/
+    
+    public void testExample9() {
+        URL fileToRMLFile = getClass().getResource("/example9/Vol-1128.rml.ttl");
+        URL fileToOutputFile = getClass().getResource("/example9/Vol-1128.nt");
+        Map<String, String> parameters = new HashMap<String, String>();
+        parameters.put("number","1128");
+        assertTrue(desiredOutput(fileToOutputFile).isEqualTo(
+                assertMap(fileToRMLFile, parameters, null)));
+    }
     
     public void testExample10() {
         URL fileToRMLFile = getClass().getResource("/example10/exampleAirport.rml.ttl");
@@ -226,7 +230,7 @@ public class MapperTest
             RMLDocRetrieval mapDocRetrieval = new RMLDocRetrieval();
             Repository repository = mapDocRetrieval.getMappingDoc(
                     mappingURL.getFile(), RDFFormat.TURTLE);
-
+            
             RMLEngine engine = new RMLEngine();
             RMLMapping mapping = mappingFactory.extractRMLMapping(repository);
             RMLSesameDataSet output = engine.runRMLMapping(
