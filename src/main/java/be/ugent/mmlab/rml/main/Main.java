@@ -5,6 +5,7 @@ import be.ugent.mmlab.rml.core.RMLEngine;
 import be.ugent.mmlab.rml.mapdochandler.extraction.std.StdRMLMappingFactory;
 import be.ugent.mmlab.rml.mapdochandler.retrieval.RMLDocRetrieval;
 import be.ugent.mmlab.rml.model.RMLMapping;
+import be.ugent.mmlab.rml.sesame.RMLSesameDataSet;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.commons.cli.CommandLine;
@@ -64,16 +65,20 @@ public class Main {
             if (commandLine.hasOption("m")) {
                 map_doc = commandLine.getOptionValue("m", null);
             }
-            log.error("RML Processor - Extracting Mapping Document.");
             System.out.println("RML Processor - Extracting Mapping Document.");
             System.out.println("--------------------------------------------------------------------------------");
             System.out.println("");
             
             //Retrieve the Mapping Document
-            log.info("Retrieving the Mapping Document..");
+            log.info("========================================");
+            log.info("Retrieving the RML Mapping Document...");
+            log.info("========================================");
             RMLDocRetrieval mapDocRetrieval = new RMLDocRetrieval();
             Repository repository = mapDocRetrieval.getMappingDoc(map_doc, RDFFormat.TURTLE);
             
+            log.info("========================================");
+            log.info("Extracting the RML Mapping Definitions..");
+            log.info("========================================");
             RMLMapping mapping = mappingFactory.extractRMLMapping(repository);
             
             if (commandLine.hasOption("tm")) {
@@ -81,14 +86,16 @@ public class Main {
                 if(triplesMap != null)
                     exeTriplesMap = RMLConfiguration.processTriplesMap(triplesMap,map_doc);
             }
-            log.error("RML Processor - Executing Mapping Document.");
             System.out.println("RML Processor - Executing Mapping Document.");
             System.out.println("--------------------------------------------------------------------------------");
             System.out.println("");
             
-            engine.runRMLMapping(mapping, graphName, outputFile, 
-                    outputFormat, parameters, exeTriplesMap);  
-            
+            log.info("========================================");
+            log.info("Running the RML Mapping..");
+            log.info("========================================");
+            RMLSesameDataSet dataset = engine.runRMLMapping(mapping, graphName, outputFile, 
+                                     outputFormat, parameters, exeTriplesMap);  
+            dataset.closeRepository();
             System.exit(0);
             
             /*System.out.println("--------------------------------------------------------------------------------");
@@ -107,7 +114,7 @@ public class Main {
             //}
         } catch (Exception ex) {
             System.exit(1);
-            log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ex);
+            log.error("Exception " + ex);
             RMLConfiguration.displayHelp();
         } 
 

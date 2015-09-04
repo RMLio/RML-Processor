@@ -18,6 +18,7 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Properties;
+import org.openrdf.repository.RepositoryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,24 +79,24 @@ public class RMLEngine {
             String baseIRI, String pathToNativeStore, String outputFormat, 
             Map<String, String> parameters, String[] exeTriplesMap) {
         long startTime = System.nanoTime();
+        RMLSesameDataSet sesameDataSet = null;
 
         log.debug("Running RML mapping... ");
         if (rmlMapping == null) 
             log.info("No RML Mapping object found.");
         if (baseIRI == null) 
             log.info("No base IRI found.");
-
-        RMLSesameDataSet sesameDataSet = 
-                chooseSesameDataSet(pathToNativeStore, outputFormat);
+        
+        sesameDataSet = chooseSesameDataSet(pathToNativeStore, outputFormat);
         // Update baseIRI
         this.baseIRI = baseIRI;
-
+        
         sesameDataSet = generateRDFTriples(
                 sesameDataSet, rmlMapping, parameters, exeTriplesMap);
         
         //TODO:improve/replace metadata generator
         generateMetaData(sesameDataSet, startTime);
-               
+            
         return sesameDataSet;
     }
     
@@ -103,10 +104,10 @@ public class RMLEngine {
             String pathToNativeStore, String outputFormat){
         RMLSesameDataSet sesameDataSet;
         if (pathToNativeStore != null) {
-            log.debug("Using direct file " + pathToNativeStore);
+            log.info("Using direct file " + pathToNativeStore);
             sesameDataSet = new FileSesameDataset(pathToNativeStore, outputFormat);
         } else {
-            log.debug("Using default store (memory) ");
+            log.info("Using default store (memory) ");
             sesameDataSet = new RMLSesameDataSet();
         }
         return sesameDataSet;
@@ -125,8 +126,7 @@ public class RMLEngine {
             RMLSesameDataSet sesameDataSet, RMLMapping rmlMapping, 
             Map<String, String> parameters, String[] exeTriplesMap) {
 
-        log.debug(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
-                + "Generate RDF triples... ");
+        log.debug("Generate RDF triples... ");
         Collection<TriplesMap> triplesMaps;
         
         if(exeTriplesMap != null && exeTriplesMap.length != 0)
@@ -138,13 +138,7 @@ public class RMLEngine {
             sesameDataSet = generateTriplesMapTriples(triplesMap, parameters, 
                     exeTriplesMap, sesameDataSet);
         }
-        //log.info("sesameDataSet " + sesameDataSet.printRDF(RDFFormat.TURTLE));
-        /*try {
-            sesameDataSet.closeRepository(generateRDFTriples);
-        } catch (RepositoryException ex) {
-            log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
-                    + "Cannot close output repository", ex);
-        }*/
+
         return sesameDataSet;
     }
     

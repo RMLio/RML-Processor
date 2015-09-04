@@ -8,12 +8,10 @@ import be.ugent.mmlab.rml.sesame.RMLSesameDataSet;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import static junit.framework.TestCase.assertTrue;
 import junit.framework.TestSuite;
-
 import org.apache.log4j.LogManager;
 import org.openrdf.repository.Repository;
 import org.openrdf.rio.RDFFormat;
@@ -25,7 +23,8 @@ public class MapperTest
         extends TestCase {
     
     // Log
-    private static final org.apache.log4j.Logger log = LogManager.getLogger(MapperTest.class);
+    private static final org.apache.log4j.Logger log = 
+            LogManager.getLogger(MapperTest.class);
 
     /**
      * Create the test case
@@ -130,6 +129,13 @@ public class MapperTest
         assertTrue(desiredOutput(fileToOutputFile).isEqualTo(assertMap(fileToRMLFile, null)));
     }
     
+    public void testExample13() {
+        URL fileToRMLFile = getClass().getResource("/example13/example13.rml.ttl");
+        URL fileToOutputFile = getClass().getResource("/example13/example13.output.ttl");
+        assertTrue(desiredOutput(fileToOutputFile).isEqualTo(
+                assertMap(fileToRMLFile, null, null)));
+    }
+    
     public void testExample14() {
         URL fileToRMLFile = getClass().getResource("/example14/example14.rml.ttl");
         URL fileToOutputFile = getClass().getResource("/example14/example14.output.ttl");
@@ -170,13 +176,14 @@ public class MapperTest
         URL fileToRMLFile = getClass().getResource("/example16/example16b.rml.ttl");
         URL fileToOutputFile = getClass().getResource("/example16/example16b.output.ttl");
         assertTrue(desiredOutput(fileToOutputFile).isEqualTo(assertMap(fileToRMLFile, null)));
-    }
+    }*/
     
     public void testExample17() {
         URL fileToRMLFile = getClass().getResource("/example17/example17.rml.ttl");
         URL fileToOutputFile = getClass().getResource("/example17/example17.output.ttl");
-        assertTrue(desiredOutput(fileToOutputFile).isEqualTo(assertMap(fileToRMLFile, null)));
-    }*/
+        assertTrue(desiredOutput(fileToOutputFile).isEqualTo(
+                assertMap(fileToRMLFile, null, null)));
+    }
     
     public void testExample18() {
         URL fileToRMLFile = getClass().getResource("/example18/example18.rml.ttl");
@@ -256,7 +263,7 @@ public class MapperTest
                     mapping, "http://example.com", parameters, triplesMap);
             if(output != null)
                 output.dumpRDF(System.out, RDFFormat.TURTLE);
-log.debug("output " + output);
+
             return output;
 
         } catch (Exception ex) {

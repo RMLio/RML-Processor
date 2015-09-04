@@ -9,7 +9,7 @@
 @base <http://example.com/base> .
 
 <#Input>
-    a hydra:APIDocumentation ;
+    a hydra:IriTemplate ;
     hydra:template "https://biblio.ugent.be/publication/780271.json" .
 
 <#PaperAuthor>

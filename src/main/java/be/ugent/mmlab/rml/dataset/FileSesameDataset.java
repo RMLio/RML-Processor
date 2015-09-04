@@ -62,10 +62,10 @@ public class FileSesameDataset extends RMLSesameDataSet {
             writer = Rio.createWriter(this.format, fw);
             writer.startRDF();
 
-        } catch (IOException | RDFHandlerException ex) {
-            log.error(
-                    Thread.currentThread().getStackTrace()[1].getMethodName() + ": " 
-                    + "File not found.", ex);
+        } catch (IOException ex) {
+            log.error("IO Exception ", ex);
+        } catch (RDFHandlerException ex) {
+            log.error("RDF Handler Exception ", ex);
         }
 
     }
@@ -102,9 +102,10 @@ public class FileSesameDataset extends RMLSesameDataSet {
             writer = Rio.createWriter(this.format, fw);
             writer.startRDF();
 
-        } catch (IOException | RDFHandlerException ex) {
-            log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": " 
-                    + "File not found.", ex);
+        } catch (IOException ex) {
+            log.error("IO Exception ", ex);
+        } catch (RDFHandlerException ex) {
+            log.error("RDF Handler Exception ", ex);
         }
 
     }
