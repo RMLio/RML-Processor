@@ -160,9 +160,7 @@ public class XPathProcessor extends AbstractRMLProcessor {
                 }
             });
             //Execute the streaming
-
-            //dog.sniff(event, new InputSource(new FileInputStream(fileName)));
-            dog.sniff(event, new InputSource(input));
+             dog.sniff(event, new InputSource(input));
         } catch (SAXPathException ex) {
             log.error("SAXPathException " + ex);
         } catch (XPathException ex) {

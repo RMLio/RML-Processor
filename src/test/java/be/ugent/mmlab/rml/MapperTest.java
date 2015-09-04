@@ -77,7 +77,8 @@ public class MapperTest
     /*public void testExample5() {
         URL fileToRMLFile = getClass().getResource("/example5/museum-model.rml.ttl");
         URL fileToOutputFile = getClass().getResource("/example5/museum.output.ttl");
-        assertTrue(desiredOutput(fileToOutputFile).isEqualTo(assertMap(fileToRMLFile, null)));
+        assertTrue(desiredOutput(fileToOutputFile).isEqualTo(
+                assertMap(fileToRMLFile, null, null)));
     }*/
     
     public void testExample6() {
@@ -197,6 +198,15 @@ public class MapperTest
                 assertMap(fileToRMLFile, null, triplesMap)));
     }
     
+    public void testExample18b() {
+        URL fileToRMLFile = getClass().getResource("/example18/example18b.rml.ttl");
+        URL fileToOutputFile = getClass().getResource("/example18/example18b.output.ttl");
+        String[] triplesMap = {"http://example.com/base#Paper"};
+        
+        assertTrue(desiredOutput(fileToOutputFile).isEqualTo(
+                assertMap(fileToRMLFile, null, triplesMap)));
+    }
+    
     /*public void testExample19() {
         URL fileToRMLFile = getClass().getResource("/example19/example19.rml.ttl");
         URL fileToOutputFile = getClass().getResource("/example19/example19.output.ttl");
@@ -226,18 +236,27 @@ public class MapperTest
         try {
             StdRMLMappingFactory mappingFactory = new StdRMLMappingFactory();
             //Retrieve the Mapping Document
-            log.info("Retrieving the Mapping Document..");
+            log.info("========================================");
+            log.info("Retrieving the RML Mapping Document..");
+            log.info("========================================");
             RMLDocRetrieval mapDocRetrieval = new RMLDocRetrieval();
             Repository repository = mapDocRetrieval.getMappingDoc(
                     mappingURL.getFile(), RDFFormat.TURTLE);
             
+            log.info("========================================");
+            log.info("Extracting the RML Mapping Definitions..");
+            log.info("========================================");
             RMLEngine engine = new RMLEngine();
             RMLMapping mapping = mappingFactory.extractRMLMapping(repository);
+            
+            log.info("========================================");
+            log.info("Running the RML Mapping..");
+            log.info("========================================");
             RMLSesameDataSet output = engine.runRMLMapping(
                     mapping, "http://example.com", parameters, triplesMap);
             if(output != null)
                 output.dumpRDF(System.out, RDFFormat.TURTLE);
-
+log.debug("output " + output);
             return output;
 
         } catch (Exception ex) {

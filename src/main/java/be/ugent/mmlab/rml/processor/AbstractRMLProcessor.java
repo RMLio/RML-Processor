@@ -287,9 +287,8 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
 
             SourceProcessor inputProcessor = new AbstractInputProcessor();
                        
-            //TODO: Replace null with Bind Condition results
             InputStream input = inputProcessor.getInputStream(
-                    parentTriplesMap.getLogicalSource().getSource(), parameters);
+                    parentTriplesMap.getLogicalSource(), parameters);
             
             RMLProcessor processor = factory.create(referenceFormulation);
             RMLPerformer performer = null;

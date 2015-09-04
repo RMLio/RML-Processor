@@ -236,8 +236,8 @@ public class RMLEngine {
         try {
             processor = factory.create(triplesMap.getLogicalSource().getReferenceFormulation());
         } catch (Exception ex) {
-            log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": " + ex
-                    + " There is no suitable processor for this reference formulation");
+            log.error("Exception " + ex + 
+                    " There is no suitable processor for this reference formulation");
         }
 
         return processor;
@@ -254,7 +254,7 @@ public class RMLEngine {
                 createSourceProcessor(triplesMap.getLogicalSource().getSource());
 
         InputStream input = inputProcessor.getInputStream(
-                triplesMap.getLogicalSource().getSource(), parameters);
+                triplesMap.getLogicalSource(), parameters);
         return input;
     }
     
