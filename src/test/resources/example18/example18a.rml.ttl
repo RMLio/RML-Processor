@@ -48,9 +48,9 @@
 
         rr:objectMap [ 
             rr:parentTriplesMap <#Author> ;
-            crml:bindingCondition [
+            crml:binding [
                 rml:reference "id" ;
-                crml:value "publication_id"
+                crml:variable "publication_id"
                 ]
             ]
     ].

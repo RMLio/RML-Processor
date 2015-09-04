@@ -59,9 +59,9 @@
 
         rr:objectMap [ 
             rr:parentTriplesMap <#Country> ;
-            crml:bindingCondition [
+            crml:binding [
                 rml:reference "country" ;
-                crml:value "country"
+                crml:variable "country"
                 ]
             ]
     ].
