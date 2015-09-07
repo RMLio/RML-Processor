@@ -88,12 +88,15 @@ public class RMLEngine {
             log.info("No base IRI found.");
         
         sesameDataSet = chooseSesameDataSet(pathToNativeStore, outputFormat);
+        log.debug("Dataset repository generated");
         // Update baseIRI
         this.baseIRI = baseIRI;
         
+        log.debug("Generating triples..");
         sesameDataSet = generateRDFTriples(
                 sesameDataSet, rmlMapping, parameters, exeTriplesMap);
         
+        log.debug("Generating metadata..");
         //TODO:improve/replace metadata generator
         generateMetaData(sesameDataSet, startTime);
             
