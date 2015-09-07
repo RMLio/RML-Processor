@@ -132,8 +132,8 @@ public class MapperTest
     }
     
     public void testExampleHydra() {
-        URL fileToRMLFile = getClass().getResource("/exampleHydra/example18.rml.ttl");
-        URL fileToOutputFile = getClass().getResource("/exampleHydra/example18.output.ttl");
+        URL fileToRMLFile = getClass().getResource("/exampleHydra/exampleHydra.rml.ttl");
+        URL fileToOutputFile = getClass().getResource("/exampleHydra/exampleHydra.output.ttl");
         Map<String, String> parameters = new HashMap<String, String>();
         parameters.put("publication_id","4384220");
         parameters.put("format","json");
@@ -143,8 +143,8 @@ public class MapperTest
     }
     
     public void testExampleHydraA() {
-        URL fileToRMLFile = getClass().getResource("/exampleHydra/example18a.rml.ttl");
-        URL fileToOutputFile = getClass().getResource("/exampleHydra/example18a.output.ttl");
+        URL fileToRMLFile = getClass().getResource("/exampleHydra/exampleHydraA.rml.ttl");
+        URL fileToOutputFile = getClass().getResource("/exampleHydra/exampleHydraA.output.ttl");
         String[] triplesMap = {"http://example.com/base#Paper"};
         
         assertTrue(desiredOutput(fileToOutputFile).isEqualTo(
@@ -152,8 +152,8 @@ public class MapperTest
     }
     
     public void testExampleHydraB() {
-        URL fileToRMLFile = getClass().getResource("/exampleHydra/example17.rml.ttl");
-        URL fileToOutputFile = getClass().getResource("/exampleHydra/example17.output.ttl");
+        URL fileToRMLFile = getClass().getResource("/exampleHydra/exampleHydraB.rml.ttl");
+        URL fileToOutputFile = getClass().getResource("/exampleHydra/exampleHydraB.output.ttl");
         assertTrue(desiredOutput(fileToOutputFile).isEqualTo(
                 assertMap(fileToRMLFile, null, null)));
     }
