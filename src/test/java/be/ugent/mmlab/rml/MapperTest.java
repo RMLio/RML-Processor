@@ -159,8 +159,10 @@ public class MapperTest
     }
     
     public void testExampleHydraSPARQLsd() {
-        URL fileToRMLFile = getClass().getResource("/exampleSPARQLsd/example18b.rml.ttl");
-        URL fileToOutputFile = getClass().getResource("/exampleSPARQLsd/example18b.output.ttl");
+        URL fileToRMLFile = getClass().getResource(
+                "/exampleHydraSPARQLsd/exampleHydraSPARQLsd.rml.ttl");
+        URL fileToOutputFile = getClass().getResource(
+                "/exampleHydraSPARQLsd/exampleHydraSPARQLsd.output.ttl");
         String[] triplesMap = {"http://example.com/base#Paper"};
         
         assertTrue(desiredOutput(fileToOutputFile).isEqualTo(
