@@ -110,6 +110,13 @@ public class MapperTest
                 assertMap(fileToRMLFile, parameters, null)));
     }
     
+    public void testExampleXLSX() {
+        URL fileToRMLFile = getClass().getResource("/exampleXLSX/Embrapa.rml.ttl");
+        URL fileToOutputFile = getClass().getResource("/exampleXLSX/Embrapa.output.ttl");
+        assertTrue(desiredOutput(fileToOutputFile).isEqualTo(
+                assertMap(fileToRMLFile, null, null)));
+    }
+    
     public void testExampleCSVW() {
         URL fileToRMLFile = getClass().getResource("/exampleCSVW/exampleAirport.rml.ttl");
         URL fileToOutputFile = getClass().getResource("/exampleCSVW/exampleAirport.output.ttl");

@@ -18,6 +18,7 @@ public class ConcreteTermMapFactory implements TermMapProcessorFactory {
     
     @Override
     public TermMapProcessor create(QLTerm term) {
+        //TODO: Make CSVTermMap more generic
         switch (term){
             case XPATH_CLASS:
                 return new XPathTermMapProcessor();
@@ -27,6 +28,10 @@ public class ConcreteTermMapFactory implements TermMapProcessorFactory {
                 return new JSONPathTermMapProcessor();
             case CSS3_CLASS:
                 return new CSS3TermMapProcessor();
+            case XLS_CLASS:
+                return new CSVTermMapProcessor();
+            case XLSX_CLASS:
+                return new CSVTermMapProcessor();
             default:
                 log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
                         + "The term " + term + "was not defined.");
