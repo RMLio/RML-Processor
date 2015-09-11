@@ -43,7 +43,7 @@ public class Main {
 
         try {
             commandLine = RMLConfiguration.parseArguments(args);
-            String outputFile = null, outputFormat = null;
+            String outputFile = null, outputFormat = "turtle";
             String graphName = "";
 
             if (commandLine.hasOption("h")) {
