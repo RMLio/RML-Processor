@@ -28,7 +28,7 @@ public class Main {
     public static void main(String[] args) {
         // Log
         Logger log = LoggerFactory.getLogger(Main.class);
-        String map_doc = null, parameter = null, triplesMap ;
+        String map_doc = null, triplesMap ;
         String[] exeTriplesMap = null;
         Map<String, String> parameters = null;
         BasicConfigurator.configure();

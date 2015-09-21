@@ -23,7 +23,9 @@
          rr:graphMap [ rr:constant ex:Graph ];
     ];
     rr:predicateObjectMap [
-	rr:predicate transit:service;
+	rr:predicateMap [
+            rr:template "http://vocab.org/transit/terms/{type}"
+        ];
 	rr:objectMap [
             rml:reference "bus" ;
 	    ] ;

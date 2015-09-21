@@ -49,10 +49,14 @@ public class SimpleReferencePerformer extends NodeRMLPerformer {
                 dataset.add(subject, predicate, object);
                 log.debug("Subject " + subject 
                         + " Predicate " + predicate 
-                        + "Object " + object.toString());
+                        + " Object " + object.toString());
 
-                if ((map.getLogicalSource().getReferenceFormulation().toString().equals("CSV"))
-                        || (map.getLogicalSource().getIterator().equals(map.getLogicalSource().getIterator()))) {
+                if ((map.getLogicalSource().getReferenceFormulation().toString().
+                        equals("CSV"))
+                        || (map.getLogicalSource().getReferenceFormulation().toString().
+                            equals("XLSX"))
+                        || (map.getLogicalSource().getIterator().
+                            equals(map.getLogicalSource().getIterator()))) {
                     performer.perform(node, dataset, map, object);
                 } else {
                     int end = map.getLogicalSource().getIterator().length();

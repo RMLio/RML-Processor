@@ -1,2 +1,2 @@
-id,city,bus,latitude,longitude
-6523,Brussels,25,50.901389,4.484444
+id,city,bus,latitude,longitude,type
+6523,Brussels,25,50.901389,4.484444,service

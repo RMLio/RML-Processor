@@ -78,7 +78,7 @@ public class RMLEngine {
             String baseIRI, String pathToNativeStore, String outputFormat, 
             Map<String, String> parameters, String[] exeTriplesMap) {
         long startTime = System.nanoTime();
-        RMLSesameDataSet sesameDataSet = null;
+        RMLSesameDataSet sesameDataSet ;
 
         log.debug("Running RML mapping... ");
         if (rmlMapping == null) 
@@ -163,7 +163,6 @@ public class RMLEngine {
 
             log.info("Generating Data Retrieval Processor..");
             InputStream input = generateInputStream(triplesMap, parameters);
-
             try {
                 log.debug("Generating Performer..");
                 NodeRMLPerformer performer = new NodeRMLPerformer(processor);

@@ -51,6 +51,16 @@ public class MapperTest
         assertTrue(desiredOutput(fileToOutputFile).isEqualTo(
                 assertMap(fileToRMLFile, null, null)));
     }
+   
+   public void testExample1b() {
+        URL fileToRMLFile = getClass().getResource("/example1/example1b.rml.ttl");
+        URL fileToOutputFile = getClass().getResource("/example1/example.output.ttl");
+        Map<String, String> parameters = new HashMap<String, String>();
+        parameters.put("filename","src/test/resources/example1/example1.xml");
+        assertTrue(desiredOutput(fileToOutputFile).isEqualTo(
+                assertMap(fileToRMLFile, parameters, null)));
+        //assertTrue(desiredOutput(fileToOutputFile).isEqualTo(assertMap(fileToRMLFile, null)));
+    }
 
     public void testExample2() {
         URL fileToRMLFile = getClass().getResource("/example2/example.rml.ttl");
@@ -87,12 +97,12 @@ public class MapperTest
                 assertMap(fileToRMLFile, null, null)));
     }
     
-    public void testExample7() {
+    /*public void testExample7() {
         URL fileToRMLFile = getClass().getResource("/example7/example7.rml.ttl");
         URL fileToOutputFile = getClass().getResource("/example7/example7.output.ttl");
         assertTrue(desiredContextOutput(fileToOutputFile).isEqualTo(
                 assertMap(fileToRMLFile, null, null)));
-    }
+    }*/
     
     /*public void testExample8() {
         URL fileToRMLFile = getClass().getResource("/example8/simergy.rml.ttl");

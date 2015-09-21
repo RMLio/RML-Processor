@@ -22,6 +22,7 @@ import jlibs.xml.sax.dog.XMLDog;
 import jlibs.xml.sax.dog.XPathResults;
 import jlibs.xml.sax.dog.expr.Expression;
 import jlibs.xml.sax.dog.expr.InstantEvaluationListener;
+import jlibs.xml.sax.dog.sniff.Event;
 import nu.xom.Node;
 import nu.xom.Nodes;
 import nu.xom.XPathContext;
@@ -56,7 +57,8 @@ public class XPathProcessor extends AbstractRMLProcessor {
 
     public XPathContext nsContext = new XPathContext();
     
-    private DefaultNamespaceContext get_namespaces() {
+    private DefaultNamespaceContext get_namespaces(TriplesMap map) {
+        
         DefaultNamespaceContext dnc = new DefaultNamespaceContext();
         this.nsContext.addNamespace("xsd", Namespaces.URI_XSD);
         dnc.declarePrefix("xsd", Namespaces.URI_XSD);
@@ -66,22 +68,24 @@ public class XPathProcessor extends AbstractRMLProcessor {
         XMLDog dog = new XMLDog(dnc);
         try {
             Expression xpath = dog.addXPath("/*/namespace::*[name()]");
-            if (map != null) {
-                String source = map.getLogicalSource().getSource().getTemplate();
-                XPathResults results = dog.sniff(new InputSource(source));
-                if (results != null) {
-                    Collection<NodeItem> result3 = (Collection<NodeItem>) results.getResult(xpath);
-                    for (NodeItem res : result3) {
-                        this.nsContext.addNamespace(res.qualifiedName, res.value);
-                        dnc.declarePrefix(res.qualifiedName, res.value);
-                    }
+            InputSource source = new InputSource(
+                    map.getLogicalSource().getSource().getTemplate());
+            XPathResults results = dog.sniff(source);
+
+            if (results != null) {
+                Collection<NodeItem> result =
+                        (Collection<NodeItem>) results.getResult(xpath);
+                for (NodeItem res : result) {
+                    this.nsContext.addNamespace(res.qualifiedName, res.value);
+                    dnc.declarePrefix(res.qualifiedName, res.value);
                 }
             }
+
         } catch (SAXPathException ex) {
-            log.error("SAXPathException: " + ex );
+            log.error("SAX Path Exception: " + ex );
         } catch (XPathException ex) {
-            log.error("SAXPathException: " + ex );
-        }
+            log.error("XPath Exception: " + ex );
+        } 
         return dnc;
     }
     
@@ -123,18 +127,19 @@ public class XPathProcessor extends AbstractRMLProcessor {
             //Inititalize the XMLDog for processing XPath
             // an implementation of javax.xml.namespace.NamespaceContext
             //DefaultNamespaceContext dnc = new DefaultNamespaceContext();
-            DefaultNamespaceContext dnc = get_namespaces();
-            XMLDog dog = new XMLDog(dnc);
             
+            DefaultNamespaceContext dnc = get_namespaces(map);
+
+            XMLDog dog = new XMLDog(dnc);
+            //XMLDog dog = get_namespaces(input);
             //adding expression to the xpathprocessor
             dog.addXPath(reference);
 
-            jlibs.xml.sax.dog.sniff.Event event = dog.createEvent();
+            Event event = dog.createEvent();
 
             //event.setXMLBuilder(new DOMBuilder());
             //use XOM now
             event.setXMLBuilder(new XOMBuilder());
-            
             
             event.setListener(new InstantEvaluationListener() {
                 //When an XPath expression matches
@@ -166,7 +171,6 @@ public class XPathProcessor extends AbstractRMLProcessor {
         } catch (XPathException ex) {
             log.error("XPathException " + ex);
         } 
-
     }
     
     @Override

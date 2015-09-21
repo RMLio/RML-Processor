@@ -61,9 +61,9 @@ public class XLSXProcessor extends AbstractRMLProcessor {
                             currentCell.getStringCellValue());
                     enumerator++;
                 }
-                
                 //let the performer handle the rows
-                performer.perform(rowMap, dataset, map, pomExecution);
+                if(row.getRowNum() != 0)
+                    performer.perform(rowMap, dataset, map, pomExecution);
             }
             
         } catch (FileNotFoundException ex) {

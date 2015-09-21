@@ -100,8 +100,8 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
         //log.info("Abstract RML Processor Graph Map" + subjectMap.getGraphMaps().toString());
         if (values == null || values.isEmpty()) 
             if(subjectMap.getTermType() != BLANK_NODE){
-                log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
-                        + "No subject was generated for " + subjectMap.toString());
+                log.error("No subject was generated for " 
+                        + subjectMap.getOwnTriplesMap().getName().toString());
                 return null;
             }
             
@@ -175,8 +175,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                 }
 
             } else {
-                log.debug(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
-                        + "No suitable replacement for template " + template + ".");
+                log.debug("No suitable replacement for template " + template + ".");
                 return null;
             }
         }
@@ -228,7 +227,8 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
      */
     @Override
     public void processPredicateObjectMap(
-            RMLSesameDataSet dataset, Resource subject, PredicateObjectMap pom, Object node, TriplesMap map) {
+            RMLSesameDataSet dataset, Resource subject, PredicateObjectMap pom, 
+            Object node, TriplesMap map) {
 
         Set<PredicateMap> predicateMaps = pom.getPredicateMaps();
         //Go over each predicate map
@@ -320,12 +320,21 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
             else if (joinConditions.isEmpty()
                     & parentTriplesMap.getLogicalSource().getSource().getTemplate().equals(
                     map.getLogicalSource().getSource().getTemplate())) {
+                
                 log.debug("Referencing Object Map with Logical Source without conditions.");
                 performer = new SimpleReferencePerformer(processor, subject, predicate);
-                if ((parentTriplesMap.getLogicalSource().getReferenceFormulation().toString().equals("CSV"))
-                        || (parentTriplesMap.getLogicalSource().getIterator().equals(map.getLogicalSource().getIterator()))) {
+                
+                if ((parentTriplesMap.getLogicalSource().getReferenceFormulation().toString().
+                            equals("CSV"))
+                        || (parentTriplesMap.getLogicalSource().getReferenceFormulation().toString().
+                            equals("XLSX"))
+                        || (parentTriplesMap.getLogicalSource().getIterator().
+                            equals(map.getLogicalSource().getIterator()))
+                    ) {
+                    log.debug("Tabular-structured Referencing Object Map");
                     performer.perform(node, dataset, parentTriplesMap, false);
                 } else {
+                    log.debug("Hierarchical-structured Referencing Object Map");
                     int end = map.getLogicalSource().getIterator().length();
                     
                     String expression = "";
@@ -423,8 +432,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                     }
                 }
             } else {
-                log.debug(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
-                        + "No object created. No triple will be generated.");
+                log.debug("No object created. No triple will be generated.");
             }
         }
     }
