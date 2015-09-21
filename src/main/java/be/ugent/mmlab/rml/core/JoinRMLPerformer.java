@@ -21,7 +21,8 @@ import org.openrdf.model.Value;
 public class JoinRMLPerformer extends NodeRMLPerformer{
     
     // Log
-    private static final Logger log = LoggerFactory.getLogger(JoinRMLPerformer.class);
+    private static final Logger log = 
+            LoggerFactory.getLogger(JoinRMLPerformer.class);
     
     private Resource subject;
     private URI predicate;

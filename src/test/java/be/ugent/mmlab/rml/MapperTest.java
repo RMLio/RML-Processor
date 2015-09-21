@@ -81,7 +81,7 @@ public class MapperTest
         URL fileToOutputFile = getClass().getResource("/example4/example4_Venue.output.ttl");
         assertTrue(desiredOutput(fileToOutputFile).isEqualTo(
                 assertMap(fileToRMLFile, null, null)));
-    } 
+    }
 
     /*public void testExample5() {
         URL fileToRMLFile = getClass().getResource("/example5/museum-model.rml.ttl");

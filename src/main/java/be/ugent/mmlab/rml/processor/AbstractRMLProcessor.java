@@ -2,6 +2,7 @@ package be.ugent.mmlab.rml.processor;
 
 import be.ugent.mmlab.rml.condition.model.BindingCondition;
 import be.ugent.mmlab.rml.condition.model.std.BindingReferencingObjectMap;
+import be.ugent.mmlab.rml.core.ConditionalJoinRMLPerformer;
 import be.ugent.mmlab.rml.core.JoinRMLPerformer;
 import be.ugent.mmlab.rml.core.RMLPerformer;
 import be.ugent.mmlab.rml.core.SimpleReferencePerformer;
@@ -401,7 +402,8 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
             for (String childValue : childValues) {    
                 joinMap.put(joinCondition.getParent(), childValue);
                 if (joinMap.size() == joinConditions.size()) {
-                    performer = new JoinRMLPerformer(processor, subject, predicate);
+                    performer = new ConditionalJoinRMLPerformer(
+                            processor, joinMap, subject, predicate);
                     processor.execute(dataset, parentTriplesMap, performer, input, false);
                 }
             }
