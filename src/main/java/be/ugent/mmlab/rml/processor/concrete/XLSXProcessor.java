@@ -1,6 +1,6 @@
 package be.ugent.mmlab.rml.processor.concrete;
 
-import be.ugent.mmlab.rml.core.RMLPerformer;
+import be.ugent.mmlab.rml.performer.RMLPerformer;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.AbstractRMLProcessor;
 import be.ugent.mmlab.rml.processor.termmap.TermMapProcessorFactory;
@@ -18,7 +18,6 @@ import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.xssf.extractor.XSSFExcelExtractor;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openrdf.model.Resource;
 import org.slf4j.Logger;
@@ -42,7 +41,8 @@ public class XLSXProcessor extends AbstractRMLProcessor {
 
     @Override
     public void execute(RMLSesameDataSet dataset, TriplesMap map, 
-    RMLPerformer performer, InputStream input, boolean pomExecution) {
+        RMLPerformer performer, InputStream input, 
+        String[] exeTriplesMap, boolean pomExecution) {
         XSSFWorkbook wb;
         try {
             OPCPackage pkg = OPCPackage.open(input);
@@ -63,7 +63,8 @@ public class XLSXProcessor extends AbstractRMLProcessor {
                 }
                 //let the performer handle the rows
                 if(row.getRowNum() != 0)
-                    performer.perform(rowMap, dataset, map, pomExecution);
+                    performer.perform(
+                            rowMap, dataset, map, exeTriplesMap, pomExecution);
             }
             
         } catch (FileNotFoundException ex) {
@@ -80,7 +81,7 @@ public class XLSXProcessor extends AbstractRMLProcessor {
     @Override
     public void execute_node(RMLSesameDataSet dataset, String expression, 
         TriplesMap parentTriplesMap, RMLPerformer performer, Object node, 
-        Resource subject, boolean pomExecution) {
+        Resource subject, String[] exeTriplesMap, boolean pomExecution) {
         throw new UnsupportedOperationException("Not supported yet."); 
         //TODO:implement this
     }

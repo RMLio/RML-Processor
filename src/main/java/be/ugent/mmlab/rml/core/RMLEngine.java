@@ -1,5 +1,6 @@
 package be.ugent.mmlab.rml.core;
 
+import be.ugent.mmlab.rml.performer.NodeRMLPerformer;
 import be.ugent.mmlab.rml.dataset.FileSesameDataset;
 import be.ugent.mmlab.rml.input.ConcreteLogicalSourceProcessorFactory;
 import be.ugent.mmlab.rml.input.processor.SourceProcessor;
@@ -15,7 +16,6 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 import java.util.Collection;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Properties;
 import org.slf4j.Logger;
@@ -31,7 +31,8 @@ import org.slf4j.LoggerFactory;
 public class RMLEngine {
 
     // Log
-    private static final Logger log = LoggerFactory.getLogger(RMLEngine.class);
+    private static final Logger log = 
+            LoggerFactory.getLogger(RMLEngine.class);
     // A base IRI used in resolving relative IRIs produced by the R2RML mapping.
     private String baseIRI;
     //private static boolean source_properties;
@@ -106,10 +107,10 @@ public class RMLEngine {
             String pathToNativeStore, String outputFormat){
         RMLSesameDataSet sesameDataSet;
         if (pathToNativeStore != null) {
-            log.info("Using direct file " + pathToNativeStore);
+            log.debug("Using direct file " + pathToNativeStore);
             sesameDataSet = new FileSesameDataset(pathToNativeStore, outputFormat);
         } else {
-            log.info("Using default store (memory) ");
+            log.debug("Using default store (memory) ");
             sesameDataSet = new RMLSesameDataSet();
         }
         return sesameDataSet;
@@ -130,9 +131,13 @@ public class RMLEngine {
 
         log.debug("Generate RDF triples... ");
         Collection<TriplesMap> triplesMaps;
+        RMLExecutionEngine executionEngine = 
+                new RMLExecutionEngine(exeTriplesMap);
         
-        if(exeTriplesMap != null && exeTriplesMap.length != 0)
-            triplesMaps = processExecutionList(rmlMapping, exeTriplesMap);
+        if(exeTriplesMap != null && exeTriplesMap.length != 0){
+            triplesMaps = executionEngine.
+                    processExecutionList(rmlMapping, exeTriplesMap);
+        }
         else
             triplesMaps = rmlMapping.getTriplesMaps();
 
@@ -151,7 +156,10 @@ public class RMLEngine {
         int delta = 0;
 
         if (exeTriplesMap != null) {
-            flag = checkExecutionList(triplesMap, exeTriplesMap);
+            RMLExecutionEngine executionEngine = 
+                new RMLExecutionEngine(exeTriplesMap);
+            flag = executionEngine.
+                    checkExecutionList(triplesMap, exeTriplesMap);
         }
         if (flag) {
             System.out.println("Generating RDF triples for " 
@@ -168,8 +176,8 @@ public class RMLEngine {
                 NodeRMLPerformer performer = new NodeRMLPerformer(processor);
 
                 log.debug("Executing Mapping Processor..");
-                processor.execute(
-                        sesameDataSet, triplesMap, performer, input, false);
+                processor.execute(sesameDataSet, triplesMap, performer, 
+                        input, exeTriplesMap, false);
 
                 log.info((sesameDataSet.getSize() - delta)
                         + " triples were generated for " 
@@ -188,36 +196,6 @@ public class RMLEngine {
             }
         }
         return sesameDataSet;
-    }
-    
-    private boolean checkExecutionList(TriplesMap triplesMap, String[] exeTriplesMap) {
-        boolean flag = false;
-
-        for (String exeTM : exeTriplesMap) {
-            flag = false;
-
-            if (triplesMap.getName().toString().equals(exeTM.toString())) {
-                flag = true;
-            }
-        }
-
-        return flag;
-    }
-    
-    private Collection<TriplesMap> processExecutionList(
-            RMLMapping rmlMapping, String[] exeTriplesMap) {
-        Collection<TriplesMap> tms = rmlMapping.getTriplesMaps();
-        Collection<TriplesMap> triplesMaps = new LinkedHashSet<TriplesMap>();
-
-        for (String exeTM : exeTriplesMap) {
-            for (TriplesMap tm : tms) {
-                if (tm.getName().equals(exeTM.toString())) {
-                    triplesMaps.add(tm);
-                }
-            }
-        }
-
-        return triplesMaps;
     }
     
     private RMLProcessor generateRMLProcessor(TriplesMap triplesMap) {

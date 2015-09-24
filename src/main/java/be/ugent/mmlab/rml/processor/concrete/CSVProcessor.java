@@ -1,6 +1,6 @@
 package be.ugent.mmlab.rml.processor.concrete;
 
-import be.ugent.mmlab.rml.core.RMLPerformer;
+import be.ugent.mmlab.rml.performer.RMLPerformer;
 import be.ugent.mmlab.rml.model.LogicalSource;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.model.std.CsvwReferenceFormulation;
@@ -53,7 +53,8 @@ public class CSVProcessor extends AbstractRMLProcessor {
 
     @Override
     public void execute(RMLSesameDataSet dataset, TriplesMap map, 
-    RMLPerformer performer, InputStream input, boolean pomExecution) {
+    RMLPerformer performer, InputStream input, 
+    String[] exeTriplesMap, boolean pomExecution) {
 
         try {
             char delimiter = getDelimiter(map.getLogicalSource());
@@ -70,7 +71,7 @@ public class CSVProcessor extends AbstractRMLProcessor {
                    row.put(new String(header.getBytes("iso8859-1"), UTF_8), reader.get(header));
                 }
                 //let the performer handle the rows
-                performer.perform(row, dataset, map, pomExecution);
+                performer.perform(row, dataset, map, exeTriplesMap, pomExecution);
             }
 
         } catch (FileNotFoundException ex) {
@@ -84,7 +85,7 @@ public class CSVProcessor extends AbstractRMLProcessor {
     public void execute_node(
             RMLSesameDataSet dataset, String expression, 
             TriplesMap parentTriplesMap, RMLPerformer performer, Object node, 
-            Resource subject, boolean pomExecution) {
+            Resource subject, String[] exeTriplesMap, boolean pomExecution) {
         throw new UnsupportedOperationException("Not applicable for CSV sources."); 
         //TODO: implement this
     }

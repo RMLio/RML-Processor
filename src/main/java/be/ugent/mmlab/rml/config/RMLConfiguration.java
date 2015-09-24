@@ -37,7 +37,6 @@ public class RMLConfiguration {
         cliOptions.addOption("o", "output file", true, "the URI of the output file (required)");
         cliOptions.addOption("f", "file format", true, 
                 "the output format of the results: turtle, n3, ntriples (default), rdfxml (optional)");
-        //cliOptions.addOption("p", "parameter", true, "");
         cliOptions.addOption("tm", "Triples Map", true, "Triples Map to be executed.");
         cliOptions.addOption("p", 
                 "arguments to pass if the rml:source of the mapping document is a URI template "
@@ -66,7 +65,7 @@ public class RMLConfiguration {
             for(int i=0 ; i < exeTriplesMap.length ; i++){
                 //TODO:remove hardcoded file:
                 exeTriplesMap[i] = "file:" + map_doc + "#" + exeTriplesMap[i];
-            log.error("exeTriplesMap[i] " + exeTriplesMap[i]);
+            log.info("TriplesMap to be processed " + exeTriplesMap[i]);
             }
             return exeTriplesMap;
         } else {

@@ -1,6 +1,5 @@
-package be.ugent.mmlab.rml.core;
+package be.ugent.mmlab.rml.performer;
 
-import be.ugent.mmlab.rml.model.PredicateObjectMap;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.RMLProcessor;
 import be.ugent.mmlab.rml.sesame.RMLSesameDataSet;
@@ -42,8 +41,9 @@ public class JoinRMLPerformer extends NodeRMLPerformer{
      */
     @Override
     public void perform(Object node, RMLSesameDataSet dataset, 
-    TriplesMap map, boolean pomExecution) {
-        Value object = processor.processSubjectMap(dataset, map.getSubjectMap(), node);
+    TriplesMap map, String[] exeTriplesMap, boolean pomExecution) {
+        Value object = processor.processSubjectMap(
+                dataset, map.getSubjectMap(), node);
 
         if (object == null){
             return;
@@ -51,18 +51,12 @@ public class JoinRMLPerformer extends NodeRMLPerformer{
         
         //add the join triple
         dataset.add(subject, predicate, object);
-        
-        //TODO: put that separately
+
         if(pomExecution){
-            log.debug("Execute entirely the Referencing Object Map.");
-            Resource refObjSub = processor.processSubjectMap(
-                    dataset, map.getSubjectMap(), node);
-            processor.processSubjectTypeMap(
-                    dataset, refObjSub, map.getSubjectMap(), node);
-            for (PredicateObjectMap pom : map.getPredicateObjectMaps()) {
-                processor.processPredicateObjectMap(
-                        dataset, refObjSub, pom, node, map);
-            }
+            NestedRMLPerformer nestedPerformer = 
+                    new NestedRMLPerformer(processor);
+            nestedPerformer.perform(
+                    node, dataset, map, exeTriplesMap, pomExecution);
         }
     }
 

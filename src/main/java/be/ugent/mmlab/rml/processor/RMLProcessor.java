@@ -1,6 +1,6 @@
 package be.ugent.mmlab.rml.processor;
 
-import be.ugent.mmlab.rml.core.RMLPerformer;
+import be.ugent.mmlab.rml.performer.RMLPerformer;
 import be.ugent.mmlab.rml.model.RDFTerm.PredicateMap;
 import be.ugent.mmlab.rml.model.PredicateObjectMap;
 import be.ugent.mmlab.rml.model.RDFTerm.SubjectMap;
@@ -30,12 +30,13 @@ public interface RMLProcessor {
      * @param performer the performer handling the action done on the triplemap
      */
     public void execute(RMLSesameDataSet dataset, TriplesMap map, 
-            RMLPerformer performer, InputStream input, boolean pomExecution);
+            RMLPerformer performer, InputStream input, 
+            String[] exeTriplesMap, boolean pomExecution);
     
     public void execute_node(
             RMLSesameDataSet dataset, String expression, 
             TriplesMap parentTriplesMap, RMLPerformer performer, Object node, 
-            Resource subject, boolean pomExecution);
+            Resource subject, String[] exeTriplesMap, boolean pomExecution);
 
     /**
      * process a subject map
@@ -79,8 +80,8 @@ public interface RMLProcessor {
      * @param node 
      */
     public void processPredicateObjectMap(
-            RMLSesameDataSet dataset, Resource subject, 
-            PredicateObjectMap pom, Object node, TriplesMap map);
+            RMLSesameDataSet dataset, Resource subject, PredicateObjectMap pom, 
+            Object node, TriplesMap map, String[] exeTriplesMap);
     
     /**
      *

@@ -1,7 +1,7 @@
 package be.ugent.mmlab.rml.processor.concrete;
 
-import be.ugent.mmlab.rml.core.NodeRMLPerformer;
-import be.ugent.mmlab.rml.core.RMLPerformer;
+import be.ugent.mmlab.rml.performer.NodeRMLPerformer;
+import be.ugent.mmlab.rml.performer.RMLPerformer;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.AbstractRMLProcessor;
 import be.ugent.mmlab.rml.processor.RMLProcessor;
@@ -120,7 +120,8 @@ public class XPathProcessor extends AbstractRMLProcessor {
     
     @Override
     public void execute(final RMLSesameDataSet dataset, final TriplesMap map, 
-    final RMLPerformer performer, InputStream input, final boolean pomExecution) {
+        final RMLPerformer performer, InputStream input, 
+        final String[] exeTriplesMap, final boolean pomExecution) {
         try {
             this.map = map;
             String reference = getReference(map.getLogicalSource());
@@ -144,12 +145,13 @@ public class XPathProcessor extends AbstractRMLProcessor {
             event.setListener(new InstantEvaluationListener() {
                 //When an XPath expression matches
                 @Override
-                public void onNodeHit(Expression expression, NodeItem nodeItem) {
+                public void onNodeHit(
+                        Expression expression, NodeItem nodeItem) {
                     log.debug("Expression " + expression);
                     Node node = (Node) nodeItem.xml;
                     //Let the performer do its thing
-                    performer.perform(node, dataset, map, pomExecution);
-                    //System.out.println("XPath: " + expression.getXPath() + " has hit: " + node.getTextContent());
+                    performer.perform(
+                            node, dataset, map, exeTriplesMap, pomExecution);
                 }
 
                 @Override
@@ -169,7 +171,9 @@ public class XPathProcessor extends AbstractRMLProcessor {
         } catch (SAXPathException ex) {
             log.error("SAXPathException " + ex);
         } catch (XPathException ex) {
-            log.error("XPathException " + ex);
+            log.error("XPathException " + ex 
+                    + " for the expression " 
+                    + getReference(map.getLogicalSource()));
         } 
     }
     
@@ -177,7 +181,7 @@ public class XPathProcessor extends AbstractRMLProcessor {
     public void execute_node(
             RMLSesameDataSet dataset, String expression, 
             TriplesMap parentTriplesMap, RMLPerformer performer, Object node, 
-            Resource subject, boolean pomExecution) {
+            Resource subject, String[] exeTriplesMap, boolean pomExecution) {
         //still need to make it work with more nore-results 
         //currently it handles only one
         log.debug("Execute node..");
@@ -191,12 +195,15 @@ public class XPathProcessor extends AbstractRMLProcessor {
         for (int i = 0; i < nodes.size(); i++) {
             Node n = nodes.get(i);
             if(subject == null)
-                performer.perform(n, dataset, parentTriplesMap, pomExecution);
+                performer.perform(n, dataset, parentTriplesMap, 
+                        exeTriplesMap, pomExecution);
             else{
                 RMLProcessorFactory factory = new ConcreteRMLProcessorFactory();
-                RMLProcessor subprocessor = factory.create(map.getLogicalSource().getReferenceFormulation());
+                RMLProcessor subprocessor = 
+                        factory.create(map.getLogicalSource().getReferenceFormulation());
                 RMLPerformer subperformer = new NodeRMLPerformer(subprocessor);
-                subperformer.perform(n, dataset, parentTriplesMap, subject);
+                subperformer.perform(
+                        n, dataset, parentTriplesMap, subject, exeTriplesMap);
             }
         }
 

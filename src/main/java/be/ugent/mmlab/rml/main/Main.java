@@ -65,9 +65,6 @@ public class Main {
             if (commandLine.hasOption("m")) {
                 map_doc = commandLine.getOptionValue("m", null);
             }
-            System.out.println("RML Processor - Extracting Mapping Document.");
-            System.out.println("--------------------------------------------------------------------------------");
-            System.out.println("");
             
             //Retrieve the Mapping Document
             log.info("========================================");
@@ -86,9 +83,6 @@ public class Main {
                 if(triplesMap != null)
                     exeTriplesMap = RMLConfiguration.processTriplesMap(triplesMap,map_doc);
             }
-            System.out.println("RML Processor - Executing Mapping Document.");
-            System.out.println("--------------------------------------------------------------------------------");
-            System.out.println("");
             
             log.info("========================================");
             log.info("Running the RML Mapping..");
@@ -98,20 +92,6 @@ public class Main {
             dataset.closeRepository();
             System.exit(0);
             
-            /*System.out.println("--------------------------------------------------------------------------------");
-            System.out.println("RML Processor");
-            System.out.println("--------------------------------------------------------------------------------");
-            System.out.println("");
-            System.out.println("Usage: java -jar -m <mapping_file> -o <output_file> -f format [-g <graph> -tm <TriplesMap>]");
-            System.out.println("");
-            System.out.println("With");
-            System.out.println("    <mapping_file> = The RML mapping document conform with the RML specification (http://semweb.mmlab.be/rml/spec.html)");
-            System.out.println("    <output_file> = The output format (turtle, ntriples, n3, nquads, rdfxml, rdfjson, jsonld).");
-            System.out.println("    <output_file> = The file where the output RDF triples are stored; default in Turtle (http://www.w3.org/TR/turtle/) syntax.");
-            System.out.println("    <graph> (optional) = The named graph in which the output RDF triples are stored.");
-            System.out.println("");
-            System.out.println("--------------------------------------------------------------------------------");*/
-            //}
         } catch (Exception ex) {
             System.exit(1);
             log.error("Exception " + ex);

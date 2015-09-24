@@ -1,4 +1,4 @@
-package be.ugent.mmlab.rml.core;
+package be.ugent.mmlab.rml.performer;
 
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.sesame.RMLSesameDataSet;
@@ -20,7 +20,7 @@ public interface RMLPerformer {
      * @param map current triple map that is being processed
      */
     public void perform(Object node, RMLSesameDataSet dataset, 
-            TriplesMap map, boolean pomExecution);
+            TriplesMap map, String[] exeTriplesMap, boolean pomExecution);
     
     /**
      *
@@ -28,7 +28,8 @@ public interface RMLPerformer {
      * @param dataset
      * @param map
      * @param subject
+     * @param exeTriplesMap
      */
     public void perform(Object node, RMLSesameDataSet dataset, 
-            TriplesMap map, Resource subject);
+            TriplesMap map, Resource subject, String[] exeTriplesMap);
 }

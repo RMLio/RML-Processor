@@ -1,4 +1,4 @@
-package be.ugent.mmlab.rml.core;
+package be.ugent.mmlab.rml.performer;
 
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.RMLProcessor;
@@ -30,7 +30,8 @@ public class SimpleReferencePerformer extends NodeRMLPerformer {
     private Resource subject;
     private URI predicate;
     
-    public SimpleReferencePerformer(RMLProcessor processor, Resource subject, URI predicate) {
+    public SimpleReferencePerformer(
+            RMLProcessor processor, Resource subject, URI predicate) {
         super(processor);
         this.subject = subject;
         this.predicate = predicate;
@@ -38,7 +39,7 @@ public class SimpleReferencePerformer extends NodeRMLPerformer {
     
     @Override
     public void perform(Object node, RMLSesameDataSet dataset, 
-    TriplesMap map, boolean pomExecution) {
+    TriplesMap map, String[] exeTriplesMap, boolean pomExecution) {
         if(map.getSubjectMap().getTermType() == be.ugent.mmlab.rml.model.RDFTerm.TermType.BLANK_NODE 
                 || map.getSubjectMap().getTermType() == be.ugent.mmlab.rml.model.RDFTerm.TermType.IRI){
             RMLProcessorFactory factory = new ConcreteRMLProcessorFactory();
@@ -57,11 +58,10 @@ public class SimpleReferencePerformer extends NodeRMLPerformer {
                             equals("XLSX"))
                         || (map.getLogicalSource().getIterator().
                             equals(map.getLogicalSource().getIterator()))) {
-                    performer.perform(node, dataset, map, object);
+                    performer.perform(node, dataset, map, object, exeTriplesMap);
                 } else {
                     int end = map.getLogicalSource().getIterator().length();
-                    log.info(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
-                            + "[SimpleReferencePerformer:perform] reference " 
+                    log.info("reference " 
                             + map.getLogicalSource().getIterator().toString());
                     String expression = "";
                     switch (map.getLogicalSource().getReferenceFormulation().toString()) {
@@ -74,7 +74,7 @@ public class SimpleReferencePerformer extends NodeRMLPerformer {
                     }
                     processor.execute_node(
                             dataset, expression, map, performer, 
-                            node, object, pomExecution);
+                            node, object, exeTriplesMap, pomExecution);
                 }
             }
             else

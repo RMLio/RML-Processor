@@ -1,5 +1,6 @@
-package be.ugent.mmlab.rml.core;
+package be.ugent.mmlab.rml.performer;
 
+import be.ugent.mmlab.rml.core.RMLExecutionEngine;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.RMLProcessor;
 import be.ugent.mmlab.rml.processor.termmap.TermMapProcessor;
@@ -24,7 +25,7 @@ public class ConditionalJoinRMLPerformer extends NodeRMLPerformer{
     
     // Log
     private static final Logger log = 
-            LoggerFactory.getLogger(JoinRMLPerformer.class);
+            LoggerFactory.getLogger(ConditionalJoinRMLPerformer.class);
     
     private HashMap<String, String> conditions;
     private Resource subject;
@@ -55,9 +56,9 @@ public class ConditionalJoinRMLPerformer extends NodeRMLPerformer{
      */
     @Override
     public void perform(Object node, RMLSesameDataSet dataset, 
-        TriplesMap map, boolean pomExecution) {
+        TriplesMap map, String[] exeTriplesMap, boolean pomExecution) {
         Value object;
-        log.debug("Performing...");
+        
         //iterate the conditions, execute the expressions and compare both values
         if(conditions != null){
             boolean flag = true;
@@ -72,6 +73,7 @@ public class ConditionalJoinRMLPerformer extends NodeRMLPerformer{
                 
                 List<String> values = termMapProcessor.extractValueFromNode(node, expr);
                 
+                //TODO: check if it stops as soon as it finds something
                 for(String value : values){
                     log.debug("value " + value);
                     if(value == null || !value.equals(cond)){
@@ -80,16 +82,34 @@ public class ConditionalJoinRMLPerformer extends NodeRMLPerformer{
                     }
                 }
             }
+            
             if(flag){
                 object = processor.processSubjectMap(dataset, map.getSubjectMap(), node);
                 if (subject != null && object != null){
                     dataset.add(subject, predicate, object);
-                    log.debug("[ConditionalJoinRMLPerformer:addTriples] Subject "
-                                + subject + " Predicate " + predicate + "Object " + object.toString());
+                    log.debug("Subject " + subject 
+                            + " Predicate " + predicate 
+                            + " Object " + object.toString());
+                    
+                    if (exeTriplesMap != null) {
+                        RMLExecutionEngine executionEngine =
+                                new RMLExecutionEngine(exeTriplesMap);
+                        pomExecution = executionEngine.
+                                checkExecutionList(map, exeTriplesMap);
+                    }
+                    
+                    if (!pomExecution) {
+                        log.debug("Nested performer is called");
+                        NestedRMLPerformer nestedPerformer =
+                                new NestedRMLPerformer(processor);
+                        nestedPerformer.perform(
+                                node, dataset, map, exeTriplesMap, true);
+                    }
                 } 
                 else
-                    log.debug("[ConditionalJoinRMLPerformer:addTriples] triple for Subject "
-                                + subject + " Predicate " + predicate + "Object " + object
+                    log.debug("Triple for Subject " + subject 
+                            + " Predicate " + predicate 
+                            + "Object " + object
                             + "was not created");
             }
         }       

@@ -2,10 +2,10 @@ package be.ugent.mmlab.rml.processor;
 
 import be.ugent.mmlab.rml.condition.model.BindingCondition;
 import be.ugent.mmlab.rml.condition.model.std.BindingReferencingObjectMap;
-import be.ugent.mmlab.rml.core.ConditionalJoinRMLPerformer;
-import be.ugent.mmlab.rml.core.JoinRMLPerformer;
-import be.ugent.mmlab.rml.core.RMLPerformer;
-import be.ugent.mmlab.rml.core.SimpleReferencePerformer;
+import be.ugent.mmlab.rml.performer.ConditionalJoinRMLPerformer;
+import be.ugent.mmlab.rml.performer.JoinRMLPerformer;
+import be.ugent.mmlab.rml.performer.RMLPerformer;
+import be.ugent.mmlab.rml.performer.SimpleReferencePerformer;
 import be.ugent.mmlab.rml.model.RDFTerm.GraphMap;
 import be.ugent.mmlab.rml.model.JoinCondition;
 import be.ugent.mmlab.rml.model.LogicalSource;
@@ -68,7 +68,8 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
      */
     
     // Log
-    private static final Logger log = LoggerFactory.getLogger(AbstractRMLProcessor.class);
+    private static final Logger log = 
+            LoggerFactory.getLogger(AbstractRMLProcessor.class);
 
     /**
      * gets the expression specified in the logical source
@@ -90,7 +91,8 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
      * @return the created subject
      */
     @Override
-    public Resource processSubjectMap(RMLSesameDataSet dataset, SubjectMap subjectMap, Object node) {  
+    public Resource processSubjectMap(
+            RMLSesameDataSet dataset, SubjectMap subjectMap, Object node) {  
 
         //Get the uri
         TermMapProcessorFactory factory = new ConcreteTermMapFactory();
@@ -229,7 +231,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
     @Override
     public void processPredicateObjectMap(
             RMLSesameDataSet dataset, Resource subject, PredicateObjectMap pom, 
-            Object node, TriplesMap map) {
+            Object node, TriplesMap map, String[] exeTriplesMap) {
 
         Set<PredicateMap> predicateMaps = pom.getPredicateMaps();
         //Go over each predicate map
@@ -240,7 +242,8 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
             URI predicate = predicates.get(0);
             
             //Process the joins first
-            processPredicateObjectMap_RefObjMap(dataset, subject, predicate, pom, node, map);
+            processPredicateObjectMap_RefObjMap(
+                    dataset, subject, predicate, pom, node, map, exeTriplesMap);
             
             //process the objectmaps
             processPredicateObjectMap_ObjMap(dataset, subject, predicate, pom, node);
@@ -250,7 +253,8 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
     
     private void processPredicateObjectMap_RefObjMap(
             RMLSesameDataSet dataset, Resource subject, URI predicate,
-            PredicateObjectMap pom, Object node, TriplesMap map) {
+            PredicateObjectMap pom, Object node, 
+            TriplesMap map, String[] exeTriplesMap) {
         String template ;
         Map<String, String> parameters = null;
         
@@ -302,7 +306,8 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                 log.debug("Referencing Object Map with Logical Source "
                         + "without join and binding conditions.");
                 performer = new JoinRMLPerformer(processor, subject, predicate);
-                processor.execute(dataset, parentTriplesMap, performer, input, false);
+                processor.execute(dataset, parentTriplesMap, performer, input, 
+                        exeTriplesMap, false);
             }
             
             //different Logical Source AND 
@@ -314,7 +319,8 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                 log.debug("Referencing Object Map with Logical Source "
                         + "without join conditions but with bind conditions.");
                 performer = new JoinRMLPerformer(processor, subject, predicate);
-                processor.execute(dataset, parentTriplesMap, performer, input, true);
+                processor.execute(dataset, parentTriplesMap, performer, input, 
+                        exeTriplesMap, true);
             }
             
             //same Logical Source and no Conditions
@@ -333,7 +339,8 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                             equals(map.getLogicalSource().getIterator()))
                     ) {
                     log.debug("Tabular-structured Referencing Object Map");
-                    performer.perform(node, dataset, parentTriplesMap, false);
+                    performer.perform(
+                            node, dataset, parentTriplesMap, exeTriplesMap, false);
                 } else {
                     log.debug("Hierarchical-structured Referencing Object Map");
                     int end = map.getLogicalSource().getIterator().length();
@@ -359,7 +366,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                     }
                     processor.execute_node(
                             dataset, expression, parentTriplesMap, 
-                            performer, node, null, false);
+                            performer, node, null, exeTriplesMap, false);
                 }
             } //Conditions
             else {
@@ -367,8 +374,9 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                 //Build a join map where
                 //  key: the parent expression
                 //  value: the value extracted from the child
-                processJoinConditions(node, performer, processor, subject, predicate, 
-                        dataset, input, parentTriplesMap, joinConditions);
+                processJoinConditions(node, performer, processor, subject, 
+                        predicate, dataset, input, parentTriplesMap, 
+                        joinConditions, exeTriplesMap);
             }
         }
     }
@@ -389,9 +397,10 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
         return parameters;
     }
     
-    public void processJoinConditions(Object node, RMLPerformer performer, RMLProcessor processor, 
-            Resource subject, URI predicate, RMLSesameDataSet dataset, InputStream input, 
-            TriplesMap parentTriplesMap, Set<JoinCondition> joinConditions) {
+    public void processJoinConditions(Object node, RMLPerformer performer, 
+            RMLProcessor processor, Resource subject, URI predicate, 
+            RMLSesameDataSet dataset, InputStream input, TriplesMap parentTriplesMap, 
+            Set<JoinCondition> joinConditions, String[] exeTriplesMap) {
         HashMap<String, String> joinMap = new HashMap<>();
 
         for (JoinCondition joinCondition : joinConditions) {
@@ -404,7 +413,8 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                 if (joinMap.size() == joinConditions.size()) {
                     performer = new ConditionalJoinRMLPerformer(
                             processor, joinMap, subject, predicate);
-                    processor.execute(dataset, parentTriplesMap, performer, input, false);
+                    processor.execute(dataset, parentTriplesMap, performer, 
+                            input, exeTriplesMap, false);
                 }
             }
         }
