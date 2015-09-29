@@ -1,6 +1,6 @@
 package be.ugent.mmlab.rml.processor;
 
-import be.ugent.mmlab.rml.dataset.RMLDataset;
+import be.ugent.mmlab.rml.dataset.StdRMLDataset;
 import be.ugent.mmlab.rml.performer.RMLPerformer;
 import be.ugent.mmlab.rml.model.RDFTerm.PredicateMap;
 import be.ugent.mmlab.rml.model.PredicateObjectMap;
@@ -29,12 +29,12 @@ public interface RMLProcessor {
      * @param map the triplemap
      * @param performer the performer handling the action done on the triplemap
      */
-    public void execute(RMLDataset dataset, TriplesMap map, 
+    public void execute(StdRMLDataset dataset, TriplesMap map, 
             RMLPerformer performer, InputStream input, 
             String[] exeTriplesMap, boolean pomExecution);
     
     public void execute_node(
-            RMLDataset dataset, String expression, 
+            StdRMLDataset dataset, String expression, 
             TriplesMap parentTriplesMap, RMLPerformer performer, Object node, 
             Resource subject, String[] exeTriplesMap, boolean pomExecution);
 
@@ -45,10 +45,10 @@ public interface RMLProcessor {
      * @param node
      * @return 
      */
-    public Resource processSubjectMap(RMLDataset dataset, 
+    public Resource processSubjectMap(StdRMLDataset dataset, 
             SubjectMap subjectMap, Object node);
     
-    public void processSubjectTypeMap(RMLDataset dataset, Resource subject, 
+    public void processSubjectTypeMap(StdRMLDataset dataset, Resource subject, 
             SubjectMap subjectMap, Object node);
     
     /**
@@ -81,7 +81,7 @@ public interface RMLProcessor {
      * @param node 
      */
     public void processPredicateObjectMap(
-            RMLDataset dataset, Resource subject, PredicateObjectMap pom, 
+            StdRMLDataset dataset, Resource subject, PredicateObjectMap pom, 
             Object node, TriplesMap map, String[] exeTriplesMap);
     
     /**
@@ -101,7 +101,7 @@ public interface RMLProcessor {
      * @param node
      */
     public void processPredicateObjectMap_ObjMap(
-            RMLDataset dataset, Resource subject, URI predicate,
+            StdRMLDataset dataset, Resource subject, URI predicate,
             PredicateObjectMap pom, Object node);
     
     /**

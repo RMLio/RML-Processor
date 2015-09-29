@@ -3,6 +3,7 @@ package be.ugent.mmlab.rml.core;
 import be.ugent.mmlab.rml.performer.NodeRMLPerformer;
 import be.ugent.mmlab.rml.dataset.FileDataset;
 import be.ugent.mmlab.rml.dataset.RMLDataset;
+import be.ugent.mmlab.rml.dataset.StdRMLDataset;
 import be.ugent.mmlab.rml.input.ConcreteLogicalSourceProcessorFactory;
 import be.ugent.mmlab.rml.input.processor.SourceProcessor;
 import be.ugent.mmlab.rml.model.LogicalSource;
@@ -58,7 +59,6 @@ public class RMLEngine {
      * @throws SQLException
      * @throws UnsupportedEncodingException
      */
-    //public RMLSesameDataSet runRMLMapping(
     public RMLDataset runRMLMapping(
     RMLMapping rmlMapping, String baseIRI, 
             Map<String, String> parameters, String[] triplesMap) 
@@ -80,7 +80,7 @@ public class RMLEngine {
             String baseIRI, String pathToNativeStore, String outputFormat, 
             Map<String, String> parameters, String[] exeTriplesMap) {
         long startTime = System.nanoTime();
-        RMLDataset dataset ;
+        StdRMLDataset dataset ;
 
         log.debug("Running RML mapping... ");
         if (rmlMapping == null) 
@@ -104,15 +104,15 @@ public class RMLEngine {
         return dataset;
     }
     
-    private RMLDataset chooseSesameDataSet(
+    private StdRMLDataset chooseSesameDataSet(
             String pathToNativeStore, String outputFormat){
-        RMLDataset dataset;
+        StdRMLDataset dataset;
         if (pathToNativeStore != null) {
             log.debug("Using direct file " + pathToNativeStore);
             dataset = new FileDataset(pathToNativeStore, outputFormat);
         } else {
             log.debug("Using default store (memory) ");
-            dataset = new RMLDataset();
+            dataset = new StdRMLDataset();
         }
         return dataset;
         
@@ -126,8 +126,8 @@ public class RMLEngine {
      * @param sesameDataSet
      * @param rmlMapping
      */
-    private RMLDataset generateRDFTriples(
-            RMLDataset sesameDataSet, RMLMapping rmlMapping, 
+    private StdRMLDataset generateRDFTriples(
+            StdRMLDataset sesameDataSet, RMLMapping rmlMapping, 
             Map<String, String> parameters, String[] exeTriplesMap) {
 
         log.debug("Generate RDF triples... ");
@@ -150,9 +150,9 @@ public class RMLEngine {
         return sesameDataSet;
     }
     
-    private RMLDataset generateTriplesMapTriples(
+    private StdRMLDataset generateTriplesMapTriples(
             TriplesMap triplesMap, Map<String, String> parameters,
-            String[] exeTriplesMap, RMLDataset dataset) {
+            String[] exeTriplesMap, StdRMLDataset dataset) {
         boolean flag = true;
         int delta = 0;
 
@@ -234,7 +234,7 @@ public class RMLEngine {
     }
     
     private void generateMetaData(
-            RMLDataset sesameDataSet, long startTime) {
+            StdRMLDataset sesameDataSet, long startTime) {
         //TODO:add metadata this Triples Map started then, finished then and lasted that much
         long endTime = System.nanoTime();
         long duration = endTime - startTime;

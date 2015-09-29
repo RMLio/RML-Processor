@@ -2,6 +2,7 @@ package be.ugent.mmlab.rml;
 
 import be.ugent.mmlab.rml.core.RMLEngine;
 import be.ugent.mmlab.rml.dataset.RMLDataset;
+import be.ugent.mmlab.rml.dataset.StdRMLDataset;
 import be.ugent.mmlab.rml.mapdochandler.extraction.std.StdRMLMappingFactory;
 import be.ugent.mmlab.rml.mapdochandler.retrieval.RMLDocRetrieval;
 import be.ugent.mmlab.rml.model.RMLMapping;
@@ -180,13 +181,13 @@ public class MapperTest
     }
     
     private RMLDataset desiredOutput (URL outputURL){
-        RMLDataset desiredOutput = new RMLDataset(false);
+        RMLDataset desiredOutput = new StdRMLDataset(false);
         desiredOutput.addFile(outputURL.getFile(), RDFFormat.TURTLE);
         return desiredOutput;
     }
     
     private RMLDataset desiredContextOutput (URL outputURL){
-        RMLDataset desiredOutput = new RMLDataset(false);
+        RMLDataset desiredOutput = new StdRMLDataset(false);
         desiredOutput.addFile(outputURL.getFile(), RDFFormat.NQUADS);
         return desiredOutput;
     }

@@ -1,6 +1,6 @@
 package be.ugent.mmlab.rml.performer;
 
-import be.ugent.mmlab.rml.dataset.RMLDataset;
+import be.ugent.mmlab.rml.dataset.StdRMLDataset;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.RMLProcessor;
 import be.ugent.mmlab.rml.processor.RMLProcessorFactory;
@@ -38,7 +38,7 @@ public class SimpleReferencePerformer extends NodeRMLPerformer {
     }
     
     @Override
-    public void perform(Object node, RMLDataset dataset, 
+    public void perform(Object node, StdRMLDataset dataset, 
     TriplesMap map, String[] exeTriplesMap, boolean pomExecution) {
         if(map.getSubjectMap().getTermType() == be.ugent.mmlab.rml.model.RDFTerm.TermType.BLANK_NODE 
                 || map.getSubjectMap().getTermType() == be.ugent.mmlab.rml.model.RDFTerm.TermType.IRI){

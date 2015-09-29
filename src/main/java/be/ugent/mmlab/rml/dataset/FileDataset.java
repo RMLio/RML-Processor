@@ -1,51 +1,54 @@
+/*
+ * 
+ * @author andimou
+ * 
+ */
 package be.ugent.mmlab.rml.dataset;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.URL;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.openrdf.repository.RepositoryException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.openrdf.model.Resource;
+import org.openrdf.model.Statement;
+import org.openrdf.model.URI;
+import org.openrdf.model.Value;
+import org.openrdf.model.impl.StatementImpl;
 import org.openrdf.rio.RDFFormat;
 import org.openrdf.rio.RDFHandlerException;
-import org.openrdf.rio.RDFParseException;
 import org.openrdf.rio.RDFWriter;
 import org.openrdf.rio.Rio;
 
 /**
- * RML Processor
  *
- * @author mielvandersande, andimou
+ * @author mielvandersande
  */
-public class FileDataset extends RMLDataset {
+public class FileDataset extends StdRMLDataset {
 
     // Log
-    private static final Logger log = 
-            LoggerFactory.getLogger(FileDataset.class);
+    private static Log log = LogFactory.getLog(FileDataset.class);
     
     private File target;
     private BufferedWriter fw;
     private RDFWriter writer;
     private RDFFormat format = RDFFormat.NTRIPLES;
+    //private int bnodeid = 0;
+    
+    private int size = 0;
 
     public FileDataset(String target) {
-
-        this.target = new File(target);
-
         try {
+            this.target = new File(target);
             fw = new BufferedWriter(new FileWriter(target));
             writer = Rio.createWriter(this.format, fw);
             writer.startRDF();
-
         } catch (IOException ex) {
-            log.error("IO Exception ", ex);
+            log.error("IOException " + ex);
         } catch (RDFHandlerException ex) {
-            log.error("RDF Handler Exception ", ex);
+            log.error("RDFHandlerException " + ex);
         }
-
     }
     
     public FileDataset(String target, String outputFormat) {
@@ -81,18 +84,46 @@ public class FileDataset extends RMLDataset {
             writer.startRDF();
 
         } catch (IOException ex) {
-            log.error("IO Exception ", ex);
-        } catch (RDFHandlerException ex) {
-            log.error("RDF Handler Exception ", ex);
+            log.error("IOException ", ex);
+        } catch ( RDFHandlerException ex) {
+            log.error("RDFHandlerException ", ex);
         }
 
     }
 
-    public void loadDataFromURL(String stringURL) 
-            throws RepositoryException, RDFParseException, IOException {
+    @Override
+    public void add(Resource s, URI p, Value o, Resource... contexts) {
+        if (log.isDebugEnabled()) {
+            log.debug(Thread.currentThread().getStackTrace()[1].getMethodName() + ": " 
+                    + "[FileSesameDataSet:add] Add triple (" + s.stringValue()
+                    + ", " + p.stringValue() + ", " + o.stringValue() + ").");
+        }
 
-        URL url = new URL(stringURL);
-        //TODO:Replace with getWriterFormatForFileName
-        format = RDFFormat.forFileName(stringURL);
+        Statement st = new StatementImpl(s, p, o);
+        try {
+            writer.handleStatement(st);
+            size++;
+        } catch (RDFHandlerException ex) {
+            log.fatal(o);
+        }
+
+    }
+   
+    /**
+     * Close current repository.
+     *
+     */
+    @Override
+    public void closeRepository() {
+        log.debug("Closing file...");
+        try {
+            fw.flush();
+            writer.endRDF();
+            fw.close();
+        } catch (RDFHandlerException ex) {
+            log.error(ex);
+        } catch (IOException ex) {
+            log.error("IOException " + ex);
+        } 
     }
 }

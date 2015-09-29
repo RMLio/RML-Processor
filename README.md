@@ -1,7 +1,7 @@
 RMLProcessor
 ============
 
-Processor for RML (R2RML extension) in Java based on [DB2Triples](https://github.com/antidot/db2triples/)
+Processor for RML (R2RML extension) in Java.
 
 Class diagram
 -------------
@@ -20,18 +20,19 @@ You can run a mapping process by executing the following command.
 
 Master branch:    
     
-    java -jar target/RMLMapper-0.1.jar -m <mapping_file> -f <output_file> -o <output_format> [-g <graph>]
+    java -jar target/RMLMapper-0.1.jar -m <mapping_file> -o <output_file> -f <output_format> [-g <graph> -tm <triples_map>]
 
 With 
     
-    <mapping_file>  = The RML mapping file conform with the [RML specification](http://semweb.mmlab.be/ns/rml)
+    <mapping_file>  = The RML mapping file conform with the [RML specification](http://rml.io/spec.html)
     <output_file>   = The file where the output RDF triples are stored; default in [N-Triples](http://www.w3.org/TR/n-triples/) syntax.
     <output_format> = The prefered output format, use one of the followings: turtle, ntriples, nquads, rdfxml, rdfjson, jsonld.
     <graph> (optional) = The named graph in which the output RDF triples are stored.
+    <triples_map>   = A specific Triples Map of the mapping document to be executed. Default: all Triples Maps are executed.
         
 For instance, to run example1, execute the following command by replacing the paths to the files with the local paths:
 
-    java -jar target/RMLMapper-0.1.jar /path/to/the/mapping/document/example.rml.ttl /path/to/the/output/file/example1_test.output.nt
+    java -jar target/RMLMapper-0.1.jar src/test/resources/example1/example.rml.ttl src/test/resources/example1/example1_test.output.nt
 
 Remark
 -----

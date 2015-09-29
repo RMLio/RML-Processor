@@ -1,6 +1,6 @@
 package be.ugent.mmlab.rml.processor.concrete;
 
-import be.ugent.mmlab.rml.dataset.RMLDataset;
+import be.ugent.mmlab.rml.dataset.StdRMLDataset;
 import be.ugent.mmlab.rml.performer.RMLPerformer;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.AbstractRMLProcessor;
@@ -40,7 +40,7 @@ public class XLSXProcessor extends AbstractRMLProcessor {
     }
 
     @Override
-    public void execute(RMLDataset dataset, TriplesMap map, 
+    public void execute(StdRMLDataset dataset, TriplesMap map, 
         RMLPerformer performer, InputStream input, 
         String[] exeTriplesMap, boolean pomExecution) {
         XSSFWorkbook wb;
@@ -79,7 +79,7 @@ public class XLSXProcessor extends AbstractRMLProcessor {
     }
 
     @Override
-    public void execute_node(RMLDataset dataset, String expression, 
+    public void execute_node(StdRMLDataset dataset, String expression, 
         TriplesMap parentTriplesMap, RMLPerformer performer, Object node, 
         Resource subject, String[] exeTriplesMap, boolean pomExecution) {
         throw new UnsupportedOperationException("Not supported yet."); 

@@ -1,6 +1,6 @@
 package be.ugent.mmlab.rml.performer;
 
-import be.ugent.mmlab.rml.dataset.RMLDataset;
+import be.ugent.mmlab.rml.dataset.StdRMLDataset;
 import be.ugent.mmlab.rml.model.RDFTerm.GraphMap;
 import be.ugent.mmlab.rml.model.PredicateObjectMap;
 import be.ugent.mmlab.rml.model.TriplesMap;
@@ -40,7 +40,7 @@ public class NodeRMLPerformer implements RMLPerformer {
      * @param map current triple map that is being processed
      */
     @Override
-    public void perform(Object node, RMLDataset dataset, 
+    public void perform(Object node, StdRMLDataset dataset, 
     TriplesMap map, String[] exeTriplesMap, boolean pomExecution) {
 
         Resource subject = processor.processSubjectMap(dataset, map.getSubjectMap(), node);
@@ -68,7 +68,7 @@ public class NodeRMLPerformer implements RMLPerformer {
      * @param subject
      */
     @Override
-    public void perform(Object node, RMLDataset dataset, TriplesMap map, 
+    public void perform(Object node, StdRMLDataset dataset, TriplesMap map, 
         Resource subject, String[] exeTriplesMap) {
         processor.processSubjectTypeMap(dataset, subject, map.getSubjectMap(), node);
         for (PredicateObjectMap pom : map.getPredicateObjectMaps()) {

@@ -1,6 +1,6 @@
 package be.ugent.mmlab.rml.performer;
 
-import be.ugent.mmlab.rml.dataset.RMLDataset;
+import be.ugent.mmlab.rml.dataset.StdRMLDataset;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.RMLProcessor;
 import org.slf4j.Logger;
@@ -40,7 +40,7 @@ public class JoinRMLPerformer extends NodeRMLPerformer{
      * @param map 
      */
     @Override
-    public void perform(Object node, RMLDataset dataset, 
+    public void perform(Object node, StdRMLDataset dataset, 
     TriplesMap map, String[] exeTriplesMap, boolean pomExecution) {
         Value object = processor.processSubjectMap(
                 dataset, map.getSubjectMap(), node);

@@ -1,6 +1,6 @@
 package be.ugent.mmlab.rml.processor.concrete;
 
-import be.ugent.mmlab.rml.dataset.RMLDataset;
+import be.ugent.mmlab.rml.dataset.StdRMLDataset;
 import be.ugent.mmlab.rml.performer.RMLPerformer;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.AbstractRMLProcessor;
@@ -38,7 +38,7 @@ public class CSS3Extractor extends AbstractRMLProcessor {
     }
 
     @Override
-    public void execute(RMLDataset dataset, TriplesMap map, 
+    public void execute(StdRMLDataset dataset, TriplesMap map, 
     RMLPerformer performer, InputStream input, 
     String[] exeTriplesMap, boolean pomExecution) {
         //this should not be needed to be defined within the extractor
@@ -62,7 +62,7 @@ public class CSS3Extractor extends AbstractRMLProcessor {
 
     @Override
     public void execute_node(
-            RMLDataset dataset, String expression, 
+            StdRMLDataset dataset, String expression, 
             TriplesMap parentTriplesMap, RMLPerformer performer, Object node, 
             Resource subject, String[] exeTriplesMap, boolean pomExecution) {
         if (expression.startsWith("+")) {
