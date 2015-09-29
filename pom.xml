@@ -74,7 +74,7 @@
         <repository>
             <id>repository.jboss.org</id>
             <url>https://repository.jboss.org/nexus/content/repositories/thirdparty-releases</url>
-        </repository>
+        </repository> 
         <repository>
             <id>jlibs-repository</id>
             <name>JLibs Repository</name>

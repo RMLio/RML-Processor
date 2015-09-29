@@ -1,12 +1,12 @@
 package be.ugent.mmlab.rml.processor;
 
+import be.ugent.mmlab.rml.dataset.RMLDataset;
 import be.ugent.mmlab.rml.performer.RMLPerformer;
 import be.ugent.mmlab.rml.model.RDFTerm.PredicateMap;
 import be.ugent.mmlab.rml.model.PredicateObjectMap;
 import be.ugent.mmlab.rml.model.RDFTerm.SubjectMap;
 import be.ugent.mmlab.rml.model.RDFTerm.TermMap;
 import be.ugent.mmlab.rml.model.TriplesMap;
-import be.ugent.mmlab.rml.sesame.RMLSesameDataSet;
 import be.ugent.mmlab.rml.vocabularies.QLVocabulary.QLTerm;
 import java.io.InputStream;
 import java.util.List;
@@ -29,12 +29,12 @@ public interface RMLProcessor {
      * @param map the triplemap
      * @param performer the performer handling the action done on the triplemap
      */
-    public void execute(RMLSesameDataSet dataset, TriplesMap map, 
+    public void execute(RMLDataset dataset, TriplesMap map, 
             RMLPerformer performer, InputStream input, 
             String[] exeTriplesMap, boolean pomExecution);
     
     public void execute_node(
-            RMLSesameDataSet dataset, String expression, 
+            RMLDataset dataset, String expression, 
             TriplesMap parentTriplesMap, RMLPerformer performer, Object node, 
             Resource subject, String[] exeTriplesMap, boolean pomExecution);
 
@@ -45,10 +45,10 @@ public interface RMLProcessor {
      * @param node
      * @return 
      */
-    public Resource processSubjectMap(RMLSesameDataSet dataset, 
+    public Resource processSubjectMap(RMLDataset dataset, 
             SubjectMap subjectMap, Object node);
     
-    public void processSubjectTypeMap(RMLSesameDataSet dataset, Resource subject, 
+    public void processSubjectTypeMap(RMLDataset dataset, Resource subject, 
             SubjectMap subjectMap, Object node);
     
     /**
@@ -58,7 +58,8 @@ public interface RMLProcessor {
      * @param expression
      * @return
      */
-    public List<String> processTemplate(TermMap map, List<String> replacements, String expression);
+    public List<String> processTemplate(
+            TermMap map, List<String> replacements, String expression);
     
     /**
      *
@@ -69,8 +70,8 @@ public interface RMLProcessor {
      * @param replacement
      * @return
      */
-    public String processTemplate(String expression, String template, String termType,
-            QLTerm referenceFormulation, String replacement);
+    public String processTemplate(String expression, String template, 
+            String termType, QLTerm referenceFormulation, String replacement);
     
     /**
      * process a predicate object map
@@ -80,7 +81,7 @@ public interface RMLProcessor {
      * @param node 
      */
     public void processPredicateObjectMap(
-            RMLSesameDataSet dataset, Resource subject, PredicateObjectMap pom, 
+            RMLDataset dataset, Resource subject, PredicateObjectMap pom, 
             Object node, TriplesMap map, String[] exeTriplesMap);
     
     /**
@@ -100,7 +101,7 @@ public interface RMLProcessor {
      * @param node
      */
     public void processPredicateObjectMap_ObjMap(
-            RMLSesameDataSet dataset, Resource subject, URI predicate,
+            RMLDataset dataset, Resource subject, URI predicate,
             PredicateObjectMap pom, Object node);
     
     /**
@@ -110,7 +111,8 @@ public interface RMLProcessor {
      * @param termMap
      * @return
      */
-    public List<Value> applyTermType(String value, List<Value> valueList, TermMap termMap);
+    public List<Value> applyTermType(
+            String value, List<Value> valueList, TermMap termMap);
     
     /**
      *

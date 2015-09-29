@@ -1,5 +1,6 @@
 package be.ugent.mmlab.rml.performer;
 
+import be.ugent.mmlab.rml.dataset.RMLDataset;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.RMLProcessor;
 import be.ugent.mmlab.rml.processor.RMLProcessorFactory;
@@ -7,7 +8,6 @@ import be.ugent.mmlab.rml.processor.concrete.ConcreteRMLProcessorFactory;
 import be.ugent.mmlab.rml.processor.termmap.TermMapProcessor;
 import be.ugent.mmlab.rml.processor.termmap.TermMapProcessorFactory;
 import be.ugent.mmlab.rml.processor.termmap.concrete.ConcreteTermMapFactory;
-import be.ugent.mmlab.rml.sesame.RMLSesameDataSet;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +38,7 @@ public class SimpleReferencePerformer extends NodeRMLPerformer {
     }
     
     @Override
-    public void perform(Object node, RMLSesameDataSet dataset, 
+    public void perform(Object node, RMLDataset dataset, 
     TriplesMap map, String[] exeTriplesMap, boolean pomExecution) {
         if(map.getSubjectMap().getTermType() == be.ugent.mmlab.rml.model.RDFTerm.TermType.BLANK_NODE 
                 || map.getSubjectMap().getTermType() == be.ugent.mmlab.rml.model.RDFTerm.TermType.IRI){
@@ -85,8 +85,8 @@ public class SimpleReferencePerformer extends NodeRMLPerformer {
             TermMapProcessor termMapProcessor = 
                     factory.create(map.getLogicalSource().getReferenceFormulation());
 
-            List<String> values = termMapProcessor.processTermMap(map.getSubjectMap(), node);    
-            //List<String> values = processor.processTermMap(map.getSubjectMap(), node);    
+            List<String> values = 
+                    termMapProcessor.processTermMap(map.getSubjectMap(), node);        
             for(String value : values){
                 Resource object = new URIImpl(value);
 

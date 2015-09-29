@@ -17,7 +17,8 @@ public class RMLExecutionEngine {
         this.exeTriplesMap = exeTriplesMap;
     }
     
-    public boolean checkExecutionList(TriplesMap triplesMap, String[] exeTriplesMap) {
+    public boolean checkExecutionList(
+            TriplesMap triplesMap, String[] exeTriplesMap) {
         boolean flag = false;
 
         for (String exeTM : exeTriplesMap) {

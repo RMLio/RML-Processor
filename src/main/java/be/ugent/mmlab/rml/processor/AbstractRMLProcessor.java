@@ -2,6 +2,7 @@ package be.ugent.mmlab.rml.processor;
 
 import be.ugent.mmlab.rml.condition.model.BindingCondition;
 import be.ugent.mmlab.rml.condition.model.std.BindingReferencingObjectMap;
+import be.ugent.mmlab.rml.dataset.RMLDataset;
 import be.ugent.mmlab.rml.performer.ConditionalJoinRMLPerformer;
 import be.ugent.mmlab.rml.performer.JoinRMLPerformer;
 import be.ugent.mmlab.rml.performer.RMLPerformer;
@@ -26,7 +27,6 @@ import be.ugent.mmlab.rml.model.std.StdTemplateMap;
 import be.ugent.mmlab.rml.processor.termmap.TermMapProcessor;
 import be.ugent.mmlab.rml.processor.termmap.TermMapProcessorFactory;
 import be.ugent.mmlab.rml.processor.termmap.concrete.ConcreteTermMapFactory;
-import be.ugent.mmlab.rml.sesame.RMLSesameDataSet;
 import be.ugent.mmlab.rml.vocabularies.QLVocabulary.QLTerm;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -45,6 +45,7 @@ import org.openrdf.model.impl.LiteralImpl;
 import org.openrdf.model.impl.URIImpl;
 import org.openrdf.model.vocabulary.RDF;
 import java.util.regex.Pattern;
+import org.apache.commons.lang.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -92,7 +93,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
      */
     @Override
     public Resource processSubjectMap(
-            RMLSesameDataSet dataset, SubjectMap subjectMap, Object node) {  
+            RMLDataset dataset, SubjectMap subjectMap, Object node) {  
 
         //Get the uri
         TermMapProcessorFactory factory = new ConcreteTermMapFactory();
@@ -132,7 +133,8 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                     subject = new URIImpl(value);
                 break;
             case BLANK_NODE:
-                subject = new BNodeImpl(org.apache.commons.lang.RandomStringUtils.randomAlphanumeric(10));
+                subject = new BNodeImpl(
+                        RandomStringUtils.randomAlphanumeric(10));
                 break;
             default:
                 subject = new URIImpl(value);
@@ -142,7 +144,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
     
     @Override
     public void processSubjectTypeMap(
-            RMLSesameDataSet dataset, Resource subject, SubjectMap subjectMap, Object node) {
+            RMLDataset dataset, Resource subject, SubjectMap subjectMap, Object node) {
 
         //Add the type triples
         Set<org.openrdf.model.URI> classIRIs = subjectMap.getClassIRIs();
@@ -170,7 +172,8 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
             String replacement = replacements.get(i);
             if (replacement != null || !replacement.equals("")) {
                 if (!replacement.isEmpty()) {
-                    String temp = this.termMapProcessor.processTemplate(map, expression, template, replacement);
+                    String temp = this.termMapProcessor.processTemplate(
+                            map, expression, template, replacement);
                     template = temp;
                     if (StdTemplateMap.extractVariablesFromStringTemplate(temp).isEmpty()) {
                         validValues.add(temp);
@@ -215,7 +218,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                 template = template.replaceAll("\\{" + expression + "\\}", replacement);
             }
         } catch (UnsupportedEncodingException ex) {
-            log.error("UnsupportedEncodingException " + ex);
+            log.error("Unsupported Encoding Exception " + ex);
         }
         return template.toString();
     }
@@ -230,7 +233,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
      */
     @Override
     public void processPredicateObjectMap(
-            RMLSesameDataSet dataset, Resource subject, PredicateObjectMap pom, 
+            RMLDataset dataset, Resource subject, PredicateObjectMap pom, 
             Object node, TriplesMap map, String[] exeTriplesMap) {
 
         Set<PredicateMap> predicateMaps = pom.getPredicateMaps();
@@ -252,7 +255,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
     }
     
     private void processPredicateObjectMap_RefObjMap(
-            RMLSesameDataSet dataset, Resource subject, URI predicate,
+            RMLDataset dataset, Resource subject, URI predicate,
             PredicateObjectMap pom, Object node, 
             TriplesMap map, String[] exeTriplesMap) {
         String template ;
@@ -399,7 +402,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
     
     public void processJoinConditions(Object node, RMLPerformer performer, 
             RMLProcessor processor, Resource subject, URI predicate, 
-            RMLSesameDataSet dataset, InputStream input, TriplesMap parentTriplesMap, 
+            RMLDataset dataset, InputStream input, TriplesMap parentTriplesMap, 
             Set<JoinCondition> joinConditions, String[] exeTriplesMap) {
         HashMap<String, String> joinMap = new HashMap<>();
 
@@ -422,7 +425,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
     
     @Override
     public void processPredicateObjectMap_ObjMap(
-            RMLSesameDataSet dataset, Resource subject, URI predicate,
+            RMLDataset dataset, Resource subject, URI predicate,
             PredicateObjectMap pom, Object node) {
         Set<ObjectMap> objectMaps = pom.getObjectMaps();
         for (ObjectMap objectMap : objectMaps) {

@@ -1,11 +1,11 @@
 package be.ugent.mmlab.rml.processor.concrete;
 
+import be.ugent.mmlab.rml.dataset.RMLDataset;
 import be.ugent.mmlab.rml.performer.RMLPerformer;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.AbstractRMLProcessor;
 import be.ugent.mmlab.rml.processor.termmap.TermMapProcessorFactory;
 import be.ugent.mmlab.rml.processor.termmap.concrete.ConcreteTermMapFactory;
-import be.ugent.mmlab.rml.sesame.RMLSesameDataSet;
 import be.ugent.mmlab.rml.vocabularies.QLVocabulary.QLTerm;
 import com.jayway.jsonpath.JsonPath;
 import java.io.FileNotFoundException;
@@ -36,7 +36,7 @@ public class JSONPathProcessor extends AbstractRMLProcessor {
 
     @Override
     public void execute(
-            RMLSesameDataSet dataset, TriplesMap map, 
+            RMLDataset dataset, TriplesMap map, 
             RMLPerformer performer, InputStream input, 
             String[] exeTriplesMap, boolean pomExecution) {
 
@@ -57,7 +57,7 @@ public class JSONPathProcessor extends AbstractRMLProcessor {
 
     @Override
     public void execute_node(
-            RMLSesameDataSet dataset, String expression, 
+            RMLDataset dataset, String expression, 
             TriplesMap parentTriplesMap, RMLPerformer performer, Object node, 
             Resource subject, String[] exeTriplesMap, boolean pomExecution) {
        
@@ -68,7 +68,7 @@ public class JSONPathProcessor extends AbstractRMLProcessor {
         //TODO: check if it's complete for sub-mappings
     }
     
-    private void execute (RMLSesameDataSet dataset, TriplesMap parentTriplesMap, 
+    private void execute (RMLDataset dataset, TriplesMap parentTriplesMap, 
             RMLPerformer performer, Object node, 
             String[] exeTriplesMap, boolean pomExecution){
         if (node instanceof JSONObject) 

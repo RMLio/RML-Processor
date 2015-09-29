@@ -1,7 +1,8 @@
 package be.ugent.mmlab.rml.core;
 
 import be.ugent.mmlab.rml.performer.NodeRMLPerformer;
-import be.ugent.mmlab.rml.dataset.FileSesameDataset;
+import be.ugent.mmlab.rml.dataset.FileDataset;
+import be.ugent.mmlab.rml.dataset.RMLDataset;
 import be.ugent.mmlab.rml.input.ConcreteLogicalSourceProcessorFactory;
 import be.ugent.mmlab.rml.input.processor.SourceProcessor;
 import be.ugent.mmlab.rml.model.LogicalSource;
@@ -10,7 +11,6 @@ import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.RMLProcessor;
 import be.ugent.mmlab.rml.processor.RMLProcessorFactory;
 import be.ugent.mmlab.rml.processor.concrete.ConcreteRMLProcessorFactory;
-import be.ugent.mmlab.rml.sesame.RMLSesameDataSet;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -58,8 +58,9 @@ public class RMLEngine {
      * @throws SQLException
      * @throws UnsupportedEncodingException
      */
-    public RMLSesameDataSet runRMLMapping(
-            RMLMapping rmlMapping, String baseIRI, 
+    //public RMLSesameDataSet runRMLMapping(
+    public RMLDataset runRMLMapping(
+    RMLMapping rmlMapping, String baseIRI, 
             Map<String, String> parameters, String[] triplesMap) 
             throws SQLException, UnsupportedEncodingException, IOException {
         return runRMLMapping(
@@ -75,11 +76,11 @@ public class RMLEngine {
      * @return RMLSesameDataSet
      * 
      */
-    public RMLSesameDataSet runRMLMapping(RMLMapping rmlMapping,
+    public RMLDataset runRMLMapping(RMLMapping rmlMapping,
             String baseIRI, String pathToNativeStore, String outputFormat, 
             Map<String, String> parameters, String[] exeTriplesMap) {
         long startTime = System.nanoTime();
-        RMLSesameDataSet sesameDataSet ;
+        RMLDataset dataset ;
 
         log.debug("Running RML mapping... ");
         if (rmlMapping == null) 
@@ -87,33 +88,33 @@ public class RMLEngine {
         if (baseIRI == null) 
             log.info("No base IRI found.");
         
-        sesameDataSet = chooseSesameDataSet(pathToNativeStore, outputFormat);
+        dataset = chooseSesameDataSet(pathToNativeStore, outputFormat);
         log.debug("Dataset repository generated");
         // Update baseIRI
         this.baseIRI = baseIRI;
         
         log.debug("Generating triples..");
-        sesameDataSet = generateRDFTriples(
-                sesameDataSet, rmlMapping, parameters, exeTriplesMap);
+        dataset = generateRDFTriples(
+                dataset, rmlMapping, parameters, exeTriplesMap);
         
         log.debug("Generating metadata..");
         //TODO:improve/replace metadata generator
-        generateMetaData(sesameDataSet, startTime);
+        generateMetaData(dataset, startTime);
             
-        return sesameDataSet;
+        return dataset;
     }
     
-    private RMLSesameDataSet chooseSesameDataSet(
+    private RMLDataset chooseSesameDataSet(
             String pathToNativeStore, String outputFormat){
-        RMLSesameDataSet sesameDataSet;
+        RMLDataset dataset;
         if (pathToNativeStore != null) {
             log.debug("Using direct file " + pathToNativeStore);
-            sesameDataSet = new FileSesameDataset(pathToNativeStore, outputFormat);
+            dataset = new FileDataset(pathToNativeStore, outputFormat);
         } else {
             log.debug("Using default store (memory) ");
-            sesameDataSet = new RMLSesameDataSet();
+            dataset = new RMLDataset();
         }
-        return sesameDataSet;
+        return dataset;
         
     }
 
@@ -125,8 +126,8 @@ public class RMLEngine {
      * @param sesameDataSet
      * @param rmlMapping
      */
-    private RMLSesameDataSet generateRDFTriples(
-            RMLSesameDataSet sesameDataSet, RMLMapping rmlMapping, 
+    private RMLDataset generateRDFTriples(
+            RMLDataset sesameDataSet, RMLMapping rmlMapping, 
             Map<String, String> parameters, String[] exeTriplesMap) {
 
         log.debug("Generate RDF triples... ");
@@ -149,9 +150,9 @@ public class RMLEngine {
         return sesameDataSet;
     }
     
-    private RMLSesameDataSet generateTriplesMapTriples(
+    private RMLDataset generateTriplesMapTriples(
             TriplesMap triplesMap, Map<String, String> parameters,
-            String[] exeTriplesMap, RMLSesameDataSet sesameDataSet) {
+            String[] exeTriplesMap, RMLDataset dataset) {
         boolean flag = true;
         int delta = 0;
 
@@ -176,14 +177,14 @@ public class RMLEngine {
                 NodeRMLPerformer performer = new NodeRMLPerformer(processor);
 
                 log.debug("Executing Mapping Processor..");
-                processor.execute(sesameDataSet, triplesMap, performer, 
+                processor.execute(dataset, triplesMap, performer, 
                         input, exeTriplesMap, false);
 
-                log.info((sesameDataSet.getSize() - delta)
+                log.info((dataset.getSize() - delta)
                         + " triples were generated for " 
                         + triplesMap.getName());
                 //TODO: Add metadata that this Triples Map generatedthat many triples
-                delta = sesameDataSet.getSize();
+                delta = dataset.getSize();
             } catch (Exception ex) {
                 log.error("Exception " + ex);
                 log.error("The execution of the mapping failed.");
@@ -195,7 +196,7 @@ public class RMLEngine {
                 log.error("IOException " + ex);
             }
         }
-        return sesameDataSet;
+        return dataset;
     }
     
     private RMLProcessor generateRMLProcessor(TriplesMap triplesMap) {
@@ -207,7 +208,8 @@ public class RMLEngine {
         log.debug("Reference formulation: " 
                     + triplesMap.getLogicalSource().getReferenceFormulation());
         try {
-            processor = factory.create(triplesMap.getLogicalSource().getReferenceFormulation());
+            processor = factory.create(
+                    triplesMap.getLogicalSource().getReferenceFormulation());
         } catch (Exception ex) {
             log.error("Exception " + ex + 
                     " There is no suitable processor for this reference formulation");
@@ -232,7 +234,7 @@ public class RMLEngine {
     }
     
     private void generateMetaData(
-            RMLSesameDataSet sesameDataSet, long startTime) {
+            RMLDataset sesameDataSet, long startTime) {
         //TODO:add metadata this Triples Map started then, finished then and lasted that much
         long endTime = System.nanoTime();
         long duration = endTime - startTime;

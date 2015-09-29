@@ -20,7 +20,8 @@ import org.slf4j.LoggerFactory;
 public class RMLConfiguration {
     
     // Log
-    private static final Logger log = LoggerFactory.getLogger(RMLConfiguration.class);
+    private static final Logger log = 
+            LoggerFactory.getLogger(RMLConfiguration.class);
     private static final Options cliOptions = generateCLIOptions();
     
     public static CommandLine parseArguments(String[] args) throws ParseException {
@@ -32,9 +33,12 @@ public class RMLConfiguration {
     private static Options generateCLIOptions() {
         Options cliOptions = new Options();
         
-        cliOptions.addOption("h", "help", false, "show this help message");
-        cliOptions.addOption("m", "mapping document", true, "the URI of the mapping file (required)");
-        cliOptions.addOption("o", "output file", true, "the URI of the output file (required)");
+        cliOptions.addOption("h", "help", false, 
+                "show this help message");
+        cliOptions.addOption("m", "mapping document", true, 
+                "the URI of the mapping file (required)");
+        cliOptions.addOption("o", "output file", true, 
+                "the URI of the output file (required)");
         cliOptions.addOption("f", "file format", true, 
                 "the output format of the results: turtle, n3, ntriples (default), rdfxml (optional)");
         cliOptions.addOption("tm", "Triples Map", true, "Triples Map to be executed.");
@@ -42,10 +46,14 @@ public class RMLConfiguration {
                 "arguments to pass if the rml:source of the mapping document is a URI template "
                 + "and requires parameters (they should be comma separated)", true, 
                 "arguments for the source template");
-        cliOptions.addOption("g", "graph", false, "the graph to use");
-        cliOptions.addOption("prov", "prov", false, "the provenance graph");
-        cliOptions.addOption("s", "schemas", false, "schemas");
-        //cliOptions.addOption("t", "tests are enabled", false, "the RDFUnit tests are called");
+        cliOptions.addOption("g", "graph", false, 
+                "the graph to use");
+        cliOptions.addOption("prov", "prov", false, 
+                "the provenance graph");
+        cliOptions.addOption("s", "schemas", false, 
+                "schemas");
+        //cliOptions.addOption("t", "tests are enabled", false, 
+        //      "the RDFUnit tests are called");
         return cliOptions;
     }
     

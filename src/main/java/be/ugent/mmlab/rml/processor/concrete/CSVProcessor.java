@@ -1,5 +1,6 @@
 package be.ugent.mmlab.rml.processor.concrete;
 
+import be.ugent.mmlab.rml.dataset.RMLDataset;
 import be.ugent.mmlab.rml.performer.RMLPerformer;
 import be.ugent.mmlab.rml.model.LogicalSource;
 import be.ugent.mmlab.rml.model.TriplesMap;
@@ -7,7 +8,6 @@ import be.ugent.mmlab.rml.model.std.CsvwReferenceFormulation;
 import be.ugent.mmlab.rml.processor.AbstractRMLProcessor;
 import be.ugent.mmlab.rml.processor.termmap.TermMapProcessorFactory;
 import be.ugent.mmlab.rml.processor.termmap.concrete.ConcreteTermMapFactory;
-import be.ugent.mmlab.rml.sesame.RMLSesameDataSet;
 import be.ugent.mmlab.rml.vocabularies.QLVocabulary.QLTerm;
 import com.csvreader.CsvReader;
 import java.io.FileNotFoundException;
@@ -28,7 +28,8 @@ import org.openrdf.model.Resource;
 public class CSVProcessor extends AbstractRMLProcessor {
 
     // Log
-    private static final Logger log = LoggerFactory.getLogger(CSVProcessor.class);
+    private static final Logger log = 
+            LoggerFactory.getLogger(CSVProcessor.class);
     
     CSVProcessor(){
         TermMapProcessorFactory factory = new ConcreteTermMapFactory();
@@ -36,7 +37,6 @@ public class CSVProcessor extends AbstractRMLProcessor {
     }
     
     private char getDelimiter(LogicalSource ls) {
-        //String d = RMLEngine.getFileMap().getProperty(ls.getSource() + ".delimiter");
         String d = null;
         CsvwReferenceFormulation refForm =
                 (CsvwReferenceFormulation) ls.getCustomReferenceFormulation();
@@ -52,7 +52,7 @@ public class CSVProcessor extends AbstractRMLProcessor {
     }
 
     @Override
-    public void execute(RMLSesameDataSet dataset, TriplesMap map, 
+    public void execute(RMLDataset dataset, TriplesMap map, 
     RMLPerformer performer, InputStream input, 
     String[] exeTriplesMap, boolean pomExecution) {
 
@@ -83,7 +83,7 @@ public class CSVProcessor extends AbstractRMLProcessor {
 
     @Override
     public void execute_node(
-            RMLSesameDataSet dataset, String expression, 
+            RMLDataset dataset, String expression, 
             TriplesMap parentTriplesMap, RMLPerformer performer, Object node, 
             Resource subject, String[] exeTriplesMap, boolean pomExecution) {
         throw new UnsupportedOperationException("Not applicable for CSV sources."); 

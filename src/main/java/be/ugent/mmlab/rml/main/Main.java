@@ -2,10 +2,10 @@ package be.ugent.mmlab.rml.main;
 
 import be.ugent.mmlab.rml.config.RMLConfiguration;
 import be.ugent.mmlab.rml.core.RMLEngine;
+import be.ugent.mmlab.rml.dataset.RMLDataset;
 import be.ugent.mmlab.rml.mapdochandler.extraction.std.StdRMLMappingFactory;
 import be.ugent.mmlab.rml.mapdochandler.retrieval.RMLDocRetrieval;
 import be.ugent.mmlab.rml.model.RMLMapping;
-import be.ugent.mmlab.rml.sesame.RMLSesameDataSet;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.commons.cli.CommandLine;
@@ -36,9 +36,9 @@ public class Main {
         StdRMLMappingFactory mappingFactory = new StdRMLMappingFactory();
         RMLEngine engine = new RMLEngine();
         
-        System.out.println("--------------------------------------------------------------------------------");
+        System.out.println("-------------------------------------------------");
         System.out.println("RML Processor");
-        System.out.println("--------------------------------------------------------------------------------");
+        System.out.println("-------------------------------------------------");
         System.out.println("");
 
         try {
@@ -87,7 +87,7 @@ public class Main {
             log.info("========================================");
             log.info("Running the RML Mapping..");
             log.info("========================================");
-            RMLSesameDataSet dataset = engine.runRMLMapping(mapping, graphName, outputFile, 
+            RMLDataset dataset = engine.runRMLMapping(mapping, graphName, outputFile, 
                                      outputFormat, parameters, exeTriplesMap);  
             dataset.closeRepository();
             System.exit(0);

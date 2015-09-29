@@ -1,10 +1,10 @@
 package be.ugent.mmlab.rml.performer;
 
+import be.ugent.mmlab.rml.dataset.RMLDataset;
 import be.ugent.mmlab.rml.model.RDFTerm.GraphMap;
 import be.ugent.mmlab.rml.model.PredicateObjectMap;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.RMLProcessor;
-import be.ugent.mmlab.rml.sesame.RMLSesameDataSet;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +40,7 @@ public class NodeRMLPerformer implements RMLPerformer {
      * @param map current triple map that is being processed
      */
     @Override
-    public void perform(Object node, RMLSesameDataSet dataset, 
+    public void perform(Object node, RMLDataset dataset, 
     TriplesMap map, String[] exeTriplesMap, boolean pomExecution) {
 
         Resource subject = processor.processSubjectMap(dataset, map.getSubjectMap(), node);
@@ -68,7 +68,7 @@ public class NodeRMLPerformer implements RMLPerformer {
      * @param subject
      */
     @Override
-    public void perform(Object node, RMLSesameDataSet dataset, TriplesMap map, 
+    public void perform(Object node, RMLDataset dataset, TriplesMap map, 
         Resource subject, String[] exeTriplesMap) {
         processor.processSubjectTypeMap(dataset, subject, map.getSubjectMap(), node);
         for (PredicateObjectMap pom : map.getPredicateObjectMaps()) {

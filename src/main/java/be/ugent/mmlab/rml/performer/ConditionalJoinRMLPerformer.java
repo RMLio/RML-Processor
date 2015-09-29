@@ -1,12 +1,12 @@
 package be.ugent.mmlab.rml.performer;
 
 import be.ugent.mmlab.rml.core.RMLExecutionEngine;
+import be.ugent.mmlab.rml.dataset.RMLDataset;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.RMLProcessor;
 import be.ugent.mmlab.rml.processor.termmap.TermMapProcessor;
 import be.ugent.mmlab.rml.processor.termmap.TermMapProcessorFactory;
 import be.ugent.mmlab.rml.processor.termmap.concrete.ConcreteTermMapFactory;
-import be.ugent.mmlab.rml.sesame.RMLSesameDataSet;
 import java.util.HashMap;
 import java.util.List;
 import org.openrdf.model.Resource;
@@ -55,7 +55,7 @@ public class ConditionalJoinRMLPerformer extends NodeRMLPerformer{
      * @param map 
      */
     @Override
-    public void perform(Object node, RMLSesameDataSet dataset, 
+    public void perform(Object node, RMLDataset dataset, 
         TriplesMap map, String[] exeTriplesMap, boolean pomExecution) {
         Value object;
         
@@ -75,7 +75,6 @@ public class ConditionalJoinRMLPerformer extends NodeRMLPerformer{
                 
                 //TODO: check if it stops as soon as it finds something
                 for(String value : values){
-                    log.debug("value " + value);
                     if(value == null || !value.equals(cond)){
                             flag = false;
                             break iter;

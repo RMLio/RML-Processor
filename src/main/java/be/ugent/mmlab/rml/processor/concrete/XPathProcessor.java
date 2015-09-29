@@ -1,5 +1,6 @@
 package be.ugent.mmlab.rml.processor.concrete;
 
+import be.ugent.mmlab.rml.dataset.RMLDataset;
 import be.ugent.mmlab.rml.performer.NodeRMLPerformer;
 import be.ugent.mmlab.rml.performer.RMLPerformer;
 import be.ugent.mmlab.rml.model.TriplesMap;
@@ -8,7 +9,6 @@ import be.ugent.mmlab.rml.processor.RMLProcessor;
 import be.ugent.mmlab.rml.processor.RMLProcessorFactory;
 import be.ugent.mmlab.rml.processor.termmap.TermMapProcessorFactory;
 import be.ugent.mmlab.rml.processor.termmap.concrete.ConcreteTermMapFactory;
-import be.ugent.mmlab.rml.sesame.RMLSesameDataSet;
 import be.ugent.mmlab.rml.vocabularies.QLVocabulary.QLTerm;
 import be.ugent.mmlab.rml.xml.XOMBuilder;
 import java.io.File;
@@ -119,7 +119,7 @@ public class XPathProcessor extends AbstractRMLProcessor {
     }
     
     @Override
-    public void execute(final RMLSesameDataSet dataset, final TriplesMap map, 
+    public void execute(final RMLDataset dataset, final TriplesMap map, 
         final RMLPerformer performer, InputStream input, 
         final String[] exeTriplesMap, final boolean pomExecution) {
         try {
@@ -179,7 +179,7 @@ public class XPathProcessor extends AbstractRMLProcessor {
     
     @Override
     public void execute_node(
-            RMLSesameDataSet dataset, String expression, 
+            RMLDataset dataset, String expression, 
             TriplesMap parentTriplesMap, RMLPerformer performer, Object node, 
             Resource subject, String[] exeTriplesMap, boolean pomExecution) {
         //still need to make it work with more nore-results 

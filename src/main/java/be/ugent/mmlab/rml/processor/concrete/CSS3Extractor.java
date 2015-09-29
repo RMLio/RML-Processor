@@ -1,11 +1,11 @@
 package be.ugent.mmlab.rml.processor.concrete;
 
+import be.ugent.mmlab.rml.dataset.RMLDataset;
 import be.ugent.mmlab.rml.performer.RMLPerformer;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.AbstractRMLProcessor;
 import be.ugent.mmlab.rml.processor.termmap.TermMapProcessorFactory;
 import be.ugent.mmlab.rml.processor.termmap.concrete.ConcreteTermMapFactory;
-import be.ugent.mmlab.rml.sesame.RMLSesameDataSet;
 import be.ugent.mmlab.rml.vocabularies.QLVocabulary.QLTerm;
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,7 +38,7 @@ public class CSS3Extractor extends AbstractRMLProcessor {
     }
 
     @Override
-    public void execute(RMLSesameDataSet dataset, TriplesMap map, 
+    public void execute(RMLDataset dataset, TriplesMap map, 
     RMLPerformer performer, InputStream input, 
     String[] exeTriplesMap, boolean pomExecution) {
         //this should not be needed to be defined within the extractor
@@ -48,7 +48,7 @@ public class CSS3Extractor extends AbstractRMLProcessor {
         try {
             doc = Jerry.jerry(IOUtils.toString(input, "UTF-8"));
         } catch (IOException ex) {
-            log.error("IOException " + ex);
+            log.error("IO Exception " + ex);
         }
         NodeSelector nodeSelector ;
         nodeSelector = new NodeSelector(doc.get(0));
@@ -62,7 +62,7 @@ public class CSS3Extractor extends AbstractRMLProcessor {
 
     @Override
     public void execute_node(
-            RMLSesameDataSet dataset, String expression, 
+            RMLDataset dataset, String expression, 
             TriplesMap parentTriplesMap, RMLPerformer performer, Object node, 
             Resource subject, String[] exeTriplesMap, boolean pomExecution) {
         if (expression.startsWith("+")) {

@@ -1,10 +1,10 @@
 package be.ugent.mmlab.rml;
 
 import be.ugent.mmlab.rml.core.RMLEngine;
+import be.ugent.mmlab.rml.dataset.RMLDataset;
 import be.ugent.mmlab.rml.mapdochandler.extraction.std.StdRMLMappingFactory;
 import be.ugent.mmlab.rml.mapdochandler.retrieval.RMLDocRetrieval;
 import be.ugent.mmlab.rml.model.RMLMapping;
-import be.ugent.mmlab.rml.sesame.RMLSesameDataSet;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -179,19 +179,19 @@ public class MapperTest
                 assertMap(fileToRMLFile, null, triplesMap)));
     }
     
-    private RMLSesameDataSet desiredOutput (URL outputURL){
-        RMLSesameDataSet desiredOutput = new RMLSesameDataSet(false);
+    private RMLDataset desiredOutput (URL outputURL){
+        RMLDataset desiredOutput = new RMLDataset(false);
         desiredOutput.addFile(outputURL.getFile(), RDFFormat.TURTLE);
         return desiredOutput;
     }
     
-    private RMLSesameDataSet desiredContextOutput (URL outputURL){
-        RMLSesameDataSet desiredOutput = new RMLSesameDataSet(false);
+    private RMLDataset desiredContextOutput (URL outputURL){
+        RMLDataset desiredOutput = new RMLDataset(false);
         desiredOutput.addFile(outputURL.getFile(), RDFFormat.NQUADS);
         return desiredOutput;
     }
     
-    private RMLSesameDataSet assertMap(URL mappingURL, 
+    private RMLDataset assertMap(URL mappingURL, 
             Map<String, String> parameters, String[] triplesMap) {
         try {
             StdRMLMappingFactory mappingFactory = new StdRMLMappingFactory();
@@ -212,7 +212,7 @@ public class MapperTest
             log.info("========================================");
             log.info("Running the RML Mapping..");
             log.info("========================================");
-            RMLSesameDataSet output = engine.runRMLMapping(
+            RMLDataset output = engine.runRMLMapping(
                     mapping, "http://example.com", parameters, triplesMap);
             if(output != null)
                 output.dumpRDF(System.out, RDFFormat.TURTLE);

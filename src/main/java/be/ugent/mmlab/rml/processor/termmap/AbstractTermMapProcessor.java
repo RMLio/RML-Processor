@@ -25,7 +25,8 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractTermMapProcessor implements TermMapProcessor{
     
     // Log
-    private static final Logger log = LoggerFactory.getLogger(AbstractTermMapProcessor.class);
+    private static final Logger log = 
+            LoggerFactory.getLogger(AbstractTermMapProcessor.class);
     
     @Override
     public List<String> processTermMap(TermMap map, Object node) {
@@ -36,7 +37,8 @@ public abstract class AbstractTermMapProcessor implements TermMapProcessor{
             case REFERENCE_VALUED:
                 //Get the expression and extract the value
                 ReferenceMap identifier = map.getReferenceMap();
-                values = extractValueFromNode(node, identifier.getReference().toString().trim());
+                values = extractValueFromNode(
+                        node, identifier.getReference().toString().trim());
 
                 for (String value : values) {
                     if (valueList.isEmpty()) {
@@ -54,7 +56,8 @@ public abstract class AbstractTermMapProcessor implements TermMapProcessor{
                 //Resolve the template
                 String template = map.getStringTemplate();
                 //Set<String> tokens = R2RMLToolkit.extractColumnNamesFromStringTemplate(template);
-                Set<String> tokens = StdTemplateMap.extractVariablesFromStringTemplate(template);
+                Set<String> tokens = 
+                        StdTemplateMap.extractVariablesFromStringTemplate(template);
                 for (String expression : tokens) {
                     List<String> replacements = extractValueFromNode(node, expression);
                     for (int i = 0; i < replacements.size(); i++) {
@@ -123,7 +126,8 @@ public abstract class AbstractTermMapProcessor implements TermMapProcessor{
     }
     
     @Override
-    public String processTemplate(TermMap map, String expression, String template, String replacement) {
+    public String processTemplate(
+            TermMap map, String expression, String template, String replacement) {
         log.error("Template processing...");
         if (expression.contains("[")) {
             expression = expression.replaceAll("\\[", "").replaceAll("\\]", "");
