@@ -20,7 +20,7 @@ You can run a mapping process by executing the following command.
 
 Master branch:    
     
-    java -jar target/RMLMapper-0.1.jar -m <mapping_file> -o <output_file> -f <output_format> [-g <graph> -tm <triples_map>]
+    java -jar target/RML-Procssor-0.2.jar -m <mapping_file> -o <output_file> -f <output_format> [-g <graph> -tm <triples_map>]
 
 With 
     
@@ -28,11 +28,11 @@ With
     <output_file>   = The file where the output RDF triples are stored; default in [N-Triples](http://www.w3.org/TR/n-triples/) syntax.
     <output_format> = The prefered output format, use one of the followings: turtle, ntriples, nquads, rdfxml, rdfjson, jsonld.
     <graph> (optional) = The named graph in which the output RDF triples are stored.
-    <triples_map>   = A specific Triples Map of the mapping document to be executed. Default: all Triples Maps are executed.
+    <triples_map> (optional)  = A specific Triples Map of the mapping document to be executed. Default: all Triples Maps are executed.
         
 For instance, to run example1, execute the following command by replacing the paths to the files with the local paths:
 
-    java -jar target/RMLMapper-0.1.jar src/test/resources/example1/example.rml.ttl src/test/resources/example1/example1_test.output.nt
+    java -jar target/RML-Processor-0.2.jar -m src/test/resources/example1/example.rml.ttl -o src/test/resources/example1/example1_test.output.nt
 
 Remark
 -----
@@ -46,7 +46,7 @@ More information about the solution can be found at http://rml.io
 
 This application is developed by Multimedia Lab http://www.mmlab.be
 
-Copyright 2014, Multimedia Lab - Ghent University - iMinds
+Copyright 2013-2015, Multimedia Lab - Ghent University - iMinds
 
 License
 -------
