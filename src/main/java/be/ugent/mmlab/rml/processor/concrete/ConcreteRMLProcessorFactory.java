@@ -18,7 +18,8 @@ import org.slf4j.LoggerFactory;
 public class ConcreteRMLProcessorFactory implements RMLProcessorFactory{
     
     // Log
-    private static final Logger log = LoggerFactory.getLogger(ConcreteRMLProcessorFactory.class);
+    private static final Logger log = 
+            LoggerFactory.getLogger(ConcreteRMLProcessorFactory.class);
 
     /**
      * Create the language-dependent processor based on the given language
@@ -42,8 +43,8 @@ public class ConcreteRMLProcessorFactory implements RMLProcessorFactory{
                 return new JSONPathProcessor();
             case CSS3_CLASS:
                 return new CSS3Extractor();
-            case XLS_CLASS:
-                return new XLSProcessor();
+            //case XLS_CLASS:
+            //    return new XLSProcessor();
             case XLSX_CLASS:
                 return new XLSXProcessor();
             default:

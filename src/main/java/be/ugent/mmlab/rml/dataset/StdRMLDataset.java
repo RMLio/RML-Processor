@@ -33,7 +33,7 @@ public class StdRMLDataset implements RMLDataset {
     private static final Logger log = 
             LoggerFactory.getLogger(StdRMLDataset.class);
     
-    private Repository repository = null;
+    protected Repository repository = null;
     
     public StdRMLDataset() {
         this(false);
@@ -143,7 +143,7 @@ public class StdRMLDataset implements RMLDataset {
     }
     
     //TODO: Spring it
-    private List<Statement> tuplePattern(Resource s, URI p, Value o,
+    protected List<Statement> tuplePattern(Resource s, URI p, Value o,
 			Resource... contexts) {
         try {
             RepositoryConnection con = repository.getConnection();

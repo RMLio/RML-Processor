@@ -1,6 +1,6 @@
 package be.ugent.mmlab.rml.performer;
 
-import be.ugent.mmlab.rml.dataset.StdRMLDataset;
+import be.ugent.mmlab.rml.dataset.RMLDataset;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import org.openrdf.model.Resource;
 
@@ -19,7 +19,7 @@ public interface RMLPerformer {
      * @param dataset dataset for endresult
      * @param map current triple map that is being processed
      */
-    public void perform(Object node, StdRMLDataset dataset, 
+    public void perform(Object node, RMLDataset dataset, 
             TriplesMap map, String[] exeTriplesMap, boolean pomExecution);
     
     /**
@@ -30,6 +30,6 @@ public interface RMLPerformer {
      * @param subject
      * @param exeTriplesMap
      */
-    public void perform(Object node, StdRMLDataset dataset, 
+    public void perform(Object node, RMLDataset dataset, 
             TriplesMap map, Resource subject, String[] exeTriplesMap);
 }

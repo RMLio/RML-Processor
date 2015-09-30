@@ -1,6 +1,6 @@
 package be.ugent.mmlab.rml.processor.concrete;
 
-import be.ugent.mmlab.rml.dataset.StdRMLDataset;
+import be.ugent.mmlab.rml.dataset.RMLDataset;
 import be.ugent.mmlab.rml.performer.RMLPerformer;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.AbstractRMLProcessor;
@@ -36,7 +36,7 @@ public class JSONPathProcessor extends AbstractRMLProcessor {
 
     @Override
     public void execute(
-            StdRMLDataset dataset, TriplesMap map, 
+            RMLDataset dataset, TriplesMap map, 
             RMLPerformer performer, InputStream input, 
             String[] exeTriplesMap, boolean pomExecution) {
 
@@ -57,7 +57,7 @@ public class JSONPathProcessor extends AbstractRMLProcessor {
 
     @Override
     public void execute_node(
-            StdRMLDataset dataset, String expression, 
+            RMLDataset dataset, String expression, 
             TriplesMap parentTriplesMap, RMLPerformer performer, Object node, 
             Resource subject, String[] exeTriplesMap, boolean pomExecution) {
        
@@ -68,7 +68,7 @@ public class JSONPathProcessor extends AbstractRMLProcessor {
         //TODO: check if it's complete for sub-mappings
     }
     
-    private void execute (StdRMLDataset dataset, TriplesMap parentTriplesMap, 
+    private void execute (RMLDataset dataset, TriplesMap parentTriplesMap, 
             RMLPerformer performer, Object node, 
             String[] exeTriplesMap, boolean pomExecution){
         if (node instanceof JSONObject) 

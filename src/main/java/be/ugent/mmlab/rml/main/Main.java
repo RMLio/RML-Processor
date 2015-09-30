@@ -2,9 +2,7 @@ package be.ugent.mmlab.rml.main;
 
 import be.ugent.mmlab.rml.config.RMLConfiguration;
 import be.ugent.mmlab.rml.core.RMLEngine;
-import be.ugent.mmlab.rml.dataset.FileDataset;
 import be.ugent.mmlab.rml.dataset.RMLDataset;
-import be.ugent.mmlab.rml.dataset.StdRMLDataset;
 import be.ugent.mmlab.rml.mapdochandler.extraction.std.StdRMLMappingFactory;
 import be.ugent.mmlab.rml.mapdochandler.retrieval.RMLDocRetrieval;
 import be.ugent.mmlab.rml.model.RMLMapping;
@@ -73,7 +71,8 @@ public class Main {
             log.info("Retrieving the RML Mapping Document...");
             log.info("========================================");
             RMLDocRetrieval mapDocRetrieval = new RMLDocRetrieval();
-            Repository repository = mapDocRetrieval.getMappingDoc(map_doc, RDFFormat.TURTLE);
+            Repository repository = 
+                    mapDocRetrieval.getMappingDoc(map_doc, RDFFormat.TURTLE);
             
             log.info("========================================");
             log.info("Extracting the RML Mapping Definitions..");
@@ -83,20 +82,16 @@ public class Main {
             if (commandLine.hasOption("tm")) {
                 triplesMap = commandLine.getOptionValue("tm", null);
                 if(triplesMap != null)
-                    exeTriplesMap = RMLConfiguration.processTriplesMap(triplesMap,map_doc);
+                    exeTriplesMap = 
+                            RMLConfiguration.processTriplesMap(triplesMap,map_doc);
             }
             
             log.info("========================================");
             log.info("Running the RML Mapping..");
             log.info("========================================");
-            RMLDataset dataset = engine.runRMLMapping(mapping, graphName, outputFile, 
-                                     outputFormat, parameters, exeTriplesMap);  
-            if(dataset.getClass().getSimpleName().equals("FileDataset")){
-                //FileDataset dataset2 = (FileDataset) dataset;
-                //dataset2.printRDF(RDFFormat.RDFXML);
-                //dataset2.closeRepository();
-            //log.debug("dataset " + dataset.dumpRDF(outputFile, outputFormat));
-            }
+            RMLDataset dataset = 
+                    engine.runRMLMapping(mapping, graphName, outputFile, 
+                    outputFormat, parameters, exeTriplesMap);  
             dataset.closeRepository();
             System.exit(0);
             

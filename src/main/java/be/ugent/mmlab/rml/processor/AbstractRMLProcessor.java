@@ -2,7 +2,7 @@ package be.ugent.mmlab.rml.processor;
 
 import be.ugent.mmlab.rml.condition.model.BindingCondition;
 import be.ugent.mmlab.rml.condition.model.std.BindingReferencingObjectMap;
-import be.ugent.mmlab.rml.dataset.StdRMLDataset;
+import be.ugent.mmlab.rml.dataset.RMLDataset;
 import be.ugent.mmlab.rml.performer.ConditionalJoinRMLPerformer;
 import be.ugent.mmlab.rml.performer.JoinRMLPerformer;
 import be.ugent.mmlab.rml.performer.RMLPerformer;
@@ -93,7 +93,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
      */
     @Override
     public Resource processSubjectMap(
-            StdRMLDataset dataset, SubjectMap subjectMap, Object node) {  
+            RMLDataset dataset, SubjectMap subjectMap, Object node) {  
 
         //Get the uri
         TermMapProcessorFactory factory = new ConcreteTermMapFactory();
@@ -144,7 +144,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
     
     @Override
     public void processSubjectTypeMap(
-            StdRMLDataset dataset, Resource subject, SubjectMap subjectMap, Object node) {
+            RMLDataset dataset, Resource subject, SubjectMap subjectMap, Object node) {
 
         //Add the type triples
         Set<org.openrdf.model.URI> classIRIs = subjectMap.getClassIRIs();
@@ -155,7 +155,9 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                 else
                     for (GraphMap map : subjectMap.getGraphMaps()) 
                         if (map.getConstantValue() != null) 
-                            dataset.add(subject, RDF.TYPE, classIRI, new URIImpl(map.getConstantValue().toString()));
+                            dataset.add(
+                                    subject, RDF.TYPE, classIRI, 
+                                    new URIImpl(map.getConstantValue().toString()));
     }
 
     //TODO:move this to Term Map processor
@@ -233,7 +235,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
      */
     @Override
     public void processPredicateObjectMap(
-            StdRMLDataset dataset, Resource subject, PredicateObjectMap pom, 
+            RMLDataset dataset, Resource subject, PredicateObjectMap pom, 
             Object node, TriplesMap map, String[] exeTriplesMap) {
 
         Set<PredicateMap> predicateMaps = pom.getPredicateMaps();
@@ -255,7 +257,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
     }
     
     private void processPredicateObjectMap_RefObjMap(
-            StdRMLDataset dataset, Resource subject, URI predicate,
+            RMLDataset dataset, Resource subject, URI predicate,
             PredicateObjectMap pom, Object node, 
             TriplesMap map, String[] exeTriplesMap) {
         String template ;
@@ -402,7 +404,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
     
     public void processJoinConditions(Object node, RMLPerformer performer, 
             RMLProcessor processor, Resource subject, URI predicate, 
-            StdRMLDataset dataset, InputStream input, TriplesMap parentTriplesMap, 
+            RMLDataset dataset, InputStream input, TriplesMap parentTriplesMap, 
             Set<JoinCondition> joinConditions, String[] exeTriplesMap) {
         HashMap<String, String> joinMap = new HashMap<>();
 
@@ -425,7 +427,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
     
     @Override
     public void processPredicateObjectMap_ObjMap(
-            StdRMLDataset dataset, Resource subject, URI predicate,
+            RMLDataset dataset, Resource subject, URI predicate,
             PredicateObjectMap pom, Object node) {
         Set<ObjectMap> objectMaps = pom.getObjectMaps();
         for (ObjectMap objectMap : objectMaps) {

@@ -1,8 +1,3 @@
-/*
- * 
- * @author andimou
- * 
- */
 package be.ugent.mmlab.rml.dataset;
 
 import java.io.BufferedWriter;
@@ -22,7 +17,8 @@ import org.openrdf.rio.RDFWriter;
 import org.openrdf.rio.Rio;
 
 /**
- *
+ * RML Processor
+ * 
  * @author mielvandersande
  */
 public class FileDataset extends StdRMLDataset {
@@ -94,8 +90,7 @@ public class FileDataset extends StdRMLDataset {
     @Override
     public void add(Resource s, URI p, Value o, Resource... contexts) {
         if (log.isDebugEnabled()) {
-            log.debug(Thread.currentThread().getStackTrace()[1].getMethodName() + ": " 
-                    + "[FileSesameDataSet:add] Add triple (" + s.stringValue()
+            log.debug("Add triple (" + s.stringValue()
                     + ", " + p.stringValue() + ", " + o.stringValue() + ").");
         }
 
@@ -104,7 +99,7 @@ public class FileDataset extends StdRMLDataset {
             writer.handleStatement(st);
             size++;
         } catch (RDFHandlerException ex) {
-            log.fatal(o);
+            log.error("RDFHandlerException " + ex);
         }
 
     }
@@ -125,5 +120,10 @@ public class FileDataset extends StdRMLDataset {
         } catch (IOException ex) {
             log.error("IOException " + ex);
         } 
+    }
+
+    @Override
+    public int getSize() {
+        return size;
     }
 }

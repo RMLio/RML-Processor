@@ -1,6 +1,6 @@
 package be.ugent.mmlab.rml.processor.concrete;
 
-import be.ugent.mmlab.rml.dataset.StdRMLDataset;
+import be.ugent.mmlab.rml.dataset.RMLDataset;
 import be.ugent.mmlab.rml.performer.RMLPerformer;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.AbstractRMLProcessor;
@@ -28,7 +28,8 @@ import org.openrdf.model.Resource;
 public class CSS3Extractor extends AbstractRMLProcessor {
 
     // Log
-    private static final Logger log = LoggerFactory.getLogger(CSS3Extractor.class);
+    private static final Logger log = 
+            LoggerFactory.getLogger(CSS3Extractor.class);
     private int enumerator;
 
     public CSS3Extractor() {
@@ -38,9 +39,9 @@ public class CSS3Extractor extends AbstractRMLProcessor {
     }
 
     @Override
-    public void execute(StdRMLDataset dataset, TriplesMap map, 
-    RMLPerformer performer, InputStream input, 
-    String[] exeTriplesMap, boolean pomExecution) {
+    public void execute(RMLDataset dataset, TriplesMap map,
+            RMLPerformer performer, InputStream input,
+            String[] exeTriplesMap, boolean pomExecution) {
         //this should not be needed to be defined within the extractor
         String reference = getReference(map.getLogicalSource());
         // more configuration...
@@ -50,19 +51,19 @@ public class CSS3Extractor extends AbstractRMLProcessor {
         } catch (IOException ex) {
             log.error("IO Exception " + ex);
         }
-        NodeSelector nodeSelector ;
+        NodeSelector nodeSelector;
         nodeSelector = new NodeSelector(doc.get(0));
 
         List<Node> selectedNodes = nodeSelector.select(reference);
         for (int i = 0; i < selectedNodes.size(); i++) {
-            performer.perform(selectedNodes.get(i).getHtml(), dataset, map, 
+            performer.perform(selectedNodes.get(i).getHtml(), dataset, map,
                     exeTriplesMap, pomExecution);
         }
     }
 
     @Override
     public void execute_node(
-            StdRMLDataset dataset, String expression, 
+            RMLDataset dataset, String expression, 
             TriplesMap parentTriplesMap, RMLPerformer performer, Object node, 
             Resource subject, String[] exeTriplesMap, boolean pomExecution) {
         if (expression.startsWith("+")) {
