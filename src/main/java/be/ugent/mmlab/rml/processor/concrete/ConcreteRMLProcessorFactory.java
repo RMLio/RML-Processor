@@ -42,8 +42,8 @@ public class ConcreteRMLProcessorFactory implements RMLProcessorFactory{
                 return new JSONPathProcessor();
             case CSS3_CLASS:
                 return new CSS3Extractor();
-            case XLS_CLASS:
-                return new XLSProcessor();
+            //case XLS_CLASS:
+                //return new XLSProcessor();
             case XLSX_CLASS:
                 return new XLSXProcessor();
             default:
