@@ -90,11 +90,9 @@ public class JSONPathProcessor extends AbstractRMLProcessor {
             }
                 
             //iterate over all the objects
-            for (Object object : nodes) {
-                log.debug("object " + object);
+            for (Object object : nodes) 
                 performer.perform(object, dataset, parentTriplesMap, 
                         exeTriplesMap, pomExecution);
-            }
         }
     }
 

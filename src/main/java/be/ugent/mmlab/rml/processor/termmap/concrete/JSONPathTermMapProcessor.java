@@ -23,7 +23,7 @@ public class JSONPathTermMapProcessor extends AbstractTermMapProcessor {
     public List<String> extractValueFromNode(Object node, String expression) {
         
         try {
-           Object val = JsonPath.read(node, expression);
+            Object val = JsonPath.read(node, expression);
             List<String> list = new ArrayList<>();
             if (val instanceof JSONArray) {
                 JSONArray arr = (JSONArray) val;

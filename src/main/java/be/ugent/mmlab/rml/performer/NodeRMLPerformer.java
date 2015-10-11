@@ -46,7 +46,7 @@ public class NodeRMLPerformer implements RMLPerformer {
 
         Resource subject = 
                 processor.processSubjectMap(dataset, map.getSubjectMap(), node);
-
+        
         if (subject == null) {
             log.debug("No subject was generated for "
                     + map.getName() + "triple Map and node " + node.toString());
