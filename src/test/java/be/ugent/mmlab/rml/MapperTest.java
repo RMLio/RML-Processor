@@ -1,8 +1,8 @@
 package be.ugent.mmlab.rml;
 
 import be.ugent.mmlab.rml.core.RMLEngine;
-import be.ugent.mmlab.rml.dataset.RMLDataset;
-import be.ugent.mmlab.rml.dataset.StdRMLDataset;
+import be.ugent.mmlab.rml.model.dataset.RMLDataset;
+import be.ugent.mmlab.rml.model.dataset.StdRMLDataset;
 import be.ugent.mmlab.rml.mapdochandler.extraction.std.StdRMLMappingFactory;
 import be.ugent.mmlab.rml.mapdochandler.retrieval.RMLDocRetrieval;
 import be.ugent.mmlab.rml.model.RMLMapping;
@@ -14,6 +14,7 @@ import junit.framework.TestCase;
 import static junit.framework.TestCase.assertTrue;
 import junit.framework.TestSuite;
 import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.openrdf.repository.Repository;
 import org.openrdf.rio.RDFFormat;
 
@@ -24,7 +25,7 @@ public class MapperTest
         extends TestCase {
     
     // Log
-    private static final org.apache.log4j.Logger log = 
+    private static final Logger log = 
             LogManager.getLogger(MapperTest.class);
 
     /**
@@ -70,12 +71,12 @@ public class MapperTest
                 assertMap(fileToRMLFile, null, null)));
     }
 
-    public void testExample3() {
+    /*public void testExample3() {
         URL fileToRMLFile = getClass().getResource("/example3/example3.rml.ttl");
         URL fileToOutputFile = getClass().getResource("/example3/example3.output.ttl");
         assertTrue(desiredOutput(fileToOutputFile).isEqualTo(
                 assertMap(fileToRMLFile, null, null)));
-    }
+    }*/
 
     public void testExample4() {
         URL fileToRMLFile = getClass().getResource("/example4/example4_Venue.rml.ttl");
@@ -168,6 +169,18 @@ public class MapperTest
         assertTrue(desiredOutput(fileToOutputFile).isEqualTo(
                 assertMap(fileToRMLFile, null, null)));
     }
+    
+    /*public void testExampleHydraPagedCollection() {
+        log.debug("Hydra Pagged Collection example has been started.");
+        URL fileToRMLFile = getClass().getResource(
+                "/exampleHydraPagedCollection/exampleHydraPubs.rml.ttl");
+        log.debug("fileToRMLFile " + fileToRMLFile.toString());
+        URL fileToOutputFile = getClass().getResource(
+                "/exampleHydraPagedCollection/exampleHydra.output.ttl");
+        log.debug("fileToOutputFile " + fileToOutputFile.toString());
+        assertTrue(desiredOutput(fileToOutputFile).isEqualTo(
+                assertMap(fileToRMLFile, null, null)));
+    }*/
     
     public void testExampleHydraSPARQLsd() {
         URL fileToRMLFile = getClass().getResource(

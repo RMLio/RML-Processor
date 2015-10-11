@@ -1,6 +1,6 @@
 package be.ugent.mmlab.rml.processor.concrete;
 
-import be.ugent.mmlab.rml.dataset.RMLDataset;
+import be.ugent.mmlab.rml.model.dataset.RMLDataset;
 import be.ugent.mmlab.rml.performer.RMLPerformer;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.AbstractRMLProcessor;
@@ -44,7 +44,8 @@ public class JSONPathProcessor extends AbstractRMLProcessor {
             String reference = getReference(map.getLogicalSource());
             //This is a none streaming solution. A streaming parser requires own implementation, possibly based on https://code.google.com/p/json-simple/wiki/DecodingExamples
             JsonPath path = JsonPath.compile(reference);
-            
+            //log.debug("path " + path.getPath());
+            //log.debug("input stream " + input);
             Object val = path.read(input);
             execute(dataset, map, performer, val, exeTriplesMap, pomExecution);
 
@@ -89,9 +90,11 @@ public class JSONPathProcessor extends AbstractRMLProcessor {
             }
                 
             //iterate over all the objects
-            for (Object object : nodes) 
+            for (Object object : nodes) {
+                log.debug("object " + object);
                 performer.perform(object, dataset, parentTriplesMap, 
                         exeTriplesMap, pomExecution);
+            }
         }
     }
 

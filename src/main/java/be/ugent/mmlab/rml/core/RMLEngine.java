@@ -1,9 +1,9 @@
 package be.ugent.mmlab.rml.core;
 
 import be.ugent.mmlab.rml.performer.NodeRMLPerformer;
-import be.ugent.mmlab.rml.dataset.FileDataset;
-import be.ugent.mmlab.rml.dataset.RMLDataset;
-import be.ugent.mmlab.rml.dataset.StdRMLDataset;
+import be.ugent.mmlab.rml.model.dataset.FileDataset;
+import be.ugent.mmlab.rml.model.dataset.RMLDataset;
+import be.ugent.mmlab.rml.model.dataset.StdRMLDataset;
 import be.ugent.mmlab.rml.input.ConcreteLogicalSourceProcessorFactory;
 import be.ugent.mmlab.rml.input.processor.SourceProcessor;
 import be.ugent.mmlab.rml.model.LogicalSource;

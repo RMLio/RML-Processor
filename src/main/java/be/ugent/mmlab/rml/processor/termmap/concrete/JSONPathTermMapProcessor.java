@@ -23,7 +23,7 @@ public class JSONPathTermMapProcessor extends AbstractTermMapProcessor {
     public List<String> extractValueFromNode(Object node, String expression) {
         
         try {
-            Object val = JsonPath.read(node, expression);
+           Object val = JsonPath.read(node, expression);
             List<String> list = new ArrayList<>();
             if (val instanceof JSONArray) {
                 JSONArray arr = (JSONArray) val;
@@ -34,8 +34,7 @@ public class JSONPathTermMapProcessor extends AbstractTermMapProcessor {
         } catch (com.jayway.jsonpath.InvalidPathException ex) {
             return new ArrayList<>();
         } catch (Exception ex) {
-            log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
-                    + " Error: " + ex);
+            log.error("Exception: " + ex);
             return null;
         }
         

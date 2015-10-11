@@ -1,7 +1,7 @@
 package be.ugent.mmlab.rml.performer;
 
 import be.ugent.mmlab.rml.core.RMLExecutionEngine;
-import be.ugent.mmlab.rml.dataset.RMLDataset;
+import be.ugent.mmlab.rml.model.dataset.RMLDataset;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.RMLProcessor;
 import be.ugent.mmlab.rml.processor.termmap.TermMapProcessor;

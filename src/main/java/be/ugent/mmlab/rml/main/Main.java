@@ -2,7 +2,7 @@ package be.ugent.mmlab.rml.main;
 
 import be.ugent.mmlab.rml.config.RMLConfiguration;
 import be.ugent.mmlab.rml.core.RMLEngine;
-import be.ugent.mmlab.rml.dataset.RMLDataset;
+import be.ugent.mmlab.rml.model.dataset.RMLDataset;
 import be.ugent.mmlab.rml.mapdochandler.extraction.std.StdRMLMappingFactory;
 import be.ugent.mmlab.rml.mapdochandler.retrieval.RMLDocRetrieval;
 import be.ugent.mmlab.rml.model.RMLMapping;

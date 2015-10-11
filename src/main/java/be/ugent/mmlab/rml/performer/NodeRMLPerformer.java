@@ -1,6 +1,6 @@
 package be.ugent.mmlab.rml.performer;
 
-import be.ugent.mmlab.rml.dataset.RMLDataset;
+import be.ugent.mmlab.rml.model.dataset.RMLDataset;
 import be.ugent.mmlab.rml.model.RDFTerm.GraphMap;
 import be.ugent.mmlab.rml.model.PredicateObjectMap;
 import be.ugent.mmlab.rml.model.TriplesMap;
@@ -46,7 +46,6 @@ public class NodeRMLPerformer implements RMLPerformer {
 
         Resource subject = 
                 processor.processSubjectMap(dataset, map.getSubjectMap(), node);
-        
 
         if (subject == null) {
             log.debug("No subject was generated for "

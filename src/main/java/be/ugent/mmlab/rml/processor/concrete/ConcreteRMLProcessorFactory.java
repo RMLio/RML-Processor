@@ -48,8 +48,7 @@ public class ConcreteRMLProcessorFactory implements RMLProcessorFactory{
             case XLSX_CLASS:
                 return new XLSXProcessor();
             default:
-                log.error(Thread.currentThread().getStackTrace()[1].getMethodName() + ": "
-                        + "The term " + term + "was not defined.");
+                log.error("The term " + term + "was not defined.");
                 return null;
         }
     }

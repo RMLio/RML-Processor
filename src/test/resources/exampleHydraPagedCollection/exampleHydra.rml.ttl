@@ -1,0 +1,66 @@
+@prefix rr:     <http://www.w3.org/ns/r2rml#>.
+@prefix rml:    <http://semweb.mmlab.be/ns/rml#> .
+@prefix crml:   <http://semweb.mmlab.be/ns/crml#> .
+@prefix ql:     <http://semweb.mmlab.be/ns/ql#> .
+@prefix mail:   <http://example.com/mail#>.
+@prefix xsd:    <http://www.w3.org/2001/XMLSchema#>.
+@prefix ex:     <http://www.example.com/> .
+@prefix hydra:  <http://www.w3.org/ns/hydra/core#> .
+@prefix cerif:  <http://spi-fm.uca.es/neologism/cerif#>.
+@prefix dcterms:<http://purl.org/dc/terms/> .
+@base <http://example.com/base> .
+
+<#GroupsInput>
+    a hydra:PagedCollection ;
+    hydra:itemsPerPage "500"^^xsd:integer ;
+    hydra:firstPage <http://explore.ilastic.be/iminds/groups> ;
+    hydra:nextPage <http://explore.ilastic.be/iminds/groups?&offset=500&limit=500> .
+
+<#GroupMapping>
+  rml:logicalSource [ 
+    rml:referenceFormulation ql:JSONPath ;
+    rml:iterator "$.[*]" ;
+    rml:source <#GroupsInput> ];
+
+  rr:subjectMap [
+    rr:template "http://explore.ilastic.be/organization/{Groep v/d auteur - CRM ID}";
+    rr:class cerif:OrganizationalUnit
+  ];
+
+  rr:predicateObjectMap 
+  [
+    rr:predicate cerif:internalidentifier;
+    rr:objectMap 
+    [
+      rml:reference "Groep v/d auteur" ;
+      rr:language "en-us"
+    ]
+  ];
+
+  rr:predicateObjectMap 
+  [
+    rr:predicate cerif:acronym;
+    rr:objectMap 
+    [
+      rml:reference "Groep v/d auteur" ;
+    ]
+  ];
+
+  rr:predicateObjectMap 
+  [
+    rr:predicate cerif:linksToOrganizationalUnit;
+    rr:objectMap 
+    [
+      rml:reference "Groep v/d auteur - kenniscentrum code" ;
+    ]
+  ];
+
+  rr:predicateObjectMap 
+  [
+    rr:predicate dcterms:identifier;
+    rr:objectMap 
+    [
+      rml:reference "Groep v/d auteur - CRM ID" ;
+      rr:language "en-us"
+    ]
+  ].

@@ -2,7 +2,7 @@ package be.ugent.mmlab.rml.processor;
 
 import be.ugent.mmlab.rml.condition.model.BindingCondition;
 import be.ugent.mmlab.rml.condition.model.std.BindingReferencingObjectMap;
-import be.ugent.mmlab.rml.dataset.RMLDataset;
+import be.ugent.mmlab.rml.model.dataset.RMLDataset;
 import be.ugent.mmlab.rml.performer.ConditionalJoinRMLPerformer;
 import be.ugent.mmlab.rml.performer.JoinRMLPerformer;
 import be.ugent.mmlab.rml.performer.RMLPerformer;
@@ -272,8 +272,6 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
             
             TriplesMap parentTriplesMap = 
                     referencingObjectMap.getParentTriplesMap();
-            log.debug("Parent Triples Map to be processed: " 
-                    + parentTriplesMap.getName());
             
             template = parentTriplesMap.
                     getLogicalSource().getSource().getTemplate();

@@ -1,6 +1,6 @@
 package be.ugent.mmlab.rml.performer;
 
-import be.ugent.mmlab.rml.dataset.RMLDataset;
+import be.ugent.mmlab.rml.model.dataset.RMLDataset;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.RMLProcessor;
 import be.ugent.mmlab.rml.processor.RMLProcessorFactory;
@@ -40,12 +40,17 @@ public class SimpleReferencePerformer extends NodeRMLPerformer {
     @Override
     public void perform(Object node, RMLDataset dataset, 
     TriplesMap map, String[] exeTriplesMap, boolean pomExecution) {
-        if(map.getSubjectMap().getTermType() == be.ugent.mmlab.rml.model.RDFTerm.TermType.BLANK_NODE 
-                || map.getSubjectMap().getTermType() == be.ugent.mmlab.rml.model.RDFTerm.TermType.IRI){
+
+        if(map.getSubjectMap().getTermType() == 
+                be.ugent.mmlab.rml.model.RDFTerm.TermType.BLANK_NODE 
+          || map.getSubjectMap().getTermType() == 
+                be.ugent.mmlab.rml.model.RDFTerm.TermType.IRI){
             RMLProcessorFactory factory = new ConcreteRMLProcessorFactory();
-            RMLProcessor subprocessor = factory.create(map.getLogicalSource().getReferenceFormulation());
+            RMLProcessor subprocessor = factory.create(
+                    map.getLogicalSource().getReferenceFormulation());
             RMLPerformer performer = new NodeRMLPerformer(subprocessor);            
-            Resource object = processor.processSubjectMap(dataset, map.getSubjectMap(), node); 
+            Resource object = processor.processSubjectMap(
+                    dataset, map.getSubjectMap(), node); 
             if (object != null) {
                 dataset.add(subject, predicate, object);
                 log.debug("Subject " + subject 

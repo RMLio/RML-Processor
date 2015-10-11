@@ -1,0 +1,78 @@
+@prefix rr:     <http://www.w3.org/ns/r2rml#>.
+@prefix rml:    <http://semweb.mmlab.be/ns/rml#> .
+@prefix crml:   <http://semweb.mmlab.be/ns/crml#> .
+@prefix ql:     <http://semweb.mmlab.be/ns/ql#> .
+@prefix mail:   <http://example.com/mail#>.
+@prefix xsd:    <http://www.w3.org/2001/XMLSchema#>.
+@prefix ex:     <http://www.example.com/> .
+@prefix hydra:  <http://www.w3.org/ns/hydra/core#> .
+@prefix cerif:  <http://spi-fm.uca.es/neologism/cerif#>.
+@prefix dcterms:<http://purl.org/dc/terms/> .
+@prefix bibo:   <http://purl.org/ontology/bibo/> .
+@prefix im:     <http://semweb.mmlab.be/ns/im#> .
+@base <http://example.com/base> .
+
+<#PublicationsInput>
+    a hydra:PagedCollection ;
+    hydra:itemsPerPage "500"^^xsd:integer ;
+    hydra:firstPage <http://explore.ilastic.be/iminds/publications> ;
+    hydra:nextPage <http://explore.ilastic.be/iminds/publications?&offset=500&limit=500> .
+
+#Publication
+   
+<#PublicationMapping>
+  rml:logicalSource [ 
+    rml:referenceFormulation ql:JSONPath ;
+    rml:iterator "$.[*]" ;
+    rml:source <#PublicationsInput> ];
+
+  rr:subjectMap [
+    rr:template "http://explore.ilastic.be/publication/{publicatie (ID)}";
+    rr:class cerif:Publication, bibo:Document ];
+
+  rr:predicateObjectMap 
+  [
+    rr:predicate cerif:internalidentifier, bibo:identifier;
+    rr:objectMap [
+      rml:reference "publicatie (ID)" ;
+      rr:datatype xsd:positiveInteger ] ];
+
+  rr:predicateObjectMap [
+    rr:predicate cerif:title;
+    rr:objectMap [ rml:reference "Titel" ] ];
+
+  rr:predicateObjectMap [ 
+    rr:predicate cerif:abstract;
+    rr:objectMap [ rml:reference "Abstract" ] ];
+
+  rr:predicateObjectMap [
+    rr:predicate bibo:issn;
+    rr:objectMap [ rml:reference "ISSN" ] ];
+
+  rr:predicateObjectMap [
+    rr:predicate bibo:isbn13;
+    rr:objectMap [ rml:reference "ISBN" ] ];
+
+  rr:predicateObjectMap [
+    rr:predicate bibo:uri;
+    rr:objectMap [ rml:reference "URL" ; rr:termType rr:IRI ] ];
+
+  rr:predicateObjectMap [
+    rr:predicate im:webOfScience;
+    rr:objectMap [ rml:reference "WOS" ] ];
+
+  rr:predicateObjectMap [
+    rr:predicate dcterms:issued;
+    rr:objectMap [ rml:reference "Jaar van publicatie" ; rr:datatype xsd:gYear ] ];
+
+  rr:predicateObjectMap [
+    rr:predicate im:publishedIn;
+    rr:objectMap [ rml:reference "Gepubliceerd in" ] ];
+
+  rr:predicateObjectMap [
+    rr:predicate im:publishedIn;
+    rr:objectMap [ rml:reference "Conferentie titel" ] ];
+
+  rr:predicateObjectMap [
+    rr:predicate im:publicationCategory;
+    rr:objectMap [ rml:reference "Publication category" ] ].
