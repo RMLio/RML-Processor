@@ -81,7 +81,8 @@ public abstract class AbstractTermMapProcessor implements TermMapProcessor{
                             temp = temp.replaceAll("\\[", "").replaceAll("\\]", "");
                         }
                         //JSONPath expression cause problems when replacing, remove the $ first
-                        if ((map.getOwnTriplesMap().getLogicalSource().getReferenceFormulation() == QLTerm.JSONPATH_CLASS)
+                        if ((map.getOwnTriplesMap().getLogicalSource().getReferenceFormulation() == 
+                                QLTerm.JSONPATH_CLASS)
                                 && expression.contains("$")) {
                             expression = expression.replaceAll("\\$", "");
                             temp = temp.replaceAll("\\$", "");
