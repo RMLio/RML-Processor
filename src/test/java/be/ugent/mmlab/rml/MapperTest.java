@@ -199,11 +199,11 @@ public class MapperTest
         return desiredOutput;
     }
     
-    private RMLDataset desiredContextOutput (URL outputURL){
+    /*private RMLDataset desiredContextOutput (URL outputURL){
         RMLDataset desiredOutput = new StdRMLDataset(false);
         desiredOutput.addFile(outputURL.getFile(), RDFFormat.NQUADS);
         return desiredOutput;
-    }
+    }*/
     
     private RMLDataset assertMap(URL mappingURL, 
             Map<String, String> parameters, String[] triplesMap) {

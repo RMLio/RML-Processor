@@ -171,15 +171,15 @@ public class RMLEngine {
             RMLProcessor processor = generateRMLProcessor(triplesMap);
 
             log.info("Generating Data Retrieval Processor..");
-            InputStream input = generateInputStream(triplesMap, parameters);
+            SourceProcessor inputProcessor = 
+                    generateInputProcessor(triplesMap, parameters);
+           
+            do {
+                dataset = processInputStream(processor, inputProcessor,
+                        triplesMap, parameters, exeTriplesMap, dataset);
+            } while (inputProcessor.hasNextInputStream());
+            
             try {
-                log.debug("Generating Performer..");
-                NodeRMLPerformer performer = new NodeRMLPerformer(processor);
-
-                log.debug("Executing Mapping Processor..");
-                processor.execute(dataset, triplesMap, performer, 
-                        input, exeTriplesMap, false);
-
                 log.info((dataset.getSize() - delta)
                         + " triples were generated for " 
                         + triplesMap.getName());
@@ -188,12 +188,6 @@ public class RMLEngine {
             } catch (Exception ex) {
                 log.error("Exception " + ex);
                 log.error("The execution of the mapping failed.");
-            }
-
-            try {
-                input.close();
-            } catch (IOException ex) {
-                log.error("IOException " + ex);
             }
         }
         return dataset;
@@ -219,7 +213,7 @@ public class RMLEngine {
     }
     
     //TODO: Check if it's needed here or if I should take it to the DataRetrieval
-    private InputStream generateInputStream(
+    private SourceProcessor generateInputProcessor(
             TriplesMap triplesMap, Map<String, String> parameters) {
         ConcreteLogicalSourceProcessorFactory logicalSourceProcessorFactory = 
                 new ConcreteLogicalSourceProcessorFactory();
@@ -228,9 +222,37 @@ public class RMLEngine {
                 logicalSourceProcessorFactory.
                 createSourceProcessor(triplesMap.getLogicalSource().getSource());
 
+        return inputProcessor;
+    }
+    
+    private StdRMLDataset processInputStream(
+            RMLProcessor processor, SourceProcessor inputProcessor, 
+            TriplesMap triplesMap, Map<String, String> parameters,
+            String[] exeTriplesMap, StdRMLDataset dataset) {
+        
+        log.debug("Generating Input Stream..");
         InputStream input = inputProcessor.getInputStream(
                 triplesMap.getLogicalSource(), parameters);
-        return input;
+
+        try {
+            log.debug("Generating Performer..");
+            NodeRMLPerformer performer = new NodeRMLPerformer(processor);
+
+            log.debug("Executing Mapping Processor..");
+            processor.execute(dataset, triplesMap, performer,
+                    input, exeTriplesMap, false);
+            
+        } catch (Exception ex) {
+            log.error("Exception " + ex);
+            log.error("The execution of the mapping failed.");
+        }
+        
+        try {
+            input.close();
+        } catch (IOException ex) {
+            log.error("IOException " + ex);
+        }  
+        return dataset;
     }
     
     private void generateMetaData(
