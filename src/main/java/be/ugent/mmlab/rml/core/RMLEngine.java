@@ -197,7 +197,11 @@ public class RMLEngine {
         RMLProcessor processor = null;
         RMLProcessorFactory factory = new ConcreteRMLProcessorFactory();
         
-        log.debug("Logical Source: " 
+        if(triplesMap.getLogicalSource() == null)
+            log.error(triplesMap.getName() + " Logical Source: " 
+                    + triplesMap.getLogicalSource());
+        else
+            log.debug("Logical Source: " 
                     + triplesMap.getLogicalSource());
         log.debug("Reference formulation: " 
                     + triplesMap.getLogicalSource().getReferenceFormulation());

@@ -147,7 +147,7 @@ public class XPathProcessor extends AbstractRMLProcessor {
                 @Override
                 public void onNodeHit(
                         Expression expression, NodeItem nodeItem) {
-                    log.debug("Expression " + expression);
+                    //log.debug("Expression " + expression);
                     Node node = (Node) nodeItem.xml;
                     //Let the performer do its thing
                     performer.perform(
