@@ -105,11 +105,11 @@
             <artifactId>RML-DataRetrieval</artifactId>
             <version>1.0</version>
         </dependency>
-        <!-- <dependency>
+        <dependency>
             <groupId>be.ugent.mmlab.rml</groupId>
             <artifactId>RML-Metadata</artifactId>
             <version>1.0</version>
-        </dependency> -->
+        </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
