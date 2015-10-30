@@ -48,8 +48,8 @@ public class RMLConfiguration {
                 "arguments for the source template");
         cliOptions.addOption("g", "graph", false, 
                 "the graph to use");
-        cliOptions.addOption("prov", "prov", false, 
-                "the provenance graph");
+        cliOptions.addOption("prov", "prov", true, 
+                "the provenance level");
         cliOptions.addOption("s", "schemas", false, 
                 "schemas");
         //cliOptions.addOption("t", "tests are enabled", false, 

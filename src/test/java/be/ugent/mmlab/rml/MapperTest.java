@@ -1,6 +1,7 @@
 package be.ugent.mmlab.rml;
 
 import be.ugent.mmlab.rml.core.RMLEngine;
+import be.ugent.mmlab.rml.core.StdRMLEngine;
 import be.ugent.mmlab.rml.model.dataset.RMLDataset;
 import be.ugent.mmlab.rml.model.dataset.StdRMLDataset;
 import be.ugent.mmlab.rml.mapdochandler.extraction.std.StdRMLMappingFactory;
@@ -220,7 +221,7 @@ public class MapperTest
             log.info("========================================");
             log.info("Extracting the RML Mapping Definitions..");
             log.info("========================================");
-            RMLEngine engine = new RMLEngine();
+            RMLEngine engine = new StdRMLEngine();
             RMLMapping mapping = mappingFactory.extractRMLMapping(repository);
             
             log.info("========================================");

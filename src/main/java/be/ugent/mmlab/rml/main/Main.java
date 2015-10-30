@@ -1,7 +1,8 @@
 package be.ugent.mmlab.rml.main;
 
 import be.ugent.mmlab.rml.config.RMLConfiguration;
-import be.ugent.mmlab.rml.core.RMLEngine;
+import be.ugent.mmlab.rml.core.StdRMLEngine;
+import be.ugent.mmlab.rml.core.RMLEngineMeta;
 import be.ugent.mmlab.rml.model.dataset.RMLDataset;
 import be.ugent.mmlab.rml.mapdochandler.extraction.std.StdRMLMappingFactory;
 import be.ugent.mmlab.rml.mapdochandler.retrieval.RMLDocRetrieval;
@@ -34,7 +35,6 @@ public class Main {
         BasicConfigurator.configure();
         CommandLine commandLine;
         StdRMLMappingFactory mappingFactory = new StdRMLMappingFactory();
-        RMLEngine engine = new RMLEngine();
         
         System.out.println("-------------------------------------------------");
         System.out.println("RML Processor");
@@ -44,7 +44,7 @@ public class Main {
         try {
             commandLine = RMLConfiguration.parseArguments(args);
             String outputFile = null, outputFormat = "turtle";
-            String graphName = "";
+            String graphName = "", prov = null;
 
             if (commandLine.hasOption("h")) {
                 RMLConfiguration.displayHelp();
@@ -64,6 +64,10 @@ public class Main {
             
             if (commandLine.hasOption("m")) {
                 map_doc = commandLine.getOptionValue("m", null);
+            }
+            
+            if (commandLine.hasOption("prov")) {
+                prov = commandLine.getOptionValue("prov", null);
             }
             
             //Retrieve the Mapping Document
@@ -89,9 +93,24 @@ public class Main {
             log.info("========================================");
             log.info("Running the RML Mapping..");
             log.info("========================================");
-            RMLDataset dataset = 
+            RMLDataset dataset;
+            if(prov == null){
+                log.debug("No MetaData");
+                //RML Engine that does not generate metadata
+                StdRMLEngine engine = new StdRMLEngine();
+                dataset = 
                     engine.runRMLMapping(mapping, graphName, outputFile, 
-                    outputFormat, parameters, exeTriplesMap);  
+                    outputFormat, parameters, exeTriplesMap, prov);  
+            }
+            else{
+                log.debug("With MetaData");
+                //RML Rngine that generates metadata too
+                StdRMLEngine engine = 
+                        new RMLEngineMeta(outputFile, outputFormat);
+                dataset = 
+                    engine.runRMLMapping(mapping, graphName, outputFile, 
+                    outputFormat, parameters, exeTriplesMap, prov);  
+            }
             dataset.closeRepository();
             System.exit(0);
             
