@@ -12,6 +12,7 @@ import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.RMLProcessor;
 import be.ugent.mmlab.rml.processor.RMLProcessorFactory;
 import be.ugent.mmlab.rml.processor.concrete.ConcreteRMLProcessorFactory;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -19,6 +20,7 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Properties;
+import org.openrdf.repository.manager.LocalRepositoryManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,6 +42,7 @@ public class StdRMLEngine implements RMLEngine {
     //Properties containing the identifiers for files
     //There are probably better ways to do this than a static variable
     private static Properties fileMap = new Properties();
+    LocalRepositoryManager manager;
 
     public static Properties getFileMap() {
         return fileMap;
@@ -82,7 +85,7 @@ public class StdRMLEngine implements RMLEngine {
             String baseIRI, String pathToNativeStore, String outputFormat, 
             Map<String, String> parameters, String[] exeTriplesMap, String prov) {
         long startTime = System.nanoTime();
-        StdRMLDataset dataset ;
+        RMLDataset dataset ;
 
         log.debug("Running RML mapping... ");
         if (rmlMapping == null) 
@@ -90,7 +93,7 @@ public class StdRMLEngine implements RMLEngine {
         if (baseIRI == null) 
             log.info("No base IRI found.");
         
-        dataset = chooseSesameDataSet(pathToNativeStore, outputFormat);
+        dataset = chooseSesameDataSet("dataset", pathToNativeStore, outputFormat);
         log.debug("Dataset repository generated");
         // Update baseIRI
         this.baseIRI = baseIRI;
@@ -106,18 +109,21 @@ public class StdRMLEngine implements RMLEngine {
         return dataset;
     }
     
-    protected StdRMLDataset chooseSesameDataSet(
+    protected RMLDataset chooseSesameDataSet(String repositoryID,
             String pathToNativeStore, String outputFormat){
-        StdRMLDataset dataset;
-        if (pathToNativeStore != null) {
-            log.debug("Using direct file " + pathToNativeStore);
-            dataset = new FileDataset(pathToNativeStore, outputFormat);
-        } else {
-            log.debug("Using default store (memory) ");
-            dataset = new StdRMLDataset();
-        }
+
+            RMLDataset dataset;
+            
+            if (pathToNativeStore != null) {
+                log.debug("Using direct file " + pathToNativeStore);
+                dataset = new FileDataset(
+                        pathToNativeStore, outputFormat, manager, repositoryID);
+            } else {
+                log.debug("Using default store (memory) ");
+                dataset = new StdRMLDataset();
+            }
+                    
         return dataset;
-        
     }
 
     /**
@@ -128,8 +134,8 @@ public class StdRMLEngine implements RMLEngine {
      * @param sesameDataSet
      * @param rmlMapping
      */
-    protected StdRMLDataset generateRDFTriples(
-            StdRMLDataset sesameDataSet, RMLMapping rmlMapping, 
+    protected RMLDataset generateRDFTriples(
+            RMLDataset sesameDataSet, RMLMapping rmlMapping, 
             Map<String, String> parameters, String[] exeTriplesMap) {
 
         log.debug("Generate RDF triples... ");
@@ -145,17 +151,17 @@ public class StdRMLEngine implements RMLEngine {
             triplesMaps = rmlMapping.getTriplesMaps();
 
         for (TriplesMap triplesMap : triplesMaps) {
-            sesameDataSet = this.generateTriplesMapTriples(triplesMap, parameters, 
-                    exeTriplesMap, sesameDataSet);
+            sesameDataSet = this.generateTriplesMapTriples(
+                    triplesMap, parameters, exeTriplesMap, sesameDataSet);
         }
 
         return sesameDataSet;
     }
     
     @Override
-    public StdRMLDataset generateTriplesMapTriples(
+    public RMLDataset generateTriplesMapTriples(
             TriplesMap triplesMap, Map<String, String> parameters,
-            String[] exeTriplesMap, StdRMLDataset dataset) {
+            String[] exeTriplesMap, RMLDataset dataset) {
         boolean flag = true;
         int delta = 0;
 
@@ -182,20 +188,21 @@ public class StdRMLEngine implements RMLEngine {
                         triplesMap, parameters, exeTriplesMap, dataset);
             } while (inputProcessor.hasNextInputStream());
             
-            try {
+            /*try {
                 log.info((dataset.getSize() - delta)
                         + " triples were generated for " 
                         + triplesMap.getName());
                 //TODO: Add metadata that this Triples Map generatedthat many triples
-                delta = dataset.getSize();
+                //delta = dataset.getSize();
             } catch (Exception ex) {
                 log.error("Exception " + ex);
                 log.error("The execution of the mapping failed.");
-            }
+            }*/
         }
         return dataset;
     }
     
+    @Override
     public RMLProcessor generateRMLProcessor(TriplesMap triplesMap) {
         RMLProcessor processor = null;
         RMLProcessorFactory factory = new ConcreteRMLProcessorFactory();
@@ -232,10 +239,10 @@ public class StdRMLEngine implements RMLEngine {
         return inputProcessor;
     }
     
-    protected StdRMLDataset processInputStream(
+    protected RMLDataset processInputStream(
             RMLProcessor processor, SourceProcessor inputProcessor, 
             TriplesMap triplesMap, Map<String, String> parameters,
-            String[] exeTriplesMap, StdRMLDataset dataset) {
+            String[] exeTriplesMap, RMLDataset dataset) {
         
         log.debug("Generating Input Stream..");
         InputStream input = inputProcessor.getInputStream(
@@ -263,7 +270,7 @@ public class StdRMLEngine implements RMLEngine {
     }
     
     private void generateMetaData(
-            StdRMLDataset sesameDataSet, long startTime) {
+            RMLDataset sesameDataSet, long startTime) {
         //TODO:add metadata this Triples Map started then, finished then and lasted that much
         long endTime = System.nanoTime();
         long duration = endTime - startTime;

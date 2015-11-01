@@ -11,8 +11,8 @@ import be.ugent.mmlab.rml.processor.termmap.concrete.ConcreteTermMapFactory;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.openrdf.model.Resource;
+import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import org.openrdf.model.impl.URIImpl;
 
@@ -52,11 +52,15 @@ public class SimpleReferencePerformer extends NodeRMLPerformer {
             Resource object = processor.processSubjectMap(
                     dataset, map.getSubjectMap(), node); 
             if (object != null) {
-                dataset.add(subject, predicate, object);
-                log.debug("Subject " + subject 
-                        + " Predicate " + predicate 
-                        + " Object " + object.toString());
-
+                List<Statement> triples =
+                        dataset.tuplePattern(subject, predicate, object);
+                if(triples.size() == 0) {
+                    dataset.add(subject, predicate, object);
+                    log.debug("Subject " + subject
+                            + " Predicate " + predicate
+                            + " Object " + object.toString());
+                }
+                
                 if ((map.getLogicalSource().getReferenceFormulation().toString().
                         equals("CSV"))
                         || (map.getLogicalSource().getReferenceFormulation().toString().
@@ -94,11 +98,14 @@ public class SimpleReferencePerformer extends NodeRMLPerformer {
                     termMapProcessor.processTermMap(map.getSubjectMap(), node);        
             for(String value : values){
                 Resource object = new URIImpl(value);
-
-                dataset.add(subject, predicate, object);
-                log.debug("Subject " + subject 
-                        + " Predicate " + predicate 
-                        + "Object " + object.toString());
+                List<Statement> triples =
+                        dataset.tuplePattern(subject, predicate, object);
+                if (triples.size() == 0) {
+                    dataset.add(subject, predicate, object);
+                    log.debug("Subject " + subject
+                            + " Predicate " + predicate
+                            + " Object " + object.toString());
+                }
             }   
         }    
     }

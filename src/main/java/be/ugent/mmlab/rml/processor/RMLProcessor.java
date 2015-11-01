@@ -48,6 +48,13 @@ public interface RMLProcessor {
     public Resource processSubjectMap(RMLDataset dataset, 
             SubjectMap subjectMap, Object node);
     
+    /**
+     *
+     * @param dataset
+     * @param subject
+     * @param subjectMap
+     * @param node
+     */
     public void processSubjectTypeMap(RMLDataset dataset, Resource subject, 
             SubjectMap subjectMap, Object node);
     
@@ -120,5 +127,17 @@ public interface RMLProcessor {
      * @return
      */
     public String cleansing(String value);
+    
+    /**
+     *
+     * @return
+     */
+    public Integer getEntities();
+    
+    /**
+     *
+     * @return
+     */
+    public Integer getDistinctSubjects();
     
 }

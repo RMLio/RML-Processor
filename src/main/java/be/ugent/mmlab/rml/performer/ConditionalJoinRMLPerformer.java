@@ -10,6 +10,7 @@ import be.ugent.mmlab.rml.processor.termmap.concrete.ConcreteTermMapFactory;
 import java.util.HashMap;
 import java.util.List;
 import org.openrdf.model.Resource;
+import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import org.openrdf.model.Value;
 import org.slf4j.Logger;
@@ -85,10 +86,14 @@ public class ConditionalJoinRMLPerformer extends NodeRMLPerformer{
             if(flag){
                 object = processor.processSubjectMap(dataset, map.getSubjectMap(), node);
                 if (subject != null && object != null){
-                    dataset.add(subject, predicate, object);
-                    log.debug("Subject " + subject 
-                            + " Predicate " + predicate 
-                            + " Object " + object.toString());
+                    List<Statement> triples =
+                            dataset.tuplePattern(subject, predicate, object);
+                    if (triples.size() == 0) {
+                        dataset.add(subject, predicate, object);
+                        log.debug("Subject " + subject
+                                + " Predicate " + predicate
+                                + " Object " + object.toString());
+                    }
                     
                     if (exeTriplesMap != null) {
                         RMLExecutionEngine executionEngine =

@@ -109,7 +109,7 @@ public abstract class AbstractTermMapProcessor implements TermMapProcessor{
 
                     }
                 }
-                                
+                
                 //Check if there are any placeholders left in the templates and remove uris that are not
                 List<String> validValues = new ArrayList<>();
                 for (String uri : values){

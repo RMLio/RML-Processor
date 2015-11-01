@@ -3,10 +3,11 @@ package be.ugent.mmlab.rml.performer;
 import be.ugent.mmlab.rml. model.dataset.RMLDataset;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.RMLProcessor;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.openrdf.model.Resource;
+import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import org.openrdf.model.Value;
 
@@ -50,8 +51,12 @@ public class JoinRMLPerformer extends NodeRMLPerformer{
             return;
         }       
         
-        //add the join triple
-        dataset.add(subject, predicate, object);
+        List<Statement> triples =
+                dataset.tuplePattern(subject, predicate, object);
+        if (triples.size() == 0) {
+            //add the join triple
+            dataset.add(subject, predicate, object);
+        }
 
         if(pomExecution){
             NestedRMLPerformer nestedPerformer = 

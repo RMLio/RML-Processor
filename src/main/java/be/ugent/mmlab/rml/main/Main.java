@@ -66,8 +66,8 @@ public class Main {
                 map_doc = commandLine.getOptionValue("m", null);
             }
             
-            if (commandLine.hasOption("prov")) {
-                prov = commandLine.getOptionValue("prov", null);
+            if (commandLine.hasOption("md")) {
+                prov = commandLine.getOptionValue("md", null);
             }
             
             //Retrieve the Mapping Document

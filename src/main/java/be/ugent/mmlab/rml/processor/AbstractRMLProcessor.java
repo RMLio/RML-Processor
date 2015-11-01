@@ -46,6 +46,7 @@ import org.openrdf.model.impl.URIImpl;
 import org.openrdf.model.vocabulary.RDF;
 import java.util.regex.Pattern;
 import org.apache.commons.lang.RandomStringUtils;
+import org.openrdf.model.Statement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,6 +60,7 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractRMLProcessor implements RMLProcessor {
     
+    private Integer entities = 0, distinctSubjects = 0;
     protected TermMapProcessor termMapProcessor ;
 
     /**
@@ -80,6 +82,16 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
      */
     protected String getReference(LogicalSource ls) {
         return ls.getIterator();
+    }
+    
+    @Override
+    public Integer getEntities(){
+        return entities;
+    }
+    
+    @Override
+    public Integer getDistinctSubjects(){
+        return distinctSubjects;
     }
 
     /**
@@ -119,6 +131,8 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                 log.error("No subject was generated for " + subjectMap.toString());
                 return null;
             }
+            else
+                distinctSubjects++;
         }
         
         Resource subject ;
@@ -150,15 +164,20 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
         Set<org.openrdf.model.URI> classIRIs = subjectMap.getClassIRIs();
         if(subject != null)
             for (org.openrdf.model.URI classIRI : classIRIs) 
-                if(subjectMap.getGraphMaps().isEmpty())
-                    dataset.add(subject, RDF.TYPE, classIRI);
+                if (subjectMap.getGraphMaps().isEmpty()) {
+                    List<Statement> triples =
+                            dataset.tuplePattern(subject, RDF.TYPE, classIRI);
+                    if (triples.size() == 0) {
+                        dataset.add(subject, RDF.TYPE, classIRI);
+                    }
+                }
                 else
                     for (GraphMap map : subjectMap.getGraphMaps()) 
                         if (map.getConstantValue() != null) 
                             dataset.add(
                                     subject, RDF.TYPE, classIRI, 
                                     new URIImpl(map.getConstantValue().toString()));
-    }
+                        }
 
     //TODO:move this to Term Map processor
     @Override
@@ -436,10 +455,14 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                     if (object.stringValue() != null) {
                         Set<GraphMap> graphs = pom.getGraphMaps();
                         if (graphs.isEmpty() && subject != null) {
-                            dataset.add(subject, predicate, object);
+                            List<Statement> triples = 
+                                    dataset.tuplePattern(subject, predicate, object);
+                            if(triples.size() == 0)
+                                dataset.add(subject, predicate, object);
                         } else {
                             for (GraphMap graph : graphs) {
-                                Resource graphResource = new URIImpl(graph.getConstantValue().toString());
+                                Resource graphResource = new URIImpl(
+                                        graph.getConstantValue().toString());
                                 dataset.add(subject, predicate, object, graphResource);
                             }
                         }
