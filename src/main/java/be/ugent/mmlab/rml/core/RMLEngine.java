@@ -18,7 +18,7 @@ public interface RMLEngine {
 
     public RMLDataset runRMLMapping(RMLMapping rmlMapping,
             String baseIRI, String pathToNativeStore, String outputFormat, 
-            Map<String, String> parameters, String[] exeTriplesMap, String prov);
+            Map<String, String> parameters, String[] exeTriplesMap, String mdl);
     
     public RMLDataset generateTriplesMapTriples(
             TriplesMap triplesMap, Map<String, String> parameters,

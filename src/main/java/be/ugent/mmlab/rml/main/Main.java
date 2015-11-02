@@ -44,7 +44,7 @@ public class Main {
         try {
             commandLine = RMLConfiguration.parseArguments(args);
             String outputFile = null, outputFormat = "turtle";
-            String graphName = "", prov = null;
+            String graphName = "", md = null, mdl = null;
 
             if (commandLine.hasOption("h")) {
                 RMLConfiguration.displayHelp();
@@ -67,7 +67,11 @@ public class Main {
             }
             
             if (commandLine.hasOption("md")) {
-                prov = commandLine.getOptionValue("md", null);
+                md = commandLine.getOptionValue("md", null);
+            }
+            
+            if (commandLine.hasOption("mdl")) {
+                mdl = commandLine.getOptionValue("mdl", null);
             }
             
             //Retrieve the Mapping Document
@@ -94,13 +98,13 @@ public class Main {
             log.info("Running the RML Mapping..");
             log.info("========================================");
             RMLDataset dataset;
-            if(prov == null){
+            if(md == null){
                 log.debug("No MetaData");
                 //RML Engine that does not generate metadata
                 StdRMLEngine engine = new StdRMLEngine();
                 dataset = 
                     engine.runRMLMapping(mapping, graphName, outputFile, 
-                    outputFormat, parameters, exeTriplesMap, prov);  
+                    outputFormat, parameters, exeTriplesMap, mdl);  
             }
             else{
                 log.debug("With MetaData");
@@ -109,7 +113,7 @@ public class Main {
                         new RMLEngineMeta(outputFile, outputFormat);
                 dataset = 
                     engine.runRMLMapping(mapping, graphName, outputFile, 
-                    outputFormat, parameters, exeTriplesMap, prov);  
+                    outputFormat, parameters, exeTriplesMap, mdl);  
             }
             dataset.closeRepository();
             System.exit(0);

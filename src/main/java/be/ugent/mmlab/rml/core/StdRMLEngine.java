@@ -12,7 +12,6 @@ import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.RMLProcessor;
 import be.ugent.mmlab.rml.processor.RMLProcessorFactory;
 import be.ugent.mmlab.rml.processor.concrete.ConcreteRMLProcessorFactory;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -83,7 +82,7 @@ public class StdRMLEngine implements RMLEngine {
     @Override
     public RMLDataset runRMLMapping(RMLMapping rmlMapping,
             String baseIRI, String pathToNativeStore, String outputFormat, 
-            Map<String, String> parameters, String[] exeTriplesMap, String prov) {
+            Map<String, String> parameters, String[] exeTriplesMap, String mdl) {
         long startTime = System.nanoTime();
         RMLDataset dataset ;
 
@@ -104,7 +103,7 @@ public class StdRMLEngine implements RMLEngine {
         
         log.debug("Generating metadata..");
         //TODO:improve/replace metadata generator
-        generateMetaData(dataset, startTime);
+        generateBasicMetadataInfo(dataset, startTime);
             
         return dataset;
     }
@@ -135,7 +134,7 @@ public class StdRMLEngine implements RMLEngine {
      * @param rmlMapping
      */
     protected RMLDataset generateRDFTriples(
-            RMLDataset sesameDataSet, RMLMapping rmlMapping, 
+            RMLDataset dataset, RMLMapping rmlMapping, 
             Map<String, String> parameters, String[] exeTriplesMap) {
 
         log.debug("Generate RDF triples... ");
@@ -151,11 +150,11 @@ public class StdRMLEngine implements RMLEngine {
             triplesMaps = rmlMapping.getTriplesMaps();
 
         for (TriplesMap triplesMap : triplesMaps) {
-            sesameDataSet = this.generateTriplesMapTriples(
-                    triplesMap, parameters, exeTriplesMap, sesameDataSet);
+            dataset = this.generateTriplesMapTriples(
+                    triplesMap, parameters, exeTriplesMap, dataset);
         }
 
-        return sesameDataSet;
+        return dataset;
     }
     
     @Override
@@ -269,7 +268,7 @@ public class StdRMLEngine implements RMLEngine {
         return dataset;
     }
     
-    private void generateMetaData(
+    private void generateBasicMetadataInfo(
             RMLDataset sesameDataSet, long startTime) {
         //TODO:add metadata this Triples Map started then, finished then and lasted that much
         long endTime = System.nanoTime();

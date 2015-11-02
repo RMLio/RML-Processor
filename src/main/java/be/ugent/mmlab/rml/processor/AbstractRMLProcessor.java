@@ -60,7 +60,7 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractRMLProcessor implements RMLProcessor {
     
-    private Integer entities = 0, distinctSubjects = 0;
+    private Integer entities = 0;
     protected TermMapProcessor termMapProcessor ;
 
     /**
@@ -82,16 +82,6 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
      */
     protected String getReference(LogicalSource ls) {
         return ls.getIterator();
-    }
-    
-    @Override
-    public Integer getEntities(){
-        return entities;
-    }
-    
-    @Override
-    public Integer getDistinctSubjects(){
-        return distinctSubjects;
     }
 
     /**
@@ -131,8 +121,6 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                 log.error("No subject was generated for " + subjectMap.toString());
                 return null;
             }
-            else
-                distinctSubjects++;
         }
         
         Resource subject ;
@@ -152,7 +140,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                 break;
             default:
                 subject = new URIImpl(value);
-        }
+        }        
         return subject;
     }
     
@@ -457,13 +445,15 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                         if (graphs.isEmpty() && subject != null) {
                             List<Statement> triples = 
                                     dataset.tuplePattern(subject, predicate, object);
-                            if(triples.size() == 0)
-                                dataset.add(subject, predicate, object);
+                            if(triples.size() == 0){
+                                dataset.add(subject, predicate, object); 
+                            }
                         } else {
                             for (GraphMap graph : graphs) {
                                 Resource graphResource = new URIImpl(
                                         graph.getConstantValue().toString());
                                 dataset.add(subject, predicate, object, graphResource);
+                                
                             }
                         }
 

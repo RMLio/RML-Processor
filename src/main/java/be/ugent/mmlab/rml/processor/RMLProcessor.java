@@ -127,17 +127,5 @@ public interface RMLProcessor {
      * @return
      */
     public String cleansing(String value);
-    
-    /**
-     *
-     * @return
-     */
-    public Integer getEntities();
-    
-    /**
-     *
-     * @return
-     */
-    public Integer getDistinctSubjects();
-    
+
 }
