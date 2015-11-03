@@ -73,6 +73,9 @@ public class ConditionalJoinRMLPerformer extends NodeRMLPerformer{
                 factory.create(map.getLogicalSource().getReferenceFormulation());
                 
                 List<String> values = termMapProcessor.extractValueFromNode(node, expr);
+                
+                if(values.size() == 0)
+                    flag = false;
 
                 //TODO: check if it stops as soon as it finds something
                 for(String value : values){
