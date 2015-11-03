@@ -67,15 +67,17 @@ public class ConditionalJoinRMLPerformer extends NodeRMLPerformer{
             iter: for (String expr : conditions.keySet()) {
                 log.debug("expr " + expr);
                 String cond = conditions.get(expr);
-                log.debug("cond " + cond);
+                
                 TermMapProcessorFactory factory = new ConcreteTermMapFactory();
                 this.termMapProcessor = 
                 factory.create(map.getLogicalSource().getReferenceFormulation());
                 
                 List<String> values = termMapProcessor.extractValueFromNode(node, expr);
-                
+
                 //TODO: check if it stops as soon as it finds something
                 for(String value : values){
+                    log.debug("value " + value);
+                    log.debug("cond " + cond);
                     if(value == null || !value.equals(cond)){
                             flag = false;
                             break iter;

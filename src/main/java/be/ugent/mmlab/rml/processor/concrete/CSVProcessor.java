@@ -86,7 +86,7 @@ public class CSVProcessor extends AbstractRMLProcessor {
             RMLDataset dataset, String expression, 
             TriplesMap parentTriplesMap, RMLPerformer performer, Object node, 
             Resource subject, String[] exeTriplesMap, boolean pomExecution) {
-        throw new UnsupportedOperationException("Not applicable for CSV sources."); 
+        log.error("Not applicable for CSV sources."); 
         //TODO: implement this
     }
 

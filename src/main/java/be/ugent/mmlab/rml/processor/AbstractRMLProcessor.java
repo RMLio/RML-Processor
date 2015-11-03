@@ -96,7 +96,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
     @Override
     public Resource processSubjectMap(
             RMLDataset dataset, SubjectMap subjectMap, Object node) {  
-
+        Resource subject ;
         //Get the uri
         TermMapProcessorFactory factory = new ConcreteTermMapFactory();
         this.termMapProcessor = 
@@ -109,7 +109,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                 log.error("No subject was generated for " 
                         + subjectMap.getOwnTriplesMap().getName().toString());
                 return null;
-            }
+            } 
             
         String value = null;
         if(subjectMap.getTermType() != BLANK_NODE){
@@ -123,9 +123,9 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
             }
         }
         
-        Resource subject ;
-                
+        
         //TODO: doublicate code from ObjectMap - they should be handled together
+        //TODO:Spring it!
         switch (subjectMap.getTermType()) {
             case IRI:
                 if (value != null && !value.equals("")) 
@@ -353,27 +353,8 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                             node, dataset, parentTriplesMap, exeTriplesMap, false);
                 } else {
                     log.debug("Hierarchical-structured Referencing Object Map");
-                    int end = map.getLogicalSource().getIterator().length();
-                    
-                    String expression = "";
-                    //TODO:merge it with the performer's switch-case
-                    switch (parentTriplesMap.getLogicalSource().getReferenceFormulation().toString()) {
-                        case "XPath":
-                            expression = 
-                                    parentTriplesMap.getLogicalSource()
-                                    .getIterator().toString().substring(end);
-                            break;
-                        case "JSONPath":
-                            expression = 
-                                    parentTriplesMap.getLogicalSource().
-                                    getIterator().toString().substring(end + 1);
-                            break;
-                        case "CSS3":
-                            expression = 
-                                    parentTriplesMap.getLogicalSource().
-                                    getIterator().toString().substring(end);
-                            break;
-                    }
+                    String expression = handleRelevantExpression(map, parentTriplesMap);
+ 
                     processor.execute_node(
                             dataset, expression, parentTriplesMap, 
                             performer, node, null, exeTriplesMap, false);
@@ -389,6 +370,31 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                         joinConditions, exeTriplesMap);
             }
         }
+    }
+    
+    private String handleRelevantExpression(
+            TriplesMap map, TriplesMap parentTriplesMap) {
+        int end = map.getLogicalSource().getIterator().length();
+        String expression = "";
+        //TODO:merge it with the performer's switch-case
+        switch (parentTriplesMap.getLogicalSource().getReferenceFormulation().toString()) {
+            case "XPath":
+                expression =
+                        parentTriplesMap.getLogicalSource()
+                        .getIterator().toString().substring(end);
+                break;
+            case "JSONPath":
+                expression =
+                        parentTriplesMap.getLogicalSource().
+                        getIterator().toString().substring(end + 1);
+                break;
+            case "CSS3":
+                expression =
+                        parentTriplesMap.getLogicalSource().
+                        getIterator().toString().substring(end);
+                break;
+        }
+        return expression;
     }
     
     public Map<String, String> processBindingConditions(
@@ -418,7 +424,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                     node, joinCondition.getChild());
             //Allow multiple values as child - 
             //fits with RML's definition of multiple Object Maps
-            for (String childValue : childValues) {    
+            for (String childValue : childValues) { 
                 joinMap.put(joinCondition.getParent(), childValue);
                 if (joinMap.size() == joinConditions.size()) {
                     performer = new ConditionalJoinRMLPerformer(

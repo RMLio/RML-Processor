@@ -142,6 +142,7 @@ public class StdRMLEngine implements RMLEngine {
         RMLExecutionEngine executionEngine = 
                 new RMLExecutionEngine(exeTriplesMap);
         
+        log.debug("Generating execution list... ");
         if(exeTriplesMap != null && exeTriplesMap.length != 0){
             triplesMaps = executionEngine.
                     processExecutionList(rmlMapping, exeTriplesMap);
@@ -162,7 +163,6 @@ public class StdRMLEngine implements RMLEngine {
             TriplesMap triplesMap, Map<String, String> parameters,
             String[] exeTriplesMap, RMLDataset dataset) {
         boolean flag = true;
-        int delta = 0;
 
         if (exeTriplesMap != null) {
             RMLExecutionEngine executionEngine = 
