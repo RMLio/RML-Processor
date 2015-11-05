@@ -1,6 +1,7 @@
 package be.ugent.mmlab.rml.performer;
 
 import be.ugent.mmlab.rml.core.RMLExecutionEngine;
+import be.ugent.mmlab.rml.model.RDFTerm.TermType;
 import be.ugent.mmlab.rml.model.dataset.RMLDataset;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.RMLProcessor;
@@ -107,12 +108,13 @@ public class ConditionalJoinRMLPerformer extends NodeRMLPerformer{
                                 checkExecutionList(map, exeTriplesMap);
                     }
                     
-                    if (!pomExecution) {
+                    if (!pomExecution || 
+                            map.getSubjectMap().getTermType().equals(TermType.BLANK_NODE)) {
                         log.debug("Nested performer is called");
                         NestedRMLPerformer nestedPerformer =
                                 new NestedRMLPerformer(processor);
                         nestedPerformer.perform(
-                                node, dataset, map, exeTriplesMap, true);
+                                node, dataset, (Resource) object, map, exeTriplesMap, true);
                     }
                 } 
                 else

@@ -2,6 +2,7 @@ package be.ugent.mmlab.rml.performer;
 
 import be.ugent.mmlab.rml.model.dataset.RMLDataset;
 import be.ugent.mmlab.rml.model.PredicateObjectMap;
+import be.ugent.mmlab.rml.model.RDFTerm.TermType;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.RMLProcessor;
 import org.openrdf.model.Resource;
@@ -23,13 +24,12 @@ public class NestedRMLPerformer extends NodeRMLPerformer {
         super(processor);
     }
     
-    @Override
-    public void perform(Object node, RMLDataset dataset, 
+    public void perform(Object node, RMLDataset dataset, Resource refObjSub,
             TriplesMap map, String[] exeTriplesMap, boolean pomExecution) {
-        if (pomExecution) {
+        if (pomExecution || map.getSubjectMap().getTermType().equals(TermType.BLANK_NODE)) {
             log.debug("Executing entirely the Referencing Object Map.");
-            Resource refObjSub = processor.processSubjectMap(
-                    dataset, map.getSubjectMap(), node);
+            //Resource refObjSub = processor.processSubjectMap(
+            //        dataset, map.getSubjectMap(), node);
             processor.processSubjectTypeMap(
                     dataset, refObjSub, map.getSubjectMap(), node);
             for (PredicateObjectMap pom : map.getPredicateObjectMaps()) {
