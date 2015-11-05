@@ -173,7 +173,8 @@ public class XPathProcessor extends AbstractRMLProcessor {
         } catch (XPathException ex) {
             log.error("XPathException " + ex 
                     + " for the expression " 
-                    + getReference(map.getLogicalSource()));
+                    + getReference(map.getLogicalSource()) 
+                    + " of " + map.getName() + " Triples Map");
         } 
     }
     

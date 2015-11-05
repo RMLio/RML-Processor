@@ -48,7 +48,7 @@ public class SimpleReferencePerformer extends NodeRMLPerformer {
             RMLProcessorFactory factory = new ConcreteRMLProcessorFactory();
             RMLProcessor subprocessor = factory.create(
                     map.getLogicalSource().getReferenceFormulation());
-            RMLPerformer performer = new NodeRMLPerformer(subprocessor);            
+            RMLPerformer performer = new NodeRMLPerformer(subprocessor); 
             Resource object = processor.processSubjectMap(
                     dataset, map.getSubjectMap(), node); 
             if (object != null) {

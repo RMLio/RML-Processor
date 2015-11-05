@@ -348,7 +348,9 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                         || (parentTriplesMap.getLogicalSource().getIterator().
                             equals(map.getLogicalSource().getIterator()))
                     ) {
-                    log.debug("Tabular-structured Referencing Object Map");
+                    log.debug("Tabular-structured Referencing Object Map "
+                            + "or Hierarchical-structured Referencing Object Map "
+                            + "with the same iterator");
                     performer.perform(
                             node, dataset, parentTriplesMap, exeTriplesMap, false);
                 } else {

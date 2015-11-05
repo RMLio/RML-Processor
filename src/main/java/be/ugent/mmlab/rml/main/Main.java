@@ -44,7 +44,7 @@ public class Main {
         try {
             commandLine = RMLConfiguration.parseArguments(args);
             String outputFile = null, outputFormat = "turtle";
-            String graphName = "", md = null, mdl = null;
+            String graphName = "", md = null, mdl = null, mdf = "turtle";
 
             if (commandLine.hasOption("h")) {
                 RMLConfiguration.displayHelp();
@@ -74,6 +74,10 @@ public class Main {
                 mdl = commandLine.getOptionValue("mdl", null);
             }
             
+            if (commandLine.hasOption("mdf")) {
+                mdf = commandLine.getOptionValue("mdf", null);
+            }
+            
             //Retrieve the Mapping Document
             log.info("========================================");
             log.info("Retrieving the RML Mapping Document...");
@@ -81,6 +85,11 @@ public class Main {
             RMLDocRetrieval mapDocRetrieval = new RMLDocRetrieval();
             Repository repository = 
                     mapDocRetrieval.getMappingDoc(map_doc, RDFFormat.TURTLE);
+            
+            if(repository == null){
+                log.debug("Problem retrieving the RML Mapping Document");
+                System.exit(1);
+            }
             
             log.info("========================================");
             log.info("Extracting the RML Mapping Definitions..");

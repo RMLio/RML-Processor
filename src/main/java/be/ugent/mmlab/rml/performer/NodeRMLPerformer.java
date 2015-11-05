@@ -24,6 +24,7 @@ public class NodeRMLPerformer implements RMLPerformer {
     private static final Logger log = 
             LoggerFactory.getLogger(NodeRMLPerformer.class);
     protected RMLProcessor processor;
+    protected boolean blankValues = false;
 
     /**
      *
@@ -31,6 +32,11 @@ public class NodeRMLPerformer implements RMLPerformer {
      */
     public NodeRMLPerformer(RMLProcessor processor) {
         this.processor = processor;
+    }
+    
+    public NodeRMLPerformer(RMLProcessor processor, boolean blank) {
+        this.processor = processor;
+        this.blankValues = blank;
     }
 
     /**
