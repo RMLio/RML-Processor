@@ -51,7 +51,9 @@ public class RMLConfiguration {
         cliOptions.addOption("md", "md", true, 
                 "the metadata vocabulary: prov, void, dcat");
         cliOptions.addOption("mdl", "mdl", true, 
-                "the metadata level: dataset (default), triplesMap");
+                "the metadata level: dataset (default), triplesmap, triple");
+        cliOptions.addOption("mdf", "mdf", true, 
+                "the metadata format: same as output by default");
         cliOptions.addOption("s", "schemas", false, 
                 "schemas");
         //cliOptions.addOption("t", "tests are enabled", false, 

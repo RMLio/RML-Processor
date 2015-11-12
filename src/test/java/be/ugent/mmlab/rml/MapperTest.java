@@ -215,6 +215,7 @@ public class MapperTest
     
     private RMLDataset assertMap(URL mappingURL, 
             Map<String, String> parameters, String[] triplesMap) {
+        RMLDataset dataset;
         try {
             StdRMLMappingFactory mappingFactory = new StdRMLMappingFactory();
             //Retrieve the Mapping Document
@@ -234,7 +235,8 @@ public class MapperTest
             log.info("========================================");
             log.info("Running the RML Mapping..");
             log.info("========================================");
-            RMLDataset output = engine.runRMLMapping(
+            RMLDataset output = engine.chooseSesameDataSet("dataset", null, null);
+            output = engine.runRMLMapping(output,
                     mapping, "http://example.com", parameters, triplesMap);
             if(output != null)
                 output.dumpRDF(System.out, RDFFormat.TURTLE);

@@ -148,8 +148,17 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
     public void processSubjectTypeMap(
             RMLDataset dataset, Resource subject, SubjectMap subjectMap, Object node) {
 
-        //Add the type triples
+        boolean flag = false;
         Set<org.openrdf.model.URI> classIRIs = subjectMap.getClassIRIs();
+        String[] vocabs = dataset.getMetadataVocab();
+        if (vocabs.length == 0) {
+            flag = true;
+        }
+        for (String vocab : vocabs) {
+            if (vocab.equals("prov")) {
+                flag = true;
+            }
+        }
         if(subject != null)
             for (org.openrdf.model.URI classIRI : classIRIs) 
                 if (subjectMap.getGraphMaps().isEmpty()) {
@@ -157,6 +166,15 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                             dataset.tuplePattern(subject, RDF.TYPE, classIRI);
                     if (triples.size() == 0) {
                         dataset.add(subject, RDF.TYPE, classIRI);
+
+                        if (dataset.getMetadataLevel().equals("triple")) {
+                            if (flag == true) {
+                                dataset.getMetadataDataset().addReification(
+                                        subject, classIRI, subject, subjectMap.getOwnTriplesMap());
+                            }
+
+                        }
+
                     }
                 }
                 else

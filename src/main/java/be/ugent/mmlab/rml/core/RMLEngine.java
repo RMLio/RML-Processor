@@ -12,18 +12,20 @@ import java.util.Map;
  */
 public interface RMLEngine {
     
-    public RMLDataset runRMLMapping(
+    /*public RMLDataset runRMLMapping(
     RMLMapping rmlMapping, String baseIRI, 
-            Map<String, String> parameters, String[] triplesMap);
+            Map<String, String> parameters, String[] triplesMap);*/
 
-    public RMLDataset runRMLMapping(RMLMapping rmlMapping,
-            String baseIRI, String pathToNativeStore, String outputFormat, 
-            Map<String, String> parameters, String[] exeTriplesMap, String mdl);
+    public RMLDataset runRMLMapping(RMLDataset dataset, RMLMapping rmlMapping,
+            String baseIRI, Map<String, String> parameters, String[] exeTriplesMap);
     
     public RMLDataset generateTriplesMapTriples(
             TriplesMap triplesMap, Map<String, String> parameters,
             String[] exeTriplesMap, RMLDataset dataset);
     
     public RMLProcessor generateRMLProcessor(TriplesMap triplesMap);
+    
+    public RMLDataset chooseSesameDataSet(String repositoryID,
+            String pathToNativeStore, String outputFormat);
     
 }

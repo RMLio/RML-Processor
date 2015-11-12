@@ -14,8 +14,6 @@ import be.ugent.mmlab.rml.processor.RMLProcessorFactory;
 import be.ugent.mmlab.rml.processor.concrete.ConcreteRMLProcessorFactory;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Properties;
@@ -61,14 +59,13 @@ public class StdRMLEngine implements RMLEngine {
      * @throws SQLException
      * @throws UnsupportedEncodingException
      */
-    @Override
-    public RMLDataset runRMLMapping(
-    RMLMapping rmlMapping, String baseIRI, 
-            Map<String, String> parameters, String[] triplesMap) {
-        return runRMLMapping( 
-                rmlMapping, baseIRI, null, "ntriples", 
-                parameters, triplesMap, null);
-    }
+    /*@Override
+    public RMLDataset runRMLMapping(RMLDataset dataset, 
+        RMLMapping rmlMapping, String baseIRI, 
+        Map<String, String> parameters, String[] triplesMap) {
+        return runRMLMapping( dataset,
+                rmlMapping, baseIRI, parameters, triplesMap);
+    }*/
 
     /**
      *
@@ -80,19 +77,16 @@ public class StdRMLEngine implements RMLEngine {
      * 
      */
     @Override
-    public RMLDataset runRMLMapping(RMLMapping rmlMapping,
-            String baseIRI, String pathToNativeStore, String outputFormat, 
-            Map<String, String> parameters, String[] exeTriplesMap, String mdl) {
+    public RMLDataset runRMLMapping(RMLDataset dataset, RMLMapping rmlMapping, 
+        String baseIRI, Map<String, String> parameters, String[] exeTriplesMap) {
         long startTime = System.nanoTime();
-        RMLDataset dataset ;
-
+        
         log.debug("Running RML mapping... ");
         if (rmlMapping == null) 
             log.info("No RML Mapping object found.");
         if (baseIRI == null) 
             log.info("No base IRI found.");
         
-        dataset = chooseSesameDataSet("dataset", pathToNativeStore, outputFormat);
         log.debug("Dataset repository generated");
         // Update baseIRI
         this.baseIRI = baseIRI;
@@ -101,22 +95,22 @@ public class StdRMLEngine implements RMLEngine {
         dataset = generateRDFTriples(
                 dataset, rmlMapping, parameters, exeTriplesMap);
         
-        log.debug("Generating metadata..");
-        //TODO:improve/replace metadata generator
+        log.debug("Generating dataset metadata..");
         generateBasicMetadataInfo(dataset, startTime);
             
         return dataset;
     }
     
-    protected RMLDataset chooseSesameDataSet(String repositoryID,
+    @Override
+    public RMLDataset chooseSesameDataSet(String repositoryID,
             String pathToNativeStore, String outputFormat){
 
             RMLDataset dataset;
             
             if (pathToNativeStore != null) {
                 log.debug("Using direct file " + pathToNativeStore);
-                dataset = new FileDataset(
-                        pathToNativeStore, outputFormat, manager, repositoryID);
+                dataset = new FileDataset(pathToNativeStore, outputFormat, 
+                        manager, repositoryID);
             } else {
                 log.debug("Using default store (memory) ");
                 dataset = new StdRMLDataset();
@@ -249,7 +243,8 @@ public class StdRMLEngine implements RMLEngine {
 
         try {
             log.debug("Generating Performer..");
-            NodeRMLPerformer performer = new NodeRMLPerformer(processor);
+            NodeRMLPerformer performer = 
+                    new NodeRMLPerformer(processor);
 
             log.debug("Executing Mapping Processor..");
             processor.execute(dataset, triplesMap, performer,

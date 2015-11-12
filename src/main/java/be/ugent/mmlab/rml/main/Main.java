@@ -1,6 +1,7 @@
 package be.ugent.mmlab.rml.main;
 
 import be.ugent.mmlab.rml.config.RMLConfiguration;
+import be.ugent.mmlab.rml.core.RMLEngine;
 import be.ugent.mmlab.rml.core.StdRMLEngine;
 import be.ugent.mmlab.rml.core.RMLEngineMeta;
 import be.ugent.mmlab.rml.model.dataset.RMLDataset;
@@ -22,13 +23,14 @@ import org.slf4j.LoggerFactory;
  * @author mielvandersande, andimou
  */
 public class Main {
+    // Log
+    static Logger log = LoggerFactory.getLogger(Main.class);
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // Log
-        Logger log = LoggerFactory.getLogger(Main.class);
+        
         String map_doc = null, triplesMap ;
         String[] exeTriplesMap = null;
         Map<String, String> parameters = null;
@@ -44,7 +46,8 @@ public class Main {
         try {
             commandLine = RMLConfiguration.parseArguments(args);
             String outputFile = null, outputFormat = "turtle";
-            String graphName = "", md = null, mdl = null, mdf = "turtle";
+            String graphName = "", metadataVocab = null, metadataLevel = "None", 
+                    metadataFormat = null;
 
             if (commandLine.hasOption("h")) {
                 RMLConfiguration.displayHelp();
@@ -67,15 +70,16 @@ public class Main {
             }
             
             if (commandLine.hasOption("md")) {
-                md = commandLine.getOptionValue("md", null);
+                metadataVocab = commandLine.getOptionValue("md", null);
             }
             
             if (commandLine.hasOption("mdl")) {
-                mdl = commandLine.getOptionValue("mdl", null);
+                metadataLevel = commandLine.getOptionValue("mdl", null);
+                log.debug("metadataLevel " + metadataLevel);
             }
             
             if (commandLine.hasOption("mdf")) {
-                mdf = commandLine.getOptionValue("mdf", null);
+                metadataFormat = commandLine.getOptionValue("mdf", null);
             }
             
             //Retrieve the Mapping Document
@@ -107,23 +111,18 @@ public class Main {
             log.info("Running the RML Mapping..");
             log.info("========================================");
             RMLDataset dataset;
-            if(md == null){
-                log.debug("No MetaData");
-                //RML Engine that does not generate metadata
-                StdRMLEngine engine = new StdRMLEngine();
-                dataset = 
-                    engine.runRMLMapping(mapping, graphName, outputFile, 
-                    outputFormat, parameters, exeTriplesMap, mdl);  
+
+            if(metadataLevel == null && metadataFormat == null){
+                dataset = runWithoutMetadata(mapping, outputFile, outputFormat, 
+                        graphName, parameters, exeTriplesMap); 
             }
-            else{
-                log.debug("With MetaData");
-                //RML Rngine that generates metadata too
-                StdRMLEngine engine = 
-                        new RMLEngineMeta(outputFile, outputFormat);
-                dataset = 
-                    engine.runRMLMapping(mapping, graphName, outputFile, 
-                    outputFormat, parameters, exeTriplesMap, mdl);  
+            else {
+                log.debug("metadataFormat " + metadataFormat);
+                dataset = runWithMetadata(mapping, outputFile, outputFormat, 
+                        graphName, parameters, exeTriplesMap, 
+                        metadataLevel, metadataFormat, metadataVocab);
             }
+            //TODO: Do I actual need it? I think I close earlier
             dataset.closeRepository();
             System.exit(0);
             
@@ -133,6 +132,56 @@ public class Main {
             RMLConfiguration.displayHelp();
         } 
 
+    }
+    
+    private static RMLDataset runWithoutMetadata( 
+            RMLMapping mapping, String outputFile, String outputFormat, 
+            String graphName, Map<String,String> parameters, String[] exeTriplesMap) {
+        RMLEngine engine; 
+        RMLDataset dataset;
+
+        //RML Engine that does not generate metadata
+        engine = new StdRMLEngine();
+        dataset = engine.chooseSesameDataSet(
+                "dataset", outputFile, outputFormat);
+        //TODO: Do I need the returned dataset?
+        dataset =
+                engine.runRMLMapping(
+                dataset, mapping, graphName, parameters, exeTriplesMap);
+        return dataset;
+    }
+    
+    private static RMLDataset runWithMetadata(
+            RMLMapping mapping, String outputFile, String outputFormat,
+            String graphName, Map<String, String> parameters, String[] exeTriplesMap, 
+            String metadataLevel, String metadataFormat, String metadataVocab) {
+        RMLEngine engine; 
+        RMLDataset dataset, metadataDataset;
+        
+        //generate the file that contains the metadata graph
+        String pathToMetadataStore =
+                outputFile.replaceAll("(\\.[a-zA-Z0-9]*$)", ".metadata$1");
+        
+        engine = new RMLEngineMeta(outputFile);
+        
+        //RML Rngine that generates metadata too
+        if (metadataFormat == null) {
+            metadataDataset = engine.chooseSesameDataSet(
+                    "metadata", pathToMetadataStore, outputFormat);
+        } else {
+            //generate dataset for the metadata graph
+            metadataDataset = engine.chooseSesameDataSet(
+                    "metadata", pathToMetadataStore, metadataFormat);
+        }
+        dataset = engine.chooseSesameDataSet(
+                    "dataset", outputFile, outputFormat);
+
+        dataset.setDatasetMetadata(
+                metadataDataset, metadataLevel, metadataFormat, metadataVocab);
+        
+        dataset = engine.runRMLMapping(dataset, mapping, graphName,
+                parameters, exeTriplesMap);
+        return dataset;
     }
     
     /**
