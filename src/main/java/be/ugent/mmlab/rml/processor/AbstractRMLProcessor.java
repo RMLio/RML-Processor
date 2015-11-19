@@ -106,7 +106,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
         //log.info("Abstract RML Processor Graph Map" + subjectMap.getGraphMaps().toString());
         if (values == null || values.isEmpty()) 
             if(subjectMap.getTermType() != BLANK_NODE){
-                log.error("No subject was generated for " 
+                log.debug("No subject was generated for " 
                         + subjectMap.getOwnTriplesMap().getName().toString());
                 return null;
             } 
@@ -151,12 +151,16 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
         boolean flag = false;
         Set<org.openrdf.model.URI> classIRIs = subjectMap.getClassIRIs();
         String[] vocabs = dataset.getMetadataVocab();
-        if (vocabs.length == 0) {
-            flag = true;
-        }
-        for (String vocab : vocabs) {
-            if (vocab.equals("prov")) {
+        //TODO: Decide if I keep that here or if I move it to separate class
+        if (vocabs != null) {
+            if (vocabs.length == 0) {
                 flag = true;
+            } else {
+                for (String vocab : vocabs) {
+                    if (vocab.equals("prov")) {
+                        flag = true;
+                    }
+                }
             }
         }
         if(subject != null)
