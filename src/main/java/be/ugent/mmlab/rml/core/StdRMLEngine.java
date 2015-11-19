@@ -47,8 +47,12 @@ public class StdRMLEngine implements RMLEngine {
     
     public StdRMLEngine(String pathToNativeStore) {
         try {
-            String folder =
-                    pathToNativeStore.replaceAll("(/[a-zA-Z0-9._]*$)", "");
+            log.debug("pathToNativeStore " + pathToNativeStore);
+            File file = new File(pathToNativeStore);
+            String folder = file.getParent();
+            //String folder =
+            //        pathToNativeStore.replaceAll("(/[a-zA-Z0-9._]*$)", "");
+            log.debug("folder " + folder);
             File baseDir = new File(folder);
             manager = new LocalRepositoryManager(baseDir);
             manager.initialize();
