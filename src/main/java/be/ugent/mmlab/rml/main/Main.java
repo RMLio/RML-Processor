@@ -75,7 +75,6 @@ public class Main {
             
             if (commandLine.hasOption("mdl")) {
                 metadataLevel = commandLine.getOptionValue("mdl", null);
-                log.debug("metadataLevel " + metadataLevel);
             }
             
             if (commandLine.hasOption("mdf")) {
@@ -112,7 +111,8 @@ public class Main {
             log.info("========================================");
             RMLDataset dataset;
 
-            if(metadataLevel == null && metadataFormat == null){
+            if(metadataLevel.equals("None") && metadataFormat == null){
+                log.debug("Running without...");
                 dataset = runWithoutMetadata(mapping, outputFile, outputFormat, 
                         graphName, parameters, exeTriplesMap); 
             }
@@ -139,14 +139,16 @@ public class Main {
             String graphName, Map<String,String> parameters, String[] exeTriplesMap) {
         RMLEngine engine; 
         RMLDataset dataset;
+        log.debug("Running without metadata...");
 
         //RML Engine that does not generate metadata
-        engine = new StdRMLEngine();
+        engine = new StdRMLEngine(outputFile);
+        log.debug("RML Engine is generated.");
         dataset = engine.chooseSesameDataSet(
                 "dataset", outputFile, outputFormat);
+        log.debug("Dataset is generated.");
         //TODO: Do I need the returned dataset?
-        dataset =
-                engine.runRMLMapping(
+        dataset = engine.runRMLMapping(
                 dataset, mapping, graphName, parameters, exeTriplesMap);
         return dataset;
     }
@@ -157,6 +159,8 @@ public class Main {
             String metadataLevel, String metadataFormat, String metadataVocab) {
         RMLEngine engine; 
         RMLDataset dataset, metadataDataset;
+        
+        log.debug("Running with metadata...");
         
         //generate the file that contains the metadata graph
         String pathToMetadataStore =

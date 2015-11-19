@@ -12,11 +12,13 @@ import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.RMLProcessor;
 import be.ugent.mmlab.rml.processor.RMLProcessorFactory;
 import be.ugent.mmlab.rml.processor.concrete.ConcreteRMLProcessorFactory;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Properties;
+import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.manager.LocalRepositoryManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +42,20 @@ public class StdRMLEngine implements RMLEngine {
     //There are probably better ways to do this than a static variable
     private static Properties fileMap = new Properties();
     LocalRepositoryManager manager;
+    
+    public StdRMLEngine() {} 
+    
+    public StdRMLEngine(String pathToNativeStore) {
+        try {
+            String folder =
+                    pathToNativeStore.replaceAll("(/[a-zA-Z0-9._]*$)", "");
+            File baseDir = new File(folder);
+            manager = new LocalRepositoryManager(baseDir);
+            manager.initialize();
+        } catch (RepositoryException ex) {
+            log.error("Repository Exception " + ex);
+        }
+    }
 
     public static Properties getFileMap() {
         return fileMap;
@@ -111,6 +127,7 @@ public class StdRMLEngine implements RMLEngine {
                 log.debug("Using direct file " + pathToNativeStore);
                 dataset = new FileDataset(pathToNativeStore, outputFormat, 
                         manager, repositoryID);
+                log.debug("dataset is generated");
             } else {
                 log.debug("Using default store (memory) ");
                 dataset = new StdRMLDataset();
