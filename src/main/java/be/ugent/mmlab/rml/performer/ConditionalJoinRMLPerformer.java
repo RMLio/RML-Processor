@@ -123,6 +123,6 @@ public class ConditionalJoinRMLPerformer extends NodeRMLPerformer{
                             + "Object " + object
                             + "was not created");
             }
-        }       
+        }  
     }
 }

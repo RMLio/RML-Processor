@@ -132,7 +132,11 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                     if (value.startsWith("www.")) {
                         value = "http://" + value;
                     }
-                    subject = new URIImpl(value);
+                    try {
+                        subject = new URIImpl(value);
+                    } catch (Exception e) {
+                        return null;
+                    }
                 break;
             case BLANK_NODE:
                 subject = new BNodeImpl(
@@ -295,6 +299,9 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
         Set<ReferencingObjectMap> referencingObjectMaps = 
                 pom.getReferencingObjectMaps();
         for (ReferencingObjectMap referencingObjectMap : referencingObjectMaps) {
+            if(referencingObjectMap.getParentTriplesMap().getLogicalSource() == null){
+                continue;}
+            
             Set<BindingCondition> bindingConditions = null;
             Set<JoinCondition> joinConditions = 
                     referencingObjectMap.getJoinConditions();
@@ -442,8 +449,11 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
             RMLDataset dataset, InputStream input, TriplesMap parentTriplesMap, 
             Set<JoinCondition> joinConditions, String[] exeTriplesMap) {
         HashMap<String, String> joinMap = new HashMap<>();
-
+        
         for (JoinCondition joinCondition : joinConditions) {
+            if(joinCondition.getChild() == null)
+                continue;
+            
             List<String> childValues = termMapProcessor.extractValueFromNode(
                     node, joinCondition.getChild());
             //Allow multiple values as child - 

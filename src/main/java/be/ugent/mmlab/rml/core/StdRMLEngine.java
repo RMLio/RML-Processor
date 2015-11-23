@@ -115,7 +115,7 @@ public class StdRMLEngine implements RMLEngine {
         dataset = generateRDFTriples(
                 dataset, rmlMapping, parameters, exeTriplesMap);
         
-        log.debug("Generating dataset metadata..");
+        //log.debug("Generating dataset metadata..");
         generateBasicMetadataInfo(dataset, startTime);
             
         return dataset;
