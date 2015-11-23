@@ -178,6 +178,7 @@ public class StdRMLEngine implements RMLEngine {
             TriplesMap triplesMap, Map<String, String> parameters,
             String[] exeTriplesMap, RMLDataset dataset) {
         boolean flag = true;
+        SourceProcessor inputProcessor;
 
         if (exeTriplesMap != null) {
             RMLExecutionEngine executionEngine = 
@@ -192,16 +193,17 @@ public class StdRMLEngine implements RMLEngine {
 
             log.info("Generating RML Processor..");
             RMLProcessor processor = generateRMLProcessor(triplesMap);
-
-            log.info("Generating Data Retrieval Processor..");
-            SourceProcessor inputProcessor = 
-                    generateInputProcessor(triplesMap, parameters);
-           
-            do {
-                dataset = processInputStream(processor, inputProcessor,
-                        triplesMap, parameters, exeTriplesMap, dataset);
-            } while (inputProcessor.hasNextInputStream());
             
+            if (processor != null) {
+                log.info("Generating Data Retrieval Processor..");
+                inputProcessor =
+                        generateInputProcessor(triplesMap, parameters);
+                do {
+                    dataset = processInputStream(processor, inputProcessor,
+                            triplesMap, parameters, exeTriplesMap, dataset);
+                } while (inputProcessor.hasNextInputStream());
+            }         
+                    
             /*try {
                 log.info((dataset.getSize() - delta)
                         + " triples were generated for " 
@@ -221,9 +223,11 @@ public class StdRMLEngine implements RMLEngine {
         RMLProcessor processor = null;
         RMLProcessorFactory factory = new ConcreteRMLProcessorFactory();
         
-        if(triplesMap.getLogicalSource() == null)
+        if(triplesMap.getLogicalSource() == null){
             log.error(triplesMap.getName() + " Logical Source: " 
                     + triplesMap.getLogicalSource());
+            return null;
+        }
         else
             log.debug("Logical Source: " 
                     + triplesMap.getLogicalSource());
