@@ -54,16 +54,15 @@ public class NodeRMLPerformer implements RMLPerformer {
     @Override
     public void perform(Object node, RMLDataset dataset, 
     TriplesMap map, String[] exeTriplesMap, boolean pomExecution) {
-
-        Resource subject = 
-                processor.processSubjectMap(dataset, map.getSubjectMap(), node);
+        Resource subject = processor.processSubjectMap(
+                this.processor, dataset, map, map.getSubjectMap(), node, exeTriplesMap);
         
         if (subject == null) {
             log.debug("No subject was generated for "
                     + map.getName() + "triple Map and node " + node.toString());
         } else {
-            processor.processSubjectTypeMap(
-                    dataset, subject, map.getSubjectMap(), node);
+            //processor.processSubjectTypeMap(
+            //        dataset, subject, map.getSubjectMap(), node);
             
             Set<GraphMap> graph = map.getSubjectMap().getGraphMaps();
             for (PredicateObjectMap pom : map.getPredicateObjectMaps()) {
@@ -83,8 +82,8 @@ public class NodeRMLPerformer implements RMLPerformer {
     @Override
     public void perform(Object node, RMLDataset dataset, TriplesMap map, 
         Resource subject, String[] exeTriplesMap) {
-        processor.processSubjectTypeMap(
-                dataset, subject, map.getSubjectMap(), node);
+        //processor.processSubjectTypeMap(
+        //        dataset, subject, map.getSubjectMap(), node);
         for (PredicateObjectMap pom : map.getPredicateObjectMaps()) {
             processor.processPredicateObjectMap(
                     dataset, subject, pom, node, map, exeTriplesMap);

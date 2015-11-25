@@ -210,8 +210,4 @@ public class XPathProcessor extends AbstractRMLProcessor {
 
     }
 
-    @Override
-    public String cleansing(String value) {
-        return value;
-    }
 }

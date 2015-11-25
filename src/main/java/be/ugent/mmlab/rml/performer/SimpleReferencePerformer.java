@@ -49,8 +49,8 @@ public class SimpleReferencePerformer extends NodeRMLPerformer {
             RMLProcessor subprocessor = factory.create(
                     map.getLogicalSource().getReferenceFormulation());
             RMLPerformer performer = new NodeRMLPerformer(subprocessor); 
-            Resource object = processor.processSubjectMap(
-                    dataset, map.getSubjectMap(), node); 
+            Resource object = processor.processSubjectMap(this.processor,
+                    dataset, map, map.getSubjectMap(), node, exeTriplesMap); 
             if (object != null) {
                 List<Statement> triples =
                         dataset.tuplePattern(subject, predicate, object);

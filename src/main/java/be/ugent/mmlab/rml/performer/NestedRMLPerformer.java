@@ -30,8 +30,8 @@ public class NestedRMLPerformer extends NodeRMLPerformer {
             log.debug("Executing entirely the Referencing Object Map.");
             //Resource refObjSub = processor.processSubjectMap(
             //        dataset, map.getSubjectMap(), node);
-            processor.processSubjectTypeMap(
-                    dataset, refObjSub, map.getSubjectMap(), node);
+            //processor.processSubjectTypeMap(
+            //        dataset, refObjSub, map.getSubjectMap(), node);
             for (PredicateObjectMap pom : map.getPredicateObjectMaps()) {
                 processor.processPredicateObjectMap(
                         dataset, refObjSub, pom, node, map, exeTriplesMap);

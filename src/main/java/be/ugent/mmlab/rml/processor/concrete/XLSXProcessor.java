@@ -86,9 +86,4 @@ public class XLSXProcessor extends AbstractRMLProcessor {
         //TODO:implement this
     }
 
-    @Override
-    public String cleansing(String value) {
-        return value;
-    }
-
 }

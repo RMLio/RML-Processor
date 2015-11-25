@@ -90,7 +90,8 @@ public class ConditionalJoinRMLPerformer extends NodeRMLPerformer{
             }
             
             if(flag){
-                object = processor.processSubjectMap(dataset, map.getSubjectMap(), node);
+                object = processor.processSubjectMap(this.processor, dataset, 
+                        map, map.getSubjectMap(), node, exeTriplesMap);
                 if (subject != null && object != null){
                     List<Statement> triples =
                             dataset.tuplePattern(subject, predicate, object);

@@ -12,7 +12,6 @@ import java.io.InputStream;
 import java.util.List;
 import org.openrdf.model.Resource;
 import org.openrdf.model.URI;
-import org.openrdf.model.Value;
 
 /**
  * RMLProcessor 
@@ -45,8 +44,8 @@ public interface RMLProcessor {
      * @param node
      * @return 
      */
-    public Resource processSubjectMap(RMLDataset dataset, 
-            SubjectMap subjectMap, Object node);
+    public Resource processSubjectMap(RMLProcessor processor, RMLDataset dataset, 
+            TriplesMap map, SubjectMap subjectMap, Object node, String[] exeTriplesMaps);
     
     /**
      *
@@ -55,8 +54,8 @@ public interface RMLProcessor {
      * @param subjectMap
      * @param node
      */
-    public void processSubjectTypeMap(RMLDataset dataset, Resource subject, 
-            SubjectMap subjectMap, Object node);
+    //public void processSubjectTypeMap(RMLDataset dataset, Resource subject, 
+    //        SubjectMap subjectMap, Object node);
     
     /**
      *
@@ -65,8 +64,8 @@ public interface RMLProcessor {
      * @param expression
      * @return
      */
-    public List<String> processTemplate(
-            TermMap map, List<String> replacements, String expression);
+    //public List<String> processTemplate(
+    //        TermMap map, List<String> replacements, String expression);
     
     /**
      *
@@ -77,8 +76,8 @@ public interface RMLProcessor {
      * @param replacement
      * @return
      */
-    public String processTemplate(String expression, String template, 
-            String termType, QLTerm referenceFormulation, String replacement);
+    //public String processTemplate(String expression, String template, 
+    //        String termType, QLTerm referenceFormulation, String replacement);
     
     /**
      * process a predicate object map
@@ -97,7 +96,7 @@ public interface RMLProcessor {
      * @param node
      * @return
      */
-    public List<URI> processPredicateMap(PredicateMap predicateMap, Object node);
+    //public List<URI> processPredicateMap(PredicateMap predicateMap, Object node);
     
     /**
      *
@@ -107,9 +106,9 @@ public interface RMLProcessor {
      * @param pom
      * @param node
      */
-    public void processPredicateObjectMap_ObjMap(
-            RMLDataset dataset, Resource subject, URI predicate,
-            PredicateObjectMap pom, Object node);
+    //public void processPredicateObjectMap_ObjMap(
+    //        RMLDataset dataset, Resource subject, URI predicate,
+    //        PredicateObjectMap pom, Object node);
     
     /**
      *
@@ -118,14 +117,14 @@ public interface RMLProcessor {
      * @param termMap
      * @return
      */
-    public List<Value> applyTermType(
-            String value, List<Value> valueList, TermMap termMap);
+    //public List<Value> applyTermType(
+    //        String value, List<Value> valueList, TermMap termMap);
     
     /**
      *
      * @param value
      * @return
      */
-    public String cleansing(String value);
+    //public String cleansing(String value);
 
 }

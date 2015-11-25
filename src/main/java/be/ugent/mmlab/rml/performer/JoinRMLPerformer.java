@@ -44,8 +44,8 @@ public class JoinRMLPerformer extends NodeRMLPerformer{
     @Override
     public void perform(Object node, RMLDataset dataset, 
     TriplesMap map, String[] exeTriplesMap, boolean pomExecution) {
-        Value object = processor.processSubjectMap(
-                dataset, map.getSubjectMap(), node);
+        Value object = processor.processSubjectMap(this.processor,
+                dataset, map, map.getSubjectMap(), node, exeTriplesMap);
 
         if (object == null){
             return;

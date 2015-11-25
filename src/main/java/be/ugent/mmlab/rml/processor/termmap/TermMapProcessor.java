@@ -2,6 +2,7 @@ package be.ugent.mmlab.rml.processor.termmap;
 
 import be.ugent.mmlab.rml.model.RDFTerm.TermMap;
 import java.util.List;
+import org.openrdf.model.Value;
 
 /**
  * RML Processor
@@ -36,5 +37,17 @@ public interface TermMapProcessor {
      * @return
      */
     public List<String> processTermMap(TermMap map, Object node);
+    
+    /**
+     *
+     * @param value
+     * @param valueList
+     * @param termMap
+     * @return
+     */
+    public List<Value> applyTermType(
+            String value, List<Value> valueList, TermMap termMap);
+    
+    public String cleansing(String value);
     
 }

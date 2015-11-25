@@ -43,5 +43,10 @@ public class JSONPathTermMapProcessor extends AbstractTermMapProcessor {
         }
         
     }
+    
+    @Override
+    public String cleansing(String value) {
+        return value;
+    }
 
 }

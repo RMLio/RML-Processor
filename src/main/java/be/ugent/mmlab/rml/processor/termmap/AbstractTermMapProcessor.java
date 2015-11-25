@@ -5,6 +5,9 @@ import static be.ugent.mmlab.rml.model.RDFTerm.TermMap.TermMapType.CONSTANT_VALU
 import static be.ugent.mmlab.rml.model.RDFTerm.TermMap.TermMapType.REFERENCE_VALUED;
 import static be.ugent.mmlab.rml.model.RDFTerm.TermMap.TermMapType.TEMPLATE_VALUED;
 import be.ugent.mmlab.rml.model.RDFTerm.TermType;
+import static be.ugent.mmlab.rml.model.RDFTerm.TermType.BLANK_NODE;
+import static be.ugent.mmlab.rml.model.RDFTerm.TermType.IRI;
+import static be.ugent.mmlab.rml.model.RDFTerm.TermType.LITERAL;
 import be.ugent.mmlab.rml.model.std.StdTemplateMap;
 import be.ugent.mmlab.rml.model.termMap.ReferenceMap;
 import be.ugent.mmlab.rml.vocabularies.QLVocabulary.QLTerm;
@@ -14,6 +17,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
+import org.openrdf.model.URI;
+import org.openrdf.model.Value;
+import org.openrdf.model.impl.BNodeImpl;
+import org.openrdf.model.impl.LiteralImpl;
+import org.openrdf.model.impl.URIImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -158,6 +166,47 @@ public abstract class AbstractTermMapProcessor implements TermMapProcessor{
             log.error("UnsupportedEncodingException " + ex);
         }
         return template.toString();
+    }
+    
+    public List<Value> applyTermType(String value, List<Value> valueList, TermMap termMap){
+        TermType termType = termMap.getTermType();
+        String languageTag = termMap.getLanguageTag();
+        URI datatype = termMap.getDataType();
+        
+        switch (termType) {
+            case IRI:
+                if (value != null && !value.equals("")) {
+                    if (value.startsWith("www.")) {
+                        value = "http://" + value;
+                    }
+                    if (valueList == null) {
+                        valueList = new ArrayList<Value>();
+                    }
+                    try {
+                        new URIImpl(cleansing(value));
+                    } catch (Exception e) {
+                        return valueList;
+                    }
+                    valueList.add(new URIImpl(cleansing(value)));
+                } 
+                break;
+            case BLANK_NODE:
+                valueList.add(new BNodeImpl(cleansing(value)));
+                break;
+            case LITERAL:
+                if (languageTag != null && !value.equals("")) {
+                    if (valueList == null) {
+                        valueList = new ArrayList<Value>();
+                    }
+                    value = cleansing(value);
+                    valueList.add(new LiteralImpl(value, languageTag));
+                } else if (value != null && !value.equals("") && datatype != null) {
+                    valueList.add(new LiteralImpl(value, datatype));
+                } else if (value != null && !value.equals("")) {
+                    valueList.add(new LiteralImpl(value.trim()));
+                }
+        }
+        return valueList;
     }
 
 }

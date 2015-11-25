@@ -30,5 +30,10 @@ public class CSVTermMapProcessor extends AbstractTermMapProcessor {
         }
         return list;
     }
+    
+    @Override
+    public String cleansing(String value) {
+        return value;
+    }
 
 }

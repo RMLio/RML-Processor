@@ -116,4 +116,9 @@ public class XPathTermMapProcessor extends AbstractTermMapProcessor {
         return dnc;
     }
     
+    @Override
+    public String cleansing(String value) {
+        return value;
+    }
+    
 }

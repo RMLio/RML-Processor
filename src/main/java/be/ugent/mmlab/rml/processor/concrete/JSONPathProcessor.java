@@ -96,8 +96,4 @@ public class JSONPathProcessor extends AbstractRMLProcessor {
         }
     }
 
-    @Override
-    public String cleansing(String value) {
-        return value;
-    }
 }
