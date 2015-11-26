@@ -1,6 +1,7 @@
 package be.ugent.mmlab.rml.processor;
 
 import be.ugent.mmlab.rml.condition.model.BindingCondition;
+import be.ugent.mmlab.rml.condition.model.BooleanCondition;
 import be.ugent.mmlab.rml.condition.model.std.BindingReferencingObjectMap;
 import be.ugent.mmlab.rml.input.processor.AbstractInputProcessor;
 import be.ugent.mmlab.rml.input.processor.SourceProcessor;
@@ -11,6 +12,7 @@ import be.ugent.mmlab.rml.model.RDFTerm.ObjectMap;
 import be.ugent.mmlab.rml.model.RDFTerm.ReferencingObjectMap;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.model.dataset.RMLDataset;
+import be.ugent.mmlab.rml.model.std.StdConditionObjectMap;
 import be.ugent.mmlab.rml.performer.ConditionalJoinRMLPerformer;
 import be.ugent.mmlab.rml.performer.JoinRMLPerformer;
 import be.ugent.mmlab.rml.performer.RMLPerformer;
@@ -56,14 +58,31 @@ public class ObjectMapProcessor {
     public void processPredicateObjectMap_ObjMap(
             RMLDataset dataset, Resource subject, URI predicate,
             PredicateObjectMap pom, Object node) {
-        TermMapProcessorFactory factory = new ConcreteTermMapFactory();
-        this.termMapProcessor = factory.create(
-                pom.getOwnTriplesMap().getLogicalSource().getReferenceFormulation());
         
         Set<ObjectMap> objectMaps = pom.getObjectMaps();
         for (ObjectMap objectMap : objectMaps) {
             //Get the one or more objects returned by the object map
             List<Value> objects = processObjectMap(objectMap, node);
+            
+            if(objectMap.getClass().getSimpleName().equals("StdConditionObjectMap")){
+                StdConditionObjectMap tmp = (StdConditionObjectMap) objectMap;
+                Set<BooleanCondition> conditions = tmp.getBooleanConditions();
+                for (BooleanCondition condition : conditions){
+                    String expression = condition.getCondition();
+                    log.debug("condition " + condition.getCondition());
+                    log.debug("binding " + condition.getBinding());
+                    Map<String, String> parameters = 
+                            processBindingConditions(node, condition.getBinding());
+                    log.debug("parameters " + parameters);
+                    if(expression.contains("toUppercase")){
+                        log.debug("uppercase...");
+                        String uppercase = parameters.get("variable");
+                        log.debug("uppercase " + uppercase);
+                    }
+                }
+            }
+            
+            //smth = objectMap.processBooleanConditions(node, objectMap);
             if (objects != null) {
                 for (Value object : objects) {
                     if (object.stringValue() != null) {
