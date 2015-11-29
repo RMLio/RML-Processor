@@ -267,13 +267,15 @@ public class StdRMLEngine implements RMLEngine {
                 triplesMap.getLogicalSource(), parameters);
 
         try {
-            log.debug("Generating Performer..");
-            NodeRMLPerformer performer = 
-                    new NodeRMLPerformer(processor);
+            if (input != null) {
+                log.debug("Generating Performer..");
+                NodeRMLPerformer performer =
+                        new NodeRMLPerformer(processor);
 
-            log.debug("Executing Mapping Processor..");
-            processor.execute(dataset, triplesMap, performer,
-                    input, exeTriplesMap, false);
+                log.debug("Executing Mapping Processor..");
+                processor.execute(dataset, triplesMap, performer,
+                        input, exeTriplesMap, false);
+            }
             
         } catch (Exception ex) {
             log.error("Exception " + ex);

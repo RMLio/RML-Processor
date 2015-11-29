@@ -1,7 +1,7 @@
 package be.ugent.mmlab.rml.processor;
 
 import be.ugent.mmlab.rml.condition.model.BindingCondition;
-import be.ugent.mmlab.rml.condition.model.BooleanCondition;
+import be.ugent.mmlab.rml.condition.model.Condition;
 import be.ugent.mmlab.rml.condition.model.std.BindingReferencingObjectMap;
 import be.ugent.mmlab.rml.input.processor.AbstractInputProcessor;
 import be.ugent.mmlab.rml.input.processor.SourceProcessor;
@@ -65,22 +65,18 @@ public class ObjectMapProcessor {
             List<Value> objects = processObjectMap(objectMap, node);
             
             if(objectMap.getClass().getSimpleName().equals("StdConditionObjectMap")){
+                log.debug("Conditional Object Map");
                 StdConditionObjectMap tmp = (StdConditionObjectMap) objectMap;
-                Set<BooleanCondition> conditions = tmp.getBooleanConditions();
-                for (BooleanCondition condition : conditions){
+                Set<Condition> conditions = tmp.getConditions();
+                for (Condition condition : conditions){
                     String expression = condition.getCondition();
-                    log.debug("condition " + condition.getCondition());
-                    log.debug("binding " + condition.getBinding());
-                    Map<String, String> parameters = 
-                            processBindingConditions(node, condition.getBinding());
-                    log.debug("parameters " + parameters);
                     if(expression.contains("toUppercase")){
-                        log.debug("uppercase...");
-                        String uppercase = parameters.get("variable");
-                        log.debug("uppercase " + uppercase);
+                        //TODO: Add body
                     }
                 }
             }
+            else
+                log.debug("Simple Object Map");
             
             //smth = objectMap.processBooleanConditions(node, objectMap);
             if (objects != null) {
@@ -245,7 +241,7 @@ public class ObjectMapProcessor {
             
             for (String childValue : childValues) {    
                 parameters.put(
-                    bindingCondition.getValue(), childValue);
+                    bindingCondition.getVariable(), childValue);
             }
         }
         

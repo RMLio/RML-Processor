@@ -24,8 +24,7 @@ import org.slf4j.LoggerFactory;
  * @author mielvandersande, andimou
  */
 public abstract class AbstractRMLProcessor implements RMLProcessor {
-    
-    private Integer entities = 0;
+
     protected TermMapProcessor termMapProcessor ;
 
     /**
@@ -92,17 +91,19 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
             //Get the predicate
             List<URI> predicates = preMapProcessor.processPredicateMap(predicateMap, node);
             
-            URI predicate = predicates.get(0);
-            ObjectMapProcessor predicateObjectProcessor = 
-                    new ObjectMapProcessor(map);
-            
-            //Process the joins first
-            predicateObjectProcessor.processPredicateObjectMap_RefObjMap(
-                    dataset, subject, predicate, pom, node, map, exeTriplesMap);
-            
-            //process the objectmaps
-            predicateObjectProcessor.processPredicateObjectMap_ObjMap(
-                    dataset, subject, predicate, pom, node);
+            if (predicates.size() > 0) {
+                URI predicate = predicates.get(0);
+                ObjectMapProcessor predicateObjectProcessor =
+                        new ObjectMapProcessor(map);
+
+                //Process the joins first
+                predicateObjectProcessor.processPredicateObjectMap_RefObjMap(
+                        dataset, subject, predicate, pom, node, map, exeTriplesMap);
+
+                //process the objectmaps
+                predicateObjectProcessor.processPredicateObjectMap_ObjMap(
+                        dataset, subject, predicate, pom, node);
+            }
             
         }
     }
