@@ -59,6 +59,7 @@ public class PredicateMapProcessor {
             Set<Condition> conditions = tmp.getConditions();
             Set<BindingCondition> bindings = new HashSet<BindingCondition>();
             for (Condition condition : conditions) {
+                log.debug("condition " + condition.getCondition());
                 String expression = condition.getCondition();
                 bindings = condition.getBindingConditions();
                 
@@ -75,7 +76,7 @@ public class PredicateMapProcessor {
         }
         else{
             log.debug("Simple Predicate Map");
-            result = false;
+            result = true;
         }
         
         if (result == true) {

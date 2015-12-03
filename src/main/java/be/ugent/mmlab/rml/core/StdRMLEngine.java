@@ -261,10 +261,16 @@ public class StdRMLEngine implements RMLEngine {
             RMLProcessor processor, SourceProcessor inputProcessor, 
             TriplesMap triplesMap, Map<String, String> parameters,
             String[] exeTriplesMap, RMLDataset dataset) {
+        InputStream input = null;
         
         log.debug("Generating Input Stream..");
-        InputStream input = inputProcessor.getInputStream(
-                triplesMap.getLogicalSource(), parameters);
+        try {
+            input = inputProcessor.getInputStream(
+                    triplesMap.getLogicalSource(), parameters);
+        } catch (Exception ex) {
+            log.error("Exception ex " + ex);
+            log.error("Input stream was not properly retrieved.");
+        }
 
         try {
             if (input != null) {
