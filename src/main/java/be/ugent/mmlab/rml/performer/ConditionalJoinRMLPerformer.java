@@ -1,13 +1,13 @@
 package be.ugent.mmlab.rml.performer;
 
 import be.ugent.mmlab.rml.core.RMLExecutionEngine;
+import be.ugent.mmlab.rml.input.termmap.concrete.ConcreteTermMapFactory;
+import be.ugent.mmlab.rml.logicalsourcehandler.termmap.TermMapProcessor;
+import be.ugent.mmlab.rml.logicalsourcehandler.termmap.TermMapProcessorFactory;
 import be.ugent.mmlab.rml.model.RDFTerm.TermType;
 import be.ugent.mmlab.rml.model.dataset.RMLDataset;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.RMLProcessor;
-import be.ugent.mmlab.rml.processor.termmap.TermMapProcessor;
-import be.ugent.mmlab.rml.processor.termmap.TermMapProcessorFactory;
-import be.ugent.mmlab.rml.processor.termmap.concrete.ConcreteTermMapFactory;
 import java.util.HashMap;
 import java.util.List;
 import org.openrdf.model.Resource;

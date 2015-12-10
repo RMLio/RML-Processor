@@ -1,13 +1,13 @@
 package be.ugent.mmlab.rml.processor;
 
+import be.ugent.mmlab.rml.logicalsourcehandler.termmap.TermMapProcessor;
+import be.ugent.mmlab.rml.logicalsourcehandler.termmap.TermMapProcessorFactory;
+import be.ugent.mmlab.rml.logicalsourcehandler.termmap.concrete.ConcreteTermMapFactory;
 import static be.ugent.mmlab.rml.model.RDFTerm.TermType.BLANK_NODE;
 import static be.ugent.mmlab.rml.model.RDFTerm.TermType.IRI;
 import be.ugent.mmlab.rml.model.RDFTerm.GraphMap;
 import be.ugent.mmlab.rml.model.RDFTerm.SubjectMap;
 import be.ugent.mmlab.rml.model.dataset.RMLDataset;
-import be.ugent.mmlab.rml.processor.termmap.TermMapProcessor;
-import be.ugent.mmlab.rml.processor.termmap.TermMapProcessorFactory;
-import be.ugent.mmlab.rml.processor.termmap.concrete.ConcreteTermMapFactory;
 import java.util.List;
 import java.util.Set;
 import org.apache.commons.lang.RandomStringUtils;

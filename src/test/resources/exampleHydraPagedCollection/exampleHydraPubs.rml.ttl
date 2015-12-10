@@ -6,13 +6,25 @@
 @prefix xsd:    <http://www.w3.org/2001/XMLSchema#>.
 @prefix ex:     <http://www.example.com/> .
 @prefix hydra:  <http://www.w3.org/ns/hydra/core#> .
+@prefix cerif:  <http://spi-fm.uca.es/neologism/cerif#>.
 @base <http://example.com/base> .
+
+<#GroupsInput>
+  rml:source <#GroupsSource> ;
+  rml:referenceFormulation ql:JSONPath ;
+  rml:iterator "$.[*]".
+
+<#GroupsSource>
+        a hydra:PagedCollection ;
+        hydra:itemsPerPage "500"^^xsd:integer ;
+        hydra:firstPage <http://explore.ilastic.be/iminds/groups> ;
+        hydra:nextPage <http://explore.ilastic.be/iminds/groups?&offset=500&limit=500> .
 
 <#InputAPI>
     a hydra:PagedCollection ;
     hydra:itemsPerPage "500"^^xsd:integer ;
     hydra:firstPage <http://explore.ilastic.be/iminds/authors> ;
-    hydra:nextPage <http://explore.ilastic.be/iminds/authors?&offset=500&limit=500> .
+    hydra:nextPage <http://explore.ilastic.be/iminds/authors?&offset=3500&limit=500> .
 
 <#Author>
     rml:logicalSource [ 
@@ -40,4 +52,19 @@
         rr:objectMap [ 
             rml:reference "Auteur voornaam" ;
             ]
-    ].
+    ];
+
+    rr:predicateObjectMap [
+    rr:predicate cerif:linksToOrganisationUnit;
+    rr:objectMap [
+      rr:parentTriplesMap <#UniversityMapping> ;
+      rr:joinCondition [
+        rr:parent "Groep v/d auteur - kenniscentrum code" ;
+        rr:child "Auteur kenniscentrum" ] ] ].
+
+<#UniversityMapping>
+  rml:logicalSource <#GroupsInput> ;
+
+  rr:subjectMap [
+    rr:template "http://explore.ilastic.be/university/{Groep v/d auteur - kenniscentrum code}";
+    rr:class cerif:OrganizationalUnit ].

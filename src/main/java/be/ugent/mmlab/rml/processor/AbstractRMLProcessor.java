@@ -6,7 +6,7 @@ import be.ugent.mmlab.rml.model.RDFTerm.PredicateMap;
 import be.ugent.mmlab.rml.model.PredicateObjectMap;
 import be.ugent.mmlab.rml.model.RDFTerm.SubjectMap;
 import be.ugent.mmlab.rml.model.TriplesMap;
-import be.ugent.mmlab.rml.processor.termmap.TermMapProcessor;
+import be.ugent.mmlab.rml.logicalsourcehandler.termmap.TermMapProcessor;
 import java.util.List;
 import java.util.Set;
 

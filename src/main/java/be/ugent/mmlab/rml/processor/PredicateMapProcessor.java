@@ -2,12 +2,12 @@ package be.ugent.mmlab.rml.processor;
 
 import be.ugent.mmlab.rml.condition.model.BindingCondition;
 import be.ugent.mmlab.rml.condition.model.Condition;
+import be.ugent.mmlab.rml.logicalsourcehandler.termmap.TermMapProcessor;
+import be.ugent.mmlab.rml.logicalsourcehandler.termmap.TermMapProcessorFactory;
+import be.ugent.mmlab.rml.logicalsourcehandler.termmap.concrete.ConcreteTermMapFactory;
 import be.ugent.mmlab.rml.model.RDFTerm.PredicateMap;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.model.std.StdConditionPredicateMap;
-import be.ugent.mmlab.rml.processor.termmap.TermMapProcessor;
-import be.ugent.mmlab.rml.processor.termmap.TermMapProcessorFactory;
-import be.ugent.mmlab.rml.processor.termmap.concrete.ConcreteTermMapFactory;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;

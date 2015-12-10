@@ -1,12 +1,12 @@
 
 package be.ugent.mmlab.rml.processor;
 
+import be.ugent.mmlab.rml.logicalsourcehandler.termmap.TermMapProcessor;
+import be.ugent.mmlab.rml.logicalsourcehandler.termmap.TermMapProcessorFactory;
+import be.ugent.mmlab.rml.logicalsourcehandler.termmap.concrete.ConcreteTermMapFactory;
 import be.ugent.mmlab.rml.model.RDFTerm.TermMap;
 import be.ugent.mmlab.rml.model.RDFTerm.TermType;
 import be.ugent.mmlab.rml.model.std.StdTemplateMap;
-import be.ugent.mmlab.rml.processor.termmap.TermMapProcessor;
-import be.ugent.mmlab.rml.processor.termmap.TermMapProcessorFactory;
-import be.ugent.mmlab.rml.processor.termmap.concrete.ConcreteTermMapFactory;
 import be.ugent.mmlab.rml.vocabularies.QLVocabulary;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;

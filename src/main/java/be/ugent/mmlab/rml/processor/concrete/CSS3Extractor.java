@@ -1,11 +1,11 @@
 package be.ugent.mmlab.rml.processor.concrete;
 
+import be.ugent.mmlab.rml.logicalsourcehandler.termmap.TermMapProcessorFactory;
+import be.ugent.mmlab.rml.logicalsourcehandler.termmap.concrete.ConcreteTermMapFactory;
 import be.ugent.mmlab.rml.model.dataset.RMLDataset;
 import be.ugent.mmlab.rml.performer.RMLPerformer;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.AbstractRMLProcessor;
-import be.ugent.mmlab.rml.processor.termmap.TermMapProcessorFactory;
-import be.ugent.mmlab.rml.processor.termmap.concrete.ConcreteTermMapFactory;
 import be.ugent.mmlab.rml.vocabularies.QLVocabulary.QLTerm;
 import java.io.IOException;
 import java.io.InputStream;
