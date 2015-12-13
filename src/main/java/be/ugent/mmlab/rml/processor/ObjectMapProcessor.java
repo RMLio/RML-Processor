@@ -2,7 +2,7 @@ package be.ugent.mmlab.rml.processor;
 
 import be.ugent.mmlab.rml.condition.model.BindingCondition;
 import be.ugent.mmlab.rml.condition.model.Condition;
-import be.ugent.mmlab.rml.condition.model.std.BindingReferencingObjectMap;
+import be.ugent.mmlab.rml.model.std.ConditionReferencingObjectMap;
 import be.ugent.mmlab.rml.input.processor.AbstractInputProcessor;
 import be.ugent.mmlab.rml.input.processor.SourceProcessor;
 import be.ugent.mmlab.rml.logicalsourcehandler.termmap.TermMapProcessor;
@@ -25,6 +25,7 @@ import be.ugent.mmlab.rml.vocabularies.QLVocabulary;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -129,29 +130,50 @@ public class ObjectMapProcessor {
                 pom.getReferencingObjectMaps();
         for (ReferencingObjectMap referencingObjectMap : referencingObjectMaps) {
             if(referencingObjectMap.getParentTriplesMap().getLogicalSource() == null){
-                continue;}
-            
-            Set<BindingCondition> bindingConditions = null;
-            Set<JoinCondition> joinConditions = 
-                    referencingObjectMap.getJoinConditions();
-            
+                continue;
+            }
             TriplesMap parentTriplesMap = 
                     referencingObjectMap.getParentTriplesMap();
             
             template = parentTriplesMap.
                     getLogicalSource().getSource().getTemplate();
             
-            if(referencingObjectMap.getClass().getSimpleName().
+            Set<Condition> conditions = null;
+            Set<JoinCondition> joinConditions ;
+            Set<BindingCondition> bindingConditions;
+            
+            joinConditions = referencingObjectMap.getJoinConditions();
+            
+            if (referencingObjectMap.getClass().getSimpleName().equals(
+                    "ConditionReferencingObjectMap")) {
+                log.debug("Condition Referencing Object Map");
+                ConditionReferencingObjectMap condRefObjMap  =
+                        (ConditionReferencingObjectMap) referencingObjectMap;
+                conditions = condRefObjMap.getConditions();
+
+                bindingConditions = new HashSet<BindingCondition>();
+
+                for (Condition condition : conditions) {
+                    
+                    if (condition.getClass().getSimpleName().equals("StdBindingCondition")) {
+                        BindingCondition bindCondition = (BindingCondition) condition;
+                        bindingConditions.add(bindCondition);
+                    }
+                }
+                parameters = processBindingConditions(node, bindingConditions);
+            } else {
+                log.debug("Simple Referencing Object Map");
+            }
+            
+            //Binding Referencing Object Map
+            /*if(referencingObjectMap.getClass().getSimpleName().
                     equals("BindingReferencingObjectMap")){
                 log.debug("Processing Referencing Object Map "
                         + "with Binding Condition..");
-                BindingReferencingObjectMap bindingReferencingObjectMap = 
-                        (BindingReferencingObjectMap) referencingObjectMap;
-                bindingConditions =
-                        bindingReferencingObjectMap.getBindingConditions();
-                parameters = 
-                        processBindingConditions(node, bindingConditions);
-            }
+                ConditionReferencingObjectMap bindingReferencingObjectMap = 
+                        (ConditionReferencingObjectMap) referencingObjectMap;
+
+            }*/
 
             //Create the processor based on the parent triples map to perform the join
             RMLProcessorFactory factory = new ConcreteRMLProcessorFactory();
@@ -166,29 +188,24 @@ public class ObjectMapProcessor {
             RMLProcessor processor = factory.create(referenceFormulation);
             RMLPerformer performer = null;
             
-            //different Logical Source and no Conditions
+            //different Logical Source AND no Join Conditions AND no Bind Conditions
             if (joinConditions.isEmpty()
                     & !parentTriplesMap.getLogicalSource().getSource().getTemplate().equals(
                     map.getLogicalSource().getSource().getTemplate())
-                    & bindingConditions == null) {
-                log.debug("Referencing Object Map with Logical Source "
-                        + "without join and binding conditions.");
-                performer = new JoinRMLPerformer(processor, subject, predicate);
-                processor.execute(dataset, parentTriplesMap, performer, input, 
-                        exeTriplesMap, false);
+                    & conditions == null) {
+                process_difLS_noJC_noBC(performer, processor, dataset, subject, 
+                        predicate, parentTriplesMap, input, exeTriplesMap);
+                //continue;
             }
             
-            //different Logical Source AND 
-            //no join Conditions but with Binding Conditions
+            //different Logical Source AND no join Conditions AND Binding Conditions
             if (joinConditions.isEmpty()
                     & !parentTriplesMap.getLogicalSource().getSource().getTemplate().equals(
                     map.getLogicalSource().getSource().getTemplate())
-                    & (bindingConditions != null)) {
-                log.debug("Referencing Object Map with Logical Source "
-                        + "without join conditions but with bind conditions.");
-                performer = new JoinRMLPerformer(processor, subject, predicate);
-                processor.execute(dataset, parentTriplesMap, performer, input, 
-                        exeTriplesMap, true);
+                    & (conditions != null)) {
+                process_difLS_noJC_withBC(performer, processor, dataset, subject, 
+                        predicate, parentTriplesMap, input, exeTriplesMap);
+                //continue;
             }
             
             //same Logical Source and no Conditions
@@ -196,39 +213,69 @@ public class ObjectMapProcessor {
                     & parentTriplesMap.getLogicalSource().getSource().getTemplate().equals(
                     map.getLogicalSource().getSource().getTemplate())) {
                 
-                log.debug("Referencing Object Map with Logical Source without conditions.");
-                performer = new SimpleReferencePerformer(processor, subject, predicate);
+                process_sameLS_noJC(performer, processor, dataset, node, 
+                        map, subject, predicate, parentTriplesMap, input, exeTriplesMap);                
                 
-                if ((parentTriplesMap.getLogicalSource().getReferenceFormulation().toString().
-                            equals("CSV"))
-                        || (parentTriplesMap.getLogicalSource().getReferenceFormulation().toString().
-                            equals("XLSX"))
-                        || (parentTriplesMap.getLogicalSource().getIterator().
-                            equals(map.getLogicalSource().getIterator()))
-                    ) {
-                    log.debug("Tabular-structured Referencing Object Map "
-                            + "or Hierarchical-structured Referencing Object Map "
-                            + "with the same iterator");
-                    performer.perform(
-                            node, dataset, parentTriplesMap, exeTriplesMap, false);
-                } else {
-                    log.debug("Hierarchical-structured Referencing Object Map");
-                    String expression = handleRelevantExpression(map, parentTriplesMap);
- 
-                    processor.execute_node(
-                            dataset, expression, parentTriplesMap, 
-                            performer, node, null, exeTriplesMap, false);
-                }
             } //Conditions
             else {
                 log.debug("Referencing Object Map with Logical Source with conditions.");
                 //Build a join map where
                 //  key: the parent expression
                 //  value: the value extracted from the child
-                processJoinConditions(node, performer, processor, subject, 
+                process_sameLS_withJC(node, performer, processor, subject, 
                         predicate, dataset, input, parentTriplesMap, 
                         joinConditions, exeTriplesMap);
             }
+        }
+    }
+    
+    //TODO: Check te following two
+    private void process_difLS_noJC_noBC(
+            RMLPerformer performer, RMLProcessor processor,
+            RMLDataset dataset, Resource subject, URI predicate, 
+            TriplesMap parentTriplesMap, InputStream input, String[] exeTriplesMap) {
+        log.debug("Referencing Object Map with Logical Source "
+                + "without join and binding conditions.");
+        performer = new JoinRMLPerformer(processor, subject, predicate);
+        processor.execute(dataset, parentTriplesMap, performer, input,
+                exeTriplesMap, false);
+    }
+    
+    private void process_difLS_noJC_withBC(
+            RMLPerformer performer, RMLProcessor processor,
+            RMLDataset dataset, Resource subject, URI predicate,
+            TriplesMap parentTriplesMap, InputStream input, String[] exeTriplesMap) {
+        log.debug("Referencing Object Map with Logical Source "
+                + "without join conditions but with bind conditions.");
+        performer = new JoinRMLPerformer(processor, subject, predicate);
+        processor.execute(dataset, parentTriplesMap, performer, input,
+                exeTriplesMap, true);
+    }
+    
+    private void process_sameLS_noJC(
+            RMLPerformer performer, RMLProcessor processor, RMLDataset dataset, 
+            Object node, TriplesMap triplesMap, Resource subject, URI predicate,
+            TriplesMap parentTriplesMap, InputStream input, String[] exeTriplesMap) {
+        log.debug("Referencing Object Map with Logical Source without conditions.");
+        performer = new SimpleReferencePerformer(processor, subject, predicate);
+
+        if ((parentTriplesMap.getLogicalSource().getReferenceFormulation().toString().
+                equals("CSV"))
+                || (parentTriplesMap.getLogicalSource().getReferenceFormulation().toString().
+                equals("XLSX"))
+                || (parentTriplesMap.getLogicalSource().getIterator().
+                equals(triplesMap.getLogicalSource().getIterator()))) {
+            log.debug("Tabular-structured Referencing Object Map "
+                    + "or Hierarchical-structured Referencing Object Map "
+                    + "with the same iterator");
+            performer.perform(node, dataset, parentTriplesMap, exeTriplesMap, false);
+        } else {
+            log.debug("Hierarchical-structured Referencing Object Map");
+            String expression = handleRelevantExpression(triplesMap, parentTriplesMap);
+
+            processor.execute_node(
+                    dataset, expression, parentTriplesMap,
+                    performer, node, null, exeTriplesMap, false);
         }
     }
     
@@ -238,7 +285,7 @@ public class ObjectMapProcessor {
         for(BindingCondition bindingCondition : bindingConditions){
             List<String> childValues = termMapProcessor.
                     extractValueFromNode(node, bindingCondition.getReference());
-            
+            log.debug("childValues " + childValues);
             for (String childValue : childValues) {    
                 parameters.put(
                     bindingCondition.getVariable(), childValue);
@@ -248,7 +295,7 @@ public class ObjectMapProcessor {
         return parameters;
     }
     
-    public void processJoinConditions(Object node, RMLPerformer performer, 
+    public void process_sameLS_withJC(Object node, RMLPerformer performer, 
             RMLProcessor processor, Resource subject, URI predicate, 
             RMLDataset dataset, InputStream input, TriplesMap parentTriplesMap, 
             Set<JoinCondition> joinConditions, String[] exeTriplesMap) {

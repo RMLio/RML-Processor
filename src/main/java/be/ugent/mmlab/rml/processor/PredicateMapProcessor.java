@@ -1,6 +1,5 @@
 package be.ugent.mmlab.rml.processor;
 
-import be.ugent.mmlab.rml.condition.model.BindingCondition;
 import be.ugent.mmlab.rml.condition.model.Condition;
 import be.ugent.mmlab.rml.logicalsourcehandler.termmap.TermMapProcessor;
 import be.ugent.mmlab.rml.logicalsourcehandler.termmap.TermMapProcessorFactory;
@@ -9,12 +8,8 @@ import be.ugent.mmlab.rml.model.RDFTerm.PredicateMap;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.model.std.StdConditionPredicateMap;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.regex.Pattern;
 import org.openrdf.model.URI;
 import org.openrdf.model.impl.URIImpl;
 import org.slf4j.Logger;
@@ -49,30 +44,15 @@ public class PredicateMapProcessor {
     
     public List<URI> processPredicateMap(PredicateMap predicateMap, Object node) {
         List<URI> uris = new ArrayList<>();
-        Map<String, String> parameters;
         boolean result = false;
         
         if (predicateMap.getClass().getSimpleName().equals("StdConditionPredicateMap")) {
             log.debug("Conditional Predicate Map");
-            StdConditionPredicateMap tmp =
+            StdConditionPredicateMap condPreMap =
                     (StdConditionPredicateMap) predicateMap;
-            Set<Condition> conditions = tmp.getConditions();
-            Set<BindingCondition> bindings = new HashSet<BindingCondition>();
-            for (Condition condition : conditions) {
-                log.debug("condition " + condition.getCondition());
-                String expression = condition.getCondition();
-                bindings = condition.getBindingConditions();
-                
-                for(BindingCondition binding : bindings){
-                    parameters = processBindingConditions(node, bindings);
-                    String replacement = parameters.get(binding.getVariable());
-                    expression = expression.replaceAll(
-                        "%%" + Pattern.quote(binding.getVariable()) + "%%",
-                        replacement);
-                    result = processMatch(expression);
-                }
-
-            }
+            Set<Condition> conditions = condPreMap.getConditions();
+            ConditionProcessor condProcessor = new StdConditionProcessor();
+            result = condProcessor.processConditions(node, termMapProcessor, conditions);
         }
         else{
             log.debug("Simple Predicate Map");
@@ -94,39 +74,6 @@ public class PredicateMapProcessor {
         }
         //return the uri
         return uris;
-    }
-    
-    //TODO: Move it separately
-    public boolean processMatch(String expression){
-        expression = expression.replace("match(", "").replace(")", "");
-        String[] strings = expression.split(",");
-        
-        if (strings != null && strings.length > 1) {
-            if (strings[0].equals(strings[1].replaceAll("\"", ""))) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-        return false;
-    }
-    
-    //TODO: Spring it!!
-    //TODO: Merge it with the one from Referencing Object Map
-    public Map<String, String> processBindingConditions(
-            Object node, Set<BindingCondition> bindingConditions){
-        Map<String, String> parameters = new HashMap<String, String>();
-        for(BindingCondition bindingCondition : bindingConditions){
-            List<String> childValues = termMapProcessor.
-                    extractValueFromNode(node, bindingCondition.getReference());
-            
-            for (String childValue : childValues) {    
-                parameters.put(
-                    bindingCondition.getVariable(), childValue);
-            }
-        }
-        
-        return parameters;
     }
 
 }

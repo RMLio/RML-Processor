@@ -1,5 +1,6 @@
 package be.ugent.mmlab.rml.processor;
 
+import be.ugent.mmlab.rml.condition.model.Condition;
 import be.ugent.mmlab.rml.logicalsourcehandler.termmap.TermMapProcessor;
 import be.ugent.mmlab.rml.logicalsourcehandler.termmap.TermMapProcessorFactory;
 import be.ugent.mmlab.rml.logicalsourcehandler.termmap.concrete.ConcreteTermMapFactory;
@@ -8,6 +9,7 @@ import static be.ugent.mmlab.rml.model.RDFTerm.TermType.IRI;
 import be.ugent.mmlab.rml.model.RDFTerm.GraphMap;
 import be.ugent.mmlab.rml.model.RDFTerm.SubjectMap;
 import be.ugent.mmlab.rml.model.dataset.RMLDataset;
+import be.ugent.mmlab.rml.model.std.StdConditionSubjectMap;
 import java.util.List;
 import java.util.Set;
 import org.apache.commons.lang.RandomStringUtils;
@@ -33,55 +35,74 @@ public class SubjectMapProcessor {
     
     public Resource processSubjectMap(
             RMLDataset dataset, SubjectMap subjectMap, Object node) {  
-        Resource subject ;
+        Resource subject = null;
+        boolean result ;
+        
         //Get the uri
         TermMapProcessorFactory factory = new ConcreteTermMapFactory();
         this.termMapProcessor = 
                 factory.create(subjectMap.getOwnTriplesMap().getLogicalSource().getReferenceFormulation());
-
-        List<String> values = this.termMapProcessor.processTermMap(subjectMap, node);
-        //log.info("Abstract RML Processor Graph Map" + subjectMap.getGraphMaps().toString());
-        if (values == null || values.isEmpty()) 
-            if(subjectMap.getTermType() != BLANK_NODE){
-                log.debug("No subject was generated for " 
-                        + subjectMap.getOwnTriplesMap().getName().toString());
-                return null;
-            } 
-            
-        String value = null;
-        if(subjectMap.getTermType() != BLANK_NODE){
-            //Since it is the subject, more than one value is not allowed. 
-            //Only return the first one. Throw exception if not?
-            value = values.get(0);
-
-            if ((value == null) || (value.equals(""))) {
-                log.error("No subject was generated for " + subjectMap.toString());
-                return null;
-            }
+        
+        if (subjectMap.getClass().getSimpleName().equals("StdConditionSubjectMap")) {
+            log.debug("Conditional Subject Map");
+            StdConditionSubjectMap condSubMap =
+                    (StdConditionSubjectMap) subjectMap;
+            Set<Condition> conditions = condSubMap.getConditions();
+            ConditionProcessor condProcessor = new StdConditionProcessor();
+            result = condProcessor.processConditions(node, termMapProcessor, conditions);
+        }
+        else{
+            log.debug("Simple Subject Map");
+            result = true;
         }
         
-        
-        //TODO: doublicate code from ObjectMap - they should be handled together
-        //TODO:Spring it!
-        switch (subjectMap.getTermType()) {
-            case IRI:
-                if (value != null && !value.equals("")) 
-                    if (value.startsWith("www.")) {
-                        value = "http://" + value;
+        if (result == true) {
+            List<String> values = this.termMapProcessor.processTermMap(subjectMap, node);
+            //log.info("Abstract RML Processor Graph Map" + subjectMap.getGraphMaps().toString());
+            if (values == null || values.isEmpty()) {
+                if (subjectMap.getTermType() != BLANK_NODE) {
+                    log.debug("No subject was generated for "
+                            + subjectMap.getOwnTriplesMap().getName().toString());
+                    return null;
+                }
+            }
+
+            String value = null;
+            if (subjectMap.getTermType() != BLANK_NODE) {
+                //Since it is the subject, more than one value is not allowed. 
+                //Only return the first one. Throw exception if not?
+                value = values.get(0);
+
+                if ((value == null) || (value.equals(""))) {
+                    log.error("No subject was generated for " + subjectMap.toString());
+                    return null;
+                }
+            }
+
+
+            //TODO: doublicate code from ObjectMap - they should be handled together
+            //TODO:Spring it!
+            switch (subjectMap.getTermType()) {
+                case IRI:
+                    if (value != null && !value.equals("")) {
+                        if (value.startsWith("www.")) {
+                            value = "http://" + value;
+                        }
                     }
                     try {
                         subject = new URIImpl(value);
                     } catch (Exception e) {
                         return null;
                     }
-                break;
-            case BLANK_NODE:
-                subject = new BNodeImpl(
-                        RandomStringUtils.randomAlphanumeric(10));
-                break;
-            default:
-                subject = new URIImpl(value);
-        }        
+                    break;
+                case BLANK_NODE:
+                    subject = new BNodeImpl(
+                            RandomStringUtils.randomAlphanumeric(10));
+                    break;
+                default:
+                    subject = new URIImpl(value);
+            }
+        }
         return subject;
     }
 

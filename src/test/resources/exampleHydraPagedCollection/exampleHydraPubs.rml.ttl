@@ -23,10 +23,10 @@
 <#InputAPI>
     a hydra:PagedCollection ;
     hydra:itemsPerPage "500"^^xsd:integer ;
-    hydra:firstPage <http://explore.ilastic.be/iminds/authors> ;
-    hydra:nextPage <http://explore.ilastic.be/iminds/authors?&offset=3500&limit=500> .
+    hydra:firstPage <http://explore.ilastic.be/iminds/authors?offset=41500&limit=500> .
+    hydra:nextPage <http://explore.ilastic.be/iminds/authors?&offset=42000&limit=500> .
 
-<#Author>
+<#iMindsAuthor>
     rml:logicalSource [ 
 	rml:source <#InputAPI>;
         rml:referenceFormulation ql:JSONPath;
@@ -35,7 +35,8 @@
 
     rr:subjectMap [
         rr:template "http://www.ex.com/author/{CRM ID}"; 
-        rr:class ex:Author
+        #rr:class ex:Author ;
+        crml:booleanCondition <#iMindsAuthorCondition>
     ];
 
     rr:predicateObjectMap [
@@ -58,9 +59,39 @@
     rr:predicate cerif:linksToOrganisationUnit;
     rr:objectMap [
       rr:parentTriplesMap <#UniversityMapping> ;
+      crml:booleanCondition <#NonEmptyCRM_Condition> ;
       rr:joinCondition [
-        rr:parent "Groep v/d auteur - kenniscentrum code" ;
-        rr:child "Auteur kenniscentrum" ] ] ].
+        rr:parent "Groep v/d auteur - CRM ID" ;
+        rr:child "Groep v/d auteur - CRM ID" ] ] ].
+
+<#NotiMindsAuthor>
+    rml:logicalSource [ 
+	rml:source <#InputAPI>;
+        rml:referenceFormulation ql:JSONPath;
+	rml:iterator "$.[*]";
+    ];
+
+    rr:subjectMap [
+        rr:template "http://www.ex.com/author/{Auteur naam}_{Auteur voornaam}"; 
+        #rr:class ex:Author ;
+        crml:booleanCondition <#NotiMindsAuthorCondition>
+    ];
+
+    rr:predicateObjectMap [
+        rr:predicate ex:firstName;
+
+        rr:objectMap [ 
+            rml:reference "Auteur naam" ;
+            ]
+    ];
+
+    rr:predicateObjectMap [
+        rr:predicate ex:lastName;
+
+        rr:objectMap [ 
+            rml:reference "Auteur voornaam" ;
+            ]
+    ].
 
 <#UniversityMapping>
   rml:logicalSource <#GroupsInput> ;
@@ -68,3 +99,25 @@
   rr:subjectMap [
     rr:template "http://explore.ilastic.be/university/{Groep v/d auteur - kenniscentrum code}";
     rr:class cerif:OrganizationalUnit ].
+
+######################################################################################
+# 5. Conditions
+######################################################################################
+
+<#NotiMindsAuthorCondition>
+    crml:condition """match(%%id%%,0)""" ;
+    crml:binding [
+        crml:variable "id" ;
+        rml:reference "Auteur is iMinds " ] .
+
+<#iMindsAuthorCondition>
+    crml:condition """match(%%id%%,\"1\")""" ;
+    crml:binding [
+        crml:variable "id" ;
+        rml:reference "Auteur is iMinds " ] .
+
+<#NonEmptyCRM_Condition>
+    crml:condition """!match(%%id%%,\"\")""" ;
+    crml:binding [
+        crml:variable "id" ;
+        rml:reference "Groep v/d auteur - CRM ID" ] .
