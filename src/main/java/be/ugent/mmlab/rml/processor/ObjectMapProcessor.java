@@ -150,6 +150,12 @@ public class ObjectMapProcessor {
                 ConditionReferencingObjectMap condRefObjMap  =
                         (ConditionReferencingObjectMap) referencingObjectMap;
                 conditions = condRefObjMap.getConditions();
+                
+                //process conditions
+                ConditionProcessor condProcessor = new StdConditionProcessor();
+                boolean result = condProcessor.processConditions(node, termMapProcessor, conditions);
+                if(!result)
+                    continue;
 
                 bindingConditions = new HashSet<BindingCondition>();
 
@@ -158,6 +164,12 @@ public class ObjectMapProcessor {
                     if (condition.getClass().getSimpleName().equals("StdBindingCondition")) {
                         BindingCondition bindCondition = (BindingCondition) condition;
                         bindingConditions.add(bindCondition);
+                    }
+                    
+                    if (condition.getClass().getSimpleName().equals("StdBooleanCondition")) {
+                        
+                        //BindingCondition bindCondition = (BindingCondition) condition;
+                        //bindingConditions.add(bindCondition);
                     }
                 }
                 parameters = processBindingConditions(node, bindingConditions);

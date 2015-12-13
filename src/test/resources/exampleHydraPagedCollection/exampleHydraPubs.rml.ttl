@@ -98,7 +98,9 @@
 
   rr:subjectMap [
     rr:template "http://explore.ilastic.be/university/{Groep v/d auteur - kenniscentrum code}";
-    rr:class cerif:OrganizationalUnit ].
+    rr:class cerif:OrganizationalUnit ;
+    crml:booleanCondition <#MeaningfullCRM_Condition> ;
+  ].
 
 ######################################################################################
 # 5. Conditions
@@ -121,3 +123,9 @@
     crml:binding [
         crml:variable "id" ;
         rml:reference "Groep v/d auteur - CRM ID" ] .
+
+<#MeaningfullCRM_Condition>
+    crml:condition """!match(%%id%%,\"-NA\")""", """!match(%%id%%,\"-MI\")""" ;
+    crml:binding [
+        crml:variable "id" ;
+        rml:reference "Groep v/d auteur - kenniscentrum code" ] .
