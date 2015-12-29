@@ -77,7 +77,7 @@
     <dependencies>
         <dependency>
             <groupId>be.ugent.mmlab.rml</groupId>
-            <artifactId>RML-BindingCondition</artifactId>
+            <artifactId>RML-ConditionsHandler</artifactId>
             <version>1.0</version>
         </dependency>
         <dependency>
@@ -92,12 +92,12 @@
         </dependency>
         <dependency>
             <groupId>be.ugent.mmlab.rml</groupId>
-            <artifactId>RML-DataRetrieval</artifactId>
+            <artifactId>RML-DataRetrievalHandler</artifactId>
             <version>1.0</version>
         </dependency>
         <dependency>
             <groupId>be.ugent.mmlab.rml</groupId>
-            <artifactId>RML-Metadata</artifactId>
+            <artifactId>RML-MetadataHandler</artifactId>
             <version>1.0</version>
         </dependency>
         <dependency>
