@@ -2,16 +2,11 @@ package be.ugent.mmlab.rml.processor;
 
 import be.ugent.mmlab.rml.model.dataset.RMLDataset;
 import be.ugent.mmlab.rml.performer.RMLPerformer;
-import be.ugent.mmlab.rml.model.RDFTerm.PredicateMap;
 import be.ugent.mmlab.rml.model.PredicateObjectMap;
 import be.ugent.mmlab.rml.model.RDFTerm.SubjectMap;
-import be.ugent.mmlab.rml.model.RDFTerm.TermMap;
 import be.ugent.mmlab.rml.model.TriplesMap;
-import be.ugent.mmlab.rml.vocabularies.QLVocabulary.QLTerm;
 import java.io.InputStream;
-import java.util.List;
 import org.openrdf.model.Resource;
-import org.openrdf.model.URI;
 
 /**
  * RMLProcessor 

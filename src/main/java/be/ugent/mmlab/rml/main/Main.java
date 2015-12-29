@@ -99,11 +99,15 @@ public class Main {
             log.info("========================================");
             RMLMapping mapping = mappingFactory.extractRMLMapping(repository);
             
+            log.debug("Generation Execution plan...");
             if (commandLine.hasOption("tm")) {
                 triplesMap = commandLine.getOptionValue("tm", null);
                 if(triplesMap != null)
                     exeTriplesMap = 
                             RMLConfiguration.processTriplesMap(triplesMap,map_doc);
+            
+            for(String trMap : exeTriplesMap)
+                log.debug("trMap in exeTriplesMap " + trMap.toString());
             }
             
             log.info("========================================");

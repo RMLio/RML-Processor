@@ -4,6 +4,8 @@ import be.ugent.mmlab.rml.model.RMLMapping;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * RML Processor
@@ -11,6 +13,10 @@ import java.util.LinkedHashSet;
  * @author andimou
  */
 public class RMLExecutionEngine {
+    // Log
+    private static final Logger log = 
+            LoggerFactory.getLogger(RMLExecutionEngine.class);
+    
     String[] exeTriplesMap;
     
     public RMLExecutionEngine(String[] exeTriplesMap){

@@ -2,6 +2,7 @@ package be.ugent.mmlab.rml.processor;
 
 import be.ugent.mmlab.rml.condition.model.BindingCondition;
 import be.ugent.mmlab.rml.condition.model.Condition;
+import be.ugent.mmlab.rml.condition.model.std.StdJoinConditionMetric;
 import be.ugent.mmlab.rml.model.std.ConditionReferencingObjectMap;
 import be.ugent.mmlab.rml.input.processor.AbstractInputProcessor;
 import be.ugent.mmlab.rml.input.processor.SourceProcessor;
@@ -9,6 +10,7 @@ import be.ugent.mmlab.rml.logicalsourcehandler.termmap.TermMapProcessor;
 import be.ugent.mmlab.rml.logicalsourcehandler.termmap.TermMapProcessorFactory;
 import be.ugent.mmlab.rml.logicalsourcehandler.termmap.concrete.ConcreteTermMapFactory;
 import be.ugent.mmlab.rml.model.JoinCondition;
+import be.ugent.mmlab.rml.model.LogicalSource;
 import be.ugent.mmlab.rml.model.PredicateObjectMap;
 import be.ugent.mmlab.rml.model.RDFTerm.GraphMap;
 import be.ugent.mmlab.rml.model.RDFTerm.ObjectMap;
@@ -61,7 +63,11 @@ public class ObjectMapProcessor {
             PredicateObjectMap pom, Object node) {
         
         Set<ObjectMap> objectMaps = pom.getObjectMaps();
+        if(objectMaps.size() > 0)
+            log.debug("Processing Simple Object Map...");
+        
         for (ObjectMap objectMap : objectMaps) {
+            boolean flag = true;
             //Get the one or more objects returned by the object map
             List<Value> objects = processObjectMap(objectMap, node);
             
@@ -69,18 +75,15 @@ public class ObjectMapProcessor {
                 log.debug("Conditional Object Map");
                 StdConditionObjectMap tmp = (StdConditionObjectMap) objectMap;
                 Set<Condition> conditions = tmp.getConditions();
-                for (Condition condition : conditions){
-                    String expression = condition.getCondition();
-                    if(expression.contains("toUppercase")){
-                        //TODO: Add body
-                    }
-                }
+                
+                //process conditions
+                ConditionProcessor condProcessor = new StdConditionProcessor();
+                flag = condProcessor.processConditions(
+                        node, termMapProcessor, conditions);
             }
-            else
-                log.debug("Simple Object Map");
             
-            //smth = objectMap.processBooleanConditions(node, objectMap);
-            if (objects != null) {
+            if (flag && objects != null) {
+                
                 for (Value object : objects) {
                     if (object.stringValue() != null) {
                         Set<GraphMap> graphs = pom.getGraphMaps();
@@ -126,53 +129,57 @@ public class ObjectMapProcessor {
         String template ;
         Map<String, String> parameters = null;
         
-        Set<ReferencingObjectMap> referencingObjectMaps = 
+        Set<ReferencingObjectMap> referencingObjectMaps =
                 pom.getReferencingObjectMaps();
+        if (referencingObjectMaps.size() > 0) {
+            log.debug("Processing Referencing Object Map...");
+        }
         for (ReferencingObjectMap referencingObjectMap : referencingObjectMaps) {
-            if(referencingObjectMap.getParentTriplesMap().getLogicalSource() == null){
+            TriplesMap parTrMap = referencingObjectMap.getParentTriplesMap();
+            LogicalSource logSo = parTrMap.getLogicalSource();
+            if (referencingObjectMap.getParentTriplesMap().getLogicalSource() == null) {
                 continue;
             }
-            TriplesMap parentTriplesMap = 
+            TriplesMap parentTriplesMap =
                     referencingObjectMap.getParentTriplesMap();
-            
+
             template = parentTriplesMap.
                     getLogicalSource().getSource().getTemplate();
-            
+
             Set<Condition> conditions = null;
-            Set<JoinCondition> joinConditions ;
-            Set<BindingCondition> bindingConditions;
-            
+            Set<JoinCondition> joinConditions;
+            Set<BindingCondition> bindingConditions = new HashSet<BindingCondition>();
+
             joinConditions = referencingObjectMap.getJoinConditions();
             
             if (referencingObjectMap.getClass().getSimpleName().equals(
-                    "ConditionReferencingObjectMap")) {
+                    "ConditionReferencingObjectMap") ) {
+                
+                //Retrieving Conditions
                 log.debug("Condition Referencing Object Map");
                 ConditionReferencingObjectMap condRefObjMap  =
                         (ConditionReferencingObjectMap) referencingObjectMap;
                 conditions = condRefObjMap.getConditions();
                 
-                //process conditions
+                //Processing conditions
                 ConditionProcessor condProcessor = new StdConditionProcessor();
-                boolean result = condProcessor.processConditions(node, termMapProcessor, conditions);
-                if(!result)
-                    continue;
-
-                bindingConditions = new HashSet<BindingCondition>();
-
+                boolean result = condProcessor.processConditions(
+                        node, termMapProcessor, conditions);
+                
+                //Processing Binding Conditions
+                log.debug("Processing Conditions...");
                 for (Condition condition : conditions) {
                     
                     if (condition.getClass().getSimpleName().equals("StdBindingCondition")) {
                         BindingCondition bindCondition = (BindingCondition) condition;
                         bindingConditions.add(bindCondition);
                     }
-                    
-                    if (condition.getClass().getSimpleName().equals("StdBooleanCondition")) {
-                        
-                        //BindingCondition bindCondition = (BindingCondition) condition;
-                        //bindingConditions.add(bindCondition);
-                    }
                 }
                 parameters = processBindingConditions(node, bindingConditions);
+                
+                //If conditions fail  do not proceed
+                if(!result  && bindingConditions.isEmpty()) // && joinConditions.isEmpty())
+                    continue;
             } else {
                 log.debug("Simple Referencing Object Map");
             }
@@ -186,6 +193,8 @@ public class ObjectMapProcessor {
                         (ConditionReferencingObjectMap) referencingObjectMap;
 
             }*/
+            
+            log.debug("Executing Referencing Object Map....");
 
             //Create the processor based on the parent triples map to perform the join
             RMLProcessorFactory factory = new ConcreteRMLProcessorFactory();
@@ -313,21 +322,48 @@ public class ObjectMapProcessor {
             Set<JoinCondition> joinConditions, String[] exeTriplesMap) {
         HashMap<String, String> joinMap = new HashMap<>();
         
+        log.debug("Processing " + joinConditions.size() 
+                + " Referencing Object Map with Join Conditions...");
+
         for (JoinCondition joinCondition : joinConditions) {
             if(joinCondition.getChild() == null)
                 continue;
-            
-            List<String> childValues = termMapProcessor.extractValueFromNode(
+            String child = joinCondition.getChild();
+            List<String> childValues;
+            if(child.contains("{")){
+                be.ugent.mmlab.rml.input.processor.TemplateProcessor templateProcessor = 
+                        new be.ugent.mmlab.rml.input.processor.TemplateProcessor();
+                childValues = termMapProcessor.templateHandler(
+                        child, node, parentTriplesMap.getLogicalSource().getReferenceFormulation(), null);
+                log.debug("child template " + childValues);
+            }
+            else
+                childValues = termMapProcessor.extractValueFromNode(
                     node, joinCondition.getChild());
             //Allow multiple values as child - 
             //fits with RML's definition of multiple Object Maps
             for (String childValue : childValues) { 
                 joinMap.put(joinCondition.getParent(), childValue);
                 if (joinMap.size() == joinConditions.size()) {
-                    performer = new ConditionalJoinRMLPerformer(
-                            processor, joinMap, subject, predicate);
-                    processor.execute(dataset, parentTriplesMap, performer, 
-                            input, exeTriplesMap, false);
+                    log.debug("Join Condition class " + 
+                            joinCondition.getClass().getSimpleName());
+                    if (joinCondition.getClass().getSimpleName().equals(
+                            "StdJoinConditionMetric")) {
+                        log.debug("Join Condition with Metric...");
+                        StdJoinConditionMetric joinCondMetric =
+                                (StdJoinConditionMetric) joinCondition;
+                        Resource metric = joinCondMetric.getMetric();
+                        performer = new ConditionalJoinRMLPerformer(
+                                processor, joinMap, subject, predicate, metric);
+                        processor.execute(dataset, parentTriplesMap, performer,
+                                input, exeTriplesMap, false);
+                    } else {
+                        performer = new ConditionalJoinRMLPerformer(
+                                processor, joinMap, subject, predicate);
+                        log.debug("Join Condition without Metric...");
+                        processor.execute(dataset, parentTriplesMap, performer,
+                                input, exeTriplesMap, false);
+                    }
                 }
             }
         }

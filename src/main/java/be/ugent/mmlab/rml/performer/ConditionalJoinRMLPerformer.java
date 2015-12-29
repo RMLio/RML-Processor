@@ -1,15 +1,22 @@
 package be.ugent.mmlab.rml.performer;
 
+import be.ugent.mmlab.rml.condition.model.Condition;
 import be.ugent.mmlab.rml.core.RMLExecutionEngine;
-import be.ugent.mmlab.rml.input.termmap.concrete.ConcreteTermMapFactory;
 import be.ugent.mmlab.rml.logicalsourcehandler.termmap.TermMapProcessor;
 import be.ugent.mmlab.rml.logicalsourcehandler.termmap.TermMapProcessorFactory;
+import be.ugent.mmlab.rml.logicalsourcehandler.termmap.concrete.ConcreteTermMapFactory;
 import be.ugent.mmlab.rml.model.RDFTerm.TermType;
 import be.ugent.mmlab.rml.model.dataset.RMLDataset;
 import be.ugent.mmlab.rml.model.TriplesMap;
+import be.ugent.mmlab.rml.model.std.StdConditionSubjectMap;
+import be.ugent.mmlab.rml.processor.ConditionProcessor;
 import be.ugent.mmlab.rml.processor.RMLProcessor;
+import be.ugent.mmlab.rml.processor.StdConditionProcessor;
+import info.debatty.java.stringsimilarity.Jaccard;
+import info.debatty.java.stringsimilarity.Levenshtein;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 import org.openrdf.model.Resource;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
@@ -32,6 +39,7 @@ public class ConditionalJoinRMLPerformer extends NodeRMLPerformer{
     private HashMap<String, String> conditions;
     private Resource subject;
     private URI predicate;
+    private Resource metric;
 
     public ConditionalJoinRMLPerformer(
             RMLProcessor processor, HashMap<String, String> conditions, 
@@ -40,6 +48,16 @@ public class ConditionalJoinRMLPerformer extends NodeRMLPerformer{
         this.conditions = conditions;
         this.subject = subject;
         this.predicate = predicate;
+    }
+    
+    public ConditionalJoinRMLPerformer(
+            RMLProcessor processor, HashMap<String, String> conditions, 
+            Resource subject, URI predicate, Resource metric) {
+        super(processor);
+        this.conditions = conditions;
+        this.subject = subject;
+        this.predicate = predicate;
+        this.metric = metric;
     }
     
     public ConditionalJoinRMLPerformer(
@@ -60,13 +78,13 @@ public class ConditionalJoinRMLPerformer extends NodeRMLPerformer{
     public void perform(Object node, RMLDataset dataset, 
         TriplesMap map, String[] exeTriplesMap, boolean pomExecution) {
         Value object;
-        
+        log.debug("Performing Conditional Join RML Performer....");
+
         //iterate the conditions, execute the expressions and compare both values
         if(conditions != null){
             boolean flag = true;
 
-            iter: for (String expr : conditions.keySet()) {
-                log.debug("expr " + expr);
+            iter: for (String expr : conditions.keySet()) {   
                 String cond = conditions.get(expr);
                 
                 TermMapProcessorFactory factory = new ConcreteTermMapFactory();
@@ -77,53 +95,97 @@ public class ConditionalJoinRMLPerformer extends NodeRMLPerformer{
                 
                 if(values.size() == 0)
                     flag = false;
+                
+                flag = equalityMetric(values, cond);
+                if(!flag)
+                    break iter;
+            }
+            
+            if (flag) {
+                boolean result = true;
+                if (map.getSubjectMap().getClass().getSimpleName().equals("StdConditionSubjectMap")) {
+                    log.debug("Conditional Subject Map");
+                    StdConditionSubjectMap condSubMap =
+                            (StdConditionSubjectMap) map.getSubjectMap();
+                    Set<Condition> conditions = condSubMap.getConditions();
+                    ConditionProcessor condProcessor = new StdConditionProcessor();
+                    result = condProcessor.processConditions(node, termMapProcessor, conditions);
+                }
+                if (result) {
+                    object = processor.processSubjectMap(this.processor, dataset,
+                            map, map.getSubjectMap(), node, exeTriplesMap);
+                    if (subject != null && object != null) {
+                        List<Statement> triples =
+                                dataset.tuplePattern(subject, predicate, object);
+                        if (triples.size() == 0) {
+                            dataset.add(subject, predicate, object);
+                            log.debug("Subject " + subject
+                                    + " Predicate " + predicate
+                                    + " Object " + object.toString());
+                        }
 
-                //TODO: check if it stops as soon as it finds something
-                for(String value : values){
-                    log.debug("value " + value);
-                    log.debug("cond " + cond);
-                    if(value == null || !value.equals(cond)){
-                            flag = false;
-                            break iter;
+                        if (exeTriplesMap != null) {
+                            RMLExecutionEngine executionEngine =
+                                    new RMLExecutionEngine(exeTriplesMap);
+                            pomExecution = executionEngine.
+                                    checkExecutionList(map, exeTriplesMap);
+                        }
+
+                        if (!pomExecution
+                                || map.getSubjectMap().getTermType().equals(TermType.BLANK_NODE)) {
+                            log.debug("Nested performer is called");
+                            NestedRMLPerformer nestedPerformer =
+                                    new NestedRMLPerformer(processor);
+                            nestedPerformer.perform(
+                                    node, dataset, (Resource) object, map, exeTriplesMap, true);
+                        }
+                    } else {
+                        log.debug("Triple for Subject " + subject
+                                + " Predicate " + predicate
+                                + "Object " + object
+                                + "was not created");
                     }
                 }
             }
-            
-            if(flag){
-                object = processor.processSubjectMap(this.processor, dataset, 
-                        map, map.getSubjectMap(), node, exeTriplesMap);
-                if (subject != null && object != null){
-                    List<Statement> triples =
-                            dataset.tuplePattern(subject, predicate, object);
-                    if (triples.size() == 0) {
-                        dataset.add(subject, predicate, object);
-                        log.debug("Subject " + subject
-                                + " Predicate " + predicate
-                                + " Object " + object.toString());
-                    }
-                    
-                    if (exeTriplesMap != null) {
-                        RMLExecutionEngine executionEngine =
-                                new RMLExecutionEngine(exeTriplesMap);
-                        pomExecution = executionEngine.
-                                checkExecutionList(map, exeTriplesMap);
-                    }
-                    
-                    if (!pomExecution || 
-                            map.getSubjectMap().getTermType().equals(TermType.BLANK_NODE)) {
-                        log.debug("Nested performer is called");
-                        NestedRMLPerformer nestedPerformer =
-                                new NestedRMLPerformer(processor);
-                        nestedPerformer.perform(
-                                node, dataset, (Resource) object, map, exeTriplesMap, true);
-                    }
-                } 
-                else
-                    log.debug("Triple for Subject " + subject 
-                            + " Predicate " + predicate 
-                            + "Object " + object
-                            + "was not created");
-            }
         }  
+    }
+    
+    //TODO: Move that in a separate class
+    private boolean equalityMetric(List<String> values, String cond) {
+        log.debug("Equality Metric...");
+        boolean flag = false ;
+        //TODO: check if it stops as soon as it finds something
+        for (String value : values) {
+            log.info("Value " + value + " is compared to " + cond);
+
+            if (value == null) {
+                log.debug("Null value...");
+                flag = false;
+                break;
+            } else if (this.metric == null) {
+                log.debug("No metric...");
+                if((value.equals(cond)))
+                    flag = true;
+                break;
+            } else if (this.metric.stringValue().equals(
+                    "http://semweb.mmlab.be/ns/crml#Jaccard")){
+                log.debug("Processing Jaccard distance...");
+                Jaccard j = new Jaccard();
+                double distance = j.distance(value, cond);
+                log.debug("Distance " + distance);
+                if(distance == 0)
+                    flag = true;
+                break;
+            } else if(this.metric.stringValue().equals(
+                    "http://semweb.mmlab.be/ns/crml#Levenstein")){
+                log.debug("Processing Levenshtein distance..");
+                Levenshtein l = new Levenshtein();
+                double distance1 = l.distance(value, cond);
+                if(distance1 == 0)
+                    flag = true;
+                break;
+            }
+        }
+        return flag;
     }
 }

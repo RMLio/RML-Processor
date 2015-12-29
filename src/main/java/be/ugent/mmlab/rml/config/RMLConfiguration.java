@@ -1,6 +1,7 @@
 package be.ugent.mmlab.rml.config;
 
 import static be.ugent.mmlab.rml.config.RMLConfiguration.getCliOptions;
+import java.io.File;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
@@ -76,7 +77,9 @@ public class RMLConfiguration {
             String[] exeTriplesMap = parameters.split(",");
             for(int i=0 ; i < exeTriplesMap.length ; i++){
                 //TODO:remove hardcoded file:
-                exeTriplesMap[i] = "file:" + map_doc + "#" + exeTriplesMap[i];
+                //TODO: Consider also 
+                File file = new File(map_doc);
+                exeTriplesMap[i] = "file:" + file.getAbsolutePath() + "#" + exeTriplesMap[i];
             log.info("TriplesMap to be processed " + exeTriplesMap[i]);
             }
             return exeTriplesMap;

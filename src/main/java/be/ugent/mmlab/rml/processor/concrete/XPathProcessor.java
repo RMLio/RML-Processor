@@ -1,5 +1,7 @@
 package be.ugent.mmlab.rml.processor.concrete;
 
+import be.ugent.mmlab.rml.input.ConcreteLogicalSourceProcessorFactory;
+import be.ugent.mmlab.rml.input.processor.SourceProcessor;
 import be.ugent.mmlab.rml.logicalsourcehandler.termmap.TermMapProcessorFactory;
 import be.ugent.mmlab.rml.logicalsourcehandler.termmap.concrete.ConcreteTermMapFactory;
 import be.ugent.mmlab.rml.model.dataset.RMLDataset;
@@ -12,6 +14,7 @@ import be.ugent.mmlab.rml.processor.RMLProcessorFactory;
 import be.ugent.mmlab.rml.vocabularies.QLVocabulary.QLTerm;
 import be.ugent.mmlab.rml.xml.XOMBuilder;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import javax.xml.xpath.XPathException;
@@ -57,7 +60,8 @@ public class XPathProcessor extends AbstractRMLProcessor {
 
     public XPathContext nsContext = new XPathContext();
     
-    private DefaultNamespaceContext get_namespaces(TriplesMap map) {
+    private DefaultNamespaceContext get_namespaces(
+            TriplesMap map) {
         
         DefaultNamespaceContext dnc = new DefaultNamespaceContext();
         this.nsContext.addNamespace("xsd", Namespaces.URI_XSD);
@@ -68,16 +72,25 @@ public class XPathProcessor extends AbstractRMLProcessor {
         XMLDog dog = new XMLDog(dnc);
         try {
             Expression xpath = dog.addXPath("/*/namespace::*[name()]");
-            InputSource source = new InputSource(
-                    map.getLogicalSource().getSource().getTemplate());
-            XPathResults results = dog.sniff(source);
+            
+            ConcreteLogicalSourceProcessorFactory logicalSourceProcessorFactory = 
+                new ConcreteLogicalSourceProcessorFactory();
+            SourceProcessor inputProcessor = 
+                logicalSourceProcessorFactory.
+                createSourceProcessor(map.getLogicalSource().getSource());
+            try (InputStream input = inputProcessor.getInputStream(
+                                     map.getLogicalSource(), null)) {
+                InputSource source = new InputSource(input);
+                
+                XPathResults results = dog.sniff(source);
 
-            if (results != null) {
-                Collection<NodeItem> result =
-                        (Collection<NodeItem>) results.getResult(xpath);
-                for (NodeItem res : result) {
-                    this.nsContext.addNamespace(res.qualifiedName, res.value);
-                    dnc.declarePrefix(res.qualifiedName, res.value);
+                if (results != null) {
+                    Collection<NodeItem> result =
+                            (Collection<NodeItem>) results.getResult(xpath);
+                    for (NodeItem res : result) {
+                        this.nsContext.addNamespace(res.qualifiedName, res.value);
+                        dnc.declarePrefix(res.qualifiedName, res.value);
+                    }
                 }
             }
 
@@ -85,6 +98,8 @@ public class XPathProcessor extends AbstractRMLProcessor {
             log.error("SAX Path Exception: " + ex );
         } catch (XPathException ex) {
             log.error("XPath Exception: " + ex );
+        } catch (IOException ex) {
+            log.error("IOException " + ex);
         } 
         return dnc;
     }
@@ -121,15 +136,15 @@ public class XPathProcessor extends AbstractRMLProcessor {
     @Override
     public void execute(final RMLDataset dataset, final TriplesMap map, 
         final RMLPerformer performer, InputStream input, 
-        final String[] exeTriplesMap, final boolean pomExecution) {
+        final String[] exeTriplesMap, final boolean pomExecution) {      
         try {
             this.map = map;
             String reference = getReference(map.getLogicalSource());
-            //Inititalize the XMLDog for processing XPath
-            // an implementation of javax.xml.namespace.NamespaceContext
-            //DefaultNamespaceContext dnc = new DefaultNamespaceContext();
+            DefaultNamespaceContext dnc = new DefaultNamespaceContext();
             
-            DefaultNamespaceContext dnc = get_namespaces(map);
+            this.nsContext.addNamespace("xsd", Namespaces.URI_XSD);
+            dnc.declarePrefix("xsd", Namespaces.URI_XSD);
+            dnc = get_namespaces(map);
 
             XMLDog dog = new XMLDog(dnc);
             //XMLDog dog = get_namespaces(input);

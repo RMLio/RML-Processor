@@ -282,6 +282,11 @@ public class StdRMLEngine implements RMLEngine {
                 processor.execute(dataset, triplesMap, performer,
                         input, exeTriplesMap, false);
             }
+            else{
+                log.debug("Null input data derived from " + 
+                        triplesMap.getLogicalSource().getSource().getTemplate());
+                return dataset;
+            }
             
         } catch (Exception ex) {
             log.error("Exception " + ex);

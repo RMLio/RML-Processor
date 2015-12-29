@@ -59,7 +59,7 @@ public class PredicateMapProcessor {
             result = true;
         }
         
-        if (result == true) {
+        if (result) {
             // Get the value
             List<String> values =
                     this.termMapProcessor.processTermMap(predicateMap, node);
