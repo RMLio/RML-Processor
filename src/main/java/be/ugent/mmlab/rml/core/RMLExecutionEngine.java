@@ -53,5 +53,16 @@ public class RMLExecutionEngine {
 
         return triplesMaps;
     }
+    
+    public Collection<TriplesMap> registerLogicalSources(RMLMapping rmlMapping) {
+        Collection<TriplesMap> tms = rmlMapping.getTriplesMaps();
+        Collection<TriplesMap> triplesMaps = new LinkedHashSet<TriplesMap>();
+
+        for (TriplesMap tm : tms) {
+            tm.getLogicalSource().getSource();
+        }
+
+        return triplesMaps;
+    }
 
 }

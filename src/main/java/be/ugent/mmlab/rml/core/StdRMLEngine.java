@@ -131,7 +131,7 @@ public class StdRMLEngine implements RMLEngine {
                 log.debug("Using direct file " + pathToNativeStore);
                 dataset = new FileDataset(pathToNativeStore, outputFormat, 
                         manager, repositoryID);
-                log.debug("dataset is generated");
+                log.debug("Dataset is generated");
             } else {
                 log.debug("Using default store (memory) ");
                 dataset = new StdRMLDataset();
@@ -203,17 +203,6 @@ public class StdRMLEngine implements RMLEngine {
                             triplesMap, parameters, exeTriplesMap, dataset);
                 } while (inputProcessor.hasNextInputStream());
             }         
-                    
-            /*try {
-                log.info((dataset.getSize() - delta)
-                        + " triples were generated for " 
-                        + triplesMap.getName());
-                //TODO: Add metadata that this Triples Map generatedthat many triples
-                //delta = dataset.getSize();
-            } catch (Exception ex) {
-                log.error("Exception " + ex);
-                log.error("The execution of the mapping failed.");
-            }*/
         }
         return dataset;
     }

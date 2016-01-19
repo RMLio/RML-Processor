@@ -61,9 +61,6 @@ public class NodeRMLPerformer implements RMLPerformer {
             log.debug("No subject was generated for "
                     + map.getName() + "triple Map and node " + node.toString());
         } else {
-            //processor.processSubjectTypeMap(
-            //        dataset, subject, map.getSubjectMap(), node);
-            
             Set<GraphMap> graph = map.getSubjectMap().getGraphMaps();
             for (PredicateObjectMap pom : map.getPredicateObjectMaps()) {
                 processor.processPredicateObjectMap(

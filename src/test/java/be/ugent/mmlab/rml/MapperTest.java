@@ -183,6 +183,44 @@ public class MapperTest
                 assertMap(fileToRMLFile, null, null)));
     }*/
     
+    public void testExampleNegationOf() {
+        URL fileToRMLFile = getClass().getResource(
+                "/exampleNegationOf/exampleNegationOf.rml.ttl");
+        URL fileToOutputFile = getClass().getResource(
+                "/exampleNegationOf/exampleNegationOf.output.ttl");
+        assertTrue(desiredOutput(fileToOutputFile).isEqualTo(
+                assertMap(fileToRMLFile, null, null)));
+    }
+    
+    public void testExampleSubjectNegationOf() {
+        URL fileToRMLFile = getClass().getResource(
+                "/exampleNegationOf/exampleSubjectNegationOf.rml.ttl");
+        URL fileToOutputFile = getClass().getResource(
+                "/exampleNegationOf/exampleSubjectNegationOf.output.ttl");
+        assertTrue(desiredOutput(fileToOutputFile).isEqualTo(
+                assertMap(fileToRMLFile, null, null)));
+    }
+    
+    public void testExamplePredicateNegationOf() {
+        URL fileToRMLFile = getClass().getResource(
+                "/exampleNegationOf/examplePredicateNegationOf.rml.ttl");
+        URL fileToOutputFile = getClass().getResource(
+                "/exampleNegationOf/examplePredicateNegationOf.output.ttl");
+        assertTrue(desiredOutput(fileToOutputFile).isEqualTo(
+                assertMap(fileToRMLFile, null, null)));
+    }
+    
+    public void testExampleObjectNegationOf() {
+        URL fileToRMLFile = getClass().getResource(
+                "/exampleNegationOf/exampleObjectNegationOf.rml.ttl");
+        URL fileToOutputFile = getClass().getResource(
+                "/exampleNegationOf/exampleObjectNegationOf.output.ttl");
+        RMLDataset smth = desiredOutput(fileToOutputFile);
+        log.debug("smth " + smth);
+        assertTrue(smth.isEqualTo(
+                assertMap(fileToRMLFile, null, null)));
+    }
+    
     public void testExampleHydraSPARQLsd() {
         URL fileToRMLFile = getClass().getResource(
                 "/exampleHydraSPARQLsd/exampleHydraSPARQLsd.rml.ttl");
@@ -193,7 +231,7 @@ public class MapperTest
         assertTrue(desiredOutput(fileToOutputFile).isEqualTo(
                 assertMap(fileToRMLFile, null, triplesMap)));
     }
-    
+       
     private RMLDataset desiredOutput (URL outputURL){
         RMLDataset desiredOutput = new StdRMLDataset(false);
         desiredOutput.addFile(outputURL.getFile(), RDFFormat.TURTLE);

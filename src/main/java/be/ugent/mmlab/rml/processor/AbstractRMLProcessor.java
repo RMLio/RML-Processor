@@ -52,7 +52,14 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
     @Override
     public Resource processSubjectMap(RMLProcessor processor, RMLDataset dataset, 
             TriplesMap map, SubjectMap subjectMap, Object node, String[] exeTriplesMap){
-        SubjectMapProcessor subMapProcessor = new SubjectMapProcessor();
+        SubjectMapProcessor subMapProcessor;
+                
+        if(dataset.getClass().getSimpleName().equals("MetadataFileDataset")){
+            log.debug("Generate metadata subjectmap processor");
+            subMapProcessor = new MetadataSubjectMapProcessor();
+        }
+        else
+            subMapProcessor = new StdSubjectMapProcessor();
         Resource subject = subMapProcessor.processSubjectMap(dataset, subjectMap, node);
         
         if (subject == null) {

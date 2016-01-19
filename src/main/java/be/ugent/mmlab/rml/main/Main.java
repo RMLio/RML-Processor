@@ -3,11 +3,12 @@ package be.ugent.mmlab.rml.main;
 import be.ugent.mmlab.rml.config.RMLConfiguration;
 import be.ugent.mmlab.rml.core.RMLEngine;
 import be.ugent.mmlab.rml.core.StdRMLEngine;
-import be.ugent.mmlab.rml.core.RMLEngineMeta;
+import be.ugent.mmlab.rml.core.StdMetadataRMLEngine;
 import be.ugent.mmlab.rml.model.dataset.RMLDataset;
 import be.ugent.mmlab.rml.mapdochandler.extraction.std.StdRMLMappingFactory;
 import be.ugent.mmlab.rml.mapdochandler.retrieval.RMLDocRetrieval;
 import be.ugent.mmlab.rml.model.RMLMapping;
+import be.ugent.mmlab.rml.model.dataset.StdMetadataRMLDataset;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.commons.cli.CommandLine;
@@ -114,7 +115,7 @@ public class Main {
             log.info("Running the RML Mapping..");
             log.info("========================================");
             RMLDataset dataset;
-
+            
             if(metadataLevel.equals("None") && metadataFormat == null){
                 log.debug("Running without...");
                 dataset = runWithoutMetadata(mapping, outputFile, outputFormat, 
@@ -162,7 +163,8 @@ public class Main {
             String graphName, Map<String, String> parameters, String[] exeTriplesMap, 
             String metadataLevel, String metadataFormat, String metadataVocab) {
         RMLEngine engine; 
-        RMLDataset dataset, metadataDataset;
+        RMLDataset metadataDataset;
+        StdMetadataRMLDataset dataset;
         
         log.debug("Running with metadata...");
         
@@ -170,25 +172,28 @@ public class Main {
         String pathToMetadataStore =
                 outputFile.replaceAll("(\\.[a-zA-Z0-9]*$)", ".metadata$1");
         
-        engine = new RMLEngineMeta(outputFile);
+        //RML Engine that generates metadata too
+        engine = new StdMetadataRMLEngine(outputFile);
         
-        //RML Rngine that generates metadata too
+        //Choose metadata format
+        //If not user-defined, use same as for the output
         if (metadataFormat == null) {
-            metadataDataset = engine.chooseSesameDataSet(
-                    "metadata", pathToMetadataStore, outputFormat);
-        } else {
-            //generate dataset for the metadata graph
-            metadataDataset = engine.chooseSesameDataSet(
-                    "metadata", pathToMetadataStore, metadataFormat);
+            metadataFormat = outputFormat;
         }
-        dataset = engine.chooseSesameDataSet(
+        //Generate dataset for the metadata graph
+        metadataDataset = engine.chooseSesameDataSet(
+                "metadata", pathToMetadataStore, metadataFormat);
+        
+        dataset = (StdMetadataRMLDataset) engine.chooseSesameDataSet(
                     "dataset", outputFile, outputFormat);
 
         dataset.setDatasetMetadata(
                 metadataDataset, metadataLevel, metadataFormat, metadataVocab);
         
-        dataset = engine.runRMLMapping(dataset, mapping, graphName,
-                parameters, exeTriplesMap);
+        log.info("Running the mapping...");
+        dataset = (StdMetadataRMLDataset) engine.runRMLMapping(
+                dataset, mapping, graphName, parameters, exeTriplesMap);
+        
         return dataset;
     }
     
