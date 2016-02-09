@@ -83,7 +83,7 @@ public interface RMLProcessor {
      */
     public void processPredicateObjectMap(
             RMLDataset dataset, Resource subject, PredicateObjectMap pom, 
-            Object node, TriplesMap map, String[] exeTriplesMap);
+            Object node, TriplesMap map, String[] exeTriplesMap, RMLProcessor processor);
     
     /**
      *

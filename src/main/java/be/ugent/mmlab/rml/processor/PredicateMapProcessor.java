@@ -2,11 +2,11 @@ package be.ugent.mmlab.rml.processor;
 
 import be.ugent.mmlab.rml.condition.model.Condition;
 import be.ugent.mmlab.rml.logicalsourcehandler.termmap.TermMapProcessor;
-import be.ugent.mmlab.rml.logicalsourcehandler.termmap.TermMapProcessorFactory;
-import be.ugent.mmlab.rml.logicalsourcehandler.termmap.concrete.ConcreteTermMapFactory;
 import be.ugent.mmlab.rml.model.RDFTerm.PredicateMap;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.model.std.StdConditionPredicateMap;
+import be.ugent.mmlab.rml.processor.concrete.ConcreteTermMapFactory;
+import be.ugent.mmlab.rml.processor.concrete.TermMapProcessorFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -29,11 +29,16 @@ public class PredicateMapProcessor {
     
     public PredicateMapProcessor(TriplesMap map){
         TermMapProcessorFactory factory = new ConcreteTermMapFactory();
-        this.termMapProcessor = 
-                factory.create(map.getLogicalSource().getReferenceFormulation());
+        this.termMapProcessor = factory.create(
+                map.getLogicalSource().getReferenceFormulation());
     }
     
-    
+    public PredicateMapProcessor(TriplesMap map, RMLProcessor processor){
+        TermMapProcessorFactory factory = new ConcreteTermMapFactory();
+        this.termMapProcessor = factory.create(
+                map.getLogicalSource().getReferenceFormulation(), processor);
+    }
+      
     /**
      * process a predicate map
      *

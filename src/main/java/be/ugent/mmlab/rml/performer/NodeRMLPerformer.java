@@ -64,7 +64,7 @@ public class NodeRMLPerformer implements RMLPerformer {
             Set<GraphMap> graph = map.getSubjectMap().getGraphMaps();
             for (PredicateObjectMap pom : map.getPredicateObjectMaps()) {
                 processor.processPredicateObjectMap(
-                        dataset, subject, pom, node, map, exeTriplesMap);
+                        dataset, subject, pom, node, map, exeTriplesMap, processor);
             }
         }
     }
@@ -83,7 +83,7 @@ public class NodeRMLPerformer implements RMLPerformer {
         //        dataset, subject, map.getSubjectMap(), node);
         for (PredicateObjectMap pom : map.getPredicateObjectMaps()) {
             processor.processPredicateObjectMap(
-                    dataset, subject, pom, node, map, exeTriplesMap);
+                    dataset, subject, pom, node, map, exeTriplesMap, processor);
         }
     }
 }

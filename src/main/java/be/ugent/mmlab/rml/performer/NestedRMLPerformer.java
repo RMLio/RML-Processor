@@ -34,7 +34,7 @@ public class NestedRMLPerformer extends NodeRMLPerformer {
             //        dataset, refObjSub, map.getSubjectMap(), node);
             for (PredicateObjectMap pom : map.getPredicateObjectMaps()) {
                 processor.processPredicateObjectMap(
-                        dataset, refObjSub, pom, node, map, exeTriplesMap);
+                        dataset, refObjSub, pom, node, map, exeTriplesMap, null);
             }
         }
     }

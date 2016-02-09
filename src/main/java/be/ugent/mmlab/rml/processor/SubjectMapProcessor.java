@@ -11,7 +11,7 @@ import org.openrdf.model.Resource;
 public interface SubjectMapProcessor {
     
     public Resource processSubjectMap(
-            RMLDataset dataset, SubjectMap subjectMap, Object node);
+            RMLDataset dataset, SubjectMap subjectMap, Object node, RMLProcessor processor);
     
     public void processSubjectTypeMap(RMLDataset dataset, 
             Resource subject, SubjectMap subjectMap, Object node);

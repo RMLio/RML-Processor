@@ -7,8 +7,6 @@ import be.ugent.mmlab.rml.model.std.ConditionReferencingObjectMap;
 import be.ugent.mmlab.rml.input.processor.AbstractInputProcessor;
 import be.ugent.mmlab.rml.input.processor.SourceProcessor;
 import be.ugent.mmlab.rml.logicalsourcehandler.termmap.TermMapProcessor;
-import be.ugent.mmlab.rml.logicalsourcehandler.termmap.TermMapProcessorFactory;
-import be.ugent.mmlab.rml.logicalsourcehandler.termmap.concrete.ConcreteTermMapFactory;
 import be.ugent.mmlab.rml.model.JoinCondition;
 import be.ugent.mmlab.rml.model.LogicalSource;
 import be.ugent.mmlab.rml.model.PredicateObjectMap;
@@ -23,6 +21,8 @@ import be.ugent.mmlab.rml.performer.JoinRMLPerformer;
 import be.ugent.mmlab.rml.performer.RMLPerformer;
 import be.ugent.mmlab.rml.performer.SimpleReferencePerformer;
 import be.ugent.mmlab.rml.processor.concrete.ConcreteRMLProcessorFactory;
+import be.ugent.mmlab.rml.processor.concrete.ConcreteTermMapFactory;
+import be.ugent.mmlab.rml.processor.concrete.TermMapProcessorFactory;
 import be.ugent.mmlab.rml.vocabularies.QLVocabulary;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -57,6 +57,11 @@ public class ObjectMapProcessor {
                 factory.create(map.getLogicalSource().getReferenceFormulation());
     }
     
+    public ObjectMapProcessor(TriplesMap map, RMLProcessor processor){
+        TermMapProcessorFactory factory = new ConcreteTermMapFactory();
+        this.termMapProcessor = factory.create(
+                map.getLogicalSource().getReferenceFormulation(), processor);
+    }
     
     public void processPredicateObjectMap_ObjMap(
             RMLDataset dataset, Resource subject, URI predicate,

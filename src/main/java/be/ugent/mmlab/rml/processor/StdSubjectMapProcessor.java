@@ -2,14 +2,14 @@ package be.ugent.mmlab.rml.processor;
 
 import be.ugent.mmlab.rml.condition.model.Condition;
 import be.ugent.mmlab.rml.logicalsourcehandler.termmap.TermMapProcessor;
-import be.ugent.mmlab.rml.logicalsourcehandler.termmap.TermMapProcessorFactory;
-import be.ugent.mmlab.rml.logicalsourcehandler.termmap.concrete.ConcreteTermMapFactory;
 import static be.ugent.mmlab.rml.model.RDFTerm.TermType.BLANK_NODE;
 import static be.ugent.mmlab.rml.model.RDFTerm.TermType.IRI;
 import be.ugent.mmlab.rml.model.RDFTerm.GraphMap;
 import be.ugent.mmlab.rml.model.RDFTerm.SubjectMap;
 import be.ugent.mmlab.rml.model.dataset.RMLDataset;
 import be.ugent.mmlab.rml.model.std.StdConditionSubjectMap;
+import be.ugent.mmlab.rml.processor.concrete.ConcreteTermMapFactory;
+import be.ugent.mmlab.rml.processor.concrete.TermMapProcessorFactory;
 import java.util.List;
 import java.util.Set;
 import org.apache.commons.lang.RandomStringUtils;
@@ -34,15 +34,16 @@ public class StdSubjectMapProcessor implements SubjectMapProcessor {
             LoggerFactory.getLogger(StdSubjectMapProcessor.class);
     
     @Override
-    public Resource processSubjectMap(
-            RMLDataset dataset, SubjectMap subjectMap, Object node) {  
+    public Resource processSubjectMap(RMLDataset dataset, SubjectMap subjectMap, 
+        Object node, RMLProcessor processor) {  
         Resource subject = null;
         boolean result ;
         
         //Get the uri
         TermMapProcessorFactory factory = new ConcreteTermMapFactory();
         this.termMapProcessor = factory.create(
-                subjectMap.getOwnTriplesMap().getLogicalSource().getReferenceFormulation());
+                subjectMap.getOwnTriplesMap().getLogicalSource().getReferenceFormulation(),
+                processor);
         
         if (subjectMap.getClass().getSimpleName().equals("StdConditionSubjectMap")) {
             log.debug("Conditional Subject Map");

@@ -60,7 +60,8 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
         }
         else
             subMapProcessor = new StdSubjectMapProcessor();
-        Resource subject = subMapProcessor.processSubjectMap(dataset, subjectMap, node);
+        Resource subject = subMapProcessor.processSubjectMap(
+                dataset, subjectMap, node, processor);
         
         if (subject == null) {
             log.debug("No subject was generated for "
@@ -70,9 +71,10 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                     dataset, subject, map.getSubjectMap(), node);
             
             //Set<GraphMap> graph = map.getSubjectMap().getGraphMaps();
+            if(map.getPredicateObjectMaps().size() > 0)
             for (PredicateObjectMap pom : map.getPredicateObjectMaps()) {
                 processor.processPredicateObjectMap(
-                        dataset, subject, pom, node, map, exeTriplesMap);
+                        dataset, subject, pom, node, map, exeTriplesMap, processor);
             }
         }
         return subject;
@@ -89,19 +91,21 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
     @Override
     public void processPredicateObjectMap(
             RMLDataset dataset, Resource subject, PredicateObjectMap pom, 
-            Object node, TriplesMap map, String[] exeTriplesMap) {
+            Object node, TriplesMap map, String[] exeTriplesMap, RMLProcessor processor) {
 
         Set<PredicateMap> predicateMaps = pom.getPredicateMaps();
         //Go over each predicate map
         for (PredicateMap predicateMap : predicateMaps) {
-            PredicateMapProcessor preMapProcessor = new PredicateMapProcessor(map);
+            PredicateMapProcessor preMapProcessor = 
+                    new PredicateMapProcessor(map, processor);
             //Get the predicate
-            List<URI> predicates = preMapProcessor.processPredicateMap(predicateMap, node);
+            List<URI> predicates = 
+                    preMapProcessor.processPredicateMap(predicateMap, node);
             
             if (predicates.size() > 0) {
                 URI predicate = predicates.get(0);
                 ObjectMapProcessor predicateObjectProcessor =
-                        new ObjectMapProcessor(map);
+                        new ObjectMapProcessor(map, processor);
 
                 //Process the joins first
                 predicateObjectProcessor.processPredicateObjectMap_RefObjMap(
@@ -114,7 +118,4 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
             
         }
     }
-
-    
-
 }
