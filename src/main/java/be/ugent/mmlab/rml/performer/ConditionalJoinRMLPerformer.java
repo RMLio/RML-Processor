@@ -3,8 +3,6 @@ package be.ugent.mmlab.rml.performer;
 import be.ugent.mmlab.rml.condition.model.Condition;
 import be.ugent.mmlab.rml.core.RMLExecutionEngine;
 import be.ugent.mmlab.rml.logicalsourcehandler.termmap.TermMapProcessor;
-import be.ugent.mmlab.rml.logicalsourcehandler.termmap.TermMapProcessorFactory;
-import be.ugent.mmlab.rml.logicalsourcehandler.termmap.concrete.ConcreteTermMapFactory;
 import be.ugent.mmlab.rml.model.RDFTerm.TermType;
 import be.ugent.mmlab.rml.model.dataset.RMLDataset;
 import be.ugent.mmlab.rml.model.TriplesMap;
@@ -12,6 +10,8 @@ import be.ugent.mmlab.rml.model.std.StdConditionSubjectMap;
 import be.ugent.mmlab.rml.processor.ConditionProcessor;
 import be.ugent.mmlab.rml.processor.RMLProcessor;
 import be.ugent.mmlab.rml.processor.StdConditionProcessor;
+import be.ugent.mmlab.rml.processor.concrete.ConcreteTermMapFactory;
+import be.ugent.mmlab.rml.processor.concrete.TermMapProcessorFactory;
 import info.debatty.java.stringsimilarity.Jaccard;
 import info.debatty.java.stringsimilarity.Levenshtein;
 import java.util.HashMap;
@@ -172,7 +172,6 @@ public class ConditionalJoinRMLPerformer extends NodeRMLPerformer{
                 log.debug("Processing Jaccard distance...");
                 Jaccard j = new Jaccard();
                 double distance = j.distance(value, cond);
-                log.debug("Distance " + distance);
                 if(distance == 0)
                     flag = true;
                 break;

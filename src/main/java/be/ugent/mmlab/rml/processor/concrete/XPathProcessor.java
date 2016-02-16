@@ -18,12 +18,14 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collection;
 import java.util.Scanner;
 import javax.xml.xpath.XPathException;
 import jlibs.xml.DefaultNamespaceContext;
 import jlibs.xml.Namespaces;
 import jlibs.xml.sax.dog.NodeItem;
 import jlibs.xml.sax.dog.XMLDog;
+import jlibs.xml.sax.dog.XPathResults;
 import jlibs.xml.sax.dog.expr.Expression;
 import jlibs.xml.sax.dog.expr.InstantEvaluationListener;
 import jlibs.xml.sax.dog.sniff.Event;
@@ -71,7 +73,7 @@ public class XPathProcessor extends AbstractRMLProcessor {
                 map.getLogicalSource().getSource().getTemplate().toString();
 
         try {
-            Scanner s = new Scanner(new FileInputStream(filepath)).useDelimiter(" \\?>");
+            Scanner s = new Scanner(new FileInputStream(filepath)).useDelimiter("\\?>");
             if (s.hasNext()) {
                 String root = s.next();
                 String[] subroot = root.split("xmlns:");
@@ -87,12 +89,33 @@ public class XPathProcessor extends AbstractRMLProcessor {
                     String content;
                     try {
                         content = new String(Files.readAllBytes(path), charset);
-                        content = content.replaceAll(" xmlns:.* \\?>", "\\?>");
+                        content = content.replaceAll(" xmlns:.*\\?>", "\\?>");
                         Files.write(path, content.getBytes(charset));
                     } catch (IOException ex) {
                         log.error("IO Exception " + ex);
                     }
                 }
+                
+                XMLDog dog = new XMLDog(dnc);
+                try {
+                    Expression xpath = dog.addXPath("/*/namespace::*[name()]");
+                    InputSource source = new InputSource(
+                            map.getLogicalSource().getSource().getTemplate());
+                    XPathResults results = dog.sniff(source);
+
+                    if (results != null) {
+                        Collection<NodeItem> result =
+                                (Collection<NodeItem>) results.getResult(xpath);
+                        for (NodeItem res : result) {
+                            this.nsContext.addNamespace(res.qualifiedName, res.value);
+                            dnc.declarePrefix(res.qualifiedName, res.value);
+                        }
+                    }
+                } catch (SAXPathException ex) {
+                    log.error("SAX Path Exception: " + ex);
+                } catch (XPathException ex) {
+                    log.error("XPath Exception: " + ex);
+                } 
             }
         } catch (FileNotFoundException ex) {
             log.error("File Not Found Exception " + ex);

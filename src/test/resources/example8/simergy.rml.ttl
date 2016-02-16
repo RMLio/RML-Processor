@@ -11,7 +11,7 @@
   rml:logicalSource 
   [
     rml:source "src/test/resources/example8/simergy.xml" ;
-    rml:iterator "/simmodel:SimModel/simmodel:SimAppLibraryDefault_AppLibraryDefault_GlobalLibrary";
+    rml:iterator "/SimModel/simmodel:SimAppLibraryDefault_AppLibraryDefault_GlobalLibrary";
     rml:referenceFormulation ql:XPath ;
   ];
 

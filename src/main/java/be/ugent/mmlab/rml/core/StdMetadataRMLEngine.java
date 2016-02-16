@@ -90,7 +90,7 @@ public class StdMetadataRMLEngine extends StdRMLEngine implements RMLEngine {
         String startDateTime = sdf.format(new Date());//.replace(' ', 'T') + 'Z';
         
         dataset = (MetadataRMLDataset) super.generateTriplesMapTriples(
-                triplesMap, parameters,exeTriplesMap, dataset);
+                triplesMap, parameters, exeTriplesMap, dataset);
         
         //sdf = new SimpleDateFormat("yyyy-mm-dd h:mm:ss");
         sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX");

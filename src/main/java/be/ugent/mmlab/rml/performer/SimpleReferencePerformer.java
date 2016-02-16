@@ -1,13 +1,13 @@
 package be.ugent.mmlab.rml.performer;
 
 import be.ugent.mmlab.rml.logicalsourcehandler.termmap.TermMapProcessor;
-import be.ugent.mmlab.rml.logicalsourcehandler.termmap.TermMapProcessorFactory;
-import be.ugent.mmlab.rml.logicalsourcehandler.termmap.concrete.ConcreteTermMapFactory;
 import be.ugent.mmlab.rml.model.dataset.RMLDataset;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.RMLProcessor;
 import be.ugent.mmlab.rml.processor.RMLProcessorFactory;
 import be.ugent.mmlab.rml.processor.concrete.ConcreteRMLProcessorFactory;
+import be.ugent.mmlab.rml.processor.concrete.ConcreteTermMapFactory;
+import be.ugent.mmlab.rml.processor.concrete.TermMapProcessorFactory;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
