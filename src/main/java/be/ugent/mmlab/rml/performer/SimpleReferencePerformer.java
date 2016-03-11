@@ -9,6 +9,7 @@ import be.ugent.mmlab.rml.processor.concrete.ConcreteRMLProcessorFactory;
 import be.ugent.mmlab.rml.processor.concrete.ConcreteTermMapFactory;
 import be.ugent.mmlab.rml.processor.concrete.TermMapProcessorFactory;
 import java.util.List;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.openrdf.model.Resource;
@@ -24,8 +25,8 @@ import org.openrdf.model.impl.URIImpl;
 public class SimpleReferencePerformer extends NodeRMLPerformer {
     
     // Log
-    private static final Logger log = 
-            LoggerFactory.getLogger(SimpleReferencePerformer.class);
+    private static final Logger log = LoggerFactory.getLogger(
+            SimpleReferencePerformer.class.getSimpleName());
     
     private Resource subject;
     private URI predicate;
@@ -38,8 +39,8 @@ public class SimpleReferencePerformer extends NodeRMLPerformer {
     }
     
     @Override
-    public void perform(Object node, RMLDataset dataset, 
-    TriplesMap map, String[] exeTriplesMap, boolean pomExecution) {
+    public void perform(Object node, RMLDataset dataset, TriplesMap map, 
+        String[] exeTriplesMap, Map<String, String> parameters, boolean pomExecution) {
 
         if(map.getSubjectMap().getTermType() == 
                 be.ugent.mmlab.rml.model.RDFTerm.TermType.BLANK_NODE 
@@ -47,7 +48,7 @@ public class SimpleReferencePerformer extends NodeRMLPerformer {
                 be.ugent.mmlab.rml.model.RDFTerm.TermType.IRI){
             RMLProcessorFactory factory = new ConcreteRMLProcessorFactory();
             RMLProcessor subprocessor = factory.create(
-                    map.getLogicalSource().getReferenceFormulation());
+                    map.getLogicalSource().getReferenceFormulation(), parameters);
             RMLPerformer performer = new NodeRMLPerformer(subprocessor); 
             Resource object = processor.processSubjectMap(this.processor,
                     dataset, map, map.getSubjectMap(), node, exeTriplesMap); 

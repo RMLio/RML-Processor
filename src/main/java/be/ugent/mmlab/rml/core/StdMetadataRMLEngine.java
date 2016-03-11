@@ -8,11 +8,27 @@ import be.ugent.mmlab.rml.model.dataset.MetadataRMLDataset;
 import be.ugent.mmlab.rml.model.dataset.RMLDataset;
 import be.ugent.mmlab.rml.model.dataset.StdRMLDataset;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
+import org.apache.commons.io.FileUtils;
+import org.openrdf.repository.Repository;
+import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
-import org.openrdf.repository.manager.LocalRepositoryManager;
+import org.openrdf.repository.config.RepositoryConfig;
+import org.openrdf.repository.config.RepositoryConfigException;
+import org.openrdf.repository.sail.config.SailRepositoryConfig;
+import org.openrdf.rio.RDFFormat;
+import org.openrdf.rio.RDFHandlerException;
+import org.openrdf.rio.RDFWriter;
+import org.openrdf.rio.Rio;
+import org.openrdf.sail.nativerdf.config.NativeStoreConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,32 +41,23 @@ public class StdMetadataRMLEngine extends StdRMLEngine implements RMLEngine {
     
     // Log
     private static final Logger log = 
-            LoggerFactory.getLogger(StdMetadataRMLEngine.class);
+            LoggerFactory.getLogger(
+            StdMetadataRMLEngine.class.getSimpleName());
 
     private MetadataGenerator metadataGenerator;
     private String pathToNativeStore;
+    private RDFFormat format = RDFFormat.TURTLE;
+    SailRepositoryConfig repositoryTypeSpec;
     
-    public StdMetadataRMLEngine(String pathToNativeStore){
-        try {
-            this.pathToNativeStore = pathToNativeStore;
-            //generate repository manager
-            //TODO: Replace the following with OS temp folder?
-            String folder = 
-                    pathToNativeStore.replaceAll("(/[a-zA-Z0-9._]*$)", "");
-            File baseDir = new File(folder);
-            manager = new LocalRepositoryManager(baseDir);
-            manager.initialize();
-            
-            metadataGenerator =
-                    new MetadataGenerator(pathToNativeStore);
-        } catch (RepositoryException ex) {
-            log.error("Repository Exception " + ex);
-        } 
+    public StdMetadataRMLEngine(String pathToNativeStore) {
+        super(pathToNativeStore);
+        this.pathToNativeStore = pathToNativeStore;
+        this.metadataGenerator =
+                new MetadataGenerator(pathToNativeStore, manager);
+        String indexes = "spoc";
+        repositoryTypeSpec = 
+                    new SailRepositoryConfig(new NativeStoreConfig(indexes));
     }
-    
-    /*public RMLDataset getMetadataDataset(){
-        return this.metadataDataset;
-    }*/
     
     @Override
     public RMLDataset runRMLMapping(RMLDataset originalDataset, RMLMapping rmlMapping,
@@ -65,15 +72,56 @@ public class StdMetadataRMLEngine extends StdRMLEngine implements RMLEngine {
         
         String endDateTime = sdf.format(new Date()).replace(' ', 'T') + 'Z';
         
-        log.debug("Generating Dataset metadata..");
-        metadataGenerator.generateMetaData(rmlMapping,
+        dataset = metadataGenerator.generateMetaData(rmlMapping,
                 dataset, pathToNativeStore, 
                 startDateTime, endDateTime);
+
+        //generate the file that contains the metadata graph
+        String pathToMetadataStore =
+                dataset.getTarget().toString().replaceAll(
+                "(\\.[a-zA-Z0-9]*$)", "_metadata$1");
+        try {
+            dataset.setRepository(manager.getRepository("metadata"));
+        } catch (RepositoryConfigException ex) {
+            log.error("Repository Config Exception " + ex);
+        } catch (RepositoryException ex) {
+            log.error("Repository Exception " + ex);
+        }
+        removeRepository(dataset, pathToMetadataStore);
         
-        dataset.getMetadataDataset().closeRepository();
-        
-        dataset.closeRepository();
-        
+        if (dataset.getMetadataLevel().equals("triplesmap")) {
+            Collection<TriplesMap> triplesMaps = rmlMapping.getTriplesMaps();
+            writeRepositories(dataset, triplesMaps, dataset.getTarget().toString());
+        }
+        else {
+            try {
+                dataset.setRepository(manager.getRepository(dataset.getID()));
+            } catch (RepositoryConfigException ex) {
+                log.error("Repository Config Exception " + ex);
+            } catch (RepositoryException ex) {
+                log.error("Repository Exception " + ex);
+            }
+            removeRepository(dataset, dataset.getTarget().toString());
+        }
+
+        try {
+            Set<String> ids = manager.getRepositoryIDs();
+            for (String id : ids) {
+                if (!id.equals("SYSTEM")) {
+                    manager.getRepository(id).shutDown();
+                    manager.removeRepository(id);
+                }
+            }
+            manager.getSystemRepository().shutDown();
+            manager.shutDown();
+            
+            this.removeRepository(dataset);
+            
+        } catch (RepositoryException ex) {
+            log.error("Repository Exception " + ex);
+        } catch (RepositoryConfigException ex) {
+            log.error("Repository Config Exception " + ex);
+        }
         return dataset;      
     }
     
@@ -82,24 +130,66 @@ public class StdMetadataRMLEngine extends StdRMLEngine implements RMLEngine {
             TriplesMap triplesMap, Map<String, String> parameters,
             String[] exeTriplesMap, RMLDataset originalDataset) {
         MetadataRMLDataset dataset = (MetadataRMLDataset) originalDataset;
-        
+        Repository repository ;
         log.debug("Generating Triples Map triples with metadata");
-        //TODO:Check if it corrects generates ISO 8601 date/time string for xsd
-        //SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd h:mm:ss");
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX");
-        String startDateTime = sdf.format(new Date());//.replace(' ', 'T') + 'Z';
+        String startDateTime = sdf.format(new Date());
         
-        dataset = (MetadataRMLDataset) super.generateTriplesMapTriples(
-                triplesMap, parameters, exeTriplesMap, dataset);
+        if (dataset.getMetadataLevel().equals("triplesmap") ||
+                dataset.getMetadataLevel().equals("triple")) {
+            
+            String[] name = triplesMap.getName().split("#");            
+            generateRepository(name[1]);
+            try {
+                repository = manager.getRepository(name[1]);
+                dataset.setRepository(repository);
+
+                if (repository != null && !repository.isInitialized()) {
+                    repository.initialize();
+                }
+            } catch (RepositoryConfigException ex) {
+                log.error("Repository Config Exception " + ex);
+            } catch (RepositoryException ex) {
+                log.error("Repository Exception " + ex);
+            }
+
+            dataset.setNumbers();
+            dataset = (MetadataRMLDataset) super.generateTriplesMapTriples(
+                    triplesMap, parameters, exeTriplesMap, dataset);
+                  
+        } else {
+            try {
+                repository = manager.getRepository(dataset.getID());
+                dataset.setRepository(repository);
+
+                if (repository != null && !repository.isInitialized()) {
+                    repository.initialize();
+                }
+
+            } catch (RepositoryConfigException ex) {
+                log.error("Repository Config Exception " + ex);
+            } catch (RepositoryException ex) {
+                log.error("Repository Exception " + ex);
+            }
+            dataset = (MetadataFileDataset) super.generateTriplesMapTriples(
+                    triplesMap, parameters, exeTriplesMap, dataset);
+        }
         
-        //sdf = new SimpleDateFormat("yyyy-mm-dd h:mm:ss");
         sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX");
         String endDateTime = sdf.format(new Date());//.replace(' ', 'T') + 'Z';
-        
-        if(dataset.getMetadataLevel().equals("triplesmap") 
-                || dataset.getMetadataLevel().equals("triple"))
-            metadataGenerator.generateTriplesMapMetaData(dataset, triplesMap, 
-                    pathToNativeStore, startDateTime, endDateTime);
+        try {
+            dataset.setRepository(manager.getRepository("metadata"));
+        } catch (RepositoryConfigException ex) {
+            log.error("Repository Config Exception " + ex);
+        } catch (RepositoryException ex) {
+            log.error("Repository Exception " + ex);
+        }
+        if (dataset.getMetadataLevel().equals("triplesmap") ||
+                dataset.getMetadataLevel().equals("triple")) {
+            metadataGenerator.generateTriplesMapMetaData(
+                    dataset, triplesMap, pathToNativeStore,
+                    startDateTime, endDateTime, manager);
+        }
 
         return dataset;
     }
@@ -112,9 +202,8 @@ public class StdMetadataRMLEngine extends StdRMLEngine implements RMLEngine {
             
             if (pathToNativeStore != null) {
                 log.debug("Using direct file " + pathToNativeStore);
-                dataset = new MetadataFileDataset(pathToNativeStore, outputFormat, 
-                        manager, repositoryID);
-                log.debug("Dataset is generated");
+                dataset = new MetadataFileDataset(manager,
+                        pathToNativeStore, outputFormat, repositoryID);
             } else {
                 log.debug("Using default store (memory) ");
                 dataset = new StdRMLDataset();
@@ -122,5 +211,161 @@ public class StdMetadataRMLEngine extends StdRMLEngine implements RMLEngine {
                     
         return dataset;
     }
-                         
+    
+    
+    public void writeRepositories(MetadataRMLDataset dataset,
+            Collection<TriplesMap> triplesMaps, String pathToStore) {
+        Iterator<TriplesMap> iterator = triplesMaps.iterator();
+        FileOutputStream output = null;
+        Repository repository ;
+
+        while (iterator.hasNext()) {
+            TriplesMap triplesMap = iterator.next();
+            String[] name = triplesMap.getName().split("#");
+            String path = pathToStore.replaceAll("\\.[a-zA-Z0-9]*", "_" + name[1] + ".ttl");
+            File target = new File(path);
+            //Prepare writer
+            if (target.exists()) {
+                try {
+                    target.delete();
+                    target.createNewFile();
+                } catch (IOException ex) {
+                    log.error("IO Exception " + ex);
+                }
+            }
+            try {
+                output = new FileOutputStream(target);
+            } catch (FileNotFoundException ex) {
+                log.error("File Not Found Exception " + ex);
+            }
+
+            try {
+                dataset.setRepository(manager.getRepository(name[1]));
+                repository = dataset.getRepository();
+                RepositoryConnection con = repository.getConnection();
+                RDFWriter writer = Rio.createWriter(this.format, output);
+
+                con.export(writer);
+                con.commit();
+                con.close();
+                
+                manager.removeRepository(name[1]);
+                repository.shutDown();
+            } catch (RepositoryConfigException ex) {
+                log.error("Repository Config Exception " + ex);
+            } catch (RepositoryException ex) {
+                log.error("Repository Exception " + ex);
+            } catch (RDFHandlerException ex) {
+                log.error("RDF Handler Exception " + ex);
+            } finally {
+                try {
+                    output.close();
+                } catch (IOException ex) {
+                    log.error("IO Exception " + ex);
+                }
+            }
+
+        }
+    }
+
+    
+    public void removeRepository(
+            RMLDataset originalDataset, String pathToStore) {
+        FileOutputStream output = null;
+        try {
+            MetadataRMLDataset dataset = (MetadataRMLDataset) originalDataset;
+            Repository repository = dataset.getRepository();
+            RepositoryConnection con = repository.getConnection();
+            File target = new File(pathToStore); 
+            //Prepare writer
+            if (target.exists()) {
+                try {
+                    target.delete();
+                    target.createNewFile();
+                } catch (IOException ex) {
+                    log.error("IO Exception " + ex);
+                }
+            }
+            output = new FileOutputStream(target);
+            RDFWriter writer = Rio.createWriter(this.format, output);
+            
+            con.export(writer);
+            con.commit();
+            con.close();
+
+        } catch (FileNotFoundException ex) {
+            log.error("File Not Found Exception " + ex);
+        } catch (RepositoryException ex) {
+            log.error("Repository Exception " + ex);
+        } catch (RDFHandlerException ex) {
+            log.error("RDF Handler Exception " + ex);
+        } finally {
+            try {
+                output.close();
+            } catch (IOException ex) {
+                log.error("IO Exception " + ex);
+            }
+        }
+    }
+    
+    public void removeRepository(RMLDataset dataset) {
+        String file = manager.getBaseDir()  + "/repositories";
+        
+        dataset.closeRepository();
+        manager.shutDown();
+        
+        try {
+            FileUtils.deleteDirectory(new File(file));
+        } catch (IOException ex) {
+            log.error("IO Exception " + ex);
+        }
+        log.debug("Repository was successfully removed.");
+    }
+    
+    
+    public void generateRepositoryManager() {
+        String indexes = "spoc";
+        repositoryTypeSpec = 
+                    new SailRepositoryConfig(new NativeStoreConfig(indexes));
+    }
+    
+    public String generateRepositoryIDFromFile(String file){
+        String repositoryID = 
+                file.replaceAll("[a-zA-Z\\/]*/([a-zA-Z_.]*)", "$1").replaceAll(".ttl", "");
+        return repositoryID;
+    }
+    
+    public void generateRepository(String repositoryID) {
+        RepositoryConfig repConfig ;
+        repositoryTypeSpec =
+                new SailRepositoryConfig(new NativeStoreConfig("spoc"));
+        repConfig =
+                new RepositoryConfig(repositoryID, repositoryTypeSpec);
+        try {
+            manager.addRepositoryConfig(repConfig);
+        } catch (RepositoryException ex) {
+            log.error("Repository Exception " + ex);
+        } catch (RepositoryConfigException ex) {
+            log.error("Repository Config Exception " + ex);
+        }
+
+        Repository repository;
+        try {
+            repository = manager.getRepository(repositoryID);
+
+            //Clean up repo from previous use
+            if (!repository.isInitialized()) {
+                repository.initialize();
+            }
+            RepositoryConnection con = repository.getConnection();
+            con.clear();
+            con.commit();
+            con.close();
+            repository.shutDown();
+        } catch (RepositoryConfigException ex) {
+            log.error("Repository Config Exception " + ex);
+        } catch (RepositoryException ex) {
+            log.error("Repository Exception " + ex);
+        }
+    }                    
 }

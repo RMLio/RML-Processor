@@ -4,6 +4,7 @@ import be.ugent.mmlab.rml.logicalsourcehandler.termmap.TermMapProcessor;
 import be.ugent.mmlab.rml.metadata.MetadataGenerator;
 import be.ugent.mmlab.rml.model.RDFTerm.GraphMap;
 import be.ugent.mmlab.rml.model.RDFTerm.SubjectMap;
+import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.model.dataset.MetadataRMLDataset;
 import be.ugent.mmlab.rml.model.dataset.RMLDataset;
 import java.util.List;
@@ -25,14 +26,16 @@ public class MetadataSubjectMapProcessor extends StdSubjectMapProcessor implemen
     
     // Log
     private static final Logger log = 
-            LoggerFactory.getLogger(MetadataSubjectMapProcessor.class);
+            LoggerFactory.getLogger(
+            MetadataSubjectMapProcessor.class.getSimpleName());
     
     
     @Override
     public void processSubjectTypeMap(RMLDataset originalDataset, 
-    Resource subject, SubjectMap subjectMap, Object node) {
+    Resource subject, TriplesMap map, Object node) {
+        
         MetadataGenerator metadataGenerator = new MetadataGenerator();
-               
+        SubjectMap subjectMap = map.getSubjectMap();
         boolean flag = false;
         Set<org.openrdf.model.URI> classIRIs = subjectMap.getClassIRIs();
         MetadataRMLDataset dataset = (MetadataRMLDataset) originalDataset ;
@@ -49,31 +52,36 @@ public class MetadataSubjectMapProcessor extends StdSubjectMapProcessor implemen
                     }
                 }
             }
-        }
+        } 
         if (subject != null) {
             for (org.openrdf.model.URI classIRI : classIRIs) {
                 if (subjectMap.getGraphMaps().isEmpty()) {
                     List<Statement> triples =
                             dataset.tuplePattern(subject, RDF.TYPE, classIRI);
-                    if (triples.size() == 0) {
-                        dataset.add(subject, RDF.TYPE, classIRI);
+                    if (triples.isEmpty()) {
+                        if(vocabs.contains("void") && 
+                                dataset.getMetadataLevel().equals("triplesmap")){
+                            dataset.addToRepository(
+                                    map, subject, RDF.TYPE, classIRI);
+                        }
+                        else{
+                            log.debug("Adding to general repository...");
+                            dataset.add(subject, RDF.TYPE, classIRI);
+                        }
 
                         if (dataset.getMetadataLevel().equals("triple")) {
                             if (flag == true) {
-                                RMLDataset metadata = dataset.getMetadataDataset();
                                 metadataGenerator.generateTripleMetaData(dataset,
                                         subject, RDF.TYPE, classIRI);
                             }
-
                         }
-
                     }
                 } else {
-                    for (GraphMap map : subjectMap.getGraphMaps()) {
-                        if (map.getConstantValue() != null) {
+                    for (GraphMap graphMap : subjectMap.getGraphMaps()) {
+                        if (graphMap.getConstantValue() != null) {
                             dataset.add(
                                     subject, RDF.TYPE, classIRI,
-                                    new URIImpl(map.getConstantValue().toString()));
+                                    new URIImpl(graphMap.getConstantValue().toString()));
                         }
                     }
                 }

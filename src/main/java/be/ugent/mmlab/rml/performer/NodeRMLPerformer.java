@@ -5,6 +5,7 @@ import be.ugent.mmlab.rml.model.RDFTerm.GraphMap;
 import be.ugent.mmlab.rml.model.PredicateObjectMap;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.RMLProcessor;
+import java.util.Map;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +54,8 @@ public class NodeRMLPerformer implements RMLPerformer {
      */
     @Override
     public void perform(Object node, RMLDataset dataset, 
-    TriplesMap map, String[] exeTriplesMap, boolean pomExecution) {
+    TriplesMap map, String[] exeTriplesMap, Map<String, String> parameters,
+    boolean pomExecution) {
         Resource subject = processor.processSubjectMap(
                 this.processor, dataset, map, map.getSubjectMap(), node, exeTriplesMap);
         

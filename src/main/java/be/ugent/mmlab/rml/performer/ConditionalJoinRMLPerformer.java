@@ -16,6 +16,7 @@ import info.debatty.java.stringsimilarity.Jaccard;
 import info.debatty.java.stringsimilarity.Levenshtein;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.openrdf.model.Resource;
 import org.openrdf.model.Statement;
@@ -75,8 +76,8 @@ public class ConditionalJoinRMLPerformer extends NodeRMLPerformer{
      * @param map 
      */
     @Override
-    public void perform(Object node, RMLDataset dataset, 
-        TriplesMap map, String[] exeTriplesMap, boolean pomExecution) {
+    public void perform(Object node, RMLDataset dataset, TriplesMap map, 
+    String[] exeTriplesMap, Map<String, String> parameters, boolean pomExecution) {
         Value object;
         log.debug("Performing Conditional Join RML Performer....");
 

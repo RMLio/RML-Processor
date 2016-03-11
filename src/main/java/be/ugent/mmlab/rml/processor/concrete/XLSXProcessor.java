@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -32,9 +33,10 @@ public class XLSXProcessor extends AbstractRMLProcessor {
     private static final Logger log = 
             LoggerFactory.getLogger(XLSXProcessor.class);
     
-    XLSXProcessor(){
+    XLSXProcessor(Map<String, String> parameters){
         TermMapProcessorFactory factory = new ConcreteTermMapFactory();
         this.termMapProcessor = factory.create(QLVocabulary.QLTerm.XLSX_CLASS);
+        this.parameters = parameters;
     }
 
     @Override
@@ -61,8 +63,8 @@ public class XLSXProcessor extends AbstractRMLProcessor {
                 }
                 //let the performer handle the rows
                 if(row.getRowNum() != 0)
-                    performer.perform(
-                            rowMap, dataset, map, exeTriplesMap, pomExecution);
+                    performer.perform(rowMap, dataset, map, exeTriplesMap, 
+                            parameters, pomExecution);
             }
             
         } catch (FileNotFoundException ex) {

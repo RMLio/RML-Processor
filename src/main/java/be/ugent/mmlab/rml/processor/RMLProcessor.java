@@ -24,7 +24,7 @@ public interface RMLProcessor {
      * @param performer the performer handling the action done on the triplemap
      */
     public void execute(RMLDataset dataset, TriplesMap map, 
-            RMLPerformer performer, InputStream input, 
+            RMLPerformer performer, InputStream input,
             String[] exeTriplesMap, boolean pomExecution);
     
     public void execute_node(

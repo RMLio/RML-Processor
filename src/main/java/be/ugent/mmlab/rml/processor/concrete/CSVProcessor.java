@@ -14,6 +14,7 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import java.util.HashMap;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.openrdf.model.Resource;
@@ -29,9 +30,10 @@ public class CSVProcessor extends AbstractRMLProcessor {
     private static final Logger log = 
             LoggerFactory.getLogger(CSVProcessor.class);
     
-    CSVProcessor(){
+    CSVProcessor(Map<String, String> parameters){
         TermMapProcessorFactory factory = new ConcreteTermMapFactory();
         this.termMapProcessor = factory.create(QLTerm.CSV_CLASS);
+        this.parameters = parameters;
     }
     
     private char getDelimiter(LogicalSource ls) {
@@ -69,7 +71,8 @@ public class CSVProcessor extends AbstractRMLProcessor {
                    row.put(new String(header.getBytes("iso8859-1"), UTF_8), reader.get(header));
                 }
                 //let the performer handle the rows
-                performer.perform(row, dataset, map, exeTriplesMap, pomExecution);
+                performer.perform(
+                        row, dataset, map, exeTriplesMap, parameters, pomExecution);
             }
 
         } catch (FileNotFoundException ex) {

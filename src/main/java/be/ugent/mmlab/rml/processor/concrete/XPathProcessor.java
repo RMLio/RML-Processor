@@ -19,6 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Scanner;
 import javax.xml.xpath.XPathException;
 import jlibs.xml.DefaultNamespaceContext;
@@ -55,9 +56,10 @@ public class XPathProcessor extends AbstractRMLProcessor {
     public XPathContext nsContext ;
     
     // Log
-    static final Logger log = LoggerFactory.getLogger(XPathProcessor.class);
+    static final Logger log = LoggerFactory.getLogger(
+            XPathProcessor.class.getSimpleName());
     
-    public XPathProcessor(){
+    public XPathProcessor(Map<String, String> parameters){
         dnc = new DefaultNamespaceContext();
         nsContext = new XPathContext();
         
@@ -65,6 +67,7 @@ public class XPathProcessor extends AbstractRMLProcessor {
         this.nsContext.addNamespace("xsd", Namespaces.URI_XSD);
         dnc.declarePrefix("xsd", Namespaces.URI_XSD);
         nsContext = new XPathContext("xsd", Namespaces.URI_XSD);
+        this.parameters = parameters;
     }
     
     private DefaultNamespaceContext get_namespaces(
@@ -181,8 +184,8 @@ public class XPathProcessor extends AbstractRMLProcessor {
                     //log.debug("Expression " + expression);
                     Node node = (Node) nodeItem.xml;
                     //Let the performer do its thing
-                    performer.perform(
-                            node, dataset, map, exeTriplesMap, pomExecution);
+                    performer.perform(node, dataset, map, exeTriplesMap, 
+                            parameters, pomExecution);
                 }
 
                 @Override
@@ -226,11 +229,11 @@ public class XPathProcessor extends AbstractRMLProcessor {
             Node n = nodes.get(i);
             if(subject == null)
                 performer.perform(n, dataset, parentTriplesMap, 
-                        exeTriplesMap, pomExecution);
+                        exeTriplesMap, parameters, pomExecution);
             else{
                 RMLProcessorFactory factory = new ConcreteRMLProcessorFactory();
                 RMLProcessor subprocessor = 
-                        factory.create(map.getLogicalSource().getReferenceFormulation());
+                        factory.create(map.getLogicalSource().getReferenceFormulation(), parameters);
                 RMLPerformer subperformer = new NodeRMLPerformer(subprocessor);
                 subperformer.perform(
                         n, dataset, parentTriplesMap, subject, exeTriplesMap);

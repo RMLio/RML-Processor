@@ -2,6 +2,7 @@
 package be.ugent.mmlab.rml.processor;
 
 import be.ugent.mmlab.rml.vocabularies.QLVocabulary;
+import java.util.Map;
 
 /**
  * RML Processor
@@ -17,6 +18,7 @@ public interface RMLProcessorFactory {
      * @param term
      * @return
      */
-    public  RMLProcessor create(QLVocabulary.QLTerm term);
+    public  RMLProcessor create(
+            QLVocabulary.QLTerm term, Map<String, String> parameters);
     
 }

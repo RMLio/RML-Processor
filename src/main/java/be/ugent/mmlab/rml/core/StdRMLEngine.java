@@ -34,7 +34,7 @@ public class StdRMLEngine implements RMLEngine {
 
     // Log
     private static final Logger log = 
-            LoggerFactory.getLogger(StdRMLEngine.class);
+            LoggerFactory.getLogger(StdRMLEngine.class.getSimpleName());
     // A base IRI used in resolving relative IRIs produced by the R2RML mapping.
     protected String baseIRI;
     //private static boolean source_properties;
@@ -47,12 +47,8 @@ public class StdRMLEngine implements RMLEngine {
     
     public StdRMLEngine(String pathToNativeStore) {
         try {
-            log.debug("pathToNativeStore " + pathToNativeStore);
             File file = new File(pathToNativeStore);
             String folder = file.getParent();
-            //String folder =
-            //        pathToNativeStore.replaceAll("(/[a-zA-Z0-9._]*$)", "");
-            log.debug("folder " + folder);
             File baseDir = new File(folder);
             manager = new LocalRepositoryManager(baseDir);
             manager.initialize();
@@ -69,23 +65,6 @@ public class StdRMLEngine implements RMLEngine {
     protected String getIdentifier(LogicalSource ls) {
         return StdRMLEngine.getFileMap().getProperty(ls.getSource().getTemplate());
     }
-
-    /**
-     * Generate RDF based on a RML mapping
-     *
-     * @param rmlMapping Parsed RML mapping
-     * @param baseIRI base URI of the resulting RDF
-     * @return dataset containing the triples
-     * @throws SQLException
-     * @throws UnsupportedEncodingException
-     */
-    /*@Override
-    public RMLDataset runRMLMapping(RMLDataset dataset, 
-        RMLMapping rmlMapping, String baseIRI, 
-        Map<String, String> parameters, String[] triplesMap) {
-        return runRMLMapping( dataset,
-                rmlMapping, baseIRI, parameters, triplesMap);
-    }*/
 
     /**
      *
@@ -117,7 +96,7 @@ public class StdRMLEngine implements RMLEngine {
         
         //log.debug("Generating dataset metadata..");
         generateBasicMetadataInfo(dataset, startTime);
-            
+        
         return dataset;
     }
     
@@ -192,23 +171,24 @@ public class StdRMLEngine implements RMLEngine {
             //TODO: Add metadata that this Map Doc has that many Triples Maps
 
             log.info("Generating RML Processor..");
-            RMLProcessor processor = generateRMLProcessor(triplesMap);
+            RMLProcessor processor = generateRMLProcessor(triplesMap, parameters);
             
             if (processor != null) {
                 log.info("Generating Data Retrieval Processor..");
                 inputProcessor =
-                        generateInputProcessor(triplesMap, parameters);
+                        generateInputProcessor(triplesMap);
                 do {
                     dataset = processInputStream(processor, inputProcessor,
                             triplesMap, parameters, exeTriplesMap, dataset);
                 } while (inputProcessor.hasNextInputStream());
-            }         
+            }     
         }
         return dataset;
     }
     
     @Override
-    public RMLProcessor generateRMLProcessor(TriplesMap triplesMap) {
+    public RMLProcessor generateRMLProcessor(
+            TriplesMap triplesMap, Map<String, String> parameters) {
         RMLProcessor processor = null;
         RMLProcessorFactory factory = new ConcreteRMLProcessorFactory();
         
@@ -217,14 +197,10 @@ public class StdRMLEngine implements RMLEngine {
                     + triplesMap.getLogicalSource());
             return null;
         }
-        else
-            log.debug("Logical Source: " 
-                    + triplesMap.getLogicalSource());
-        log.debug("Reference formulation: " 
-                    + triplesMap.getLogicalSource().getReferenceFormulation());
+
         try {
             processor = factory.create(
-                    triplesMap.getLogicalSource().getReferenceFormulation());
+                    triplesMap.getLogicalSource().getReferenceFormulation(),parameters);
         } catch (Exception ex) {
             log.error("Exception " + ex + 
                     " There is no suitable processor for this reference formulation");
@@ -235,7 +211,7 @@ public class StdRMLEngine implements RMLEngine {
     
     //TODO: Check if it's needed here or if I should take it to the DataRetrieval
     protected SourceProcessor generateInputProcessor(
-            TriplesMap triplesMap, Map<String, String> parameters) {
+            TriplesMap triplesMap) {
         ConcreteLogicalSourceProcessorFactory logicalSourceProcessorFactory = 
                 new ConcreteLogicalSourceProcessorFactory();
         

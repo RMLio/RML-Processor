@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import org.slf4j.Logger;
@@ -27,7 +28,7 @@ public class JSONPathProcessor extends AbstractRMLProcessor {
     // Log
     static final Logger log = LoggerFactory.getLogger(JSONPathProcessor.class);
     
-    JSONPathProcessor(){
+    JSONPathProcessor(Map<String, String> parameters){
         TermMapProcessorFactory factory = new ConcreteTermMapFactory();
         this.termMapProcessor = factory.create(QLTerm.JSONPATH_CLASS);
     }
@@ -42,9 +43,8 @@ public class JSONPathProcessor extends AbstractRMLProcessor {
             String reference = getReference(map.getLogicalSource());
             //This is a none streaming solution. A streaming parser requires own implementation, possibly based on https://code.google.com/p/json-simple/wiki/DecodingExamples
             JsonPath path = JsonPath.compile(reference);
-            //log.debug("path " + path.getPath());
-            //log.debug("input stream " + input);
             Object val = path.read(input);
+            log.debug("val " + val);
             execute(dataset, map, performer, val, exeTriplesMap, pomExecution);
 
         } catch (FileNotFoundException ex) {
@@ -70,9 +70,11 @@ public class JSONPathProcessor extends AbstractRMLProcessor {
     private void execute (RMLDataset dataset, TriplesMap parentTriplesMap, 
             RMLPerformer performer, Object node, 
             String[] exeTriplesMap, boolean pomExecution){
-        if (node instanceof JSONObject) 
+        
+        if (node instanceof JSONObject) {
             performer.perform(node, dataset, parentTriplesMap, 
-                    exeTriplesMap, pomExecution);
+                    exeTriplesMap, parameters, pomExecution);
+        }
         else {
             List<Object> nodes;
 
@@ -84,13 +86,15 @@ public class JSONPathProcessor extends AbstractRMLProcessor {
                     nodes = (List<Object>) node;
                 } catch (ClassCastException cce) {
                     nodes = new ArrayList<Object>();
+                    nodes.add(node);
                 }
             }
                 
             //iterate over all the objects
-            for (Object object : nodes) 
+            for (Object object : nodes) {
                 performer.perform(object, dataset, parentTriplesMap, 
-                        exeTriplesMap, pomExecution);
+                        exeTriplesMap, parameters, pomExecution);
+            }
         }
     }
 

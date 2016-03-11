@@ -8,6 +8,7 @@ import be.ugent.mmlab.rml.vocabularies.QLVocabulary.QLTerm;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 import jodd.csselly.selector.PseudoFunctionSelector;
 import jodd.jerry.Jerry;
 import jodd.lagarto.dom.Node;
@@ -30,15 +31,16 @@ public class CSS3Extractor extends AbstractRMLProcessor {
             LoggerFactory.getLogger(CSS3Extractor.class);
     private int enumerator;
 
-    public CSS3Extractor() {
+    public CSS3Extractor(Map<String, String> parameters) {
         TermMapProcessorFactory factory = new ConcreteTermMapFactory();
         this.termMapProcessor = factory.create(QLTerm.CSS3_CLASS);
         PseudoFunctionSelector.registerPseudoFunction(CSS3NotFunction.class);
+        this.parameters = parameters;
     }
 
     @Override
     public void execute(RMLDataset dataset, TriplesMap map,
-            RMLPerformer performer, InputStream input,
+            RMLPerformer performer, InputStream input, 
             String[] exeTriplesMap, boolean pomExecution) {
         //this should not be needed to be defined within the extractor
         String reference = getReference(map.getLogicalSource());
@@ -55,7 +57,7 @@ public class CSS3Extractor extends AbstractRMLProcessor {
         List<Node> selectedNodes = nodeSelector.select(reference);
         for (int i = 0; i < selectedNodes.size(); i++) {
             performer.perform(selectedNodes.get(i).getHtml(), dataset, map,
-                    exeTriplesMap, pomExecution);
+                    exeTriplesMap, parameters, pomExecution);
         }
     }
 
@@ -74,7 +76,7 @@ public class CSS3Extractor extends AbstractRMLProcessor {
         List<Node> selectedNodes = nodeSelector.select(expression.trim());
         for (Node selectNode : selectedNodes) {
             performer.perform(selectNode.getHtml(), dataset, parentTriplesMap, 
-                    exeTriplesMap, false);
+                    exeTriplesMap, parameters, false);
         }
     }
 

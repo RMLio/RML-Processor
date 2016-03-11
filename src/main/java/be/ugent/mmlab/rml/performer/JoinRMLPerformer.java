@@ -4,6 +4,7 @@ import be.ugent.mmlab.rml. model.dataset.RMLDataset;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.RMLProcessor;
 import java.util.List;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.openrdf.model.Resource;
@@ -42,8 +43,8 @@ public class JoinRMLPerformer extends NodeRMLPerformer{
      * @param map 
      */
     @Override
-    public void perform(Object node, RMLDataset dataset, 
-    TriplesMap map, String[] exeTriplesMap, boolean pomExecution) {
+    public void perform(Object node, RMLDataset dataset, TriplesMap map, 
+    String[] exeTriplesMap, Map<String, String> parameters, boolean pomExecution) {
         Value object = processor.processSubjectMap(this.processor,
                 dataset, map, map.getSubjectMap(), node, exeTriplesMap);
 
@@ -62,7 +63,7 @@ public class JoinRMLPerformer extends NodeRMLPerformer{
             NestedRMLPerformer nestedPerformer = 
                     new NestedRMLPerformer(processor);
             nestedPerformer.perform(
-                    node, dataset, map, exeTriplesMap, pomExecution);
+                    node, dataset, map, exeTriplesMap, parameters, pomExecution);
         }
     }
 

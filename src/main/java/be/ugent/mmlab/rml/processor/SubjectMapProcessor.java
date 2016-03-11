@@ -1,6 +1,7 @@
 package be.ugent.mmlab.rml.processor;
 
 import be.ugent.mmlab.rml.model.RDFTerm.SubjectMap;
+import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.model.dataset.RMLDataset;
 import org.openrdf.model.Resource;
 
@@ -14,5 +15,5 @@ public interface SubjectMapProcessor {
             RMLDataset dataset, SubjectMap subjectMap, Object node, RMLProcessor processor);
     
     public void processSubjectTypeMap(RMLDataset dataset, 
-            Resource subject, SubjectMap subjectMap, Object node);
+            Resource subject, TriplesMap map, Object node);
 }

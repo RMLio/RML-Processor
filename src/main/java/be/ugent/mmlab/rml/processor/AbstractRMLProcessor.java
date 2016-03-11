@@ -7,8 +7,8 @@ import be.ugent.mmlab.rml.model.PredicateObjectMap;
 import be.ugent.mmlab.rml.model.RDFTerm.SubjectMap;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.logicalsourcehandler.termmap.TermMapProcessor;
-import be.ugent.mmlab.rml.model.dataset.MetadataRMLDataset;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.openrdf.model.Resource;
@@ -25,8 +25,9 @@ import org.slf4j.LoggerFactory;
  * @author mielvandersande, andimou
  */
 public abstract class AbstractRMLProcessor implements RMLProcessor {
-
+    protected int enumerator =0;
     protected TermMapProcessor termMapProcessor ;
+    protected Map<String, String> parameters;
 
     /**
      * Gets the globally defined identifier-to-path map
@@ -37,7 +38,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
     
     // Log
     private static final Logger log = 
-            LoggerFactory.getLogger(AbstractRMLProcessor.class);
+            LoggerFactory.getLogger(AbstractRMLProcessor.class.getSimpleName());
 
     /**
      * gets the expression specified in the logical source
@@ -48,40 +49,37 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
     protected String getReference(LogicalSource ls) {
         return ls.getIterator();
     }
+    
+    public Map<String, String> getParameters() {
+        return parameters;
+    }
 
      
     @Override
-    public Resource processSubjectMap(RMLProcessor processor, RMLDataset originalDataset, 
+    public Resource processSubjectMap(RMLProcessor processor, RMLDataset dataset, 
             TriplesMap map, SubjectMap subjectMap, Object node, String[] exeTriplesMap){
         SubjectMapProcessor subMapProcessor;
-        MetadataRMLDataset dataset = (MetadataRMLDataset) originalDataset;
                 
-        if(dataset.getClass().getSimpleName().equals("MetadataFileDataset")){
-            log.debug("Generate metadata subjectmap processor");
-            subMapProcessor = new MetadataSubjectMapProcessor();
+        if(!dataset.getClass().getSimpleName().equals("MetadataFileDataset")){
+            subMapProcessor = new StdSubjectMapProcessor();
         }
         else{
-            if(dataset.getMetadataLevel().equals("triple"))
+            if(dataset.getMetadataLevel().equals("triplesmap") ||
+                    dataset.getMetadataLevel().equals("triple")){
                 subMapProcessor = new MetadataSubjectMapProcessor();
-            else
+            }   
+            else{
                 subMapProcessor = new StdSubjectMapProcessor();
+            }
         }
         Resource subject = subMapProcessor.processSubjectMap(
                 dataset, subjectMap, node, processor);
         
         if (subject == null) {
             log.debug("No subject was generated for "
-                    + map.getName() + "triple Map and node " + node.toString());
+                    + map.getName() + " triple Map and node " + node.toString());
         } else {
-            subMapProcessor.processSubjectTypeMap(
-                    dataset, subject, map.getSubjectMap(), node);
-            
-            //Set<GraphMap> graph = map.getSubjectMap().getGraphMaps();
-            if(map.getPredicateObjectMaps().size() > 0)
-            for (PredicateObjectMap pom : map.getPredicateObjectMaps()) {
-                processor.processPredicateObjectMap(
-                        dataset, subject, pom, node, map, exeTriplesMap, processor);
-            }
+            subMapProcessor.processSubjectTypeMap(dataset, subject, map, node);
         }
         return subject;
     }
@@ -96,22 +94,20 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
      */
     @Override
     public void processPredicateObjectMap(
-            RMLDataset originalDataset, Resource subject, PredicateObjectMap pom, 
+            RMLDataset dataset, Resource subject, PredicateObjectMap pom, 
             Object node, TriplesMap map, String[] exeTriplesMap, RMLProcessor processor) {
-        MetadataRMLDataset dataset = (MetadataRMLDataset) originalDataset;
-
         Set<PredicateMap> predicateMaps = pom.getPredicateMaps();
         //Go over each predicate map
         for (PredicateMap predicateMap : predicateMaps) {
             PredicateMapProcessor preMapProcessor = 
                     new PredicateMapProcessor(map, processor);
-            //Get the predicate
+            //Get the predicates
             List<URI> predicates = 
                     preMapProcessor.processPredicateMap(predicateMap, node);
             
             if (predicates.size() > 0) {
                 URI predicate = predicates.get(0);
-                StdObjectMapProcessor predicateObjectProcessor ;
+                ObjectMapProcessor predicateObjectProcessor ;
                 //        = new ObjectMapProcessor(map, processor);
                 if(dataset.getMetadataLevel().equals("triple")){
                     predicateObjectProcessor = 
@@ -121,10 +117,11 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                     predicateObjectProcessor = 
                             new StdObjectMapProcessor(map, processor);
                 }
-
+                
                 //Process the joins first
                 predicateObjectProcessor.processPredicateObjectMap_RefObjMap(
-                        dataset, subject, predicate, pom, node, map, exeTriplesMap);
+                        dataset, subject, predicate, pom, node, 
+                        map, parameters, exeTriplesMap);
 
                 //process the objectmaps
                 predicateObjectProcessor.processPredicateObjectMap_ObjMap(

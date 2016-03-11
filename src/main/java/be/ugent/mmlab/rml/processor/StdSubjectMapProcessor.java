@@ -6,6 +6,7 @@ import static be.ugent.mmlab.rml.model.RDFTerm.TermType.BLANK_NODE;
 import static be.ugent.mmlab.rml.model.RDFTerm.TermType.IRI;
 import be.ugent.mmlab.rml.model.RDFTerm.GraphMap;
 import be.ugent.mmlab.rml.model.RDFTerm.SubjectMap;
+import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.model.dataset.RMLDataset;
 import be.ugent.mmlab.rml.model.std.StdConditionSubjectMap;
 import be.ugent.mmlab.rml.processor.concrete.ConcreteTermMapFactory;
@@ -14,7 +15,6 @@ import java.util.List;
 import java.util.Set;
 import org.apache.commons.lang.RandomStringUtils;
 import org.openrdf.model.Resource;
-import org.openrdf.model.Statement;
 import org.openrdf.model.impl.BNodeImpl;
 import org.openrdf.model.impl.URIImpl;
 import org.openrdf.model.vocabulary.RDF;
@@ -46,7 +46,6 @@ public class StdSubjectMapProcessor implements SubjectMapProcessor {
                 processor);
         
         if (subjectMap.getClass().getSimpleName().equals("StdConditionSubjectMap")) {
-            log.debug("Conditional Subject Map");
             StdConditionSubjectMap condSubMap =
                     (StdConditionSubjectMap) subjectMap;
             //TODO: Move this to conditionSubjectMapProcessor
@@ -55,7 +54,6 @@ public class StdSubjectMapProcessor implements SubjectMapProcessor {
             result = condProcessor.processConditions(node, termMapProcessor, conditions);
         }
         else{
-            log.debug("Simple Subject Map");
             result = true;
         }
         
@@ -111,8 +109,8 @@ public class StdSubjectMapProcessor implements SubjectMapProcessor {
 
     @Override
     public void processSubjectTypeMap(
-            RMLDataset dataset, Resource subject, SubjectMap subjectMap, Object node) {
-
+            RMLDataset dataset, Resource subject, TriplesMap map, Object node) {
+        SubjectMap subjectMap = map.getSubjectMap();
         boolean flag = false;
         Set<org.openrdf.model.URI> classIRIs = subjectMap.getClassIRIs();
         /*String[] vocabs = dataset.getMetadataVocab();
@@ -131,26 +129,17 @@ public class StdSubjectMapProcessor implements SubjectMapProcessor {
         if (subject != null) {
             for (org.openrdf.model.URI classIRI : classIRIs) {
                 if (subjectMap.getGraphMaps().isEmpty()) {
-                    List<Statement> triples =
-                            dataset.tuplePattern(subject, RDF.TYPE, classIRI);
-                    if (triples.size() == 0) {
+                    //List<Statement> triples =
+                    //        dataset.tuplePattern(subject, RDF.TYPE, classIRI);
+                    //if (triples.size() == 0) {
                         dataset.add(subject, RDF.TYPE, classIRI);
-
-                        /*if (dataset.getMetadataLevel().equals("triple")) {
-                            if (flag == true) {
-                                dataset.getMetadataDataset().addReification(
-                                        subject, classIRI, subject, subjectMap.getOwnTriplesMap());
-                            }
-
-                        }*/
-
-                    }
+                    //}
                 } else {
-                    for (GraphMap map : subjectMap.getGraphMaps()) {
-                        if (map.getConstantValue() != null) {
+                    for (GraphMap graphMap : subjectMap.getGraphMaps()) {
+                        if (graphMap.getConstantValue() != null) {
                             dataset.add(
                                     subject, RDF.TYPE, classIRI,
-                                    new URIImpl(map.getConstantValue().toString()));
+                                    new URIImpl(graphMap.getConstantValue().toString()));
                         }
                     }
                 }

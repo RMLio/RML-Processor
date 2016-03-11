@@ -4,6 +4,7 @@ import be.ugent.mmlab.rml.processor.RMLProcessor;
 import be.ugent.mmlab.rml.processor.RMLProcessorFactory;
 import be.ugent.mmlab.rml.vocabularies.QLVocabulary.QLTerm;
 import static be.ugent.mmlab.rml.vocabularies.QLVocabulary.QLTerm.CSV_CLASS;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,26 +28,26 @@ public class ConcreteRMLProcessorFactory implements RMLProcessorFactory{
      * @return processor able to process the specified language
      */
     @Override
-    public RMLProcessor create(QLTerm term) {
+    public RMLProcessor create(QLTerm term, Map<String, String> parameters) {
         switch (term){
             case XPATH_CLASS:
-                return new XPathProcessor();
+                return new XPathProcessor(parameters);
             case CSV_CLASS:
-                return new CSVProcessor();
+                return new CSVProcessor(parameters);
             case SQL_CLASS:
                 //TODO: optimize the following 
                 //TODO: no reference formulations implies 
                 //SQL reference formulation
                 //but check first if custom defined one
-                return new CSVProcessor();
+                return new CSVProcessor(parameters);
             case JSONPATH_CLASS:
-                return new JSONPathProcessor();
+                return new JSONPathProcessor(parameters);
             case CSS3_CLASS:
-                return new CSS3Extractor();
+                return new CSS3Extractor(parameters);
             //case XLS_CLASS:
             //    return new XLSProcessor();
             case XLSX_CLASS:
-                return new XLSXProcessor();
+                return new XLSXProcessor(parameters);
             default:
                 log.error("The term " + term + "was not defined.");
                 return null;

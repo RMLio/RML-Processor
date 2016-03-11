@@ -68,7 +68,7 @@ public class MetadataObjectMapProcessor extends StdObjectMapProcessor implements
                         if (graphs.isEmpty() && subject != null) {
                             List<Statement> triples = 
                                     dataset.tuplePattern(subject, predicate, object);
-                            if(triples.size() == 0){
+                            if(triples.isEmpty()){
                                 dataset.add(subject, predicate, object); 
                                 log.debug("Should log triple level metadata...");
                                 metadataGenerator.generateTripleMetaData(dataset,

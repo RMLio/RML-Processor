@@ -60,7 +60,6 @@ public class PredicateMapProcessor {
             result = condProcessor.processConditions(node, termMapProcessor, conditions);
         }
         else{
-            log.debug("Simple Predicate Map");
             result = true;
         }
         
