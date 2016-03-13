@@ -11,6 +11,10 @@ import java.util.Map;
  * @author andimou
  */
 public interface RMLEngine {
+    
+    public void run(RMLMapping mapping, String outputFile, String outputFormat, 
+            String graphName, Map<String,String> parameters, String[] exeTriplesMap,
+            String metadataLevel, String metadataFormat, String metadataVocab);
 
     public RMLDataset runRMLMapping(RMLDataset dataset, RMLMapping rmlMapping,
             String baseIRI, Map<String, String> parameters, String[] exeTriplesMap);

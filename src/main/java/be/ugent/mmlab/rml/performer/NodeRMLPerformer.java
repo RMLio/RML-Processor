@@ -23,7 +23,7 @@ public class NodeRMLPerformer implements RMLPerformer {
 
     // Log
     private static final Logger log = 
-            LoggerFactory.getLogger(NodeRMLPerformer.class);
+            LoggerFactory.getLogger(NodeRMLPerformer.class.getSimpleName());
     protected RMLProcessor processor;
     protected String metadataLevel = null;
     protected boolean blankValues = false;

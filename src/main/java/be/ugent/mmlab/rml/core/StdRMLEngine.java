@@ -65,6 +65,23 @@ public class StdRMLEngine implements RMLEngine {
     protected String getIdentifier(LogicalSource ls) {
         return StdRMLEngine.getFileMap().getProperty(ls.getSource().getTemplate());
     }
+    
+    @Override
+    public void run(RMLMapping mapping, String outputFile, String outputFormat, 
+            String graphName, Map<String,String> parameters, String[] exeTriplesMap,
+            String metadataLevel, String metadataFormat, String metadataVocab) {
+        RMLDataset dataset;
+        log.debug("Running without metadata...");
+
+        //RML Engine that does not generate metadata
+        dataset = chooseSesameDataSet(
+                "dataset", outputFile, outputFormat);
+
+        runRMLMapping(
+                dataset, mapping, graphName, parameters, exeTriplesMap);
+        
+        dataset.closeRepository();
+    }
 
     /**
      *

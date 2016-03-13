@@ -1,6 +1,5 @@
 package be.ugent.mmlab.rml.processor;
 
-import be.ugent.mmlab.rml.logicalsourcehandler.termmap.TermMapProcessor;
 import be.ugent.mmlab.rml.metadata.MetadataGenerator;
 import be.ugent.mmlab.rml.model.RDFTerm.GraphMap;
 import be.ugent.mmlab.rml.model.RDFTerm.SubjectMap;
@@ -22,8 +21,6 @@ import org.slf4j.LoggerFactory;
  * @author andimou
  */
 public class MetadataSubjectMapProcessor extends StdSubjectMapProcessor implements SubjectMapProcessor {
-    private TermMapProcessor termMapProcessor ;
-    
     // Log
     private static final Logger log = 
             LoggerFactory.getLogger(
@@ -34,11 +31,12 @@ public class MetadataSubjectMapProcessor extends StdSubjectMapProcessor implemen
     public void processSubjectTypeMap(RMLDataset originalDataset, 
     Resource subject, TriplesMap map, Object node) {
         
-        MetadataGenerator metadataGenerator = new MetadataGenerator();
         SubjectMap subjectMap = map.getSubjectMap();
         boolean flag = false;
         Set<org.openrdf.model.URI> classIRIs = subjectMap.getClassIRIs();
         MetadataRMLDataset dataset = (MetadataRMLDataset) originalDataset ;
+        MetadataGenerator metadataGenerator = 
+                new MetadataGenerator(dataset.getTarget().toString());
         
         List vocabs = dataset.getMetadataVocab();
         //TODO: Decide if I keep that here or if I move it to separate class

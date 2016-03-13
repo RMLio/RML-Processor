@@ -60,6 +60,45 @@ public class StdMetadataRMLEngine extends StdRMLEngine implements RMLEngine {
     }
     
     @Override
+    public void run(
+            RMLMapping mapping, String outputFile, String outputFormat,
+            String graphName, Map<String, String> parameters, String[] exeTriplesMap, 
+            String metadataLevel, String metadataFormat, String metadataVocab) {
+        //StdMetadataRMLEngine engine; 
+        MetadataRMLDataset dataset;
+        
+        //If not user-defined, use same as for the output
+        if (metadataFormat == null) {
+            metadataFormat = outputFormat;
+        }
+        
+        //RML Engine that generates metadata too
+        //engine = new StdMetadataRMLEngine(outputFile);
+
+        //generate the repository ID for the metadata graph
+        String metadataRepositoryID = "metadata";
+        //Generate the repository for the metadata graph
+        generateRepository(metadataRepositoryID);
+        //generate the repository ID for the metadata graph
+        String datasetRepositoryID = generateRepositoryIDFromFile(outputFile);
+        //Generate the repository for the actual dataset
+        generateRepository(datasetRepositoryID);
+
+        //Generate dataset for the actual dataset graph
+        dataset = (MetadataRMLDataset) chooseSesameDataSet(
+                    datasetRepositoryID, outputFile, outputFormat);
+        //Set dataset metadata
+        dataset.setDatasetMetadata(metadataLevel, metadataFormat, metadataVocab);
+
+        runRMLMapping(
+                dataset, mapping, graphName, parameters, exeTriplesMap);
+        
+        File file = new File(dataset.getRepository().getDataDir().getParent());
+        boolean out = file.delete(); 
+        
+    }
+    
+    @Override
     public RMLDataset runRMLMapping(RMLDataset originalDataset, RMLMapping rmlMapping,
             String baseIRI, Map<String, String> parameters, String[] exeTriplesMap) {
         MetadataRMLDataset dataset = (MetadataRMLDataset) originalDataset;
@@ -89,7 +128,8 @@ public class StdMetadataRMLEngine extends StdRMLEngine implements RMLEngine {
         }
         removeRepository(dataset, pathToMetadataStore);
         
-        if (dataset.getMetadataLevel().equals("triplesmap")) {
+        if (dataset.getMetadataLevel().equals("triplesmap") || 
+                dataset.getMetadataLevel().equals("triple")) {
             Collection<TriplesMap> triplesMaps = rmlMapping.getTriplesMaps();
             writeRepositories(dataset, triplesMaps, dataset.getTarget().toString());
         }
