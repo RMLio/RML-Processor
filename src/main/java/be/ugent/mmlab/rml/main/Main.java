@@ -81,7 +81,6 @@ public class Main {
                 metadataFormat = commandLine.getOptionValue("mdf", null);
             }
             
-            //Retrieve the Mapping Document
             log.info("========================================");
             log.info("Retrieving the RML Mapping Document...");
             log.info("========================================");

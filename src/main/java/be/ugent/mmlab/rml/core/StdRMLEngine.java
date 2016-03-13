@@ -6,7 +6,6 @@ import be.ugent.mmlab.rml.model.dataset.RMLDataset;
 import be.ugent.mmlab.rml.model.dataset.StdRMLDataset;
 import be.ugent.mmlab.rml.input.ConcreteLogicalSourceProcessorFactory;
 import be.ugent.mmlab.rml.input.processor.SourceProcessor;
-import be.ugent.mmlab.rml.model.LogicalSource;
 import be.ugent.mmlab.rml.model.RMLMapping;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.RMLProcessor;
@@ -17,7 +16,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Properties;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.manager.LocalRepositoryManager;
 import org.slf4j.Logger;
@@ -40,7 +38,6 @@ public class StdRMLEngine implements RMLEngine {
     //private static boolean source_properties;
     //Properties containing the identifiers for files
     //There are probably better ways to do this than a static variable
-    private static Properties fileMap = new Properties();
     LocalRepositoryManager manager;
     
     public StdRMLEngine() {} 
@@ -56,15 +53,7 @@ public class StdRMLEngine implements RMLEngine {
             log.error("Repository Exception " + ex);
         }
     }
-
-    public static Properties getFileMap() {
-        return fileMap;
-    }
     
-    
-    protected String getIdentifier(LogicalSource ls) {
-        return StdRMLEngine.getFileMap().getProperty(ls.getSource().getTemplate());
-    }
     
     @Override
     public void run(RMLMapping mapping, String outputFile, String outputFormat, 
@@ -77,8 +66,7 @@ public class StdRMLEngine implements RMLEngine {
         dataset = chooseSesameDataSet(
                 "dataset", outputFile, outputFormat);
 
-        runRMLMapping(
-                dataset, mapping, graphName, parameters, exeTriplesMap);
+        runRMLMapping(dataset, mapping, graphName, parameters, exeTriplesMap);
         
         dataset.closeRepository();
     }

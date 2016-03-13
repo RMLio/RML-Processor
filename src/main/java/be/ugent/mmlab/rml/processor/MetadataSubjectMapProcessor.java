@@ -25,7 +25,11 @@ public class MetadataSubjectMapProcessor extends StdSubjectMapProcessor implemen
     private static final Logger log = 
             LoggerFactory.getLogger(
             MetadataSubjectMapProcessor.class.getSimpleName());
+    private MetadataGenerator metadataGenerator = null;
     
+    MetadataSubjectMapProcessor(MetadataGenerator metadataGenerator){
+        this.metadataGenerator = metadataGenerator;
+    }
     
     @Override
     public void processSubjectTypeMap(RMLDataset originalDataset, 
@@ -35,8 +39,6 @@ public class MetadataSubjectMapProcessor extends StdSubjectMapProcessor implemen
         boolean flag = false;
         Set<org.openrdf.model.URI> classIRIs = subjectMap.getClassIRIs();
         MetadataRMLDataset dataset = (MetadataRMLDataset) originalDataset ;
-        MetadataGenerator metadataGenerator = 
-                new MetadataGenerator(dataset.getTarget().toString());
         
         List vocabs = dataset.getMetadataVocab();
         //TODO: Decide if I keep that here or if I move it to separate class
@@ -58,7 +60,8 @@ public class MetadataSubjectMapProcessor extends StdSubjectMapProcessor implemen
                             dataset.tuplePattern(subject, RDF.TYPE, classIRI);
                     if (triples.isEmpty()) {
                         if(vocabs.contains("void") && 
-                                dataset.getMetadataLevel().equals("triplesmap")){
+                                dataset.getMetadataLevel().equals("triplesmap") || 
+                                dataset.getMetadataLevel().equals("triple")){
                             dataset.addToRepository(
                                     map, subject, RDF.TYPE, classIRI);
                         }
@@ -70,7 +73,7 @@ public class MetadataSubjectMapProcessor extends StdSubjectMapProcessor implemen
                         if (dataset.getMetadataLevel().equals("triple")) {
                             if (flag == true) {
                                 metadataGenerator.generateTripleMetaData(dataset,
-                                        subject, RDF.TYPE, classIRI);
+                                        map, subject, RDF.TYPE, classIRI);
                             }
                         }
                     }

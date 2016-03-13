@@ -7,6 +7,7 @@ import be.ugent.mmlab.rml.model.PredicateObjectMap;
 import be.ugent.mmlab.rml.model.RDFTerm.SubjectMap;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.logicalsourcehandler.termmap.TermMapProcessor;
+import be.ugent.mmlab.rml.metadata.MetadataGenerator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -28,6 +29,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
     protected int enumerator =0;
     protected TermMapProcessor termMapProcessor ;
     protected Map<String, String> parameters;
+    protected MetadataGenerator metadataGenerator = null;
 
     /**
      * Gets the globally defined identifier-to-path map
@@ -66,7 +68,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
         else{
             if(dataset.getMetadataLevel().equals("triplesmap") ||
                     dataset.getMetadataLevel().equals("triple")){
-                subMapProcessor = new MetadataSubjectMapProcessor();
+                subMapProcessor = new MetadataSubjectMapProcessor(metadataGenerator);
             }   
             else{
                 subMapProcessor = new StdSubjectMapProcessor();
@@ -111,7 +113,8 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                 //        = new ObjectMapProcessor(map, processor);
                 if(dataset.getMetadataLevel().equals("triple")){
                     predicateObjectProcessor = 
-                            new MetadataObjectMapProcessor(map, processor);
+                            new MetadataObjectMapProcessor(
+                            map, processor,metadataGenerator);
                 }
                 else {
                     predicateObjectProcessor = 
@@ -129,5 +132,23 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
             }
             
         }
+    }
+    
+    /**
+     *
+     * @param metadataGenerator
+     */
+    @Override
+    public void setMetadataGenerator(MetadataGenerator metadataGenerator){
+        this.metadataGenerator = metadataGenerator ;
+    }
+    
+    /**
+     *
+     * @return
+     */
+    @Override
+    public MetadataGenerator getMetadataGenerator(){
+        return this.metadataGenerator ;
     }
 }

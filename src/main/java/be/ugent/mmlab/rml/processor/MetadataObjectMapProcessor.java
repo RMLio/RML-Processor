@@ -27,10 +27,15 @@ import org.slf4j.LoggerFactory;
 public class MetadataObjectMapProcessor extends StdObjectMapProcessor implements ObjectMapProcessor {
     // Log
     private static final Logger log = 
-            LoggerFactory.getLogger(MetadataObjectMapProcessor.class);
+            LoggerFactory.getLogger(
+            MetadataObjectMapProcessor.class.getSimpleName());
     
-    public MetadataObjectMapProcessor(TriplesMap map, RMLProcessor processor){
+    MetadataGenerator metadataGenerator = null;
+    
+    public MetadataObjectMapProcessor(TriplesMap map, RMLProcessor processor,
+            MetadataGenerator metadataGenerator){
         super(map, processor);
+        this.metadataGenerator = metadataGenerator;
     }
     
     @Override
@@ -38,7 +43,7 @@ public class MetadataObjectMapProcessor extends StdObjectMapProcessor implements
             RMLDataset originalDataset, Resource subject, URI predicate,
             PredicateObjectMap pom, Object node) {
         MetadataRMLDataset dataset = (MetadataRMLDataset) originalDataset ;
-        MetadataGenerator metadataGenerator = new MetadataGenerator();
+        //MetadataGenerator metadataGenerator = new MetadataGenerator();
         
         Set<ObjectMap> objectMaps = pom.getObjectMaps();
         if(objectMaps.size() > 0)
@@ -71,7 +76,8 @@ public class MetadataObjectMapProcessor extends StdObjectMapProcessor implements
                             if(triples.isEmpty()){
                                 dataset.add(subject, predicate, object); 
                                 log.debug("Should log triple level metadata...");
-                                metadataGenerator.generateTripleMetaData(dataset,
+                                metadataGenerator.generateTripleMetaData(
+                                        dataset, pom.getOwnTriplesMap(), 
                                         subject, predicate, object);
                             }
                         } else {
@@ -80,7 +86,8 @@ public class MetadataObjectMapProcessor extends StdObjectMapProcessor implements
                                         graph.getConstantValue().toString());
                                 dataset.add(subject, predicate, object, graphResource);
                                 log.debug("Should log triple level metadata...");
-                                metadataGenerator.generateTripleMetaData(dataset,
+                                metadataGenerator.generateTripleMetaData(
+                                        dataset, pom.getOwnTriplesMap(), 
                                         subject, predicate, object);
                             }
                         }

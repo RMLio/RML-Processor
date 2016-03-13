@@ -7,6 +7,7 @@ import be.ugent.mmlab.rml.model.dataset.MetadataFileDataset;
 import be.ugent.mmlab.rml.model.dataset.MetadataRMLDataset;
 import be.ugent.mmlab.rml.model.dataset.RMLDataset;
 import be.ugent.mmlab.rml.model.dataset.StdRMLDataset;
+import be.ugent.mmlab.rml.processor.RMLProcessor;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -37,7 +38,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author andimou
  */
-public class StdMetadataRMLEngine extends StdRMLEngine implements RMLEngine {
+public class StdMetadataRMLEngine extends StdRMLEngine {
     
     // Log
     private static final Logger log = 
@@ -90,8 +91,7 @@ public class StdMetadataRMLEngine extends StdRMLEngine implements RMLEngine {
         //Set dataset metadata
         dataset.setDatasetMetadata(metadataLevel, metadataFormat, metadataVocab);
 
-        runRMLMapping(
-                dataset, mapping, graphName, parameters, exeTriplesMap);
+        runRMLMapping(dataset, mapping, graphName, parameters, exeTriplesMap);
         
         File file = new File(dataset.getRepository().getDataDir().getParent());
         boolean out = file.delete(); 
@@ -250,6 +250,16 @@ public class StdMetadataRMLEngine extends StdRMLEngine implements RMLEngine {
             }
                     
         return dataset;
+    }
+    
+    @Override
+    public RMLProcessor generateRMLProcessor(
+            TriplesMap triplesMap, Map<String, String> parameters) {
+        RMLProcessor processor = 
+                super.generateRMLProcessor(triplesMap, parameters);
+        processor.setMetadataGenerator(metadataGenerator);
+
+        return processor;
     }
     
     

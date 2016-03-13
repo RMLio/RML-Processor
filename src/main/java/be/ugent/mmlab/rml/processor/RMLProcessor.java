@@ -1,5 +1,6 @@
 package be.ugent.mmlab.rml.processor;
 
+import be.ugent.mmlab.rml.metadata.MetadataGenerator;
 import be.ugent.mmlab.rml.model.dataset.RMLDataset;
 import be.ugent.mmlab.rml.performer.RMLPerformer;
 import be.ugent.mmlab.rml.model.PredicateObjectMap;
@@ -43,38 +44,6 @@ public interface RMLProcessor {
             TriplesMap map, SubjectMap subjectMap, Object node, String[] exeTriplesMaps);
     
     /**
-     *
-     * @param dataset
-     * @param subject
-     * @param subjectMap
-     * @param node
-     */
-    //public void processSubjectTypeMap(RMLDataset dataset, Resource subject, 
-    //        SubjectMap subjectMap, Object node);
-    
-    /**
-     *
-     * @param map
-     * @param replacements
-     * @param expression
-     * @return
-     */
-    //public List<String> processTemplate(
-    //        TermMap map, List<String> replacements, String expression);
-    
-    /**
-     *
-     * @param expression
-     * @param template
-     * @param termType
-     * @param referenceFormulation
-     * @param replacement
-     * @return
-     */
-    //public String processTemplate(String expression, String template, 
-    //        String termType, QLTerm referenceFormulation, String replacement);
-    
-    /**
      * process a predicate object map
      * @param dataset
      * @param subject the subject created by the subject map
@@ -84,42 +53,8 @@ public interface RMLProcessor {
     public void processPredicateObjectMap(
             RMLDataset dataset, Resource subject, PredicateObjectMap pom, 
             Object node, TriplesMap map, String[] exeTriplesMap, RMLProcessor processor);
+   
+    public MetadataGenerator getMetadataGenerator();
     
-    /**
-     *
-     * @param predicateMap
-     * @param node
-     * @return
-     */
-    //public List<URI> processPredicateMap(PredicateMap predicateMap, Object node);
-    
-    /**
-     *
-     * @param dataset
-     * @param subject
-     * @param predicate
-     * @param pom
-     * @param node
-     */
-    //public void processPredicateObjectMap_ObjMap(
-    //        RMLDataset dataset, Resource subject, URI predicate,
-    //        PredicateObjectMap pom, Object node);
-    
-    /**
-     *
-     * @param value
-     * @param valueList
-     * @param termMap
-     * @return
-     */
-    //public List<Value> applyTermType(
-    //        String value, List<Value> valueList, TermMap termMap);
-    
-    /**
-     *
-     * @param value
-     * @return
-     */
-    //public String cleansing(String value);
-
+    public void setMetadataGenerator(MetadataGenerator metadataGenerator);
 }
