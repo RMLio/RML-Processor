@@ -44,7 +44,6 @@ public class JSONPathProcessor extends AbstractRMLProcessor {
             //This is a none streaming solution. A streaming parser requires own implementation, possibly based on https://code.google.com/p/json-simple/wiki/DecodingExamples
             JsonPath path = JsonPath.compile(reference);
             Object val = path.read(input);
-            log.debug("val " + val);
             execute(dataset, map, performer, val, exeTriplesMap, pomExecution);
 
         } catch (FileNotFoundException ex) {
