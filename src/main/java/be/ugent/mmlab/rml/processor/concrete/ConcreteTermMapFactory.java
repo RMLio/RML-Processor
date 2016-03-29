@@ -13,7 +13,7 @@ import static be.ugent.mmlab.rml.vocabularies.QLVocabulary.QLTerm.JSONPATH_CLASS
 import static be.ugent.mmlab.rml.vocabularies.QLVocabulary.QLTerm.XLSX_CLASS;
 import static be.ugent.mmlab.rml.vocabularies.QLVocabulary.QLTerm.XLS_CLASS;
 import static be.ugent.mmlab.rml.vocabularies.QLVocabulary.QLTerm.XPATH_CLASS;
-import nu.xom.XPathContext;
+import jlibs.xml.DefaultNamespaceContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +25,9 @@ import org.slf4j.LoggerFactory;
 public class ConcreteTermMapFactory implements TermMapProcessorFactory {
     
     // Log
-    private static final Logger log = LoggerFactory.getLogger(ConcreteTermMapFactory.class);
+    private static final Logger log = 
+            LoggerFactory.getLogger(
+            ConcreteTermMapFactory.class.getSimpleName());
     
     /**
      *
@@ -40,8 +42,8 @@ public class ConcreteTermMapFactory implements TermMapProcessorFactory {
             case XPATH_CLASS:
                 if (processor != null) {
                     XPathProcessor process = (XPathProcessor) processor;
-                    XPathContext nsContext = process.getNamespaces();
-                    return new XPathTermMapProcessor(nsContext);
+                    DefaultNamespaceContext dnc = process.getNamespaces();
+                    return new XPathTermMapProcessor(dnc);
                 }
             case CSV_CLASS:
                 return new CSVTermMapProcessor();

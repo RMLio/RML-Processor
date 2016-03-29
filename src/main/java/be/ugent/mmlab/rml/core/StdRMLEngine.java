@@ -205,7 +205,8 @@ public class StdRMLEngine implements RMLEngine {
 
         try {
             processor = factory.create(
-                    triplesMap.getLogicalSource().getReferenceFormulation(),parameters);
+                    triplesMap.getLogicalSource().getReferenceFormulation(),
+                    parameters, triplesMap);
         } catch (Exception ex) {
             log.error("Exception " + ex + 
                     " There is no suitable processor for this reference formulation");

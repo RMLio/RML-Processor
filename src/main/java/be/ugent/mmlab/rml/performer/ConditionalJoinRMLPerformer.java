@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author mielvandersande, andimou
  */
+//TODO: Remove ConditionalJoinRMLPerformer, never used
 public class ConditionalJoinRMLPerformer extends NodeRMLPerformer{
     private TermMapProcessor termMapProcessor ;
     

@@ -139,14 +139,14 @@ public class StdObjectMapProcessor implements ObjectMapProcessor {
             PredicateObjectMap pom, Object node, TriplesMap map, 
             Map<String, String> parameters, String[] exeTriplesMap) {
         String template ;
-        
+       
         Set<ReferencingObjectMap> referencingObjectMaps =
                 pom.getReferencingObjectMaps();
         if (referencingObjectMaps.size() > 0) {
             log.debug("Processing Referencing Object Map...");
         }
         for (ReferencingObjectMap referencingObjectMap : referencingObjectMaps) {
-            TriplesMap parTrMap = referencingObjectMap.getParentTriplesMap();
+            //TriplesMap parTrMap = referencingObjectMap.getParentTriplesMap();
             
             if (referencingObjectMap.getParentTriplesMap().getLogicalSource() == null) {
                 continue;
@@ -221,7 +221,8 @@ public class StdObjectMapProcessor implements ObjectMapProcessor {
             } catch (IOException ex) {
                 log.error("IOException " + ex);
             }
-            RMLProcessor processor = factory.create(referenceFormulation, parameters);
+            RMLProcessor processor = factory.create(
+                    referenceFormulation, parameters, parentTriplesMap);
             RMLPerformer performer = null;
             
             //different Logical Source AND no Join Conditions AND no Bind Conditions
@@ -311,7 +312,7 @@ public class StdObjectMapProcessor implements ObjectMapProcessor {
             }*/
     }
     
-    //TODO: Check te following two
+    //TODO: Check the following two
     private void process_difLS_noJC_noBC(
             RMLPerformer performer, RMLProcessor processor,
             RMLDataset dataset, Resource subject, URI predicate, 

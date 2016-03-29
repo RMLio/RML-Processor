@@ -110,13 +110,16 @@ public class Main {
             log.info("Running the RML Mapping..");
             log.info("========================================");
             
-            if(metadataLevel.equals("None") && metadataFormat == null){
+            if(metadataLevel.equals("None") && metadataFormat == null
+                    && (metadataVocab == null || !metadataVocab.contains("co"))){
+                log.debug("Mapping without metadata...");
                 RMLEngine engine = new StdRMLEngine(outputFile);
                 engine.run(mapping, outputFile, outputFormat, 
                         graphName, parameters, exeTriplesMap,
                         null, null, null);
             }
             else {
+                log.debug("Mapping with metadata...");
                 StdMetadataRMLEngine engine = new StdMetadataRMLEngine(outputFile);
                 engine.run(mapping, outputFile, outputFormat, 
                         graphName, parameters, exeTriplesMap, 

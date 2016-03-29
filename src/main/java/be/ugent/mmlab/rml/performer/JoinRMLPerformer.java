@@ -47,7 +47,7 @@ public class JoinRMLPerformer extends NodeRMLPerformer{
     String[] exeTriplesMap, Map<String, String> parameters, boolean pomExecution) {
         Value object = processor.processSubjectMap(this.processor,
                 dataset, map, map.getSubjectMap(), node, exeTriplesMap);
-
+        
         if (object == null){
             return;
         }       

@@ -48,7 +48,7 @@ public class SimpleReferencePerformer extends NodeRMLPerformer {
                 be.ugent.mmlab.rml.model.RDFTerm.TermType.IRI){
             RMLProcessorFactory factory = new ConcreteRMLProcessorFactory();
             RMLProcessor subprocessor = factory.create(
-                    map.getLogicalSource().getReferenceFormulation(), parameters);
+                    map.getLogicalSource().getReferenceFormulation(), parameters, map);
             RMLPerformer performer = new NodeRMLPerformer(subprocessor); 
             Resource object = processor.processSubjectMap(this.processor,
                     dataset, map, map.getSubjectMap(), node, exeTriplesMap); 

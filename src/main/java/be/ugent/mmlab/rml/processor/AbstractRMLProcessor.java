@@ -61,13 +61,15 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
     public Resource processSubjectMap(RMLProcessor processor, RMLDataset dataset, 
             TriplesMap map, SubjectMap subjectMap, Object node, String[] exeTriplesMap){
         SubjectMapProcessor subMapProcessor;
-                
+        
         if(!dataset.getClass().getSimpleName().equals("MetadataFileDataset")){
             subMapProcessor = new StdSubjectMapProcessor();
         }
         else{
             if(dataset.getMetadataLevel().equals("triplesmap") ||
-                    dataset.getMetadataLevel().equals("triple")){
+                    dataset.getMetadataLevel().equals("triple") ||
+                    dataset.getMetadataVocab().contains("co") ){
+                
                 subMapProcessor = new MetadataSubjectMapProcessor(metadataGenerator);
             }   
             else{
@@ -111,7 +113,8 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                 URI predicate = predicates.get(0);
                 ObjectMapProcessor predicateObjectProcessor ;
                 //        = new ObjectMapProcessor(map, processor);
-                if(dataset.getMetadataLevel().equals("triple")){
+                if(dataset.getMetadataLevel().equals("triple") ||
+                        dataset.getMetadataVocab().contains("co")){
                     predicateObjectProcessor = 
                             new MetadataObjectMapProcessor(
                             map, processor,metadataGenerator);
