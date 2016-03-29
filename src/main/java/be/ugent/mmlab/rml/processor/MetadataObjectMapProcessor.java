@@ -76,14 +76,7 @@ public class MetadataObjectMapProcessor extends StdObjectMapProcessor implements
                             if(triples.isEmpty()){
                                 dataset.add(subject, predicate, object); 
                                 log.debug("Should log triple level metadata...");
-                                
-                                if(objectMap.getValidation() == true){
-                                    log.debug("Add metadata for object to be validated");
-                                    metadataGenerator.generateTripleMetaData(
-                                        dataset, pom.getOwnTriplesMap(), 
-                                        subject, predicate, object, "validation");
-                                }
-                                else        
+                                     
                                     metadataGenerator.generateTripleMetaData(
                                         dataset, pom.getOwnTriplesMap(), 
                                         subject, predicate, object, null);
@@ -104,12 +97,6 @@ public class MetadataObjectMapProcessor extends StdObjectMapProcessor implements
                 }
             } else {
                 log.debug("No object created. No triple will be generated.");
-                if (objectMap.getCompletion() == true) {
-                    log.debug("Add metadata for object to be completed");
-                    metadataGenerator.generateTripleMetaData(
-                            dataset, pom.getOwnTriplesMap(),
-                            subject, predicate, null, "completion");
-                }
             }
         }
     }
