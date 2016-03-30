@@ -186,7 +186,7 @@ public class StdRMLEngine implements RMLEngine {
                     dataset = processInputStream(processor, inputProcessor,
                             triplesMap, parameters, exeTriplesMap, dataset);
                 } while (inputProcessor.hasNextInputStream());
-            }     
+            } 
         }
         return dataset;
     }

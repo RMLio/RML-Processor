@@ -41,7 +41,7 @@ public class ConcreteRMLProcessorFactory implements RMLProcessorFactory{
                 //TODO: no reference formulations implies 
                 //SQL reference formulation
                 //but check first if custom defined one
-                return new CSVProcessor(parameters);
+                return new JdbcProcessor(parameters);
             case JSONPATH_CLASS:
                 return new JSONPathProcessor(parameters);
             case CSS3_CLASS:

@@ -4,6 +4,7 @@ import be.ugent.mmlab.rml.logicalsourcehandler.termmap.TermMapProcessor;
 import be.ugent.mmlab.rml.logicalsourcehandler.termmap.concrete.CSS3TermMapProcessor;
 import be.ugent.mmlab.rml.logicalsourcehandler.termmap.concrete.CSVTermMapProcessor;
 import be.ugent.mmlab.rml.logicalsourcehandler.termmap.concrete.JSONPathTermMapProcessor;
+import be.ugent.mmlab.rml.logicalsourcehandler.termmap.concrete.SQLTermMapProcessor;
 import be.ugent.mmlab.rml.logicalsourcehandler.termmap.concrete.XPathTermMapProcessor;
 import be.ugent.mmlab.rml.processor.RMLProcessor;
 import be.ugent.mmlab.rml.vocabularies.QLVocabulary.QLTerm;
@@ -47,6 +48,8 @@ public class ConcreteTermMapFactory implements TermMapProcessorFactory {
                 }
             case CSV_CLASS:
                 return new CSVTermMapProcessor();
+            case SQL_CLASS:
+                return new SQLTermMapProcessor();
             case JSONPATH_CLASS:
                 return new JSONPathTermMapProcessor();
             case CSS3_CLASS:
