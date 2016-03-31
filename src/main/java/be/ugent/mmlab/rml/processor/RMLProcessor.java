@@ -54,7 +54,21 @@ public interface RMLProcessor {
             RMLDataset dataset, Resource subject, PredicateObjectMap pom, 
             Object node, TriplesMap map, String[] exeTriplesMap, RMLProcessor processor);
    
+    /**
+     *
+     * @return
+     */
     public MetadataGenerator getMetadataGenerator();
     
+    /**
+     *
+     * @param metadataGenerator
+     */
     public void setMetadataGenerator(MetadataGenerator metadataGenerator);
+        
+    /**
+     *
+     * @return
+     */
+    public Integer getEnumerator();
 }

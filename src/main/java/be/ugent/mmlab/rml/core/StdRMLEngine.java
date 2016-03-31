@@ -15,7 +15,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.manager.LocalRepositoryManager;
 import org.slf4j.Logger;
@@ -39,6 +41,7 @@ public class StdRMLEngine implements RMLEngine {
     //Properties containing the identifiers for files
     //There are probably better ways to do this than a static variable
     LocalRepositoryManager manager;
+    protected Map<String,Integer> enumerator = new HashMap<String,Integer>();
     
     public StdRMLEngine() {} 
     
@@ -252,6 +255,8 @@ public class StdRMLEngine implements RMLEngine {
                 log.debug("Executing Mapping Processor..");
                 processor.execute(dataset, triplesMap, performer,
                         input, exeTriplesMap, false);
+                Integer iteration = processor.getEnumerator();
+                enumerator.put(triplesMap.getShortName(), iteration);
             }
             else{
                 log.debug("Null input data derived from " + 

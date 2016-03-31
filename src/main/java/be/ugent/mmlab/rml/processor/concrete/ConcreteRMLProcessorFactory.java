@@ -51,7 +51,7 @@ public class ConcreteRMLProcessorFactory implements RMLProcessorFactory{
             case XLSX_CLASS:
                 return new XLSXProcessor(parameters);
             default:
-                log.error("The term " + term + "was not defined.");
+                log.error("The term " + term + " was not defined.");
                 return null;
         }
     }

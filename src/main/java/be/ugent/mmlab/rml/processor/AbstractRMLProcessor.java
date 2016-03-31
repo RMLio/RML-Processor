@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
  * @author mielvandersande, andimou
  */
 public abstract class AbstractRMLProcessor implements RMLProcessor {
-    protected int enumerator =0;
+    protected Integer enumerator = 0;
     protected TermMapProcessor termMapProcessor ;
     protected Map<String, String> parameters;
     protected MetadataGenerator metadataGenerator = null;
@@ -153,5 +153,10 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
     @Override
     public MetadataGenerator getMetadataGenerator(){
         return this.metadataGenerator ;
+    }
+    
+    @Override
+    public Integer getEnumerator(){
+        return this.enumerator;
     }
 }

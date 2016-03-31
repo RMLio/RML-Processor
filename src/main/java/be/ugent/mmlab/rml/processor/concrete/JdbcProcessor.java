@@ -34,7 +34,7 @@ public class JdbcProcessor extends AbstractRMLProcessor  {
     @Override
     public void execute(RMLDataset dataset, TriplesMap map, RMLPerformer performer, 
     InputStream input, String[] exeTriplesMap, boolean pomExecution) {
-
+    ++enumerator;
         try {
             byte[] bytes = IOUtils.toByteArray(input);
             ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
@@ -54,7 +54,7 @@ public class JdbcProcessor extends AbstractRMLProcessor  {
     public void execute_node(RMLDataset dataset, String expression, 
     TriplesMap parentTriplesMap, RMLPerformer performer, Object node, 
     Resource subject, String[] exeTriplesMap, boolean pomExecution) {
-        log.debug("Not supported yet."); 
+        log.error("Not supported yet."); 
     }
 
 }
