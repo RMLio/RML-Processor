@@ -181,6 +181,7 @@ public class StdMetadataRMLEngine extends StdRMLEngine {
         if (dataset.getMetadataLevel().equals("triplesmap") ||
                 dataset.getMetadataLevel().equals("triple")) {
             
+            //TODO: Change this to get the TriplesMap short name
             String[] name = triplesMap.getName().split("#");            
             generateRepository(name[1]);
             try {

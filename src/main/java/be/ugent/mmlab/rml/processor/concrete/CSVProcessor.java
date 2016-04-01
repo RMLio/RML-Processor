@@ -55,7 +55,7 @@ public class CSVProcessor extends AbstractRMLProcessor {
     public void execute(RMLDataset dataset, TriplesMap map, 
     RMLPerformer performer, InputStream input, 
     String[] exeTriplesMap, boolean pomExecution) {
-
+    ++enumerator;
         try {
             char delimiter = getDelimiter(map.getLogicalSource());
 
