@@ -39,9 +39,9 @@ public class SimpleReferencePerformer extends NodeRMLPerformer {
     }
     
     @Override
-    public void perform(Object node, RMLDataset dataset, TriplesMap map, 
+    public boolean perform(Object node, RMLDataset dataset, TriplesMap map, 
         String[] exeTriplesMap, Map<String, String> parameters, boolean pomExecution) {
-
+        boolean result = true;
         if(map.getSubjectMap().getTermType() == 
                 be.ugent.mmlab.rml.model.RDFTerm.TermType.BLANK_NODE 
           || map.getSubjectMap().getTermType() == 
@@ -87,8 +87,10 @@ public class SimpleReferencePerformer extends NodeRMLPerformer {
                             node, object, exeTriplesMap, pomExecution);
                 }
             }
-            else
+            else{
+                log.debug("Check for fallback POMs - 3");
                 log.debug("Object of " + map.getName() + " was null. ");
+            }
         }
         else{
             TermMapProcessorFactory factory = new ConcreteTermMapFactory();
@@ -109,5 +111,6 @@ public class SimpleReferencePerformer extends NodeRMLPerformer {
                 }
             }   
         }    
+        return result;
     }
 }

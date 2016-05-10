@@ -47,7 +47,7 @@ public class Main {
             commandLine = RMLConfiguration.parseArguments(args);
             String outputFile = null, outputFormat = "turtle";
             String graphName = "", metadataVocab = null, metadataLevel = "None", 
-                    metadataFormat = null;
+                    metadataFormat = null, baseIRI= null;
 
             if (commandLine.hasOption("h")) {
                 RMLConfiguration.displayHelp();
@@ -64,7 +64,9 @@ public class Main {
             if (commandLine.hasOption("f")) {
                 outputFormat = commandLine.getOptionValue("f", null);
             }
-            
+            if (commandLine.hasOption("b")) {
+                baseIRI = commandLine.getOptionValue("b", null);
+            }
             if (commandLine.hasOption("m")) {
                 map_doc = commandLine.getOptionValue("m", null);
             }
@@ -98,17 +100,17 @@ public class Main {
             log.info("========================================");
             RMLMapping mapping = mappingFactory.extractRMLMapping(repository);
             
+            log.info("========================================");
+            log.info("Executing the RML Mapping..");
+            log.info("========================================");
+            
             log.debug("Generation Execution plan...");
             if (commandLine.hasOption("tm")) {
                 triplesMap = commandLine.getOptionValue("tm", null);
                 if(triplesMap != null)
                     exeTriplesMap = 
-                            RMLConfiguration.processTriplesMap(triplesMap,map_doc);
+                            RMLConfiguration.processTriplesMap(triplesMap,map_doc, baseIRI);
             }
-            
-            log.info("========================================");
-            log.info("Running the RML Mapping..");
-            log.info("========================================");
             
             if(metadataLevel.equals("None") && metadataFormat == null
                     && (metadataVocab == null || !metadataVocab.contains("co"))){

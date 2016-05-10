@@ -43,13 +43,13 @@ public class JoinRMLPerformer extends NodeRMLPerformer{
      * @param map 
      */
     @Override
-    public void perform(Object node, RMLDataset dataset, TriplesMap map, 
+    public boolean perform(Object node, RMLDataset dataset, TriplesMap map, 
     String[] exeTriplesMap, Map<String, String> parameters, boolean pomExecution) {
         Value object = processor.processSubjectMap(this.processor,
                 dataset, map, map.getSubjectMap(), node, exeTriplesMap);
-        
+        boolean result = true;
         if (object == null){
-            return;
+            result = false;
         }       
         
         List<Statement> triples =
@@ -62,9 +62,11 @@ public class JoinRMLPerformer extends NodeRMLPerformer{
         if(pomExecution){
             NestedRMLPerformer nestedPerformer = 
                     new NestedRMLPerformer(processor);
-            nestedPerformer.perform(
-                    node, dataset, map, exeTriplesMap, parameters, pomExecution);
+            boolean subresult = nestedPerformer.perform(
+                            node, dataset, map, exeTriplesMap, parameters, pomExecution);
+            log.debug("The subresult of the nested performer is " + subresult);
         }
+        return result;
     }
 
 }

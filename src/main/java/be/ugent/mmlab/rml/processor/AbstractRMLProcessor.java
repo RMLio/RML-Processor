@@ -9,6 +9,7 @@ import be.ugent.mmlab.rml.model.RDFTerm.SubjectMap;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.logicalsourcehandler.termmap.TermMapProcessor;
 import be.ugent.mmlab.rml.metadata.MetadataGenerator;
+import be.ugent.mmlab.rml.model.RDFTerm.ReferencingObjectMap;
 import be.ugent.mmlab.rml.model.std.StdConditionPredicateObjectMap;
 import be.ugent.mmlab.rml.processor.concrete.ConcreteTermMapFactory;
 import be.ugent.mmlab.rml.processor.concrete.TermMapProcessorFactory;
@@ -34,6 +35,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
     protected TermMapProcessor termMapProcessor ;
     protected Map<String, String> parameters;
     protected MetadataGenerator metadataGenerator = null;
+    protected boolean iterationStatus = false;
 
     /**
      * Gets the globally defined identifier-to-path map
@@ -120,7 +122,8 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
 
             //process conditions
             ConditionProcessor condProcessor = new StdConditionProcessor();
-            flag = condProcessor.processConditions(
+            if(conditions.size() > 0)
+                flag = condProcessor.processConditions(
                     node, termMapProcessor, conditions);
             if (!flag) {
                 //Takes the first conditions
@@ -136,8 +139,6 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
             else
                 log.debug("No conditions found.");
         }
-        else
-            log.debug("Conditional Predicate Object Map not properly set");
         //TODO: Till here
         if (flag) {
             log.debug("Proceed with the POM");
@@ -165,8 +166,10 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                     }
 
                     //Process the joins first
+                    Set<ReferencingObjectMap> referencingObjectMaps =
+                            pom.getReferencingObjectMaps();
                     predicateObjectProcessor.processPredicateObjectMap_RefObjMap(
-                            dataset, subject, predicate, pom, node,
+                            dataset, subject, predicate, referencingObjectMaps, node,
                             map, parameters, exeTriplesMap);
 
                     //process the objectmaps
@@ -198,5 +201,14 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
     @Override
     public Integer getEnumerator(){
         return this.enumerator;
+    }
+    
+    public void setIterationStatus(boolean status){
+        this.iterationStatus = status;
+    }
+    
+    @Override
+    public boolean getIterationStatus(){
+        return this.iterationStatus;
     }
 }

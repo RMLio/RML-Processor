@@ -136,12 +136,10 @@ public class StdObjectMapProcessor implements ObjectMapProcessor {
     @Override
     public void processPredicateObjectMap_RefObjMap(
             RMLDataset dataset, Resource subject, URI predicate,
-            PredicateObjectMap pom, Object node, TriplesMap map, 
+            Set<ReferencingObjectMap> referencingObjectMaps, Object node, TriplesMap map, 
             Map<String, String> parameters, String[] exeTriplesMap) {
         String template ;
        
-        Set<ReferencingObjectMap> referencingObjectMaps =
-                pom.getReferencingObjectMaps();
         if (referencingObjectMaps.size() > 0) {
             log.debug("Processing Referencing Object Map...");
         }
@@ -240,9 +238,23 @@ public class StdObjectMapProcessor implements ObjectMapProcessor {
                     & !parentTriplesMap.getLogicalSource().getSource().getTemplate().equals(
                     map.getLogicalSource().getSource().getTemplate())
                     & (conditions != null)) {
-                process_difLS_noJC_withBC(performer, processor, dataset, subject, 
+                boolean result = process_difLS_noJC_withBC(performer, processor, dataset, subject, 
                         predicate, parentTriplesMap, input, exeTriplesMap);
-                //continue;
+                if (!result) {
+                    log.debug("Check for falllback object maps" );
+                    Set<ReferencingObjectMap> fallbackReferencingObjectMaps =
+                            referencingObjectMap.getFallbackReferencingObjectMaps();
+                    log.debug("Found " + fallbackReferencingObjectMaps
+                            + " fallback Referencing Object Maps");
+                    //Process the joins first
+                    if (fallbackReferencingObjectMaps.size() > 0) {
+                        ObjectMapProcessor predicateObjectProcessor =
+                                new StdObjectMapProcessor(map, processor);
+                        predicateObjectProcessor.processPredicateObjectMap_RefObjMap(
+                                dataset, subject, predicate, fallbackReferencingObjectMaps, node,
+                                map, parameters, exeTriplesMap);
+                    }
+                }
             }
             
             //same Logical Source and no Conditions
@@ -260,13 +272,28 @@ public class StdObjectMapProcessor implements ObjectMapProcessor {
                 //Build a join map where
                 //  key: the parent expression
                 //  value: the value extracted from the child
-                process_sameLS_withJC(node, performer, processor, subject, 
+               boolean result = process_sameLS_withJC(node, performer, processor, subject, 
                         predicate, dataset, input, parentTriplesMap, 
-                        joinConditions, exeTriplesMap);
+                        joinConditions, exeTriplesMap, referencingObjectMap);
+                if (!result) {
+                    log.debug("Check for falllback object maps" );
+                    Set<ReferencingObjectMap> fallbackReferencingObjectMaps =
+                            referencingObjectMap.getFallbackReferencingObjectMaps();
+                    log.debug("Found " + fallbackReferencingObjectMaps
+                            + " fallback Referencing Object Maps");
+                    //Process the joins first
+                    if (fallbackReferencingObjectMaps.size() > 0) {
+                        ObjectMapProcessor predicateObjectProcessor =
+                                new StdObjectMapProcessor(map, processor);
+                        predicateObjectProcessor.processPredicateObjectMap_RefObjMap(
+                                dataset, subject, predicate, fallbackReferencingObjectMaps, node,
+                                map, parameters, exeTriplesMap);
+                    }
+                }
             }
         }
     }
-    
+       
     private boolean processConditions(ReferencingObjectMap referencingObjectMap, 
             Object node, Set<Condition> conditions) {
         Map<String, String> parameters = null;
@@ -324,7 +351,7 @@ public class StdObjectMapProcessor implements ObjectMapProcessor {
                 exeTriplesMap, false);
     }
     
-    private void process_difLS_noJC_withBC(
+    private boolean process_difLS_noJC_withBC(
             RMLPerformer performer, RMLProcessor processor,
             RMLDataset dataset, Resource subject, URI predicate,
             TriplesMap parentTriplesMap, InputStream input, String[] exeTriplesMap) {
@@ -333,6 +360,12 @@ public class StdObjectMapProcessor implements ObjectMapProcessor {
         performer = new JoinRMLPerformer(processor, subject, predicate);
         processor.execute(dataset, parentTriplesMap, performer, input,
                 exeTriplesMap, true);
+        boolean status = processor.getIterationStatus();
+        if (status == false) {
+            return false;
+        }
+        else
+            return true;
     }
     
     private void process_sameLS_noJC(
@@ -380,12 +413,13 @@ public class StdObjectMapProcessor implements ObjectMapProcessor {
         return parameters;
     }
     
-    public void process_sameLS_withJC(Object node, RMLPerformer performer, 
+    public boolean process_sameLS_withJC(Object node, RMLPerformer performer, 
             RMLProcessor processor, Resource subject, URI predicate, 
             RMLDataset dataset, InputStream input, TriplesMap parentTriplesMap, 
-            Set<JoinCondition> joinConditions, String[] exeTriplesMap) {
+            Set<JoinCondition> joinConditions, String[] exeTriplesMap, 
+            ReferencingObjectMap referencingObjectMap) {
         HashMap<String, String> joinMap = new HashMap<>();
-        
+        boolean result = true;
         log.debug("Processing " + joinConditions.size() 
                 + " Referencing Object Map with Join Conditions...");
 
@@ -426,11 +460,17 @@ public class StdObjectMapProcessor implements ObjectMapProcessor {
                                 processor, joinMap, subject, predicate);
                         log.debug("Join Condition without Metric...");
                         processor.execute(dataset, parentTriplesMap, performer,
-                                input, exeTriplesMap, false);
+                                        input, exeTriplesMap, false);
+                        boolean status = processor.getIterationStatus();
+                        log.debug("The current iteration status is " + status);
+                        if (status == false) {
+                            return false;
+                        }
                     }
                 }
             }
         }
+        return true;
     }
     
     private String handleRelevantExpression(

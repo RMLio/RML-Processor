@@ -77,10 +77,10 @@ public class ConditionalJoinRMLPerformer extends NodeRMLPerformer{
      * @param map 
      */
     @Override
-    public void perform(Object node, RMLDataset dataset, TriplesMap map, 
+    public boolean perform(Object node, RMLDataset dataset, TriplesMap map, 
     String[] exeTriplesMap, Map<String, String> parameters, boolean pomExecution) {
         Value object;
-        log.debug("Performing Conditional Join RML Performer....");
+        boolean result = false;
 
         //iterate the conditions, execute the expressions and compare both values
         if(conditions != null){
@@ -104,16 +104,16 @@ public class ConditionalJoinRMLPerformer extends NodeRMLPerformer{
             }
             
             if (flag) {
-                boolean result = true;
+                boolean condResult = true;
                 if (map.getSubjectMap().getClass().getSimpleName().equals("StdConditionSubjectMap")) {
                     log.debug("Conditional Subject Map");
                     StdConditionSubjectMap condSubMap =
                             (StdConditionSubjectMap) map.getSubjectMap();
                     Set<Condition> conditions = condSubMap.getConditions();
                     ConditionProcessor condProcessor = new StdConditionProcessor();
-                    result = condProcessor.processConditions(node, termMapProcessor, conditions);
+                    condResult = condProcessor.processConditions(node, termMapProcessor, conditions);
                 }
-                if (result) {
+                if (condResult) {
                     object = processor.processSubjectMap(this.processor, dataset,
                             map, map.getSubjectMap(), node, exeTriplesMap);
                     if (subject != null && object != null) {
@@ -124,6 +124,7 @@ public class ConditionalJoinRMLPerformer extends NodeRMLPerformer{
                             log.debug("Subject " + subject
                                     + " Predicate " + predicate
                                     + " Object " + object.toString());
+                            result = true;
                         }
 
                         if (exeTriplesMap != null) {
@@ -149,23 +150,24 @@ public class ConditionalJoinRMLPerformer extends NodeRMLPerformer{
                     }
                 }
             }
-        }  
+        }
+        return result;
     }
     
     //TODO: Move that in a separate class
     private boolean equalityMetric(List<String> values, String cond) {
-        log.debug("Equality Metric...");
+        
         boolean flag = false ;
         //TODO: check if it stops as soon as it finds something
         for (String value : values) {
-            log.info("Value " + value + " is compared to " + cond);
+            //log.debug("Value " + value + " is compared to " + cond);
 
             if (value == null) {
                 log.debug("Null value...");
                 flag = false;
                 break;
             } else if (this.metric == null) {
-                log.debug("No metric...");
+                //log.debug("No metric...");
                 if((value.equals(cond)))
                     flag = true;
                 break;

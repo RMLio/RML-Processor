@@ -42,7 +42,10 @@ public class RMLConfiguration {
                 "the URI of the output file (required)");
         cliOptions.addOption("f", "file format", true, 
                 "the output format of the results: turtle, n3, ntriples (default), rdfxml (optional)");
-        cliOptions.addOption("tm", "Triples Map", true, "Triples Map to be executed.");
+        cliOptions.addOption("tm", "Triples Map", true, 
+                "Triples Map to be executed.");
+        cliOptions.addOption("b", "base IRI", true, 
+                "Base IRI of the mapping document.");
         cliOptions.addOption("p", 
                 "arguments to pass if the rml:source of the mapping document is a URI template "
                 + "and requires parameters (they should be comma separated)", true, 
@@ -72,15 +75,17 @@ public class RMLConfiguration {
         System.exit(1);
     }
     
-    public static String[] processTriplesMap (String parameters, String map_doc){
+    public static String[] processTriplesMap (
+            String parameters, String map_doc, String baseIRI){
         if (parameters != null) {
             String[] exeTriplesMap = parameters.split(",");
-            for(int i=0 ; i < exeTriplesMap.length ; i++){
-                //TODO:remove hardcoded file:
-                //TODO: Consider also 
-                File file = new File(map_doc);
-                exeTriplesMap[i] = "file:" + file.getAbsolutePath() + "#" + exeTriplesMap[i];
-            log.info("TriplesMap to be processed " + exeTriplesMap[i]);
+            for (int i = 0; i < exeTriplesMap.length; i++) {
+                if (baseIRI != null) {
+                   exeTriplesMap[i] = baseIRI + exeTriplesMap[i];
+                } else {
+                    File file = new File(map_doc);
+                    exeTriplesMap[i] = "file:" + file.getAbsolutePath() + "#" + exeTriplesMap[i];
+                }
             }
             return exeTriplesMap;
         } else {

@@ -183,43 +183,53 @@ public class MapperTest
                 assertMap(fileToRMLFile, null, null)));
     }*/
     
-    public void testExampleNegationOf() {
+    public void testExampleFallback() {
         URL fileToRMLFile = getClass().getResource(
-                "/exampleNegationOf/exampleNegationOf.rml.ttl");
+                "/exampleFallback/exampleFallback.rml.ttl");
         URL fileToOutputFile = getClass().getResource(
-                "/exampleNegationOf/exampleNegationOf.output.ttl");
+                "/exampleFallback/exampleFallback.output.ttl");
+        String[] triplesMap = {"http://example.com/base#Conference"};
+        assertTrue(desiredOutput(fileToOutputFile).isEqualTo(
+                assertMap(fileToRMLFile, null, triplesMap)));
+    }
+    
+    public void testExampleEqual() {
+        URL fileToRMLFile = getClass().getResource(
+                "/exampleEqual/example.rml.ttl");
+        URL fileToOutputFile = getClass().getResource(
+                "/exampleEqual/example.output.ttl");
         assertTrue(desiredOutput(fileToOutputFile).isEqualTo(
                 assertMap(fileToRMLFile, null, null)));
     }
     
-    public void testExampleSubjectNegationOf() {
+    public void testExampleSubject() {
         URL fileToRMLFile = getClass().getResource(
-                "/exampleNegationOf/exampleSubjectNegationOf.rml.ttl");
+                "/exampleEqual/exampleSubject.rml.ttl");
         URL fileToOutputFile = getClass().getResource(
-                "/exampleNegationOf/exampleSubjectNegationOf.output.ttl");
+                "/exampleEqual/exampleSubject.output.ttl");
         assertTrue(desiredOutput(fileToOutputFile).isEqualTo(
                 assertMap(fileToRMLFile, null, null)));
     }
     
-    public void testExamplePredicateNegationOf() {
+    /*public void testExamplePredicate() {
         URL fileToRMLFile = getClass().getResource(
-                "/exampleNegationOf/examplePredicateNegationOf.rml.ttl");
+                "/exampleEqual/examplePredicate.rml.ttl");
         URL fileToOutputFile = getClass().getResource(
-                "/exampleNegationOf/examplePredicateNegationOf.output.ttl");
+                "/exampleEqual/examplePredicate.output.ttl");
         assertTrue(desiredOutput(fileToOutputFile).isEqualTo(
                 assertMap(fileToRMLFile, null, null)));
     }
     
-    public void testExampleObjectNegationOf() {
+    public void testExampleObject() {
         URL fileToRMLFile = getClass().getResource(
-                "/exampleNegationOf/exampleObjectNegationOf.rml.ttl");
+                "/exampleEqual/exampleObject.rml.ttl");
         URL fileToOutputFile = getClass().getResource(
-                "/exampleNegationOf/exampleObjectNegationOf.output.ttl");
+                "/exampleEqual/exampleObject.output.ttl");
         RMLDataset smth = desiredOutput(fileToOutputFile);
         log.debug("smth " + smth);
         assertTrue(smth.isEqualTo(
                 assertMap(fileToRMLFile, null, null)));
-    }
+    }*/
     
     public void testExampleHydraSPARQLsd() {
         URL fileToRMLFile = getClass().getResource(

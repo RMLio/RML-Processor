@@ -83,7 +83,7 @@
         <dependency>
             <groupId>be.ugent.mmlab.rml</groupId>
             <artifactId>RML-MapDocHandler</artifactId>
-            <version>1.0</version>
+            <version>1.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>be.ugent.mmlab.rml</groupId>
@@ -98,7 +98,7 @@
         <dependency>
             <groupId>be.ugent.mmlab.rml</groupId>
             <artifactId>RML-MetadataHandler</artifactId>
-            <version>1.0</version>
+            <version>1.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

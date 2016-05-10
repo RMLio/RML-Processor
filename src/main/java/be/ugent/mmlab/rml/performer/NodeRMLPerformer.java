@@ -53,15 +53,16 @@ public class NodeRMLPerformer implements RMLPerformer {
      * @param map current triple map that is being processed
      */
     @Override
-    public void perform(Object node, RMLDataset dataset, 
+    public boolean perform(Object node, RMLDataset dataset, 
     TriplesMap map, String[] exeTriplesMap, Map<String, String> parameters,
     boolean pomExecution) {
         Resource subject = processor.processSubjectMap(
                 this.processor, dataset, map, map.getSubjectMap(), node, exeTriplesMap);
-        
+        boolean result = true;
         if (subject == null) {
             log.debug("No subject was generated for "
                     + map.getName() + "triple Map and node " + node.toString());
+            result = false;
         } else {
             Set<GraphMap> graph = map.getSubjectMap().getGraphMaps();
             for (PredicateObjectMap pom : map.getPredicateObjectMaps()) {
@@ -69,6 +70,7 @@ public class NodeRMLPerformer implements RMLPerformer {
                         dataset, subject, pom, node, map, exeTriplesMap, processor);
             }
         }
+        return result;
     }
 
     /**

@@ -20,7 +20,7 @@ public interface RMLPerformer {
      * @param dataset dataset for endresult
      * @param map current triple map that is being processed
      */
-    public void perform(Object node, RMLDataset dataset, TriplesMap map, 
+    public boolean perform(Object node, RMLDataset dataset, TriplesMap map, 
             String[] exeTriplesMap, Map<String, String> parameters, 
             boolean pomExecution);
     

@@ -47,7 +47,7 @@ public class StdRMLEngine implements RMLEngine {
     public StdRMLEngine(String pathToNativeStore) {
         try {
             File file = new File(pathToNativeStore);
-            String folder = file.getParent();
+            String folder = file.getAbsoluteFile().getParent();
             File baseDir = new File(folder);
             manager = new LocalRepositoryManager(baseDir);
             manager.initialize();
@@ -147,6 +147,7 @@ public class StdRMLEngine implements RMLEngine {
         if(exeTriplesMap != null && exeTriplesMap.length != 0){
             triplesMaps = executionEngine.
                     processExecutionList(rmlMapping, exeTriplesMap);
+            log.debug("The execution list has " + triplesMaps.size() + " triples Maps.");
         }
         else
             triplesMaps = rmlMapping.getTriplesMaps();
@@ -163,33 +164,25 @@ public class StdRMLEngine implements RMLEngine {
     public RMLDataset generateTriplesMapTriples(
             TriplesMap triplesMap, Map<String, String> parameters,
             String[] exeTriplesMap, RMLDataset dataset) {
-        boolean flag = true;
-        SourceProcessor inputProcessor;
+        boolean flag ;
 
         if (exeTriplesMap != null) {
-            RMLExecutionEngine executionEngine = 
-                new RMLExecutionEngine(exeTriplesMap);
-            flag = executionEngine.
-                    checkExecutionList(triplesMap, exeTriplesMap);
-        }
-        if (flag) {
-            System.out.println("Generating RDF triples for " 
-                    + triplesMap.getName());
-            //TODO: Add metadata that this Map Doc has that many Triples Maps
+            RMLExecutionEngine executionEngine =
+                    new RMLExecutionEngine(exeTriplesMap);
+            for (String exeTM : exeTriplesMap) {
+                flag = executionEngine.
+                        checkExecutionList(triplesMap, exeTM);
 
-            log.info("Generating RML Processor..");
-            RMLProcessor processor = generateRMLProcessor(triplesMap, parameters);
-            
-            if (processor != null) {
-                log.info("Generating Data Retrieval Processor..");
-                inputProcessor =
-                        generateInputProcessor(triplesMap);
-                do {
-                    dataset = processInputStream(processor, inputProcessor,
-                            triplesMap, parameters, exeTriplesMap, dataset);
-                } while (inputProcessor.hasNextInputStream());
-            } 
+                if (flag) {
+                    startTriplesMapExecution(dataset, triplesMap, parameters, exeTriplesMap);
+                }
+
+            }
         }
+        else {
+            startTriplesMapExecution(dataset, triplesMap, parameters, exeTriplesMap);
+        }
+        
         return dataset;
     }
     
@@ -215,6 +208,30 @@ public class StdRMLEngine implements RMLEngine {
         }
 
         return processor;
+    }
+    
+    public RMLDataset startTriplesMapExecution(
+            RMLDataset dataset, TriplesMap triplesMap, 
+            Map<String, String> parameters, String[] exeTriplesMap) {
+        SourceProcessor inputProcessor;
+        
+        System.out.println("Generating RDF triples for "
+                + triplesMap.getName());
+        //TODO: Add metadata that this Map Doc has that many Triples Maps
+
+        log.info("Generating RML Processor..");
+        RMLProcessor processor = generateRMLProcessor(triplesMap, parameters);
+
+        if (processor != null) {
+            log.info("Generating Data Retrieval Processor..");
+            inputProcessor =
+                    generateInputProcessor(triplesMap);
+            do {
+                dataset = processInputStream(processor, inputProcessor,
+                        triplesMap, parameters, exeTriplesMap, dataset);
+            } while (inputProcessor.hasNextInputStream());
+        }
+        return dataset;
     }
     
     //TODO: Check if it's needed here or if I should take it to the DataRetrieval

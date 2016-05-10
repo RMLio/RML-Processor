@@ -24,8 +24,9 @@ public class NestedRMLPerformer extends NodeRMLPerformer {
         super(processor);
     }
     
-    public void perform(Object node, RMLDataset dataset, Resource refObjSub,
+    public boolean perform(Object node, RMLDataset dataset, Resource refObjSub,
             TriplesMap map, String[] exeTriplesMap, boolean pomExecution) {
+        boolean result = false;
         if (pomExecution || map.getSubjectMap().getTermType().equals(TermType.BLANK_NODE)) {
             log.debug("Executing entirely the Referencing Object Map.");
             //Resource refObjSub = processor.processSubjectMap(
@@ -37,6 +38,7 @@ public class NestedRMLPerformer extends NodeRMLPerformer {
                         dataset, refObjSub, pom, node, map, exeTriplesMap, null);
             }
         }
+        return result;
     }
-
+    
 }

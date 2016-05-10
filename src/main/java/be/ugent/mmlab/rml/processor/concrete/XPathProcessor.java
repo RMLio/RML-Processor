@@ -60,6 +60,7 @@ public class XPathProcessor extends AbstractRMLProcessor {
         //Add at least xsd namespace
         this.nsContext.addNamespace("xsd", Namespaces.URI_XSD);
         dnc.declarePrefix("xsd", Namespaces.URI_XSD);
+        dnc.declarePrefix("sparql", "http://www.w3.org/2005/sparql-results#");
         nsContext = new XPathContext("xsd", Namespaces.URI_XSD);
         this.parameters = parameters;
     }
@@ -71,6 +72,7 @@ public class XPathProcessor extends AbstractRMLProcessor {
         //Add at least xsd namespace
         this.nsContext.addNamespace("xsd", Namespaces.URI_XSD);
         dnc.declarePrefix("xsd", Namespaces.URI_XSD);
+        dnc.declarePrefix("sparql", "http://www.w3.org/2005/sparql-results#");
         dnc = get_namespaces(map);
         this.parameters = parameters;
     }
@@ -116,7 +118,7 @@ public class XPathProcessor extends AbstractRMLProcessor {
     }
     
     public String execute(Node node, String expression) throws SaxonApiException {
-
+            //log.debug("node is " + node.toString());
             Processor proc = new Processor(false);
             XPathCompiler xpath = proc.newXPathCompiler();
             DocumentBuilder builder = proc.newDocumentBuilder();
@@ -142,7 +144,8 @@ public class XPathProcessor extends AbstractRMLProcessor {
     @Override
     public void execute(final RMLDataset dataset, final TriplesMap map, 
         final RMLPerformer performer, final InputStream input, 
-        final String[] exeTriplesMap, final boolean pomExecution) {  
+        final String[] exeTriplesMap, final boolean pomExecution) { 
+        
         try {
             this.map = map;
             String reference = getReference(map.getLogicalSource());
@@ -162,29 +165,39 @@ public class XPathProcessor extends AbstractRMLProcessor {
             InputSource source = new InputSource(input);
                 
             event.setListener(new InstantEvaluationListener() {
+                boolean finalResult = false;
                 //When an XPath expression matches
                 @Override
                 public void onNodeHit(
                         Expression expression, NodeItem nodeItem) {
+                    
                     //log.debug("Expression " + expression);
                     Node node = (Node) nodeItem.xml;
+                    //log.debug("node is " + node.toXML().toString());
                     //Let the performer do its thing
-                    performer.perform(node, dataset, map, exeTriplesMap, 
+                    boolean result = performer.perform(node, dataset, map, exeTriplesMap, 
                             parameters, pomExecution);
+                    if(result == true){
+                        finalResult = result;
+                    }
                 }
 
                 @Override
                 public void finishedNodeSet(Expression expression) {
+                    log.debug("All iterations are finished and the final result is " + finalResult);
+                    setStatus(finalResult);
                     //System.out.println("Finished Nodeset: " + expression.getXPath());
                 }
 
                 @Override
                 public void onResult(Expression expression, Object result) {
+                    log.debug("Node is resulted");
                     // this method is called only for xpaths which returns primitive result
                     // i.e result will be one of String, Boolean, Double
                     //System.out.println("XPath: " + expression.getXPath() + " result: " + result);
                 }
             });
+            
             //Execute the streaming
             dog.sniff(event, source);
         } catch (SAXPathException ex) {
@@ -195,15 +208,20 @@ public class XPathProcessor extends AbstractRMLProcessor {
         } 
     }
     
+    public void setStatus(boolean status){
+        this.setIterationStatus(status);
+    }
+    
     @Override
     public void execute_node(
             RMLDataset dataset, String expression, 
             TriplesMap parentTriplesMap, RMLPerformer performer, Object node, 
             Resource subject, String[] exeTriplesMap, boolean pomExecution) {
+        boolean result = false;
         //still need to make it work with more nore-results 
         //currently it handles only one
         log.debug("Execute node..");
-    
+        //log.debug("node is " + node.toString());
         if(expression.startsWith("/"))
             expression = expression.substring(1);
         

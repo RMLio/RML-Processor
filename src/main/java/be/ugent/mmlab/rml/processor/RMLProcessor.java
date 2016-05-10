@@ -71,4 +71,10 @@ public interface RMLProcessor {
      * @return
      */
     public Integer getEnumerator();
+    
+    /**
+     *
+     * @return
+     */
+    public boolean getIterationStatus();
 }
