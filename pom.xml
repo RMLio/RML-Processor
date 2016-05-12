@@ -78,7 +78,7 @@
         <dependency>
             <groupId>be.ugent.mmlab.rml</groupId>
             <artifactId>RML-ConditionsHandler</artifactId>
-            <version>1.0</version>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>be.ugent.mmlab.rml</groupId>
