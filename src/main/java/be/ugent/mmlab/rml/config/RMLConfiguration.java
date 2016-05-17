@@ -80,6 +80,8 @@ public class RMLConfiguration {
         if (parameters != null) {
             String[] exeTriplesMap = parameters.split(",");
             for (int i = 0; i < exeTriplesMap.length; i++) {
+                if(exeTriplesMap[i].startsWith("http"))
+                    continue;
                 if (baseIRI != null) {
                    exeTriplesMap[i] = baseIRI + exeTriplesMap[i];
                 } else {

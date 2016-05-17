@@ -46,6 +46,8 @@ public class ConcreteTermMapFactory implements TermMapProcessorFactory {
                     DefaultNamespaceContext dnc = process.getNamespaces();
                     return new XPathTermMapProcessor(dnc);
                 }
+                else
+                    return new XPathTermMapProcessor();
             case CSV_CLASS:
                 return new CSVTermMapProcessor();
             case SQL_CLASS:
