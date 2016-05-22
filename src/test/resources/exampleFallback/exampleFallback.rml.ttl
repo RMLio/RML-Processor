@@ -109,7 +109,7 @@ LIMIT 7000""" .
 <#CityDBpedia_RefObjMap>
     rr:parentTriplesMap <#City_DBpedia> ;
     rr:joinCondition <#City_JoinCondition> ;
-    crml:fallback <#CityLocal_RefObjMap> .
+    crml:fallbackMap <#CityLocal_RefObjMap> .
 
 <#CityLocal_RefObjMap>
     rr:parentTriplesMap <#City_Local> .

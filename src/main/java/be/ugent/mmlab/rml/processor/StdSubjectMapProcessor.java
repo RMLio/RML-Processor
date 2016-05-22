@@ -46,14 +46,18 @@ public class StdSubjectMapProcessor implements SubjectMapProcessor {
                 processor);
         
         if (subjectMap.getClass().getSimpleName().equals("StdConditionSubjectMap")) {
+            log.debug("Processing Conditional Subject Map");
             StdConditionSubjectMap condSubMap =
                     (StdConditionSubjectMap) subjectMap;
             //TODO: Move this to conditionSubjectMapProcessor
             Set<Condition> conditions = condSubMap.getConditions();
+            log.debug("Found " + conditions.size() + " conditions");
             ConditionProcessor condProcessor = new StdConditionProcessor();
             result = condProcessor.processConditions(node, termMapProcessor, conditions);
+            log.debug("Conditions were executed and the result is " + result);
         }
         else{
+            log.debug("Processing Simple Subject Map");
             result = true;
         }
         
