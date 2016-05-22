@@ -220,6 +220,15 @@ public class MapperTest
                 assertMap(fileToRMLFile, null, null)));
     }
     
+    public void testExamplePOM() {
+        URL fileToRMLFile = getClass().getResource(
+                "/exampleEqual/examplePOM.rml.ttl");
+        URL fileToOutputFile = getClass().getResource(
+                "/exampleEqual/examplePredicate.output.ttl");
+        assertTrue(desiredOutput(fileToOutputFile).isEqualTo(
+                assertMap(fileToRMLFile, null, null)));
+    }
+    
     public void testExamplePredicate() {
         URL fileToRMLFile = getClass().getResource(
                 "/exampleEqual/examplePredicate.rml.ttl");
