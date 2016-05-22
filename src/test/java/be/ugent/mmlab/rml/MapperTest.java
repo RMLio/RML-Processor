@@ -227,7 +227,7 @@ public class MapperTest
                 "/exampleEqual/examplePredicate.output.ttl");
         assertTrue(desiredOutput(fileToOutputFile).isEqualTo(
                 assertMap(fileToRMLFile, null, null)));
-    }
+    }*/
     
     public void testExampleObject() {
         URL fileToRMLFile = getClass().getResource(
@@ -238,7 +238,7 @@ public class MapperTest
         log.debug("smth " + smth);
         assertTrue(smth.isEqualTo(
                 assertMap(fileToRMLFile, null, null)));
-    }*/
+    }
     
     public void testExampleHydraSPARQLsd() {
         URL fileToRMLFile = getClass().getResource(

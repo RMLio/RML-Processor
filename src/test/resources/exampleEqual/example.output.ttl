@@ -17,7 +17,6 @@
 
 <http://airport.example.com/6524> a transit:Stop.
 
-
 #Transport.xml output
 <http://trans.example.com/busses/25> a transit:Service.
 <http://trans.example.com/busses/25> transit:stop <http://trans.example.com/stops/645>.
