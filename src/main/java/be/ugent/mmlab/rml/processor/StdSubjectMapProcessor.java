@@ -31,7 +31,7 @@ public class StdSubjectMapProcessor implements SubjectMapProcessor {
     
     // Log
     private static final Logger log = 
-            LoggerFactory.getLogger(StdSubjectMapProcessor.class);
+            LoggerFactory.getLogger(StdSubjectMapProcessor.class.getSimpleName());
     
     @Override
     public Resource processSubjectMap(RMLDataset dataset, SubjectMap subjectMap, 
@@ -54,10 +54,8 @@ public class StdSubjectMapProcessor implements SubjectMapProcessor {
             log.debug("Found " + conditions.size() + " conditions");
             ConditionProcessor condProcessor = new StdConditionProcessor();
             result = condProcessor.processConditions(node, termMapProcessor, conditions);
-            log.debug("Conditions were executed and the result is " + result);
         }
         else{
-            log.debug("Processing Simple Subject Map");
             result = true;
         }
         

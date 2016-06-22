@@ -41,7 +41,7 @@ public class MetadataObjectMapProcessor extends StdObjectMapProcessor implements
     @Override
     public void processPredicateObjectMap_ObjMap(
             RMLDataset originalDataset, Resource subject, URI predicate,
-            PredicateObjectMap pom, Object node) {
+            PredicateObjectMap pom, Object node, GraphMap graphMap) {
         MetadataRMLDataset dataset = (MetadataRMLDataset) originalDataset ;
         //MetadataGenerator metadataGenerator = new MetadataGenerator();
         

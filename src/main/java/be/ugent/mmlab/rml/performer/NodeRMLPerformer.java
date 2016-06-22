@@ -6,7 +6,6 @@ import be.ugent.mmlab.rml.model.PredicateObjectMap;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.RMLProcessor;
 import java.util.Map;
-import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.openrdf.model.Resource;
@@ -56,6 +55,8 @@ public class NodeRMLPerformer implements RMLPerformer {
     public boolean perform(Object node, RMLDataset dataset, 
     TriplesMap map, String[] exeTriplesMap, Map<String, String> parameters,
     boolean pomExecution) {
+        //TODO: Check how this graphMap is needed to be handled
+        GraphMap graphMap = null;
         Resource subject = processor.processSubjectMap(
                 this.processor, dataset, map, map.getSubjectMap(), node, exeTriplesMap);
         boolean result = true;
@@ -64,10 +65,10 @@ public class NodeRMLPerformer implements RMLPerformer {
                     + map.getName() + "triple Map and node " + node.toString());
             result = false;
         } else {
-            Set<GraphMap> graph = map.getSubjectMap().getGraphMaps();
+            graphMap = map.getSubjectMap().getGraphMap();
             for (PredicateObjectMap pom : map.getPredicateObjectMaps()) {
                 processor.processPredicateObjectMap(
-                        dataset, subject, pom, node, map, exeTriplesMap, processor);
+                        dataset, subject, pom, node, map, exeTriplesMap, processor, graphMap);
             }
         }
         return result;
@@ -83,11 +84,13 @@ public class NodeRMLPerformer implements RMLPerformer {
     @Override
     public void perform(Object node, RMLDataset dataset, TriplesMap map, 
         Resource subject, String[] exeTriplesMap) {
+        //TODO: Check how this graphMap is needed to be handled
+        GraphMap graphMap = null;
         //processor.processSubjectTypeMap(
         //        dataset, subject, map.getSubjectMap(), node);
         for (PredicateObjectMap pom : map.getPredicateObjectMaps()) {
             processor.processPredicateObjectMap(
-                    dataset, subject, pom, node, map, exeTriplesMap, processor);
+                    dataset, subject, pom, node, map, exeTriplesMap, processor, graphMap);
         }
     }
 }

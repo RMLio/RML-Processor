@@ -77,7 +77,6 @@ public class StdRMLEngine implements RMLEngine {
      *
      * @param rmlMapping Parsed RML mapping
      * @param baseIRI base URI of the resulting RDF
-     * @param pathToNativeStore path if triples have to be stored in sesame
      * triple store instead of memory
      * @return RMLSesameDataSet
      * 
@@ -131,7 +130,6 @@ public class StdRMLEngine implements RMLEngine {
      * triple is placed into one or more graphs of the output dataset. The
      * generated RDF triples are determined by the following algorithm.
      *
-     * @param sesameDataSet
      * @param rmlMapping
      */
     protected RMLDataset generateRDFTriples(
@@ -272,7 +270,7 @@ public class StdRMLEngine implements RMLEngine {
                 processor.execute(dataset, triplesMap, performer,
                         input, exeTriplesMap, false);
                 Integer iteration = processor.getEnumerator();
-                enumerator.put(triplesMap.getShortName(), iteration);
+//                enumerator.put(triplesMap.getShortName(), iteration);
             }
             else{
                 log.debug("Null input data derived from " + 

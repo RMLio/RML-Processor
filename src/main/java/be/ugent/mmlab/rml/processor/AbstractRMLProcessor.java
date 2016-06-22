@@ -1,6 +1,7 @@
 package be.ugent.mmlab.rml.processor;
 
 import be.ugent.mmlab.rml.condition.model.Condition;
+import be.ugent.mmlab.rml.model.RDFTerm.GraphMap;
 import be.ugent.mmlab.rml.model.dataset.RMLDataset;
 import be.ugent.mmlab.rml.model.LogicalSource;
 import be.ugent.mmlab.rml.model.RDFTerm.PredicateMap;
@@ -11,14 +12,13 @@ import be.ugent.mmlab.rml.logicalsourcehandler.termmap.TermMapProcessor;
 import be.ugent.mmlab.rml.metadata.MetadataGenerator;
 import be.ugent.mmlab.rml.model.RDFTerm.ReferencingObjectMap;
 import be.ugent.mmlab.rml.model.std.StdConditionPredicateObjectMap;
-import be.ugent.mmlab.rml.processor.concrete.ConcreteTermMapFactory;
-import be.ugent.mmlab.rml.processor.concrete.TermMapProcessorFactory;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.openrdf.model.Resource;
 import org.openrdf.model.URI;
+import org.openrdf.model.Value;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,7 +84,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
         }
         Resource subject = subMapProcessor.processSubjectMap(
                 dataset, subjectMap, node, processor);
-        
+
         if (subject == null) {
             log.debug("No subject was generated for "
                     + map.getName() + " triple Map and node " + node.toString());
@@ -105,35 +105,40 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
     @Override
     public void processPredicateObjectMap(
             RMLDataset dataset, Resource subject, PredicateObjectMap pom, 
-            Object node, TriplesMap map, String[] exeTriplesMap, RMLProcessor processor) {
+            Object node, TriplesMap map, String[] exeTriplesMap,
+            RMLProcessor processor, GraphMap graphMap) {
         Set<PredicateMap> predicateMaps = pom.getPredicateMaps();
         boolean flag = true;
         //TODO: create processConditionPredicateObjectMap instead
         if (pom.getClass().getSimpleName().equals("StdConditionPredicateObjectMap")) {
             log.debug("Processing conditional POM");
             
-            StdConditionPredicateObjectMap tmp = 
+            StdConditionPredicateObjectMap tmp =
                     (StdConditionPredicateObjectMap) pom;
             Set<Condition> conditions = tmp.getConditions();
-            
-            TermMapProcessorFactory factory = new ConcreteTermMapFactory();
-            this.termMapProcessor = factory.create(
-                map.getLogicalSource().getReferenceFormulation(), processor);
+
+//            TermMapProcessorFactory factory = new ConcreteTermMapFactory();
+//            this.termMapProcessor = factory.create(
+//                map.getLogicalSource().getReferenceFormulation(), processor);
 
             //process conditions
             ConditionProcessor condProcessor = new StdConditionProcessor();
-            if(conditions.size() > 0)
+            if(conditions.size() > 0){
                 flag = condProcessor.processConditions(
                     node, termMapProcessor, conditions);
+            }
             if (!flag) {
                 //Takes the first conditions
                 //TODO: Change it to get more conditions
-                PredicateObjectMap fallback = condProcessor.processFallback(
-                                 conditions.iterator().next());
-                log.debug("fallback to be processed is " + fallback.toString());
-                if(fallback != null){
-                    processPredicateObjectMap(dataset, subject, fallback, 
-                            node, map, exeTriplesMap, processor);
+                StdConditionPredicateObjectMap pom2 = 
+                        (StdConditionPredicateObjectMap) pom;
+                Set<PredicateObjectMap> fallbacks = pom2.getFallbackPOMs();
+
+                for (PredicateObjectMap fallback : fallbacks) {
+                    //TODO: Calculate fallbackGraphMap
+                    GraphMap fallbackGraphMap = null;
+                        processor.processPredicateObjectMap(dataset, subject, fallback,
+                                node, map, exeTriplesMap, processor, fallbackGraphMap);
                 }
             }
             else
@@ -150,11 +155,13 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                 //Get the predicates
                 List<URI> predicates =
                         preMapProcessor.processPredicateMap(predicateMap, node);
+                if(graphMap == null){
+                    graphMap = predicateMap.getGraphMap();
+                }
 
                 if (predicates.size() > 0) {
                     URI predicate = predicates.get(0);
                     ObjectMapProcessor predicateObjectProcessor;
-                    //        = new ObjectMapProcessor(map, processor);
                     if (dataset.getMetadataLevel().equals("triple")
                             || dataset.getMetadataVocab().contains("co")) {
                         predicateObjectProcessor =
@@ -170,11 +177,11 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                             pom.getReferencingObjectMaps();
                     predicateObjectProcessor.processPredicateObjectMap_RefObjMap(
                             dataset, subject, predicate, referencingObjectMaps, node,
-                            map, parameters, exeTriplesMap);
+                            map, parameters, exeTriplesMap, graphMap);
 
                     //process the objectmaps
                     predicateObjectProcessor.processPredicateObjectMap_ObjMap(
-                            dataset, subject, predicate, pom, node);
+                            dataset, subject, predicate, pom, node, graphMap);
                 }
 
             }

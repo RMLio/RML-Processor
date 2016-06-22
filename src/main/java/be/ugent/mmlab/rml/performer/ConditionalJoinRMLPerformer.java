@@ -41,11 +41,12 @@ public class ConditionalJoinRMLPerformer extends NodeRMLPerformer{
     private HashMap<String, String> conditions;
     private Resource subject;
     private URI predicate;
+    private Resource graph;
     private Resource metric;
 
     public ConditionalJoinRMLPerformer(
             RMLProcessor processor, HashMap<String, String> conditions, 
-            Resource subject, URI predicate) {
+            Resource subject, URI predicate, Resource graph) {
         super(processor);
         this.conditions = conditions;
         this.subject = subject;
@@ -54,11 +55,12 @@ public class ConditionalJoinRMLPerformer extends NodeRMLPerformer{
     
     public ConditionalJoinRMLPerformer(
             RMLProcessor processor, HashMap<String, String> conditions, 
-            Resource subject, URI predicate, Resource metric) {
+            Resource subject, URI predicate, Resource graph, Resource metric) {
         super(processor);
         this.conditions = conditions;
         this.subject = subject;
         this.predicate = predicate;
+        this.graph = graph;
         this.metric = metric;
     }
     
@@ -120,7 +122,7 @@ public class ConditionalJoinRMLPerformer extends NodeRMLPerformer{
                         List<Statement> triples =
                                 dataset.tuplePattern(subject, predicate, object);
                         if (triples.size() == 0) {
-                            dataset.add(subject, predicate, object);
+                            dataset.add(subject, predicate, object, graph);
                             log.debug("Subject " + subject
                                     + " Predicate " + predicate
                                     + " Object " + object.toString());

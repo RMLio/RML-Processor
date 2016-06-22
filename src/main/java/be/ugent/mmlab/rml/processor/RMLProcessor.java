@@ -1,6 +1,7 @@
 package be.ugent.mmlab.rml.processor;
 
 import be.ugent.mmlab.rml.metadata.MetadataGenerator;
+import be.ugent.mmlab.rml.model.RDFTerm.GraphMap;
 import be.ugent.mmlab.rml.model.dataset.RMLDataset;
 import be.ugent.mmlab.rml.performer.RMLPerformer;
 import be.ugent.mmlab.rml.model.PredicateObjectMap;
@@ -52,7 +53,7 @@ public interface RMLProcessor {
      */
     public void processPredicateObjectMap(
             RMLDataset dataset, Resource subject, PredicateObjectMap pom, 
-            Object node, TriplesMap map, String[] exeTriplesMap, RMLProcessor processor);
+            Object node, TriplesMap map, String[] exeTriplesMap, RMLProcessor processor, GraphMap graphMap);
    
     /**
      *

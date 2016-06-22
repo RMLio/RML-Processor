@@ -20,15 +20,12 @@
     rr:subjectMap [
 	 rr:template "http://airport.example.com/{id}";
 	 rr:class transit:Stop ;
-         rr:graphMap [ rr:constant ex:Graph ];
+     rr:graphMap [ rr:constant ex:Graph1 ];
     ];
     rr:predicateObjectMap [
-	rr:predicateMap [
-            rr:template "http://vocab.org/transit/terms/{type}"
-        ];
-	rr:objectMap [
+	    rr:predicate ex:bus ;
+	    rr:objectMap [
             rml:reference "bus" ;
 	    ] ;
-        rr:graphMap [ rr:constant ex:Graph ];
     ].
 

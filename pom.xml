@@ -13,7 +13,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <sesame.version>2.8.6</sesame.version>
-        <jsonpath.version>2.0.0</jsonpath.version>
+        <jsonpath.version>2.2.0</jsonpath.version>
     </properties>
     <build>
         <plugins>
@@ -78,7 +78,7 @@
         <dependency>
             <groupId>be.ugent.mmlab.rml</groupId>
             <artifactId>RML-ConditionsHandler</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>be.ugent.mmlab.rml</groupId>

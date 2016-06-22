@@ -30,12 +30,14 @@ public class SimpleReferencePerformer extends NodeRMLPerformer {
     
     private Resource subject;
     private URI predicate;
+    private Resource graph;
     
     public SimpleReferencePerformer(
-            RMLProcessor processor, Resource subject, URI predicate) {
+            RMLProcessor processor, Resource subject, URI predicate, Resource graphMapValue) {
         super(processor);
         this.subject = subject;
         this.predicate = predicate;
+        this.graph = graphMapValue;
     }
     
     @Override
@@ -56,7 +58,7 @@ public class SimpleReferencePerformer extends NodeRMLPerformer {
                 List<Statement> triples =
                         dataset.tuplePattern(subject, predicate, object);
                 if(triples.size() == 0) {
-                    dataset.add(subject, predicate, object);
+                    dataset.add(subject, predicate, object, graph);
                     log.debug("Subject " + subject
                             + " Predicate " + predicate
                             + " Object " + object.toString());

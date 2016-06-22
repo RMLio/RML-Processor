@@ -24,7 +24,6 @@ import be.ugent.mmlab.rml.processor.concrete.ConcreteRMLProcessorFactory;
 import be.ugent.mmlab.rml.processor.concrete.ConcreteTermMapFactory;
 import be.ugent.mmlab.rml.processor.concrete.TermMapProcessorFactory;
 import be.ugent.mmlab.rml.vocabularies.QLVocabulary;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,7 +36,6 @@ import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import org.openrdf.model.Value;
 import org.openrdf.model.impl.BNodeImpl;
-import org.openrdf.model.impl.URIImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,15 +67,16 @@ public class StdObjectMapProcessor implements ObjectMapProcessor {
     @Override
     public void processPredicateObjectMap_ObjMap(
             RMLDataset dataset, Resource subject, URI predicate,
-            PredicateObjectMap pom, Object node) {
-        
+            PredicateObjectMap pom, Object node, GraphMap graphMap) {
+
         Set<ObjectMap> objectMaps = pom.getObjectMaps();
-        
         for (ObjectMap objectMap : objectMaps) {
+            if(objectMap == null)
+                continue;
             boolean flag = true;
             //Get the one or more objects returned by the object map
             List<Value> objects = processObjectMap(objectMap, node);
-            
+
             if(objectMap.getClass().getSimpleName().equals("StdConditionObjectMap")){
                 StdConditionObjectMap tmp = (StdConditionObjectMap) objectMap;
                 Set<Condition> conditions = tmp.getConditions();
@@ -87,25 +86,26 @@ public class StdObjectMapProcessor implements ObjectMapProcessor {
                 flag = condProcessor.processConditions(
                         node, termMapProcessor, conditions);
             }
-            
+
             if (flag && objects != null) {
-                
+                if(graphMap == null){
+                    graphMap = objectMap.getGraphMap();
+                }
+                Resource graphResource = null;
+                if(graphMap != null)
+                    graphResource = (Resource) graphMap.getConstantValue();
+
                 for (Value object : objects) {
                     if (object.stringValue() != null) {
-                        Set<GraphMap> graphs = pom.getGraphMaps();
-                        if (graphs.isEmpty() && subject != null) {
-                            List<Statement> triples = 
+                        if (graphMap == null && subject != null) {
+                            //TODO: This control is redundant, ignore it if needed
+                            List<Statement> triples =
                                     dataset.tuplePattern(subject, predicate, object);
                             if(triples.size() == 0){
-                                dataset.add(subject, predicate, object); 
+                                dataset.add(subject, predicate, object, graphResource);
                             }
                         } else {
-                            for (GraphMap graph : graphs) {
-                                Resource graphResource = new URIImpl(
-                                        graph.getConstantValue().toString());
-                                dataset.add(subject, predicate, object, graphResource);
-                                
-                            }
+                            dataset.add(subject, predicate, object, graphResource);
                         }
 
                     }
@@ -119,8 +119,7 @@ public class StdObjectMapProcessor implements ObjectMapProcessor {
     public List<Value> processObjectMap(ObjectMap objectMap, Object node) {
         List<Value> valueList = new ArrayList<>();
         //A Term map returns one or more values (in case expression matches more)
-        
-        if (!objectMap.getTermType().equals(BLANK_NODE)) {
+        if (objectMap != null && !objectMap.getTermType().equals(BLANK_NODE)) {
             List<String> values = this.termMapProcessor.processTermMap(objectMap, node);
             for (String value : values) {
                 valueList = this.termMapProcessor.applyTermType(value, valueList, objectMap);
@@ -137,28 +136,36 @@ public class StdObjectMapProcessor implements ObjectMapProcessor {
     public void processPredicateObjectMap_RefObjMap(
             RMLDataset dataset, Resource subject, URI predicate,
             Set<ReferencingObjectMap> referencingObjectMaps, Object node, TriplesMap map, 
-            Map<String, String> parameters, String[] exeTriplesMap) {
+            Map<String, String> parameters, String[] exeTriplesMap, GraphMap graphMap) {
         String template ;
-       
         if (referencingObjectMaps.size() > 0) {
             log.debug("Processing Referencing Object Map...");
         }
+
         for (ReferencingObjectMap referencingObjectMap : referencingObjectMaps) {
+            Value graphMapValue = null;
             //TriplesMap parTrMap = referencingObjectMap.getParentTriplesMap();
-            
-            if (referencingObjectMap.getParentTriplesMap().getLogicalSource() == null) {
+            boolean condResult = true;
+            if ((referencingObjectMap == null) ||
+                (referencingObjectMap.getParentTriplesMap() != null &&
+                        referencingObjectMap.getParentTriplesMap().getLogicalSource() == null)) {
                 continue;
             }
             TriplesMap parentTriplesMap =
                     referencingObjectMap.getParentTriplesMap();
+//            template = parentTriplesMap.
+//                    getLogicalSource().getSource().getTemplate();
 
-            template = parentTriplesMap.
-                    getLogicalSource().getSource().getTemplate();
+            if(graphMap == null) {
+                graphMap = referencingObjectMap.getGraphMap();
+                if(graphMap != null){
+                    graphMapValue = graphMap.getConstantValue();
+                }
+            }
 
             Set<Condition> conditions = null;
             Set<JoinCondition> joinConditions;
             Set<BindingCondition> bindingConditions = new HashSet<BindingCondition>();
-
             joinConditions = referencingObjectMap.getJoinConditions();
             
             if (referencingObjectMap.getClass().getSimpleName().equals(
@@ -172,7 +179,7 @@ public class StdObjectMapProcessor implements ObjectMapProcessor {
                 
                 //Processing conditions
                 ConditionProcessor condProcessor = new StdConditionProcessor();
-                boolean result = condProcessor.processConditions(
+                condResult = condProcessor.processConditions(
                         node, termMapProcessor, conditions);
                 
                 //Processing Binding Conditions
@@ -184,12 +191,12 @@ public class StdObjectMapProcessor implements ObjectMapProcessor {
                         bindingConditions.add(bindCondition);
                     }
                 }
-                parameters = processBindingConditions(node, bindingConditions);
                 
                 //If conditions fail  do not proceed
-                if(!result  && bindingConditions.isEmpty()) // && joinConditions.isEmpty())
-                    continue;
+                //if(!result  && bindingConditions.isEmpty()) // && joinConditions.isEmpty())
+                //    continue;
             } else {
+                condResult = true;
                 log.debug("Simple Referencing Object Map");
             }
             
@@ -202,95 +209,103 @@ public class StdObjectMapProcessor implements ObjectMapProcessor {
                         (ConditionReferencingObjectMap) referencingObjectMap;
 
             }*/
-            
-            log.debug("Executing Referencing Object Map....");
-
             //Create the processor based on the parent triples map to perform the join
             RMLProcessorFactory factory = new ConcreteRMLProcessorFactory();
-            QLVocabulary.QLTerm referenceFormulation = 
+            QLVocabulary.QLTerm referenceFormulation =
                     parentTriplesMap.getLogicalSource().getReferenceFormulation();
-
-            SourceProcessor inputProcessor = new AbstractInputProcessor();
-                       
-            InputStream input = inputProcessor.getInputStream(
-                    parentTriplesMap.getLogicalSource(), parameters);
-            try {
-                log.debug("available input " + input.available());
-            } catch (IOException ex) {
-                log.error("IOException " + ex);
-            }
             RMLProcessor processor = factory.create(
                     referenceFormulation, parameters, parentTriplesMap);
             RMLPerformer performer = null;
-            
-            //different Logical Source AND no Join Conditions AND no Bind Conditions
-            if (joinConditions.isEmpty()
-                    & !parentTriplesMap.getLogicalSource().getSource().getTemplate().equals(
-                    map.getLogicalSource().getSource().getTemplate())
-                    & conditions == null) {
-                process_difLS_noJC_noBC(performer, processor, dataset, subject, 
-                        predicate, parentTriplesMap, input, exeTriplesMap);
-                //continue;
-            }
-            
-            //different Logical Source AND no join Conditions AND Binding Conditions
-            if (joinConditions.isEmpty()
-                    & !parentTriplesMap.getLogicalSource().getSource().getTemplate().equals(
-                    map.getLogicalSource().getSource().getTemplate())
-                    & (conditions != null)) {
-                boolean result = process_difLS_noJC_withBC(performer, processor, dataset, subject, 
-                        predicate, parentTriplesMap, input, exeTriplesMap);
-                if (!result) {
-                    log.debug("Check for falllback object maps" );
-                    Set<ReferencingObjectMap> fallbackReferencingObjectMaps =
-                            referencingObjectMap.getFallbackReferencingObjectMaps();
-                    log.debug("Found " + fallbackReferencingObjectMaps
-                            + " fallback Referencing Object Maps");
-                    //Process the joins first
-                    if (fallbackReferencingObjectMaps.size() > 0) {
-                        ObjectMapProcessor predicateObjectProcessor =
-                                new StdObjectMapProcessor(map, processor);
-                        predicateObjectProcessor.processPredicateObjectMap_RefObjMap(
-                                dataset, subject, predicate, fallbackReferencingObjectMaps, node,
-                                map, parameters, exeTriplesMap);
+            parameters = processBindingConditions(node, bindingConditions);
+
+            if (condResult || parameters.size() > 0) {
+                log.debug("Executing Referencing Object Map....");
+
+                SourceProcessor inputProcessor = new AbstractInputProcessor();
+
+                InputStream input = inputProcessor.getInputStream(
+                        parentTriplesMap.getLogicalSource(), parameters);
+
+                //different Logical Source AND no Join Conditions AND no Bind Conditions
+                if (joinConditions.isEmpty()
+                        & !parentTriplesMap.getLogicalSource().getSource().getTemplate().equals(
+                        map.getLogicalSource().getSource().getTemplate())
+                        & conditions == null) {
+                    process_difLS_noJC_noBC(performer, processor, dataset, subject,
+                            predicate, parentTriplesMap, input, exeTriplesMap);
+                    //continue;
+                }
+
+                //different Logical Source AND no join Conditions AND Binding Conditions
+                if (joinConditions.isEmpty()
+                        & !parentTriplesMap.getLogicalSource().getSource().getTemplate().equals(
+                        map.getLogicalSource().getSource().getTemplate())
+                        & (conditions != null)) {
+                    boolean result = process_difLS_noJC_withBC(performer, processor, dataset, subject,
+                            predicate, parentTriplesMap, input, exeTriplesMap);
+                    if (!result) {
+                        log.debug("Check for falllback object maps");
+                        Set<ReferencingObjectMap> fallbackReferencingObjectMaps =
+                                referencingObjectMap.getFallbackReferencingObjectMaps();
+                        log.debug("Found " + fallbackReferencingObjectMaps
+                                + " fallback Referencing Object Maps");
+                        //Process the joins first
+                        if (fallbackReferencingObjectMaps.size() > 0) {
+                            ObjectMapProcessor predicateObjectProcessor =
+                                    new StdObjectMapProcessor(map, processor);
+                            predicateObjectProcessor.processPredicateObjectMap_RefObjMap(
+                                    dataset, subject, predicate, fallbackReferencingObjectMaps, node,
+                                    map, parameters, exeTriplesMap, graphMap);
+                        }
+                    }
+                } //same Logical Source and no Conditions
+                else if (joinConditions.isEmpty()
+                        & parentTriplesMap.getLogicalSource().getSource().getTemplate().equals(
+                        map.getLogicalSource().getSource().getTemplate())) {
+
+                    process_sameLS_noJC(performer, processor, dataset, node,
+                            map, subject, predicate, parentTriplesMap, input,
+                            parameters, exeTriplesMap, (Resource) graphMapValue);
+
+                } //Conditions
+                else {
+                    log.debug("Referencing Object Map with Logical Source with conditions.");
+                    //Build a join map where
+                    //  key: the parent expression
+                    //  value: the value extracted from the child
+                    boolean result = process_sameLS_withJC(node, performer, processor, subject,
+                            predicate, dataset, input, parentTriplesMap,
+                            joinConditions, exeTriplesMap, referencingObjectMap, (Resource) graphMapValue);
+                    if (!result) {
+                        log.debug("Processing fallbacks...");
+                        processFallbackMaps(dataset, subject, predicate, map, processor,
+                        referencingObjectMap, node, parameters, exeTriplesMap);
                     }
                 }
+            } else {
+                processFallbackMaps(dataset, subject, predicate, map, processor,
+                        referencingObjectMap, node, parameters, exeTriplesMap);
             }
-            
-            //same Logical Source and no Conditions
-            else if (joinConditions.isEmpty()
-                    & parentTriplesMap.getLogicalSource().getSource().getTemplate().equals(
-                    map.getLogicalSource().getSource().getTemplate())) {
-                
-                process_sameLS_noJC(performer, processor, dataset, node, 
-                        map, subject, predicate, parentTriplesMap, input, 
-                        parameters, exeTriplesMap);                
-                
-            } //Conditions
-            else {
-                log.debug("Referencing Object Map with Logical Source with conditions.");
-                //Build a join map where
-                //  key: the parent expression
-                //  value: the value extracted from the child
-               boolean result = process_sameLS_withJC(node, performer, processor, subject, 
-                        predicate, dataset, input, parentTriplesMap, 
-                        joinConditions, exeTriplesMap, referencingObjectMap);
-                if (!result) {
-                    log.debug("Check for falllback object maps" );
-                    Set<ReferencingObjectMap> fallbackReferencingObjectMaps =
-                            referencingObjectMap.getFallbackReferencingObjectMaps();
-                    log.debug("Found " + fallbackReferencingObjectMaps
-                            + " fallback Referencing Object Maps");
-                    //Process the joins first
-                    if (fallbackReferencingObjectMaps.size() > 0) {
-                        ObjectMapProcessor predicateObjectProcessor =
-                                new StdObjectMapProcessor(map, processor);
-                        predicateObjectProcessor.processPredicateObjectMap_RefObjMap(
-                                dataset, subject, predicate, fallbackReferencingObjectMaps, node,
-                                map, parameters, exeTriplesMap);
-                    }
-                }
-            }
+        }
+    }
+    
+    private void processFallbackMaps(RMLDataset dataset, Resource subject, 
+            URI predicate, TriplesMap map, RMLProcessor processor,
+            ReferencingObjectMap referencingObjectMap, Object node,
+            Map<String, String> parameters, String[] exeTriplesMap) {
+        GraphMap fallbackGraphMap = null;
+        
+        Set<ReferencingObjectMap> fallbackReferencingObjectMaps =
+                referencingObjectMap.getFallbackReferencingObjectMaps();
+        if (fallbackReferencingObjectMaps != null)
+            log.debug("Found fallbacks " + fallbackReferencingObjectMaps);
+        //Process the joins first
+        if (fallbackReferencingObjectMaps.size() > 0) {
+            ObjectMapProcessor predicateObjectProcessor =
+                    new StdObjectMapProcessor(map, processor);
+            predicateObjectProcessor.processPredicateObjectMap_RefObjMap(
+                    dataset, subject, predicate, fallbackReferencingObjectMaps, node,
+                    map, parameters, exeTriplesMap, fallbackGraphMap);
         }
     }
        
@@ -372,9 +387,9 @@ public class StdObjectMapProcessor implements ObjectMapProcessor {
             RMLPerformer performer, RMLProcessor processor, RMLDataset dataset, 
             Object node, TriplesMap triplesMap, Resource subject, URI predicate,
             TriplesMap parentTriplesMap, InputStream input, 
-            Map<String, String> parameters, String[] exeTriplesMap) {
+            Map<String, String> parameters, String[] exeTriplesMap, Resource graphMapValue) {
         log.debug("Referencing Object Map with Logical Source without conditions.");
-        performer = new SimpleReferencePerformer(processor, subject, predicate);
+        performer = new SimpleReferencePerformer(processor, subject, predicate, (Resource) graphMapValue);
 
         if ((parentTriplesMap.getLogicalSource().getReferenceFormulation().toString().
                 equals("CSV"))
@@ -403,8 +418,7 @@ public class StdObjectMapProcessor implements ObjectMapProcessor {
         for(BindingCondition bindingCondition : bindingConditions){
             List<String> childValues = termMapProcessor.
                     extractValueFromNode(node, bindingCondition.getReference());
-            log.debug("childValues " + childValues);
-            for (String childValue : childValues) {    
+            for (String childValue : childValues) {
                 parameters.put(
                     bindingCondition.getVariable(), childValue);
             }
@@ -417,7 +431,7 @@ public class StdObjectMapProcessor implements ObjectMapProcessor {
             RMLProcessor processor, Resource subject, URI predicate, 
             RMLDataset dataset, InputStream input, TriplesMap parentTriplesMap, 
             Set<JoinCondition> joinConditions, String[] exeTriplesMap, 
-            ReferencingObjectMap referencingObjectMap) {
+            ReferencingObjectMap referencingObjectMap, Resource graph) {
         HashMap<String, String> joinMap = new HashMap<>();
         boolean result = true;
         log.debug("Processing " + joinConditions.size() 
@@ -452,12 +466,12 @@ public class StdObjectMapProcessor implements ObjectMapProcessor {
                                 (StdJoinConditionMetric) joinCondition;
                         Resource metric = joinCondMetric.getMetric();
                         performer = new ConditionalJoinRMLPerformer(
-                                processor, joinMap, subject, predicate, metric);
+                                processor, joinMap, subject, predicate, graph, metric);
                         processor.execute(dataset, parentTriplesMap, performer,
                                 input, exeTriplesMap, false);
                     } else {
                         performer = new ConditionalJoinRMLPerformer(
-                                processor, joinMap, subject, predicate);
+                                processor, joinMap, subject, predicate, graph);
                         log.debug("Join Condition without Metric...");
                         processor.execute(dataset, parentTriplesMap, performer,
                                         input, exeTriplesMap, false);
