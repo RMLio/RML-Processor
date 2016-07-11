@@ -1,21 +1,22 @@
 package be.ugent.mmlab.rml.processor;
 
 import be.ugent.mmlab.rml.condition.model.Condition;
-import be.ugent.mmlab.rml.model.RDFTerm.GraphMap;
+import be.ugent.mmlab.rml.extraction.TermExtractor;
+import be.ugent.mmlab.rml.model.RDFTerm.*;
 import be.ugent.mmlab.rml.model.dataset.RMLDataset;
 import be.ugent.mmlab.rml.model.LogicalSource;
-import be.ugent.mmlab.rml.model.RDFTerm.PredicateMap;
 import be.ugent.mmlab.rml.model.PredicateObjectMap;
-import be.ugent.mmlab.rml.model.RDFTerm.SubjectMap;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.logicalsourcehandler.termmap.TermMapProcessor;
 import be.ugent.mmlab.rml.metadata.MetadataGenerator;
-import be.ugent.mmlab.rml.model.RDFTerm.ReferencingObjectMap;
 import be.ugent.mmlab.rml.model.std.StdConditionPredicateObjectMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import be.ugent.mmlab.rml.processor.concrete.ConcreteTermMapFactory;
+import be.ugent.mmlab.rml.processor.concrete.TermMapProcessorFactory;
+import be.ugent.mmlab.rml.vocabularies.FnVocabulary;
 import org.openrdf.model.Resource;
 import org.openrdf.model.URI;
 import org.openrdf.model.Value;
@@ -175,18 +176,31 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                     //Process the joins first
                     Set<ReferencingObjectMap> referencingObjectMaps =
                             pom.getReferencingObjectMaps();
-                    predicateObjectProcessor.processPredicateObjectMap_RefObjMap(
-                            dataset, subject, predicate, referencingObjectMaps, node,
-                            map, parameters, exeTriplesMap, graphMap);
+                    if(referencingObjectMaps != null && referencingObjectMaps.size() > 0)
+                        predicateObjectProcessor.processPredicateObjectMap_RefObjMap(
+                                dataset, subject, predicate, referencingObjectMaps, node,
+                                map, parameters, exeTriplesMap, graphMap);
 
-                    //process the objectmaps
+                    //Process the Function Object Maps
+                    Set<FunctionTermMap> functionTermMaps =
+                            pom.getFunctionTermMaps();
+                    if(functionTermMaps != null && functionTermMaps.size() > 0)
+                        predicateObjectProcessor.processPredicateObjectMap_FunMap(
+                                dataset, subject, predicate, functionTermMaps, node, map, exeTriplesMap, graphMap);
+
+                    //process the Object Maps
                     predicateObjectProcessor.processPredicateObjectMap_ObjMap(
                             dataset, subject, predicate, pom, node, graphMap);
+
+
                 }
 
             }
         }
     }
+
+
+
     /**
      *
      * @param metadataGenerator

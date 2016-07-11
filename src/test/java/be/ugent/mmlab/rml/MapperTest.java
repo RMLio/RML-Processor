@@ -310,6 +310,16 @@ public class MapperTest
         assertTrue(desiredOutput(fileToOutputFile).isEqualTo(
                 assertMap(fileToRMLFile, null, triplesMap)));
     }
+
+    public void testExampleFnIsSet() {
+        URL fileToRMLFile = getClass().getResource(
+                "/exampleFn/mapping_isSet.rml.ttl");
+        URL fileToOutputFile = getClass().getResource(
+                "/exampleFn/example.output.ttl");
+        String[] triplesMap = {"http://example.com/test#Person_TemplateMapping"};
+        assertTrue(desiredOutput(fileToOutputFile).isEqualTo(
+                assertMap(fileToRMLFile, null, triplesMap)));
+    }
        
     private RMLDataset desiredOutput (URL outputURL){
         RMLDataset desiredOutput = new StdRMLDataset(false);

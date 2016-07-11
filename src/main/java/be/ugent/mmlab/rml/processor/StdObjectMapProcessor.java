@@ -3,6 +3,7 @@ package be.ugent.mmlab.rml.processor;
 import be.ugent.mmlab.rml.condition.model.BindingCondition;
 import be.ugent.mmlab.rml.condition.model.Condition;
 import be.ugent.mmlab.rml.condition.model.std.StdJoinConditionMetric;
+import be.ugent.mmlab.rml.model.RDFTerm.FunctionTermMap;
 import be.ugent.mmlab.rml.model.std.ConditionReferencingObjectMap;
 import be.ugent.mmlab.rml.input.processor.AbstractInputProcessor;
 import be.ugent.mmlab.rml.input.processor.SourceProcessor;
@@ -23,6 +24,7 @@ import be.ugent.mmlab.rml.performer.SimpleReferencePerformer;
 import be.ugent.mmlab.rml.processor.concrete.ConcreteRMLProcessorFactory;
 import be.ugent.mmlab.rml.processor.concrete.ConcreteTermMapFactory;
 import be.ugent.mmlab.rml.processor.concrete.TermMapProcessorFactory;
+import be.ugent.mmlab.rml.vocabularies.FnVocabulary;
 import be.ugent.mmlab.rml.vocabularies.QLVocabulary;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -36,6 +38,7 @@ import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import org.openrdf.model.Value;
 import org.openrdf.model.impl.BNodeImpl;
+import org.openrdf.model.impl.LiteralImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -115,6 +118,28 @@ public class StdObjectMapProcessor implements ObjectMapProcessor {
             }
         }
     }
+
+    private void addTriples(RMLDataset dataset, Resource subject, URI predicate, List<Value> objects, GraphMap graphMap){
+        Resource graphResource = null;
+        if(graphMap != null)
+            graphResource = (Resource) graphMap.getConstantValue();
+
+        for (Value object : objects) {
+            if (object.stringValue() != null) {
+                if (graphMap == null && subject != null) {
+                    //TODO: This control is redundant, ignore it if needed
+                    List<Statement> triples =
+                            dataset.tuplePattern(subject, predicate, object);
+                    if(triples.size() == 0){
+                        dataset.add(subject, predicate, object, graphResource);
+                    }
+                } else {
+                    dataset.add(subject, predicate, object, graphResource);
+                }
+
+            }
+        }
+    }
     
     public List<Value> processObjectMap(ObjectMap objectMap, Object node) {
         List<Value> valueList = new ArrayList<>();
@@ -144,7 +169,7 @@ public class StdObjectMapProcessor implements ObjectMapProcessor {
 
         for (ReferencingObjectMap referencingObjectMap : referencingObjectMaps) {
             Value graphMapValue = null;
-            //TriplesMap parTrMap = referencingObjectMap.getParentTriplesMap();
+            TriplesMap parTrMap = referencingObjectMap.getParentTriplesMap();
             boolean condResult = true;
             if ((referencingObjectMap == null) ||
                 (referencingObjectMap.getParentTriplesMap() != null &&
@@ -167,7 +192,7 @@ public class StdObjectMapProcessor implements ObjectMapProcessor {
             Set<JoinCondition> joinConditions;
             Set<BindingCondition> bindingConditions = new HashSet<BindingCondition>();
             joinConditions = referencingObjectMap.getJoinConditions();
-            
+
             if (referencingObjectMap.getClass().getSimpleName().equals(
                     "ConditionReferencingObjectMap") ) {
                 
@@ -288,7 +313,73 @@ public class StdObjectMapProcessor implements ObjectMapProcessor {
             }
         }
     }
-    
+
+    public void processPredicateObjectMap_FunMap(
+            RMLDataset dataset, Resource subject, URI predicate,
+            Set<FunctionTermMap> functionTermMaps, Object node, TriplesMap map,
+            String[] exeTriplesMap, GraphMap graphMap){
+        List<Value> valueList = new ArrayList<>();
+
+        if(functionTermMaps != null){
+            log.debug("Processing Function Term Map");
+        }
+
+        for(FunctionTermMap functionTermMap : functionTermMaps){
+            if(graphMap == null){
+                graphMap = functionTermMap.getGraphMap();
+            }
+
+            Map<String, String> parameters = retrieveParameters(node, functionTermMap.getFunctionTriplesMap());
+            String function = retrieveFunction(functionTermMap.getFunctionTriplesMap());
+
+            List<String> values = this.termMapProcessor.processFunctionTermMap(
+                    functionTermMap, node, function, parameters);
+            for (String value : values) {
+                valueList.add(new LiteralImpl(value.trim()));
+                //valueList = this.termMapProcessor.applyTermType(value, valueList, functionTermMap);
+            }
+
+            log.debug("values are " + values);
+            addTriples(dataset,subject,predicate,valueList,graphMap);
+        }
+    }
+
+    private  String retrieveFunction(TriplesMap functionTriplesMap){
+        Set<PredicateObjectMap> poms = functionTriplesMap.getPredicateObjectMaps();
+        for(PredicateObjectMap pom : poms) {
+            Value propertyValue = pom.getPredicateMaps().iterator().next().getConstantValue();
+            String executes = FnVocabulary.FNO_NAMESPACE + FnVocabulary.FnTerm.EXECUTES;
+            if (propertyValue.stringValue().equals(executes)) {
+                String property = pom.getObjectMaps().iterator().next().getConstantValue().stringValue();
+                return property;
+            }
+        }
+        return null;
+    }
+
+    private Map<String,String> retrieveParameters(Object node, TriplesMap functionTriplesMap){
+        Map<String,String> parameters = new HashMap<String, String>();
+        TermMapProcessorFactory factory = new ConcreteTermMapFactory();
+        TermMapProcessor termMapProcessor =
+                factory.create(functionTriplesMap.getLogicalSource().getReferenceFormulation());
+
+        String referenceValue;
+        Set<PredicateObjectMap> poms = functionTriplesMap.getPredicateObjectMaps();
+        for(PredicateObjectMap pom : poms) {
+            Value property = pom.getPredicateMaps().iterator().next().getConstantValue();
+            String executes = FnVocabulary.FNO_NAMESPACE + FnVocabulary.FnTerm.EXECUTES;
+            if(!property.stringValue().equals(executes)){
+                Value parameter = pom.getPredicateMaps().iterator().next().getConstantValue();
+                referenceValue = pom.getObjectMaps().iterator().next().getReferenceMap().getReference();
+                List<String> value = termMapProcessor.extractValueFromNode(node, referenceValue);
+
+                parameters.put(parameter.stringValue(),value.get(0));
+            }
+        }
+
+        return parameters;
+    }
+
     private void processFallbackMaps(RMLDataset dataset, Resource subject, 
             URI predicate, TriplesMap map, RMLProcessor processor,
             ReferencingObjectMap referencingObjectMap, Object node,

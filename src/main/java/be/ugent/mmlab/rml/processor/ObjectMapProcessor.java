@@ -1,6 +1,7 @@
 package be.ugent.mmlab.rml.processor;
 
 import be.ugent.mmlab.rml.model.PredicateObjectMap;
+import be.ugent.mmlab.rml.model.RDFTerm.FunctionTermMap;
 import be.ugent.mmlab.rml.model.RDFTerm.GraphMap;
 import be.ugent.mmlab.rml.model.RDFTerm.ReferencingObjectMap;
 import be.ugent.mmlab.rml.model.TriplesMap;
@@ -24,5 +25,9 @@ public interface ObjectMapProcessor {
             RMLDataset dataset, Resource subject, URI predicate,
             Set<ReferencingObjectMap> referencingObjectMaps, Object node, TriplesMap map, 
             Map<String, String> parameters, String[] exeTriplesMap, GraphMap graphMap);
-    
+
+    public void processPredicateObjectMap_FunMap(
+            RMLDataset dataset, Resource subject, URI predicate,
+            Set<FunctionTermMap> functionTermMaps, Object node, TriplesMap map,
+            String[] exeTriplesMap, GraphMap graphMap);
 }
