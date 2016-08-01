@@ -98,7 +98,7 @@ public class StdRMLEngine implements RMLEngine {
         
         log.debug("Generating triples..");
         dataset = generateRDFTriples(
-                dataset, rmlMapping, parameters, exeTriplesMap);
+                dataset, rmlMapping, parameters, exeTriplesMap,null);
         
         //log.debug("Generating dataset metadata..");
         generateBasicMetadataInfo(dataset, startTime);
@@ -134,7 +134,7 @@ public class StdRMLEngine implements RMLEngine {
      */
     protected RMLDataset generateRDFTriples(
             RMLDataset dataset, RMLMapping rmlMapping, 
-            Map<String, String> parameters, String[] exeTriplesMap) {
+            Map<String, String> parameters, String[] exeTriplesMap, InputStream input) {
 
         log.debug("Generate RDF triples... ");
         Collection<TriplesMap> triplesMaps;
@@ -152,7 +152,7 @@ public class StdRMLEngine implements RMLEngine {
 
         for (TriplesMap triplesMap : triplesMaps) {
             dataset = this.generateTriplesMapTriples(
-                    triplesMap, parameters, exeTriplesMap, dataset);
+                    triplesMap, parameters, exeTriplesMap, dataset, input);
         }
 
         return dataset;
@@ -161,7 +161,7 @@ public class StdRMLEngine implements RMLEngine {
     @Override
     public RMLDataset generateTriplesMapTriples(
             TriplesMap triplesMap, Map<String, String> parameters,
-            String[] exeTriplesMap, RMLDataset dataset) {
+            String[] exeTriplesMap, RMLDataset dataset, InputStream input) {
         boolean flag ;
 
         if (exeTriplesMap != null) {
@@ -172,13 +172,13 @@ public class StdRMLEngine implements RMLEngine {
                         checkExecutionList(triplesMap, exeTM);
 
                 if (flag) {
-                    startTriplesMapExecution(dataset, triplesMap, parameters, exeTriplesMap);
+                    startTriplesMapExecution(dataset, triplesMap, parameters, exeTriplesMap, input);
                 }
 
             }
         }
         else {
-            startTriplesMapExecution(dataset, triplesMap, parameters, exeTriplesMap);
+            startTriplesMapExecution(dataset, triplesMap, parameters, exeTriplesMap, input);
         }
         
         return dataset;
@@ -210,7 +210,7 @@ public class StdRMLEngine implements RMLEngine {
     
     public RMLDataset startTriplesMapExecution(
             RMLDataset dataset, TriplesMap triplesMap, 
-            Map<String, String> parameters, String[] exeTriplesMap) {
+            Map<String, String> parameters, String[] exeTriplesMap, InputStream input) {
         SourceProcessor inputProcessor;
         
         System.out.println("Generating RDF triples for "
@@ -224,9 +224,13 @@ public class StdRMLEngine implements RMLEngine {
             log.info("Generating Data Retrieval Processor..");
             inputProcessor =
                     generateInputProcessor(triplesMap);
+            if(inputProcessor == null){
+                dataset = processInputStream(processor, inputProcessor,
+                        triplesMap, parameters, exeTriplesMap, dataset, input);
+            }
             do {
                 dataset = processInputStream(processor, inputProcessor,
-                        triplesMap, parameters, exeTriplesMap, dataset);
+                        triplesMap, parameters, exeTriplesMap, dataset, input);
             } while (inputProcessor.hasNextInputStream());
         }
         return dataset;
@@ -248,12 +252,13 @@ public class StdRMLEngine implements RMLEngine {
     protected RMLDataset processInputStream(
             RMLProcessor processor, SourceProcessor inputProcessor, 
             TriplesMap triplesMap, Map<String, String> parameters,
-            String[] exeTriplesMap, RMLDataset dataset) {
-        InputStream input = null;
+            String[] exeTriplesMap, RMLDataset dataset, InputStream input) {
+        //InputStream input = null;
         
         log.debug("Generating Input Stream..");
         try {
-            input = inputProcessor.getInputStream(
+            if(input == null)
+                input = inputProcessor.getInputStream(
                     triplesMap.getLogicalSource(), parameters);
         } catch (Exception ex) {
             log.error("Exception ex " + ex);

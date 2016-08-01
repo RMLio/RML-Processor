@@ -8,10 +8,8 @@ import be.ugent.mmlab.rml.model.dataset.MetadataRMLDataset;
 import be.ugent.mmlab.rml.model.dataset.RMLDataset;
 import be.ugent.mmlab.rml.model.dataset.StdRMLDataset;
 import be.ugent.mmlab.rml.processor.RMLProcessor;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
@@ -171,7 +169,7 @@ public class StdMetadataRMLEngine extends StdRMLEngine {
     @Override
     public RMLDataset generateTriplesMapTriples(
             TriplesMap triplesMap, Map<String, String> parameters,
-            String[] exeTriplesMap, RMLDataset originalDataset) {
+            String[] exeTriplesMap, RMLDataset originalDataset, InputStream input) {
         MetadataRMLDataset dataset = (MetadataRMLDataset) originalDataset;
         Repository repository ;
         log.debug("Generating Triples Map triples with metadata");
@@ -199,7 +197,7 @@ public class StdMetadataRMLEngine extends StdRMLEngine {
 
             dataset.setNumbers();
             dataset = (MetadataRMLDataset) super.generateTriplesMapTriples(
-                    triplesMap, parameters, exeTriplesMap, dataset);
+                    triplesMap, parameters, exeTriplesMap, dataset, input);
                   
         } else {
             log.debug("Default repository");
@@ -217,7 +215,7 @@ public class StdMetadataRMLEngine extends StdRMLEngine {
                 log.error("Repository Exception " + ex);
             }
             dataset = (MetadataFileDataset) super.generateTriplesMapTriples(
-                    triplesMap, parameters, exeTriplesMap, dataset);
+                    triplesMap, parameters, exeTriplesMap, dataset, input);
         }
         
         sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX");

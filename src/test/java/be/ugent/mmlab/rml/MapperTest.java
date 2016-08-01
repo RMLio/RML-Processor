@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.Map;
 import junit.framework.Test;
 import junit.framework.TestCase;
-import static junit.framework.TestCase.assertTrue;
 import junit.framework.TestSuite;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -320,6 +319,16 @@ public class MapperTest
         assertTrue(desiredOutput(fileToOutputFile).isEqualTo(
                 assertMap(fileToRMLFile, null, triplesMap)));
     }
+
+    /*public void testExampleDBP() {
+        URL fileToRMLFile = getClass().getResource(
+                "/exampleDBP/mapping.rml.ttl");
+        URL fileToOutputFile = getClass().getResource(
+                "/exampleDBP/example.output.ttl");
+        String[] triplesMap = {"http://mappings.dbpedia.org/wiki/Mapping_en/Infobox_artist"};
+        assertTrue(desiredOutput(fileToOutputFile).isEqualTo(
+                assertMap(fileToRMLFile, null, triplesMap)));
+    }*/
        
     private RMLDataset desiredOutput (URL outputURL){
         RMLDataset desiredOutput = new StdRMLDataset(false);
