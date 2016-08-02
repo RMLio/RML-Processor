@@ -132,7 +132,7 @@ public class StdRMLEngine implements RMLEngine {
      *
      * @param rmlMapping
      */
-    protected RMLDataset generateRDFTriples(
+    public RMLDataset generateRDFTriples(
             RMLDataset dataset, RMLMapping rmlMapping, 
             Map<String, String> parameters, String[] exeTriplesMap, InputStream input) {
 
