@@ -372,8 +372,9 @@ public class StdObjectMapProcessor implements ObjectMapProcessor {
                 Value parameter = pom.getPredicateMaps().iterator().next().getConstantValue();
                 referenceValue = pom.getObjectMaps().iterator().next().getReferenceMap().getReference();
                 List<String> value = termMapProcessor.extractValueFromNode(node, referenceValue);
-
-                parameters.put(parameter.stringValue(),value.get(0));
+                if(!value.isEmpty()) { //TODO: fix this, this is added because functions are not implemented yet
+                    parameters.put(parameter.stringValue(), value.get(0));
+                }
             }
         }
 

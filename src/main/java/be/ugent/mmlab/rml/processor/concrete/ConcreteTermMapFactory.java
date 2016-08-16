@@ -80,6 +80,8 @@ public class ConcreteTermMapFactory implements TermMapProcessorFactory {
                 return new CSVTermMapProcessor();
             case XLSX_CLASS:
                 return new CSVTermMapProcessor();
+            case DBPEDIA_CLASS:
+                return new DBpediaTermMapProcessor();
             default:
                 log.error("The term " + term + "was not defined.");
                 return null;

@@ -213,8 +213,7 @@ public class StdRMLEngine implements RMLEngine {
             Map<String, String> parameters, String[] exeTriplesMap, InputStream input) {
         SourceProcessor inputProcessor;
         
-        System.out.println("Generating RDF triples for "
-                + triplesMap.getName());
+
         //TODO: Add metadata that this Map Doc has that many Triples Maps
 
         log.info("Generating RML Processor..");
