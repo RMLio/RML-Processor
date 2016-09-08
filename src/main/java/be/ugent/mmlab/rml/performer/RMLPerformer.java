@@ -3,7 +3,7 @@ package be.ugent.mmlab.rml.performer;
 import be.ugent.mmlab.rml.model.dataset.RMLDataset;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import java.util.Map;
-import org.openrdf.model.Resource;
+import org.eclipse.rdf4j.model.Resource;
 
 /**
  * RML Processor

@@ -1,7 +1,7 @@
 package be.ugent.mmlab.rml.dataset;
 
-import org.openrdf.model.Statement;
-import org.openrdf.rio.helpers.RDFHandlerBase;
+import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.rio.helpers.RDFHandlerBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

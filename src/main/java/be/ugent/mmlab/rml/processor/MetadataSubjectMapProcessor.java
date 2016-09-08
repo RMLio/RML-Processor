@@ -8,10 +8,10 @@ import be.ugent.mmlab.rml.model.dataset.MetadataRMLDataset;
 import be.ugent.mmlab.rml.model.dataset.RMLDataset;
 import java.util.List;
 import java.util.Set;
-import org.openrdf.model.Resource;
-import org.openrdf.model.Statement;
-import org.openrdf.model.impl.URIImpl;
-import org.openrdf.model.vocabulary.RDF;
+import org.eclipse.rdf4j.model.Resource;
+import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.model.impl.URIImpl;
+import org.eclipse.rdf4j.model.vocabulary.RDF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +37,7 @@ public class MetadataSubjectMapProcessor extends StdSubjectMapProcessor implemen
         
         SubjectMap subjectMap = map.getSubjectMap();
         boolean flag = false;
-        Set<org.openrdf.model.URI> classIRIs = subjectMap.getClassIRIs();
+        Set<org.eclipse.rdf4j.model.URI> classIRIs = subjectMap.getClassIRIs();
         MetadataRMLDataset dataset = (MetadataRMLDataset) originalDataset ;
         
         List vocabs = dataset.getMetadataVocab();
@@ -54,7 +54,7 @@ public class MetadataSubjectMapProcessor extends StdSubjectMapProcessor implemen
             }
         } 
         if (subject != null) {
-            for (org.openrdf.model.URI classIRI : classIRIs) {
+            for (org.eclipse.rdf4j.model.URI classIRI : classIRIs) {
                 if (subjectMap.getGraphMaps().isEmpty()) {
                     List<Statement> triples =
                             dataset.tuplePattern(subject, RDF.TYPE, classIRI);

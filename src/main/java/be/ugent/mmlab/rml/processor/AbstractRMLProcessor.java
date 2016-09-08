@@ -17,9 +17,9 @@ import java.util.Set;
 import be.ugent.mmlab.rml.processor.concrete.ConcreteTermMapFactory;
 import be.ugent.mmlab.rml.processor.concrete.TermMapProcessorFactory;
 import be.ugent.mmlab.rml.vocabularies.FnVocabulary;
-import org.openrdf.model.Resource;
-import org.openrdf.model.URI;
-import org.openrdf.model.Value;
+import org.eclipse.rdf4j.model.Resource;
+import org.eclipse.rdf4j.model.URI;
+import org.eclipse.rdf4j.model.Value;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

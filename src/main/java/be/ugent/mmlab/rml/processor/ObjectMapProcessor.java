@@ -8,8 +8,8 @@ import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.model.dataset.RMLDataset;
 import java.util.Map;
 import java.util.Set;
-import org.openrdf.model.Resource;
-import org.openrdf.model.URI;
+import org.eclipse.rdf4j.model.Resource;
+import org.eclipse.rdf4j.model.URI;
 
 /**
  *

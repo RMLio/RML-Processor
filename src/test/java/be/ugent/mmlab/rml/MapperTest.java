@@ -15,8 +15,9 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-import org.openrdf.repository.Repository;
-import org.openrdf.rio.RDFFormat;
+import org.eclipse.rdf4j.repository.Repository;
+
+import static org.eclipse.rdf4j.rio.RDFFormat.*;
 
 /**
  * Unit test for simple App.
@@ -332,13 +333,13 @@ public class MapperTest
        
     private RMLDataset desiredOutput (URL outputURL){
         RMLDataset desiredOutput = new StdRMLDataset(false);
-        desiredOutput.addFile(outputURL.getFile(), RDFFormat.TURTLE);
+        desiredOutput.addFile(outputURL.getFile(), TURTLE);
         return desiredOutput;
     }
     
     private RMLDataset desiredContextOutput (URL outputURL){
         RMLDataset desiredOutput = new StdRMLDataset(false);
-        desiredOutput.addFile(outputURL.getFile(), RDFFormat.NQUADS);
+        desiredOutput.addFile(outputURL.getFile(), NQUADS);
         return desiredOutput;
     }
     
@@ -353,7 +354,7 @@ public class MapperTest
             log.info("========================================");
             RMLDocRetrieval mapDocRetrieval = new RMLDocRetrieval();
             Repository repository = mapDocRetrieval.getMappingDoc(
-                    mappingURL.getFile(), RDFFormat.TURTLE);
+                    mappingURL.getFile(), TURTLE);
             
             log.info("========================================");
             log.info("Extracting the RML Mapping Definitions..");
@@ -368,7 +369,7 @@ public class MapperTest
             output = engine.runRMLMapping(output,
                     mapping, "http://example.com", parameters, triplesMap);
             if(output != null)
-                output.dumpRDF(System.out, RDFFormat.TURTLE);
+                output.dumpRDF(System.out, TURTLE);
 
             return output;
 

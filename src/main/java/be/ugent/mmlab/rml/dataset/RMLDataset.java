@@ -1,10 +1,10 @@
 package be.ugent.mmlab.rml.dataset;
 
 import java.io.OutputStream;
-import org.openrdf.model.Resource;
-import org.openrdf.model.URI;
-import org.openrdf.model.Value;
-import org.openrdf.rio.RDFFormat;
+import org.eclipse.rdf4j.model.Resource;
+import org.eclipse.rdf4j.model.URI;
+import org.eclipse.rdf4j.model.Value;
+import org.eclipse.rdf4j.rio.RDFFormat;
 
 /**
  * RML Processor

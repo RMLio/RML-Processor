@@ -17,8 +17,8 @@ import java.io.InputStream;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import org.openrdf.repository.RepositoryException;
-import org.openrdf.repository.manager.LocalRepositoryManager;
+import org.eclipse.rdf4j.repository.RepositoryException;
+import org.eclipse.rdf4j.repository.manager.LocalRepositoryManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
