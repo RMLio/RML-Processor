@@ -8,9 +8,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.rdf4j.model.Resource;
 import org.eclipse.rdf4j.model.Statement;
-import org.eclipse.rdf4j.model.URI;
+import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Value;
-import org.eclipse.rdf4j.model.impl.StatementImpl;
+import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.rio.RDFHandlerException;
 import org.eclipse.rdf4j.rio.RDFWriter;
@@ -88,13 +88,15 @@ public class FileDataset extends StdRMLDataset {
     }
 
     @Override
-    public void add(Resource s, URI p, Value o, Resource... contexts) {
+    public void add(Resource s, IRI p, Value o, Resource... contexts) {
+        SimpleValueFactory vf = SimpleValueFactory.getInstance();
+
         if (log.isDebugEnabled()) {
             log.debug("Add triple (" + s.stringValue()
                     + ", " + p.stringValue() + ", " + o.stringValue() + ").");
         }
 
-        Statement st = new StatementImpl(s, p, o);
+        Statement st = vf.createStatement(s, p, o);
         try {
             writer.handleStatement(st);
             size++;

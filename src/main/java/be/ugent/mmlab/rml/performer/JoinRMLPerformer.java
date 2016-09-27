@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.eclipse.rdf4j.model.Resource;
 import org.eclipse.rdf4j.model.Statement;
-import org.eclipse.rdf4j.model.URI;
+import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Value;
 
 /**
@@ -26,10 +26,10 @@ public class JoinRMLPerformer extends NodeRMLPerformer{
             LoggerFactory.getLogger(JoinRMLPerformer.class);
     
     private Resource subject;
-    private URI predicate;
+    private IRI predicate;
 
     public JoinRMLPerformer(
-            RMLProcessor processor, Resource subject, URI predicate) {
+            RMLProcessor processor, Resource subject, IRI predicate) {
         super(processor);
         this.subject = subject;
         this.predicate = predicate;

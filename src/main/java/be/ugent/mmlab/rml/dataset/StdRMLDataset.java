@@ -7,7 +7,7 @@ import java.util.List;
 import org.eclipse.rdf4j.model.BNode;
 import org.eclipse.rdf4j.model.Resource;
 import org.eclipse.rdf4j.model.Statement;
-import org.eclipse.rdf4j.model.URI;
+import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Value;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.repository.Repository;
@@ -55,7 +55,7 @@ public class StdRMLDataset implements RMLDataset {
     
     //TODO: Spring it
     @Override
-    public void add(Resource s, URI p, Value o, Resource... contexts) {
+    public void add(Resource s, IRI p, Value o, Resource... contexts) {
         if (log.isDebugEnabled()) {
             log.debug("Add triple (" + s.stringValue()
                     + ", " + p.stringValue() + ", " + o.stringValue() + ").");
@@ -144,7 +144,7 @@ public class StdRMLDataset implements RMLDataset {
     }
     
     //TODO: Spring it
-    protected List<Statement> tuplePattern(Resource s, URI p, Value o,
+    protected List<Statement> tuplePattern(Resource s, IRI p, Value o,
 			Resource... contexts) {
         try {
             RepositoryConnection con = repository.getConnection();

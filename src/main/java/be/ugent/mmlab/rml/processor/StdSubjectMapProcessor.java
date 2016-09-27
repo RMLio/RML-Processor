@@ -3,7 +3,7 @@ package be.ugent.mmlab.rml.processor;
 import be.ugent.mmlab.rml.condition.model.Condition;
 import be.ugent.mmlab.rml.logicalsourcehandler.termmap.TermMapProcessor;
 import static be.ugent.mmlab.rml.model.RDFTerm.TermType.BLANK_NODE;
-import static be.ugent.mmlab.rml.model.RDFTerm.TermType.IRI;
+
 import be.ugent.mmlab.rml.model.RDFTerm.GraphMap;
 import be.ugent.mmlab.rml.model.RDFTerm.SubjectMap;
 import be.ugent.mmlab.rml.model.TriplesMap;
@@ -14,9 +14,9 @@ import be.ugent.mmlab.rml.processor.concrete.TermMapProcessorFactory;
 import java.util.List;
 import java.util.Set;
 import org.apache.commons.lang.RandomStringUtils;
+import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Resource;
-import org.eclipse.rdf4j.model.impl.BNodeImpl;
-import org.eclipse.rdf4j.model.impl.URIImpl;
+import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.eclipse.rdf4j.model.vocabulary.RDF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +38,7 @@ public class StdSubjectMapProcessor implements SubjectMapProcessor {
         Object node, RMLProcessor processor) {  
         Resource subject = null;
         boolean result ;
+        SimpleValueFactory vf = SimpleValueFactory.getInstance();
         
         //Get the uri
         TermMapProcessorFactory factory = new ConcreteTermMapFactory();
@@ -93,17 +94,17 @@ public class StdSubjectMapProcessor implements SubjectMapProcessor {
                         }
                     }
                     try {
-                        subject = new URIImpl(value);
+                        subject = vf.createIRI(value);
                     } catch (Exception e) {
                         return null;
                     }
                     break;
                 case BLANK_NODE:
-                    subject = new BNodeImpl(
+                    subject = vf.createIRI(
                             RandomStringUtils.randomAlphanumeric(10));
                     break;
                 default:
-                    subject = new URIImpl(value);
+                    subject = vf.createIRI(value);
             }
         }
         return subject;
@@ -114,7 +115,8 @@ public class StdSubjectMapProcessor implements SubjectMapProcessor {
             RMLDataset dataset, Resource subject, TriplesMap map, Object node) {
         SubjectMap subjectMap = map.getSubjectMap();
         boolean flag = false;
-        Set<org.eclipse.rdf4j.model.URI> classIRIs = subjectMap.getClassIRIs();
+        SimpleValueFactory vf = SimpleValueFactory.getInstance();
+        Set<IRI> classIRIs = subjectMap.getClassIRIs();
         /*String[] vocabs = dataset.getMetadataVocab();
         //TODO: Decide if I keep that here or if I move it to separate class
         if (vocabs != null) {
@@ -129,7 +131,7 @@ public class StdSubjectMapProcessor implements SubjectMapProcessor {
             }
         }*/
         if (subject != null) {
-            for (org.eclipse.rdf4j.model.URI classIRI : classIRIs) {
+            for (IRI classIRI : classIRIs) {
                 if (subjectMap.getGraphMaps().isEmpty()) {
                     //List<Statement> triples =
                     //        dataset.tuplePattern(subject, RDF.TYPE, classIRI);
@@ -141,7 +143,7 @@ public class StdSubjectMapProcessor implements SubjectMapProcessor {
                         if (graphMap.getConstantValue() != null) {
                             dataset.add(
                                     subject, RDF.TYPE, classIRI,
-                                    new URIImpl(graphMap.getConstantValue().toString()));
+                                    vf.createIRI(graphMap.getConstantValue().toString()));
                         }
                     }
                 }

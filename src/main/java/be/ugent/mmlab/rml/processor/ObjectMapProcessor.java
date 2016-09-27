@@ -9,7 +9,7 @@ import be.ugent.mmlab.rml.model.dataset.RMLDataset;
 import java.util.Map;
 import java.util.Set;
 import org.eclipse.rdf4j.model.Resource;
-import org.eclipse.rdf4j.model.URI;
+import org.eclipse.rdf4j.model.IRI;
 
 /**
  *
@@ -18,16 +18,16 @@ import org.eclipse.rdf4j.model.URI;
 public interface ObjectMapProcessor {
     
     public void processPredicateObjectMap_ObjMap(
-            RMLDataset dataset, Resource subject, URI predicate,
+            RMLDataset dataset, Resource subject, IRI predicate,
             PredicateObjectMap pom, Object node, GraphMap graphMap);
     
     public void processPredicateObjectMap_RefObjMap(
-            RMLDataset dataset, Resource subject, URI predicate,
+            RMLDataset dataset, Resource subject, IRI predicate,
             Set<ReferencingObjectMap> referencingObjectMaps, Object node, TriplesMap map, 
             Map<String, String> parameters, String[] exeTriplesMap, GraphMap graphMap);
 
     public void processPredicateObjectMap_FunMap(
-            RMLDataset dataset, Resource subject, URI predicate,
+            RMLDataset dataset, Resource subject, IRI predicate,
             Set<FunctionTermMap> functionTermMaps, Object node, TriplesMap map,
             String[] exeTriplesMap, GraphMap graphMap);
 }

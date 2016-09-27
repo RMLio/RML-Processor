@@ -13,9 +13,9 @@ import java.util.List;
 import java.util.Set;
 import org.eclipse.rdf4j.model.Resource;
 import org.eclipse.rdf4j.model.Statement;
-import org.eclipse.rdf4j.model.URI;
+import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Value;
-import org.eclipse.rdf4j.model.impl.URIImpl;
+import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,9 +40,10 @@ public class MetadataObjectMapProcessor extends StdObjectMapProcessor implements
     
     @Override
     public void processPredicateObjectMap_ObjMap(
-            RMLDataset originalDataset, Resource subject, URI predicate,
+            RMLDataset originalDataset, Resource subject, IRI predicate,
             PredicateObjectMap pom, Object node, GraphMap graphMap) {
         MetadataRMLDataset dataset = (MetadataRMLDataset) originalDataset ;
+        SimpleValueFactory vf = SimpleValueFactory.getInstance();
         //MetadataGenerator metadataGenerator = new MetadataGenerator();
         
         Set<ObjectMap> objectMaps = pom.getObjectMaps();
@@ -83,7 +84,7 @@ public class MetadataObjectMapProcessor extends StdObjectMapProcessor implements
                             }
                         } else {
                             for (GraphMap graph : graphs) {
-                                Resource graphResource = new URIImpl(
+                                Resource graphResource = vf.createIRI(
                                         graph.getConstantValue().toString());
                                 dataset.add(subject, predicate, object, graphResource);
                                 log.debug("Should log triple level metadata...");

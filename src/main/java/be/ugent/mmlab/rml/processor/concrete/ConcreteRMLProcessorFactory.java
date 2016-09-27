@@ -4,7 +4,6 @@ import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.RMLProcessor;
 import be.ugent.mmlab.rml.processor.RMLProcessorFactory;
 import be.ugent.mmlab.rml.vocabularies.QLVocabulary.QLTerm;
-import static be.ugent.mmlab.rml.vocabularies.QLVocabulary.QLTerm.CSV_CLASS;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

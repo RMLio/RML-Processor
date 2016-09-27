@@ -1,7 +1,6 @@
 package be.ugent.mmlab.rml.processor;
 
 import be.ugent.mmlab.rml.condition.model.Condition;
-import be.ugent.mmlab.rml.extraction.TermExtractor;
 import be.ugent.mmlab.rml.model.RDFTerm.*;
 import be.ugent.mmlab.rml.model.dataset.RMLDataset;
 import be.ugent.mmlab.rml.model.LogicalSource;
@@ -10,16 +9,13 @@ import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.logicalsourcehandler.termmap.TermMapProcessor;
 import be.ugent.mmlab.rml.metadata.MetadataGenerator;
 import be.ugent.mmlab.rml.model.std.StdConditionPredicateObjectMap;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import be.ugent.mmlab.rml.processor.concrete.ConcreteTermMapFactory;
-import be.ugent.mmlab.rml.processor.concrete.TermMapProcessorFactory;
-import be.ugent.mmlab.rml.vocabularies.FnVocabulary;
+import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Resource;
-import org.eclipse.rdf4j.model.URI;
-import org.eclipse.rdf4j.model.Value;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -154,14 +150,14 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                 PredicateMapProcessor preMapProcessor =
                         new PredicateMapProcessor(map, processor);
                 //Get the predicates
-                List<URI> predicates =
+                List<IRI> predicates =
                         preMapProcessor.processPredicateMap(predicateMap, node);
                 if(graphMap == null){
                     graphMap = predicateMap.getGraphMap();
                 }
 
                 if (predicates.size() > 0) {
-                    URI predicate = predicates.get(0);
+                    IRI predicate = predicates.get(0);
                     ObjectMapProcessor predicateObjectProcessor;
                     if (dataset.getMetadataLevel().equals("triple")
                             || dataset.getMetadataVocab().contains("co")) {

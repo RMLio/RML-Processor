@@ -35,10 +35,9 @@ import java.util.Map;
 import java.util.Set;
 import org.eclipse.rdf4j.model.Resource;
 import org.eclipse.rdf4j.model.Statement;
-import org.eclipse.rdf4j.model.URI;
+import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Value;
-import org.eclipse.rdf4j.model.impl.BNodeImpl;
-import org.eclipse.rdf4j.model.impl.LiteralImpl;
+import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,7 +68,7 @@ public class StdObjectMapProcessor implements ObjectMapProcessor {
     
     @Override
     public void processPredicateObjectMap_ObjMap(
-            RMLDataset dataset, Resource subject, URI predicate,
+            RMLDataset dataset, Resource subject, IRI predicate,
             PredicateObjectMap pom, Object node, GraphMap graphMap) {
 
         Set<ObjectMap> objectMaps = pom.getObjectMaps();
@@ -119,7 +118,7 @@ public class StdObjectMapProcessor implements ObjectMapProcessor {
         }
     }
 
-    private void addTriples(RMLDataset dataset, Resource subject, URI predicate, List<Value> objects, GraphMap graphMap){
+    private void addTriples(RMLDataset dataset, Resource subject, IRI predicate, List<Value> objects, GraphMap graphMap){
         Resource graphResource = null;
         if(graphMap != null)
             graphResource = (Resource) graphMap.getConstantValue();
@@ -143,6 +142,7 @@ public class StdObjectMapProcessor implements ObjectMapProcessor {
     
     public List<Value> processObjectMap(ObjectMap objectMap, Object node) {
         List<Value> valueList = new ArrayList<>();
+        SimpleValueFactory vf = SimpleValueFactory.getInstance();
         //A Term map returns one or more values (in case expression matches more)
         if (objectMap != null && !objectMap.getTermType().equals(BLANK_NODE)) {
             List<String> values = this.termMapProcessor.processTermMap(objectMap, node);
@@ -151,7 +151,7 @@ public class StdObjectMapProcessor implements ObjectMapProcessor {
             }
         }
         else {
-            valueList.add(new BNodeImpl(null));
+            valueList.add(vf.createBNode(null));
         }
         
         return valueList;
@@ -159,7 +159,7 @@ public class StdObjectMapProcessor implements ObjectMapProcessor {
     
     @Override
     public void processPredicateObjectMap_RefObjMap(
-            RMLDataset dataset, Resource subject, URI predicate,
+            RMLDataset dataset, Resource subject, IRI predicate,
             Set<ReferencingObjectMap> referencingObjectMaps, Object node, TriplesMap map, 
             Map<String, String> parameters, String[] exeTriplesMap, GraphMap graphMap) {
         String template ;
@@ -315,10 +315,11 @@ public class StdObjectMapProcessor implements ObjectMapProcessor {
     }
 
     public void processPredicateObjectMap_FunMap(
-            RMLDataset dataset, Resource subject, URI predicate,
+            RMLDataset dataset, Resource subject, IRI predicate,
             Set<FunctionTermMap> functionTermMaps, Object node, TriplesMap map,
             String[] exeTriplesMap, GraphMap graphMap){
         List<Value> valueList = new ArrayList<>();
+        SimpleValueFactory vf = SimpleValueFactory.getInstance();
 
         if(functionTermMaps != null){
             log.debug("Processing Function Term Map");
@@ -335,7 +336,7 @@ public class StdObjectMapProcessor implements ObjectMapProcessor {
             List<String> values = this.termMapProcessor.processFunctionTermMap(
                     functionTermMap, node, function, parameters);
             for (String value : values) {
-                valueList.add(new LiteralImpl(value.trim()));
+                valueList.add(vf.createLiteral(value.trim()));
                 //valueList = this.termMapProcessor.applyTermType(value, valueList, functionTermMap);
             }
 
@@ -381,7 +382,7 @@ public class StdObjectMapProcessor implements ObjectMapProcessor {
     }
 
     private void processFallbackMaps(RMLDataset dataset, Resource subject, 
-            URI predicate, TriplesMap map, RMLProcessor processor,
+            IRI predicate, TriplesMap map, RMLProcessor processor,
             ReferencingObjectMap referencingObjectMap, Object node,
             Map<String, String> parameters, String[] exeTriplesMap) {
         GraphMap fallbackGraphMap = null;
@@ -448,7 +449,7 @@ public class StdObjectMapProcessor implements ObjectMapProcessor {
     //TODO: Check the following two
     private void process_difLS_noJC_noBC(
             RMLPerformer performer, RMLProcessor processor,
-            RMLDataset dataset, Resource subject, URI predicate, 
+            RMLDataset dataset, Resource subject, IRI predicate,
             TriplesMap parentTriplesMap, InputStream input, String[] exeTriplesMap) {
         log.debug("Referencing Object Map with Logical Source "
                 + "without join and binding conditions.");
@@ -459,7 +460,7 @@ public class StdObjectMapProcessor implements ObjectMapProcessor {
     
     private boolean process_difLS_noJC_withBC(
             RMLPerformer performer, RMLProcessor processor,
-            RMLDataset dataset, Resource subject, URI predicate,
+            RMLDataset dataset, Resource subject, IRI predicate,
             TriplesMap parentTriplesMap, InputStream input, String[] exeTriplesMap) {
         log.debug("Referencing Object Map with Logical Source "
                 + "without join conditions but with bind conditions.");
@@ -476,7 +477,7 @@ public class StdObjectMapProcessor implements ObjectMapProcessor {
     
     private void process_sameLS_noJC(
             RMLPerformer performer, RMLProcessor processor, RMLDataset dataset, 
-            Object node, TriplesMap triplesMap, Resource subject, URI predicate,
+            Object node, TriplesMap triplesMap, Resource subject, IRI predicate,
             TriplesMap parentTriplesMap, InputStream input, 
             Map<String, String> parameters, String[] exeTriplesMap, Resource graphMapValue) {
         log.debug("Referencing Object Map with Logical Source without conditions.");
@@ -519,7 +520,7 @@ public class StdObjectMapProcessor implements ObjectMapProcessor {
     }
     
     public boolean process_sameLS_withJC(Object node, RMLPerformer performer, 
-            RMLProcessor processor, Resource subject, URI predicate, 
+            RMLProcessor processor, Resource subject, IRI predicate,
             RMLDataset dataset, InputStream input, TriplesMap parentTriplesMap, 
             Set<JoinCondition> joinConditions, String[] exeTriplesMap, 
             ReferencingObjectMap referencingObjectMap, Resource graph) {
