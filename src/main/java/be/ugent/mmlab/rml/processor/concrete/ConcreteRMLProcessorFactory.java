@@ -5,6 +5,7 @@ import be.ugent.mmlab.rml.processor.RMLProcessor;
 import be.ugent.mmlab.rml.processor.RMLProcessorFactory;
 import be.ugent.mmlab.rml.vocabularies.QLVocabulary.QLTerm;
 import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +42,7 @@ public class ConcreteRMLProcessorFactory implements RMLProcessorFactory{
                 //SQL reference formulation
                 //but check first if custom defined one
                 return new JdbcProcessor(parameters);
+
             case JSONPATH_CLASS:
                 return new JSONPathProcessor(parameters);
             case CSS3_CLASS:

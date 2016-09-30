@@ -46,6 +46,10 @@ public class StdRMLEngine implements RMLEngine {
     
     public StdRMLEngine(String pathToNativeStore) {
         try {
+            if(pathToNativeStore == null){
+                pathToNativeStore = System.getProperty("user.dir");
+            }
+
             File file = new File(pathToNativeStore);
             String folder = file.getAbsoluteFile().getParent();
             File baseDir = new File(folder);
