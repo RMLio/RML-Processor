@@ -34,6 +34,8 @@ For instance, to run example1, execute the following command by replacing the pa
 
     java -jar target/RML-Processor-0.2.jar -m src/test/resources/example1/example.rml.ttl -o src/test/resources/example1/example1_test.output.nt
 
+Note: If not output file is provided, it writes to System.out.
+
 Remark
 -----
 
