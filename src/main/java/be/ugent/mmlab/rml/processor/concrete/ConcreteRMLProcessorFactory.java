@@ -51,6 +51,8 @@ public class ConcreteRMLProcessorFactory implements RMLProcessorFactory{
             //    return new XLSProcessor();
             case XLSX_CLASS:
                 return new XLSXProcessor(parameters);
+            case DBPEDIA_CLASS:
+                return new DBpediaProcessor(parameters);
             default:
                 log.error("The term " + term + " was not defined.");
                 return null;
