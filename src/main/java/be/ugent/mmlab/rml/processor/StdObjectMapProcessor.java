@@ -336,7 +336,9 @@ public class StdObjectMapProcessor implements ObjectMapProcessor {
             List<String> values = this.termMapProcessor.processFunctionTermMap(
                     functionTermMap, node, function, parameters);
             for (String value : values) {
-                valueList.add(vf.createLiteral(value.trim()));
+                if(value != null) {
+                    valueList.add(vf.createLiteral(value.trim()));
+                }
                 //valueList = this.termMapProcessor.applyTermType(value, valueList, functionTermMap);
             }
 
@@ -365,16 +367,34 @@ public class StdObjectMapProcessor implements ObjectMapProcessor {
                 factory.create(functionTriplesMap.getLogicalSource().getReferenceFormulation());
 
         String referenceValue;
+        String constantValue;
         Set<PredicateObjectMap> poms = functionTriplesMap.getPredicateObjectMaps();
         for(PredicateObjectMap pom : poms) {
             Value property = pom.getPredicateMaps().iterator().next().getConstantValue();
             String executes = FnVocabulary.FNO_NAMESPACE + FnVocabulary.FnTerm.EXECUTES;
             if(!property.stringValue().equals(executes)){
                 Value parameter = pom.getPredicateMaps().iterator().next().getConstantValue();
-                referenceValue = pom.getObjectMaps().iterator().next().getReferenceMap().getReference();
-                List<String> value = termMapProcessor.extractValueFromNode(node, referenceValue);
-
-                parameters.put(parameter.stringValue(),value.get(0));
+                try {
+                    referenceValue = pom.getObjectMaps().iterator().next().getReferenceMap().getReference();
+                } catch(Exception e) {
+                    referenceValue = null;
+                    System.err.println("No reference");
+                }
+                try {
+                    constantValue = pom.getObjectMaps().iterator().next().getConstantValue().stringValue();
+                } catch(Exception e) {
+                    constantValue = null;
+                    System.err.println("No constant value");
+                }
+                if(referenceValue != null) {
+                    List<String> value = termMapProcessor.extractValueFromNode(node, referenceValue);
+                    if(value.size() != 0) {
+                        parameters.put(parameter.stringValue(), value.get(0));
+                    }
+                } else if(constantValue != null) {
+                    parameters.put(parameter.stringValue(), constantValue);
+                }
+                //TODO from wmaroy: how to avoid this check?
             }
         }
 
