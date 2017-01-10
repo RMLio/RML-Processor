@@ -48,14 +48,14 @@ public class MapperTest
     /**
      * Tests
      */
-   public void testExample1() {
+    public void testExample1() {
         URL fileToRMLFile = getClass().getResource("/example1/example.rml.ttl");
         URL fileToOutputFile = getClass().getResource("/example1/example.output.ttl");
         assertTrue(desiredOutput(fileToOutputFile).isEqualTo(
                 assertMap(fileToRMLFile, null, null)));
     }
 
-   public void testExample1b() {
+    public void testExample1b() {
         URL fileToRMLFile = getClass().getResource("/example1/example1b.rml.ttl");
         URL fileToOutputFile = getClass().getResource("/example1/example.output.ttl");
         Map<String, String> parameters = new HashMap<String, String>();
@@ -328,6 +328,16 @@ public class MapperTest
     public void testExampleFnIsSet() {
         URL fileToRMLFile = getClass().getResource(
                 "/exampleFn/mapping_isSet.rml.ttl");
+        URL fileToOutputFile = getClass().getResource(
+                "/exampleFn/example.output.ttl");
+        String[] triplesMap = {"http://example.com/test#Person_TemplateMapping"};
+        assertTrue(desiredOutput(fileToOutputFile).isEqualTo(
+                assertMap(fileToRMLFile, null, triplesMap)));
+    }
+
+    public void testExampleFnSimilarity() {
+        URL fileToRMLFile = getClass().getResource(
+                "/exampleFn/mapping_similarity.rml.ttl");
         URL fileToOutputFile = getClass().getResource(
                 "/exampleFn/example.output.ttl");
         String[] triplesMap = {"http://example.com/test#Person_TemplateMapping"};
