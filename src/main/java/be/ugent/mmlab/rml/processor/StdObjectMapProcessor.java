@@ -331,7 +331,7 @@ public class StdObjectMapProcessor implements ObjectMapProcessor {
             }
 
             Map<String, String> parameters = retrieveParameters(node, functionTermMap.getFunctionTriplesMap());
-            String function = retrieveFunction(functionTermMap.getFunctionTriplesMap());
+            String function = functionTermMap.getFunction().toString();
 
             List<String> values = this.termMapProcessor.processFunctionTermMap(
                     functionTermMap, node, function, parameters);
@@ -345,19 +345,6 @@ public class StdObjectMapProcessor implements ObjectMapProcessor {
             log.debug("values are " + values);
             addTriples(dataset,subject,predicate,valueList,graphMap);
         }
-    }
-
-    private  String retrieveFunction(TriplesMap functionTriplesMap){
-        Set<PredicateObjectMap> poms = functionTriplesMap.getPredicateObjectMaps();
-        for(PredicateObjectMap pom : poms) {
-            Value propertyValue = pom.getPredicateMaps().iterator().next().getConstantValue();
-            String executes = FnVocabulary.FNO_NAMESPACE + FnVocabulary.FnTerm.EXECUTES;
-            if (propertyValue.stringValue().equals(executes)) {
-                String property = pom.getObjectMaps().iterator().next().getConstantValue().stringValue();
-                return property;
-            }
-        }
-        return null;
     }
 
     private Map<String,String> retrieveParameters(Object node, TriplesMap functionTriplesMap){
