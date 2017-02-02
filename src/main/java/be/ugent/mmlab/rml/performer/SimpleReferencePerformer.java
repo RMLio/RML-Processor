@@ -10,12 +10,13 @@ import be.ugent.mmlab.rml.processor.concrete.ConcreteTermMapFactory;
 import be.ugent.mmlab.rml.processor.concrete.TermMapProcessorFactory;
 import java.util.List;
 import java.util.Map;
+
+import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.openrdf.model.Resource;
-import org.openrdf.model.Statement;
-import org.openrdf.model.URI;
-import org.openrdf.model.impl.URIImpl;
+import org.eclipse.rdf4j.model.Resource;
+import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.model.IRI;
 
 /**
  * RML Processor
@@ -29,11 +30,11 @@ public class SimpleReferencePerformer extends NodeRMLPerformer {
             SimpleReferencePerformer.class.getSimpleName());
     
     private Resource subject;
-    private URI predicate;
+    private IRI predicate;
     private Resource graph;
     
     public SimpleReferencePerformer(
-            RMLProcessor processor, Resource subject, URI predicate, Resource graphMapValue) {
+            RMLProcessor processor, Resource subject, IRI predicate, Resource graphMapValue) {
         super(processor);
         this.subject = subject;
         this.predicate = predicate;
@@ -44,6 +45,8 @@ public class SimpleReferencePerformer extends NodeRMLPerformer {
     public boolean perform(Object node, RMLDataset dataset, TriplesMap map, 
         String[] exeTriplesMap, Map<String, String> parameters, boolean pomExecution) {
         boolean result = true;
+        SimpleValueFactory vf = SimpleValueFactory.getInstance();
+
         if(map.getSubjectMap().getTermType() == 
                 be.ugent.mmlab.rml.model.RDFTerm.TermType.BLANK_NODE 
           || map.getSubjectMap().getTermType() == 
@@ -102,7 +105,7 @@ public class SimpleReferencePerformer extends NodeRMLPerformer {
             List<String> values = 
                     termMapProcessor.processTermMap(map.getSubjectMap(), node);        
             for(String value : values){
-                Resource object = new URIImpl(value);
+                Resource object = vf.createIRI(value);
                 List<Statement> triples =
                         dataset.tuplePattern(subject, predicate, object);
                 if (triples.size() == 0) {

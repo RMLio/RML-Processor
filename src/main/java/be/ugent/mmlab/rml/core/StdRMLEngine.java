@@ -17,8 +17,8 @@ import java.io.InputStream;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import org.openrdf.repository.RepositoryException;
-import org.openrdf.repository.manager.LocalRepositoryManager;
+import org.eclipse.rdf4j.repository.RepositoryException;
+import org.eclipse.rdf4j.repository.manager.LocalRepositoryManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +46,10 @@ public class StdRMLEngine implements RMLEngine {
     
     public StdRMLEngine(String pathToNativeStore) {
         try {
+            if(pathToNativeStore == null){
+                pathToNativeStore = System.getProperty("user.dir");
+            }
+
             File file = new File(pathToNativeStore);
             String folder = file.getAbsoluteFile().getParent();
             File baseDir = new File(folder);
@@ -213,7 +217,8 @@ public class StdRMLEngine implements RMLEngine {
             Map<String, String> parameters, String[] exeTriplesMap, InputStream input) {
         SourceProcessor inputProcessor;
         
-
+        log.info("Generating RDF triples for "
+                + triplesMap.getName());
         //TODO: Add metadata that this Map Doc has that many Triples Maps
 
         log.info("Generating RML Processor..");
