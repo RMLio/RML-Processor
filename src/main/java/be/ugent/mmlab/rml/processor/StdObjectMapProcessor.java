@@ -333,17 +333,10 @@ public class StdObjectMapProcessor implements ObjectMapProcessor {
             Map<String, String> parameters = retrieveParameters(node, functionTermMap.getFunctionTriplesMap());
             String function = functionTermMap.getFunction().toString();
 
-            List<String> values = this.termMapProcessor.processFunctionTermMap(
+            List<Value> values = this.termMapProcessor.processFunctionTermMap(
                     functionTermMap, node, function, parameters);
-            for (String value : values) {
-                if(value != null) {
-                    valueList.add(vf.createLiteral(value.trim()));
-                }
-                //valueList = this.termMapProcessor.applyTermType(value, valueList, functionTermMap);
-            }
-
             log.debug("values are " + values);
-            addTriples(dataset,subject,predicate,valueList,graphMap);
+            addTriples(dataset,subject,predicate,values,graphMap);
         }
     }
 
