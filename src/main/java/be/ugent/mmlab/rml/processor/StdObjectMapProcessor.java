@@ -331,6 +331,8 @@ public class StdObjectMapProcessor implements ObjectMapProcessor {
             }
 
             Map<String, String> parameters = retrieveParameters(node, functionTermMap.getFunctionTriplesMap());
+
+            //parameters = functionTermMap.getParameterRefs();
             String function = functionTermMap.getFunction().toString();
 
             List<Value> values = this.termMapProcessor.processFunctionTermMap(
@@ -373,6 +375,9 @@ public class StdObjectMapProcessor implements ObjectMapProcessor {
                     }
                 } else if(constantValue != null) {
                     parameters.put(parameter.stringValue(), constantValue);
+                } else {
+                    // no value is present for this parameter, enter null
+                    parameters.put(parameter.stringValue(), "null"); //TODO wmaroy: change to proper uri for null
                 }
                 //TODO from wmaroy: how to avoid this check?
             }

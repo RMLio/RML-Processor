@@ -1,5 +1,6 @@
 package be.ugent.mmlab.rml.core;
 
+import be.ugent.mmlab.rml.model.PredicateObjectMap;
 import be.ugent.mmlab.rml.performer.NodeRMLPerformer;
 import be.ugent.mmlab.rml.model.dataset.FileDataset;
 import be.ugent.mmlab.rml.model.dataset.RMLDataset;
@@ -205,6 +206,7 @@ public class StdRMLEngine implements RMLEngine {
                     triplesMap.getLogicalSource().getReferenceFormulation(),
                     parameters, triplesMap);
         } catch (Exception ex) {
+            System.out.println(ex.getStackTrace());
             log.error("Exception " + ex + 
                     " There is no suitable processor for this reference formulation");
         }
@@ -215,6 +217,8 @@ public class StdRMLEngine implements RMLEngine {
     public RMLDataset startTriplesMapExecution(
             RMLDataset dataset, TriplesMap triplesMap, 
             Map<String, String> parameters, String[] exeTriplesMap, InputStream input) {
+
+
         SourceProcessor inputProcessor;
         
         log.info("Generating RDF triples for "
