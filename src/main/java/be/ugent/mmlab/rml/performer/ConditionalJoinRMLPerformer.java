@@ -18,10 +18,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.openrdf.model.Resource;
-import org.openrdf.model.Statement;
-import org.openrdf.model.URI;
-import org.openrdf.model.Value;
+import org.eclipse.rdf4j.model.Resource;
+import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Value;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,13 +40,13 @@ public class ConditionalJoinRMLPerformer extends NodeRMLPerformer{
     
     private HashMap<String, String> conditions;
     private Resource subject;
-    private URI predicate;
+    private IRI predicate;
     private Resource graph;
     private Resource metric;
 
     public ConditionalJoinRMLPerformer(
             RMLProcessor processor, HashMap<String, String> conditions, 
-            Resource subject, URI predicate, Resource graph) {
+            Resource subject, IRI predicate, Resource graph) {
         super(processor);
         this.conditions = conditions;
         this.subject = subject;
@@ -55,7 +55,7 @@ public class ConditionalJoinRMLPerformer extends NodeRMLPerformer{
     
     public ConditionalJoinRMLPerformer(
             RMLProcessor processor, HashMap<String, String> conditions, 
-            Resource subject, URI predicate, Resource graph, Resource metric) {
+            Resource subject, IRI predicate, Resource graph, Resource metric) {
         super(processor);
         this.conditions = conditions;
         this.subject = subject;
@@ -65,7 +65,7 @@ public class ConditionalJoinRMLPerformer extends NodeRMLPerformer{
     }
     
     public ConditionalJoinRMLPerformer(
-            RMLProcessor processor, Resource subject, URI predicate) {
+            RMLProcessor processor, Resource subject, IRI predicate) {
         super(processor);
         this.subject = subject;
         this.predicate = predicate;

@@ -12,7 +12,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.util.Map;
 import org.apache.commons.io.IOUtils;
-import org.openrdf.model.Resource;
+import org.eclipse.rdf4j.model.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

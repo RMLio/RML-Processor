@@ -4,8 +4,11 @@
 *.jar
 *.war
 *.ear
+*.iml
 
 target/
+log/
+.idea/
 .DS_Store
 nb-configuration.xml
 nbactions.xml

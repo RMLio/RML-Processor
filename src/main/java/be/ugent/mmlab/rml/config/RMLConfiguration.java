@@ -1,6 +1,5 @@
 package be.ugent.mmlab.rml.config;
 
-import static be.ugent.mmlab.rml.config.RMLConfiguration.getCliOptions;
 import java.io.File;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;

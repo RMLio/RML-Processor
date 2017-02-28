@@ -4,8 +4,8 @@ import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.RMLProcessor;
 import be.ugent.mmlab.rml.processor.RMLProcessorFactory;
 import be.ugent.mmlab.rml.vocabularies.QLVocabulary.QLTerm;
-import static be.ugent.mmlab.rml.vocabularies.QLVocabulary.QLTerm.CSV_CLASS;
 import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,6 +42,7 @@ public class ConcreteRMLProcessorFactory implements RMLProcessorFactory{
                 //SQL reference formulation
                 //but check first if custom defined one
                 return new JdbcProcessor(parameters);
+
             case JSONPATH_CLASS:
                 return new JSONPathProcessor(parameters);
             case CSS3_CLASS:
@@ -50,6 +51,8 @@ public class ConcreteRMLProcessorFactory implements RMLProcessorFactory{
             //    return new XLSProcessor();
             case XLSX_CLASS:
                 return new XLSXProcessor(parameters);
+            case DBPEDIA_CLASS:
+                return new DBpediaProcessor(parameters);
             default:
                 log.error("The term " + term + " was not defined.");
                 return null;

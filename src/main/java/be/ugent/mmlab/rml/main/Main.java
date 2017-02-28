@@ -11,8 +11,8 @@ import java.util.HashMap;
 import java.util.Map;
 import org.apache.commons.cli.CommandLine;
 import org.apache.log4j.BasicConfigurator;
-import org.openrdf.repository.Repository;
-import org.openrdf.rio.RDFFormat;
+import org.eclipse.rdf4j.repository.Repository;
+import org.eclipse.rdf4j.rio.RDFFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

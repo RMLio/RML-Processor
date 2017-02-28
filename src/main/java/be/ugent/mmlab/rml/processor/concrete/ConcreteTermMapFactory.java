@@ -1,19 +1,9 @@
 package be.ugent.mmlab.rml.processor.concrete;
 
 import be.ugent.mmlab.rml.logicalsourcehandler.termmap.TermMapProcessor;
-import be.ugent.mmlab.rml.logicalsourcehandler.termmap.concrete.CSS3TermMapProcessor;
-import be.ugent.mmlab.rml.logicalsourcehandler.termmap.concrete.CSVTermMapProcessor;
-import be.ugent.mmlab.rml.logicalsourcehandler.termmap.concrete.JSONPathTermMapProcessor;
-import be.ugent.mmlab.rml.logicalsourcehandler.termmap.concrete.SQLTermMapProcessor;
-import be.ugent.mmlab.rml.logicalsourcehandler.termmap.concrete.XPathTermMapProcessor;
+import be.ugent.mmlab.rml.logicalsourcehandler.termmap.concrete.*;
 import be.ugent.mmlab.rml.processor.RMLProcessor;
 import be.ugent.mmlab.rml.vocabularies.QLVocabulary.QLTerm;
-import static be.ugent.mmlab.rml.vocabularies.QLVocabulary.QLTerm.CSS3_CLASS;
-import static be.ugent.mmlab.rml.vocabularies.QLVocabulary.QLTerm.CSV_CLASS;
-import static be.ugent.mmlab.rml.vocabularies.QLVocabulary.QLTerm.JSONPATH_CLASS;
-import static be.ugent.mmlab.rml.vocabularies.QLVocabulary.QLTerm.XLSX_CLASS;
-import static be.ugent.mmlab.rml.vocabularies.QLVocabulary.QLTerm.XLS_CLASS;
-import static be.ugent.mmlab.rml.vocabularies.QLVocabulary.QLTerm.XPATH_CLASS;
 import jlibs.xml.DefaultNamespaceContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,6 +50,8 @@ public class ConcreteTermMapFactory implements TermMapProcessorFactory {
                 return new CSVTermMapProcessor();
             case XLSX_CLASS:
                 return new CSVTermMapProcessor();
+            case DBPEDIA_CLASS:
+                return new DBpediaTermMapProcessor();
             default:
                 log.error("The term " + term + " was not defined.");
                 return null;
@@ -82,6 +74,8 @@ public class ConcreteTermMapFactory implements TermMapProcessorFactory {
                 return new CSVTermMapProcessor();
             case XLSX_CLASS:
                 return new CSVTermMapProcessor();
+            case DBPEDIA_CLASS:
+                return new DBpediaTermMapProcessor();
             default:
                 log.error("The term " + term + "was not defined.");
                 return null;

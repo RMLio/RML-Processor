@@ -3,7 +3,7 @@ package be.ugent.mmlab.rml.processor;
 import be.ugent.mmlab.rml.model.RDFTerm.SubjectMap;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.model.dataset.RMLDataset;
-import org.openrdf.model.Resource;
+import org.eclipse.rdf4j.model.Resource;
 
 /**
  *
