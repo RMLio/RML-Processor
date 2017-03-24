@@ -98,6 +98,7 @@
     </dependency>
   </dependencies>
   <properties>
+    <sesame.version>2.8.6</sesame.version>
     <jsonpath.version>2.2.0</jsonpath.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
