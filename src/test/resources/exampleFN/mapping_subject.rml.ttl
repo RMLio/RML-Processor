@@ -88,6 +88,7 @@
 <#RestingPlace_SubjectMap>
 	a fnml:FunctionTermMap ;
     	fnml:functionValue <#FunctionValueSubjectIntermediateMapping> ;
+    	rr:datatype rr:IRI ;
 	rr:class ex:RestPlace .
 
 <#FunctionMapIsSetIntermediateCoordinatesGeoMapping>
