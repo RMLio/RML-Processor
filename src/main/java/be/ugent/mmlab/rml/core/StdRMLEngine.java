@@ -1,5 +1,6 @@
 package be.ugent.mmlab.rml.core;
 
+import be.ugent.mmlab.rml.model.PredicateObjectMap;
 import be.ugent.mmlab.rml.performer.NodeRMLPerformer;
 import be.ugent.mmlab.rml.model.dataset.FileDataset;
 import be.ugent.mmlab.rml.model.dataset.RMLDataset;
@@ -17,8 +18,8 @@ import java.io.InputStream;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import org.openrdf.repository.RepositoryException;
-import org.openrdf.repository.manager.LocalRepositoryManager;
+import org.eclipse.rdf4j.repository.RepositoryException;
+import org.eclipse.rdf4j.repository.manager.LocalRepositoryManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +47,10 @@ public class StdRMLEngine implements RMLEngine {
     
     public StdRMLEngine(String pathToNativeStore) {
         try {
+            if(pathToNativeStore == null){
+                pathToNativeStore = System.getProperty("user.dir");
+            }
+
             File file = new File(pathToNativeStore);
             String folder = file.getAbsoluteFile().getParent();
             File baseDir = new File(folder);
@@ -98,7 +103,7 @@ public class StdRMLEngine implements RMLEngine {
         
         log.debug("Generating triples..");
         dataset = generateRDFTriples(
-                dataset, rmlMapping, parameters, exeTriplesMap);
+                dataset, rmlMapping, parameters, exeTriplesMap,null);
         
         //log.debug("Generating dataset metadata..");
         generateBasicMetadataInfo(dataset, startTime);
@@ -132,9 +137,9 @@ public class StdRMLEngine implements RMLEngine {
      *
      * @param rmlMapping
      */
-    protected RMLDataset generateRDFTriples(
+    public RMLDataset generateRDFTriples(
             RMLDataset dataset, RMLMapping rmlMapping, 
-            Map<String, String> parameters, String[] exeTriplesMap) {
+            Map<String, String> parameters, String[] exeTriplesMap, InputStream input) {
 
         log.debug("Generate RDF triples... ");
         Collection<TriplesMap> triplesMaps;
@@ -152,7 +157,7 @@ public class StdRMLEngine implements RMLEngine {
 
         for (TriplesMap triplesMap : triplesMaps) {
             dataset = this.generateTriplesMapTriples(
-                    triplesMap, parameters, exeTriplesMap, dataset);
+                    triplesMap, parameters, exeTriplesMap, dataset, input);
         }
 
         return dataset;
@@ -161,7 +166,7 @@ public class StdRMLEngine implements RMLEngine {
     @Override
     public RMLDataset generateTriplesMapTriples(
             TriplesMap triplesMap, Map<String, String> parameters,
-            String[] exeTriplesMap, RMLDataset dataset) {
+            String[] exeTriplesMap, RMLDataset dataset, InputStream input) {
         boolean flag ;
 
         if (exeTriplesMap != null) {
@@ -172,13 +177,13 @@ public class StdRMLEngine implements RMLEngine {
                         checkExecutionList(triplesMap, exeTM);
 
                 if (flag) {
-                    startTriplesMapExecution(dataset, triplesMap, parameters, exeTriplesMap);
+                    startTriplesMapExecution(dataset, triplesMap, parameters, exeTriplesMap, input);
                 }
 
             }
         }
         else {
-            startTriplesMapExecution(dataset, triplesMap, parameters, exeTriplesMap);
+            startTriplesMapExecution(dataset, triplesMap, parameters, exeTriplesMap, input);
         }
         
         return dataset;
@@ -201,6 +206,7 @@ public class StdRMLEngine implements RMLEngine {
                     triplesMap.getLogicalSource().getReferenceFormulation(),
                     parameters, triplesMap);
         } catch (Exception ex) {
+            System.out.println(ex.getStackTrace());
             log.error("Exception " + ex + 
                     " There is no suitable processor for this reference formulation");
         }
@@ -210,10 +216,12 @@ public class StdRMLEngine implements RMLEngine {
     
     public RMLDataset startTriplesMapExecution(
             RMLDataset dataset, TriplesMap triplesMap, 
-            Map<String, String> parameters, String[] exeTriplesMap) {
+            Map<String, String> parameters, String[] exeTriplesMap, InputStream input) {
+
+
         SourceProcessor inputProcessor;
         
-        System.out.println("Generating RDF triples for "
+        log.info("Generating RDF triples for "
                 + triplesMap.getName());
         //TODO: Add metadata that this Map Doc has that many Triples Maps
 
@@ -224,9 +232,13 @@ public class StdRMLEngine implements RMLEngine {
             log.info("Generating Data Retrieval Processor..");
             inputProcessor =
                     generateInputProcessor(triplesMap);
+            if(inputProcessor == null){
+                dataset = processInputStream(processor, inputProcessor,
+                        triplesMap, parameters, exeTriplesMap, dataset, input);
+            }
             do {
                 dataset = processInputStream(processor, inputProcessor,
-                        triplesMap, parameters, exeTriplesMap, dataset);
+                        triplesMap, parameters, exeTriplesMap, dataset, input);
             } while (inputProcessor.hasNextInputStream());
         }
         return dataset;
@@ -248,12 +260,13 @@ public class StdRMLEngine implements RMLEngine {
     protected RMLDataset processInputStream(
             RMLProcessor processor, SourceProcessor inputProcessor, 
             TriplesMap triplesMap, Map<String, String> parameters,
-            String[] exeTriplesMap, RMLDataset dataset) {
-        InputStream input = null;
+            String[] exeTriplesMap, RMLDataset dataset, InputStream input) {
+        //InputStream input = null;
         
         log.debug("Generating Input Stream..");
         try {
-            input = inputProcessor.getInputStream(
+            if(input == null)
+                input = inputProcessor.getInputStream(
                     triplesMap.getLogicalSource(), parameters);
         } catch (Exception ex) {
             log.error("Exception ex " + ex);

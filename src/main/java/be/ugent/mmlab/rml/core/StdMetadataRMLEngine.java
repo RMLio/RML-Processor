@@ -8,10 +8,8 @@ import be.ugent.mmlab.rml.model.dataset.MetadataRMLDataset;
 import be.ugent.mmlab.rml.model.dataset.RMLDataset;
 import be.ugent.mmlab.rml.model.dataset.StdRMLDataset;
 import be.ugent.mmlab.rml.processor.RMLProcessor;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
@@ -19,17 +17,17 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import org.apache.commons.io.FileUtils;
-import org.openrdf.repository.Repository;
-import org.openrdf.repository.RepositoryConnection;
-import org.openrdf.repository.RepositoryException;
-import org.openrdf.repository.config.RepositoryConfig;
-import org.openrdf.repository.config.RepositoryConfigException;
-import org.openrdf.repository.sail.config.SailRepositoryConfig;
-import org.openrdf.rio.RDFFormat;
-import org.openrdf.rio.RDFHandlerException;
-import org.openrdf.rio.RDFWriter;
-import org.openrdf.rio.Rio;
-import org.openrdf.sail.nativerdf.config.NativeStoreConfig;
+import org.eclipse.rdf4j.repository.Repository;
+import org.eclipse.rdf4j.repository.RepositoryConnection;
+import org.eclipse.rdf4j.repository.RepositoryException;
+import org.eclipse.rdf4j.repository.config.RepositoryConfig;
+import org.eclipse.rdf4j.repository.config.RepositoryConfigException;
+import org.eclipse.rdf4j.repository.sail.config.SailRepositoryConfig;
+import org.eclipse.rdf4j.rio.RDFFormat;
+import org.eclipse.rdf4j.rio.RDFHandlerException;
+import org.eclipse.rdf4j.rio.RDFWriter;
+import org.eclipse.rdf4j.rio.Rio;
+import org.eclipse.rdf4j.sail.nativerdf.config.NativeStoreConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -171,7 +169,7 @@ public class StdMetadataRMLEngine extends StdRMLEngine {
     @Override
     public RMLDataset generateTriplesMapTriples(
             TriplesMap triplesMap, Map<String, String> parameters,
-            String[] exeTriplesMap, RMLDataset originalDataset) {
+            String[] exeTriplesMap, RMLDataset originalDataset, InputStream input) {
         MetadataRMLDataset dataset = (MetadataRMLDataset) originalDataset;
         Repository repository ;
         log.debug("Generating Triples Map triples with metadata");
@@ -199,7 +197,7 @@ public class StdMetadataRMLEngine extends StdRMLEngine {
 
             dataset.setNumbers();
             dataset = (MetadataRMLDataset) super.generateTriplesMapTriples(
-                    triplesMap, parameters, exeTriplesMap, dataset);
+                    triplesMap, parameters, exeTriplesMap, dataset, input);
                   
         } else {
             log.debug("Default repository");
@@ -217,7 +215,7 @@ public class StdMetadataRMLEngine extends StdRMLEngine {
                 log.error("Repository Exception " + ex);
             }
             dataset = (MetadataFileDataset) super.generateTriplesMapTriples(
-                    triplesMap, parameters, exeTriplesMap, dataset);
+                    triplesMap, parameters, exeTriplesMap, dataset, input);
         }
         
         sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX");
