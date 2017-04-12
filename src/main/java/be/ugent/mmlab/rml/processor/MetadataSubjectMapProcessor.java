@@ -73,7 +73,7 @@ public class MetadataSubjectMapProcessor extends StdSubjectMapProcessor implemen
                         if (dataset.getMetadataLevel().equals("triple")) {
                             if (flag == true) {
                                 metadataGenerator.generateTripleMetaData(dataset,
-                                        map, subject, RDF.TYPE, classIRI);
+                                        map, subject, RDF.TYPE, classIRI, null);
                             }
                         }
                     }

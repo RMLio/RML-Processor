@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author mielvandersande, andimou
  */
+//TODO: Remove ConditionalJoinRMLPerformer, never used
 public class ConditionalJoinRMLPerformer extends NodeRMLPerformer{
     private TermMapProcessor termMapProcessor ;
     
@@ -40,11 +41,12 @@ public class ConditionalJoinRMLPerformer extends NodeRMLPerformer{
     private HashMap<String, String> conditions;
     private Resource subject;
     private URI predicate;
+    private Resource graph;
     private Resource metric;
 
     public ConditionalJoinRMLPerformer(
             RMLProcessor processor, HashMap<String, String> conditions, 
-            Resource subject, URI predicate) {
+            Resource subject, URI predicate, Resource graph) {
         super(processor);
         this.conditions = conditions;
         this.subject = subject;
@@ -53,11 +55,12 @@ public class ConditionalJoinRMLPerformer extends NodeRMLPerformer{
     
     public ConditionalJoinRMLPerformer(
             RMLProcessor processor, HashMap<String, String> conditions, 
-            Resource subject, URI predicate, Resource metric) {
+            Resource subject, URI predicate, Resource graph, Resource metric) {
         super(processor);
         this.conditions = conditions;
         this.subject = subject;
         this.predicate = predicate;
+        this.graph = graph;
         this.metric = metric;
     }
     
@@ -76,10 +79,10 @@ public class ConditionalJoinRMLPerformer extends NodeRMLPerformer{
      * @param map 
      */
     @Override
-    public void perform(Object node, RMLDataset dataset, TriplesMap map, 
+    public boolean perform(Object node, RMLDataset dataset, TriplesMap map, 
     String[] exeTriplesMap, Map<String, String> parameters, boolean pomExecution) {
         Value object;
-        log.debug("Performing Conditional Join RML Performer....");
+        boolean result = false;
 
         //iterate the conditions, execute the expressions and compare both values
         if(conditions != null){
@@ -103,26 +106,27 @@ public class ConditionalJoinRMLPerformer extends NodeRMLPerformer{
             }
             
             if (flag) {
-                boolean result = true;
+                boolean condResult = true;
                 if (map.getSubjectMap().getClass().getSimpleName().equals("StdConditionSubjectMap")) {
                     log.debug("Conditional Subject Map");
                     StdConditionSubjectMap condSubMap =
                             (StdConditionSubjectMap) map.getSubjectMap();
                     Set<Condition> conditions = condSubMap.getConditions();
                     ConditionProcessor condProcessor = new StdConditionProcessor();
-                    result = condProcessor.processConditions(node, termMapProcessor, conditions);
+                    condResult = condProcessor.processConditions(node, termMapProcessor, conditions);
                 }
-                if (result) {
+                if (condResult) {
                     object = processor.processSubjectMap(this.processor, dataset,
                             map, map.getSubjectMap(), node, exeTriplesMap);
                     if (subject != null && object != null) {
                         List<Statement> triples =
                                 dataset.tuplePattern(subject, predicate, object);
                         if (triples.size() == 0) {
-                            dataset.add(subject, predicate, object);
+                            dataset.add(subject, predicate, object, graph);
                             log.debug("Subject " + subject
                                     + " Predicate " + predicate
                                     + " Object " + object.toString());
+                            result = true;
                         }
 
                         if (exeTriplesMap != null) {
@@ -148,23 +152,24 @@ public class ConditionalJoinRMLPerformer extends NodeRMLPerformer{
                     }
                 }
             }
-        }  
+        }
+        return result;
     }
     
     //TODO: Move that in a separate class
     private boolean equalityMetric(List<String> values, String cond) {
-        log.debug("Equality Metric...");
+        
         boolean flag = false ;
         //TODO: check if it stops as soon as it finds something
         for (String value : values) {
-            log.info("Value " + value + " is compared to " + cond);
+            //log.debug("Value " + value + " is compared to " + cond);
 
             if (value == null) {
                 log.debug("Null value...");
                 flag = false;
                 break;
             } else if (this.metric == null) {
-                log.debug("No metric...");
+                //log.debug("No metric...");
                 if((value.equals(cond)))
                     flag = true;
                 break;

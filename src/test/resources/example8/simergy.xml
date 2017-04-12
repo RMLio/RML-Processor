@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <SimModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-          xmlns="http://www.lbl.gov/namespaces/Sim/Model" 
+          xmlns:simmodel="http://www.lbl.gov/namespaces/Sim/Model" 
           xmlns:simcore="http://www.lbl.gov/namespaces/Sim/SimModelCore" 
           xmlns:simres="http://www.lbl.gov/namespaces/Sim/ResourcesGeneral" 
           xmlns:simgeom="http://www.lbl.gov/namespaces/Sim/ResourcesGeometry" 

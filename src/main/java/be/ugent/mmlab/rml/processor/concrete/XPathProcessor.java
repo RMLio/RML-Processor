@@ -1,5 +1,7 @@
 package be.ugent.mmlab.rml.processor.concrete;
 
+import be.ugent.mmlab.rml.input.processor.AbstractInputProcessor;
+import be.ugent.mmlab.rml.input.processor.SourceProcessor;
 import be.ugent.mmlab.rml.model.dataset.RMLDataset;
 import be.ugent.mmlab.rml.performer.NodeRMLPerformer;
 import be.ugent.mmlab.rml.performer.RMLPerformer;
@@ -9,18 +11,10 @@ import be.ugent.mmlab.rml.processor.RMLProcessor;
 import be.ugent.mmlab.rml.processor.RMLProcessorFactory;
 import be.ugent.mmlab.rml.xml.XOMBuilder;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Collection;
+import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 import javax.xml.xpath.XPathException;
 import jlibs.xml.DefaultNamespaceContext;
 import jlibs.xml.Namespaces;
@@ -66,62 +60,54 @@ public class XPathProcessor extends AbstractRMLProcessor {
         //Add at least xsd namespace
         this.nsContext.addNamespace("xsd", Namespaces.URI_XSD);
         dnc.declarePrefix("xsd", Namespaces.URI_XSD);
+        dnc.declarePrefix("sparql", "http://www.w3.org/2005/sparql-results#");
         nsContext = new XPathContext("xsd", Namespaces.URI_XSD);
         this.parameters = parameters;
     }
     
+    public XPathProcessor(Map<String, String> parameters, TriplesMap map){
+        dnc = new DefaultNamespaceContext();
+        nsContext = new XPathContext();
+        
+        //Add at least xsd namespace
+        this.nsContext.addNamespace("xsd", Namespaces.URI_XSD);
+        dnc.declarePrefix("xsd", Namespaces.URI_XSD);
+        dnc.declarePrefix("sparql", "http://www.w3.org/2005/sparql-results#");
+        dnc = get_namespaces(map);
+        this.parameters = parameters;
+    }
+    
+    
     private DefaultNamespaceContext get_namespaces(
             TriplesMap map) {
-        String filepath = 
-                map.getLogicalSource().getSource().getTemplate().toString();
-
+        if(dnc == null){
+            dnc = new DefaultNamespaceContext();
+        }
+        XMLDog dog = new XMLDog(dnc);
         try {
-            Scanner s = new Scanner(new FileInputStream(filepath)).useDelimiter("\\?>");
-            if (s.hasNext()) {
-                String root = s.next();
-                String[] subroot = root.split("xmlns:");
-                
-                if (subroot.length > 1) {
-                    String[] namespace = subroot[1].split("=");
-                    this.nsContext.addNamespace(namespace[0], namespace[1].replace("\"", ""));
-                    nsContext = new XPathContext(namespace[0], namespace[1].replace("\"", ""));
-
-                    dnc.declarePrefix(namespace[0], namespace[1].replace("\"", ""));
-                    Path path = Paths.get(filepath);
-                    Charset charset = StandardCharsets.UTF_8;
-                    String content;
-                    try {
-                        content = new String(Files.readAllBytes(path), charset);
-                        content = content.replaceAll(" xmlns:.*\\?>", "\\?>");
-                        Files.write(path, content.getBytes(charset));
-                    } catch (IOException ex) {
-                        log.error("IO Exception " + ex);
-                    }
-                }
-                
-                XMLDog dog = new XMLDog(dnc);
-                try {
-                    Expression xpath = dog.addXPath("/*/namespace::*[name()]");
-                    InputSource source = new InputSource(
-                            map.getLogicalSource().getSource().getTemplate());
-                    XPathResults results = dog.sniff(source);
-
-                    if (results != null) {
-                        Collection<NodeItem> result =
-                                (Collection<NodeItem>) results.getResult(xpath);
-                        for (NodeItem res : result) {
-                            this.nsContext.addNamespace(res.qualifiedName, res.value);
-                            dnc.declarePrefix(res.qualifiedName, res.value);
-                        }
-                    }
-                } catch (SAXPathException ex) {
-                    log.error("SAX Path Exception: " + ex);
-                } catch (XPathException ex) {
-                    log.error("XPath Exception: " + ex);
-                } 
+            Expression xpath = dog.addXPath("//*/namespace::*[name()]");
+            //log.debug("XPath to be evaluated " + xpath);
+            SourceProcessor inputProcessor = new AbstractInputProcessor();
+                       
+            InputStream input = inputProcessor.getInputStream(
+                    map.getLogicalSource(), parameters);
+            XPathResults results = dog.sniff(
+                    new InputSource(input));
+            
+            List<NodeItem> namespacesPaths = 
+                    (List<NodeItem>) results.getResult(xpath);
+            //log.debug("namespaces paths " + namespacesPaths);
+            for (NodeItem namespacePath : namespacesPaths) {
+                this.nsContext.addNamespace(namespacePath.qualifiedName, namespacePath.value);
+                dnc.declarePrefix(namespacePath.qualifiedName, namespacePath.value);
             }
-        } catch (FileNotFoundException ex) {
-            log.error("File Not Found Exception " + ex);
+            input.close();
+        } catch (SAXPathException ex) {
+            log.error("SAX Path Exception: " + ex);
+        } catch (XPathException ex) {
+            log.error("XPath Exception " + ex);
+        } catch (IOException ex) {
+            log.error("IO Exception " + ex);
         }
         return dnc;
     }
@@ -132,7 +118,7 @@ public class XPathProcessor extends AbstractRMLProcessor {
     }
     
     public String execute(Node node, String expression) throws SaxonApiException {
-
+            //log.debug("node is " + node.toString());
             Processor proc = new Processor(false);
             XPathCompiler xpath = proc.newXPathCompiler();
             DocumentBuilder builder = proc.newDocumentBuilder();
@@ -157,8 +143,9 @@ public class XPathProcessor extends AbstractRMLProcessor {
     
     @Override
     public void execute(final RMLDataset dataset, final TriplesMap map, 
-        final RMLPerformer performer, InputStream input, 
-        final String[] exeTriplesMap, final boolean pomExecution) {      
+        final RMLPerformer performer, final InputStream input, 
+        final String[] exeTriplesMap, final boolean pomExecution) { 
+        
         try {
             this.map = map;
             String reference = getReference(map.getLogicalSource());
@@ -166,7 +153,7 @@ public class XPathProcessor extends AbstractRMLProcessor {
             dnc = get_namespaces(map);
 
             XMLDog dog = new XMLDog(dnc);
-            //XMLDog dog = get_namespaces(input);
+
             //adding expression to the xpathprocessor
             dog.addXPath(reference);
 
@@ -175,33 +162,44 @@ public class XPathProcessor extends AbstractRMLProcessor {
             //event.setXMLBuilder(new DOMBuilder());
             //use XOM now
             event.setXMLBuilder(new XOMBuilder());
-            
+            InputSource source = new InputSource(input);
+                
             event.setListener(new InstantEvaluationListener() {
+                boolean finalResult = false;
                 //When an XPath expression matches
                 @Override
                 public void onNodeHit(
                         Expression expression, NodeItem nodeItem) {
+                    
                     //log.debug("Expression " + expression);
                     Node node = (Node) nodeItem.xml;
+                    //log.debug("node is " + node.toXML().toString());
                     //Let the performer do its thing
-                    performer.perform(node, dataset, map, exeTriplesMap, 
+                    boolean result = performer.perform(node, dataset, map, exeTriplesMap, 
                             parameters, pomExecution);
+                    if(result == true){
+                        finalResult = result;
+                    }
                 }
 
                 @Override
                 public void finishedNodeSet(Expression expression) {
+                    log.debug("All iterations are finished and the final result is " + finalResult);
+                    setStatus(finalResult);
                     //System.out.println("Finished Nodeset: " + expression.getXPath());
                 }
 
                 @Override
                 public void onResult(Expression expression, Object result) {
+                    log.debug("Node is resulted");
                     // this method is called only for xpaths which returns primitive result
                     // i.e result will be one of String, Boolean, Double
                     //System.out.println("XPath: " + expression.getXPath() + " result: " + result);
                 }
             });
+            
             //Execute the streaming
-            dog.sniff(event, new InputSource((FileInputStream) input));
+            dog.sniff(event, source);
         } catch (SAXPathException ex) {
             log.error("SAXPathException " + ex);
         } catch (XPathException ex) {
@@ -210,15 +208,20 @@ public class XPathProcessor extends AbstractRMLProcessor {
         } 
     }
     
+    public void setStatus(boolean status){
+        this.setIterationStatus(status);
+    }
+    
     @Override
     public void execute_node(
             RMLDataset dataset, String expression, 
             TriplesMap parentTriplesMap, RMLPerformer performer, Object node, 
             Resource subject, String[] exeTriplesMap, boolean pomExecution) {
+        boolean result = false;
         //still need to make it work with more nore-results 
         //currently it handles only one
         log.debug("Execute node..");
-    
+        //log.debug("node is " + node.toString());
         if(expression.startsWith("/"))
             expression = expression.substring(1);
         
@@ -233,7 +236,9 @@ public class XPathProcessor extends AbstractRMLProcessor {
             else{
                 RMLProcessorFactory factory = new ConcreteRMLProcessorFactory();
                 RMLProcessor subprocessor = 
-                        factory.create(map.getLogicalSource().getReferenceFormulation(), parameters);
+                        factory.create(
+                        map.getLogicalSource().getReferenceFormulation(), 
+                        parameters, parentTriplesMap);
                 RMLPerformer subperformer = new NodeRMLPerformer(subprocessor);
                 subperformer.perform(
                         n, dataset, parentTriplesMap, subject, exeTriplesMap);
@@ -242,7 +247,7 @@ public class XPathProcessor extends AbstractRMLProcessor {
 
     }
     
-    public XPathContext getNamespaces(){
-        return nsContext;
+    public DefaultNamespaceContext getNamespaces(){
+        return dnc;
     }
 }

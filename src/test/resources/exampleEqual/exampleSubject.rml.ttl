@@ -17,14 +17,13 @@
 
 <#AirportMapping>
     rml:logicalSource [
-	rml:source "src/test/resources/exampleNegationOf/Airport.csv";
+	rml:source "src/test/resources/exampleEqual/Airport.csv";
         rml:referenceFormulation ql:CSV
     ];
     rr:subjectMap [
 	 rr:template "http://airport.example.com/{id}";
-	 rr:class transit:Stop ;
-         crml:negationOf [ 
-            crml:booleanCondition <#BooleanCondition> ]
+	 rr:class transit:Stop ; 
+         crml:equalCondition <#BooleanCondition> 
     ];
     rr:predicateObjectMap [
 	rr:predicateMap [
@@ -41,7 +40,7 @@
 
 <#BusMapping>
     rml:logicalSource[
-      rml:source "src/test/resources/exampleNegationOf/Transport.xml";
+      rml:source "src/test/resources/exampleEqual/Transport.xml";
       rml:iterator "/transport/bus";
       rml:referenceFormulation ql:XPath;
     ];
@@ -60,7 +59,7 @@
 
 <#BusStopMapping>
     rml:logicalSource [
-      rml:source "src/test/resources/example3/Transport.xml";
+      rml:source "src/test/resources/exampleEqual/Transport.xml";
       rml:iterator "/transport/bus/route/stop";
       rml:referenceFormulation ql:XPath;
     ];
@@ -70,7 +69,7 @@
     ] .
 
 <#BooleanCondition>
-    crml:condition """match(%%id%%,\"6523\")""" ;
+    crml:condition """!match(%%id%%,\"6523\")""" ;
     crml:binding [
         crml:variable "id" ;
         rml:reference "id" ] .

@@ -31,7 +31,7 @@ public class XLSXProcessor extends AbstractRMLProcessor {
     
     // Log
     private static final Logger log = 
-            LoggerFactory.getLogger(XLSXProcessor.class);
+            LoggerFactory.getLogger(XLSXProcessor.class.getSimpleName());
     
     XLSXProcessor(Map<String, String> parameters){
         TermMapProcessorFactory factory = new ConcreteTermMapFactory();
