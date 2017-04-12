@@ -26,71 +26,70 @@ import org.openrdf.model.Resource;
  */
 public class CSVProcessor extends AbstractRMLProcessor {
 
-    // Log
-    private static final Logger log = 
-            LoggerFactory.getLogger(CSVProcessor.class);
-    
-    CSVProcessor(Map<String, String> parameters){
-        TermMapProcessorFactory factory = new ConcreteTermMapFactory();
-        this.termMapProcessor = factory.create(QLTerm.CSV_CLASS);
-        this.parameters = parameters;
-    }
-    
-    private char getDelimiter(LogicalSource ls) {
-        String d = null;
-        CsvwReferenceFormulation refForm =
-                (CsvwReferenceFormulation) ls.getCustomReferenceFormulation();
-        if (refForm == null) {
-            return ',';
-        } else {
-            d = refForm.getDelimiter();
-            if (d == null) {
-                return ',';
-            }
-        }
-        return d.charAt(0);
-    }
+	// Log
+	private static final Logger log = LoggerFactory.getLogger(CSVProcessor.class);
 
-    @Override
-    public void execute(RMLDataset dataset, TriplesMap map, 
-    RMLPerformer performer, InputStream input, 
-    String[] exeTriplesMap, boolean pomExecution) {
-        boolean result = false;
-    ++enumerator;
-        try {
-            char delimiter = getDelimiter(map.getLogicalSource());
+	CSVProcessor(Map<String, String> parameters) {
+		TermMapProcessorFactory factory = new ConcreteTermMapFactory();
+		this.termMapProcessor = factory.create(QLTerm.CSV_CLASS);
+		this.parameters = parameters;
+	}
 
-            //TODO: add charset guessing
-            CsvReader reader = new CsvReader(input, Charset.defaultCharset());
-            reader.setDelimiter(delimiter);
-            
-            reader.readHeaders();
-            //Iterate the rows
-            while (reader.readRecord()) {
-                HashMap<String, String> row = new HashMap<>();
-               for (String header : reader.getHeaders()) {
-                   row.put(new String(header.getBytes("iso8859-1"), UTF_8), reader.get(header));
-                }
-                //let the performer handle the rows
-                result = performer.perform(
-                        row, dataset, map, exeTriplesMap, parameters, pomExecution);
-            }
+	private char getDelimiter(LogicalSource ls) {
+		String d = null;
+		CsvwReferenceFormulation csvwRef = (CsvwReferenceFormulation) ls.getCustomReferenceFormulation();
+		if (csvwRef == null) {
+			return ',';
+		} else {
+			d = csvwRef.getDelimiter();
+			if (d == null) {
+				return ',';
+			}
+		}
+		return d.charAt(0);
+	}
 
-        } catch (FileNotFoundException ex) {
-            log.error("FileNotFoundException " + ex);
-        } catch (IOException ex) {
-            log.error("IOException " + ex);
-        } 
-    }
+	@Override
+	public void execute(RMLDataset dataset, TriplesMap map, RMLPerformer performer, InputStream input,
+			String[] exeTriplesMap, boolean pomExecution) {
 
-    @Override
-    public void execute_node(
-            RMLDataset dataset, String expression, 
-            TriplesMap parentTriplesMap, RMLPerformer performer, Object node, 
-            Resource subject, String[] exeTriplesMap, boolean pomExecution) {
-        log.error("Not applicable for CSV sources."); 
-        //TODO: implement this
-    }
+		String sourceEncoding = "iso8859-1";
+		Charset charset = Charset.defaultCharset();
 
-    
+		boolean result = false;
+
+		++enumerator;
+
+		try {
+			char delimiter = getDelimiter(map.getLogicalSource());
+
+			// TODO: add charset guessing
+			CsvReader reader = new CsvReader(input, charset);
+			reader.setDelimiter(delimiter);
+
+			reader.readHeaders();
+			// Iterate the rows
+			while (reader.readRecord()) {
+				HashMap<String, String> row = new HashMap<>();
+				for (String header : reader.getHeaders()) {
+					row.put(new String(header.getBytes(sourceEncoding), UTF_8), reader.get(header));
+				}
+				// let the performer handle the rows
+				result = performer.perform(row, dataset, map, exeTriplesMap, parameters, pomExecution);
+			}
+
+		} catch (FileNotFoundException ex) {
+			log.error("FileNotFoundException " + ex);
+		} catch (IOException ex) {
+			log.error("IOException " + ex);
+		}
+	}
+
+	@Override
+	public void execute_node(RMLDataset dataset, String expression, TriplesMap parentTriplesMap, RMLPerformer performer,
+			Object node, Resource subject, String[] exeTriplesMap, boolean pomExecution) {
+		log.error("Not applicable for CSV sources.");
+		// TODO: implement this
+	}
+
 }
