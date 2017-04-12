@@ -1,5 +1,6 @@
 package be.ugent.mmlab.rml.performer;
 
+import be.ugent.mmlab.rml.model.RDFTerm.GraphMap;
 import be.ugent.mmlab.rml.model.dataset.RMLDataset;
 import be.ugent.mmlab.rml.model.PredicateObjectMap;
 import be.ugent.mmlab.rml.model.RDFTerm.TermType;
@@ -24,8 +25,11 @@ public class NestedRMLPerformer extends NodeRMLPerformer {
         super(processor);
     }
     
-    public void perform(Object node, RMLDataset dataset, Resource refObjSub,
+    public boolean perform(Object node, RMLDataset dataset, Resource refObjSub,
             TriplesMap map, String[] exeTriplesMap, boolean pomExecution) {
+        boolean result = false;
+        //TODO: Check how to handle this graph Map
+        GraphMap graphMap = null;
         if (pomExecution || map.getSubjectMap().getTermType().equals(TermType.BLANK_NODE)) {
             log.debug("Executing entirely the Referencing Object Map.");
             //Resource refObjSub = processor.processSubjectMap(
@@ -34,9 +38,10 @@ public class NestedRMLPerformer extends NodeRMLPerformer {
             //        dataset, refObjSub, map.getSubjectMap(), node);
             for (PredicateObjectMap pom : map.getPredicateObjectMaps()) {
                 processor.processPredicateObjectMap(
-                        dataset, refObjSub, pom, node, map, exeTriplesMap, null);
+                        dataset, refObjSub, pom, node, map, exeTriplesMap, null, graphMap);
             }
         }
+        return result;
     }
-
+    
 }

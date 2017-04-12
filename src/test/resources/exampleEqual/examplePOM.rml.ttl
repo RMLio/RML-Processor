@@ -17,7 +17,7 @@
 
 <#AirportMapping>
     rml:logicalSource [
-	rml:source "src/test/resources/exampleNegationOf/Airport.csv";
+	rml:source "src/test/resources/exampleEqual/Airport.csv";
         rml:referenceFormulation ql:CSV
     ];
     rr:subjectMap [
@@ -25,45 +25,41 @@
 	 rr:class transit:Stop ;
     ];
     rr:predicateObjectMap [
-	rr:predicateMap [
-            rr:constant transit:service ];
+	rr:predicate transit:service ;
 	rr:objectMap [
 	    rr:parentTriplesMap <#BusMapping>;
 	    rr:joinCondition [
 		rr:child "bus";
-		rr:parent "@id";
-	    ]
-        ]
-    ].
+		rr:parent "@id"; ] ] ].
 
 
 <#BusMapping>
     rml:logicalSource[
-      rml:source "src/test/resources/exampleNegationOf/Transport.xml";
+      rml:source "src/test/resources/exampleEqual/Transport.xml";
       rml:iterator "/transport/bus";
-      rml:referenceFormulation ql:XPath;
-    ];
+      rml:referenceFormulation ql:XPath ];
     
     rr:subjectMap [
       rr:template "http://trans.example.com/busses/{@id}";
-      rr:class transit:Service 
-    ];
+      rr:class transit:Service ];
   
     rr:predicateObjectMap [
-        rr:predicate transit:stop;
-        rr:objectMap [
-            rr:parentTriplesMap <#BusStopMapping>;
-        ] 
-    ] .
+        rr:predicateMap [ rr:constant transit:stop ];
+        rr:objectMap [ rr:parentTriplesMap <#BusStopMapping> ] ; 
+        crml:equalCondition <#BooleanCondition> ] .
 
 <#BusStopMapping>
     rml:logicalSource [
-      rml:source "src/test/resources/exampleNegationOf/Transport.xml";
+      rml:source "src/test/resources/exampleEqual/Transport.xml";
       rml:iterator "/transport/bus/route/stop";
-      rml:referenceFormulation ql:XPath;
-    ];
+      rml:referenceFormulation ql:XPath ];
+
     rr:subjectMap [
       rr:template "http://trans.example.com/stops/{@id}";
-      rr:class transit:Stop 
-    ] .
+      rr:class transit:Stop ] .
 
+<#BooleanCondition>
+    crml:condition """!match(%%id%%,\"25\")""" ;
+    crml:binding [
+        crml:variable "id" ;
+        rml:reference "@id" ] .

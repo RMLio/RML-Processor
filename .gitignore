@@ -5,6 +5,10 @@
 *.war
 *.ear
 
+.classpath
+.project
+.settings/
+dependency-reduced-pom.xml
 target/
 .DS_Store
 nb-configuration.xml

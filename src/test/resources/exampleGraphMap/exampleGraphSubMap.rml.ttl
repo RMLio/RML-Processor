@@ -11,17 +11,21 @@
 @prefix gn: <http://www.geonames.org/ontology#>.
 @prefix geosp: <http://www.telegraphis.net/ontology/geography/geography#> .
 
-#Airport.csv output
-<http://airport.example.com/6523> a transit:Stop.
-<http://airport.example.com/6523> transit:service <http://trans.example.com/busses/25>.
 
-
-#Transport.xml output
-<http://trans.example.com/busses/25> a transit:Service.
-<http://trans.example.com/busses/25> transit:stop <http://trans.example.com/stops/645>.
-<http://trans.example.com/busses/25> transit:stop <http://trans.example.com/stops/651>.
-
-<http://trans.example.com/stops/645> a transit:Stop.
-
-<http://trans.example.com/stops/651> a transit:Stop.
+<#AirportMapping>
+    rml:logicalSource [
+	rml:source "src/test/resources/example3/Airport.csv";
+        rml:referenceFormulation ql:CSV
+    ];
+    rr:subjectMap [
+	 rr:template "http://airport.example.com/{id}";
+	 rr:class transit:Stop ;
+     rr:graphMap [ rr:constant ex:Graph1 ];
+    ];
+    rr:predicateObjectMap [
+	    rr:predicate ex:bus ;
+	    rr:objectMap [
+            rml:reference "bus" ;
+	    ] ;
+    ].
 

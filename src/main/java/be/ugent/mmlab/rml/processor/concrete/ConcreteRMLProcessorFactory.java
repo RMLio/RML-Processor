@@ -1,5 +1,6 @@
 package be.ugent.mmlab.rml.processor.concrete;
 
+import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.processor.RMLProcessor;
 import be.ugent.mmlab.rml.processor.RMLProcessorFactory;
 import be.ugent.mmlab.rml.vocabularies.QLVocabulary.QLTerm;
@@ -28,10 +29,11 @@ public class ConcreteRMLProcessorFactory implements RMLProcessorFactory{
      * @return processor able to process the specified language
      */
     @Override
-    public RMLProcessor create(QLTerm term, Map<String, String> parameters) {
+    public RMLProcessor create(
+            QLTerm term, Map<String, String> parameters, TriplesMap map) {
         switch (term){
             case XPATH_CLASS:
-                return new XPathProcessor(parameters);
+                return new XPathProcessor(parameters, map);
             case CSV_CLASS:
                 return new CSVProcessor(parameters);
             case SQL_CLASS:
@@ -39,7 +41,7 @@ public class ConcreteRMLProcessorFactory implements RMLProcessorFactory{
                 //TODO: no reference formulations implies 
                 //SQL reference formulation
                 //but check first if custom defined one
-                return new CSVProcessor(parameters);
+                return new JdbcProcessor(parameters);
             case JSONPATH_CLASS:
                 return new JSONPathProcessor(parameters);
             case CSS3_CLASS:
@@ -49,7 +51,7 @@ public class ConcreteRMLProcessorFactory implements RMLProcessorFactory{
             case XLSX_CLASS:
                 return new XLSXProcessor(parameters);
             default:
-                log.error("The term " + term + "was not defined.");
+                log.error("The term " + term + " was not defined.");
                 return null;
         }
     }

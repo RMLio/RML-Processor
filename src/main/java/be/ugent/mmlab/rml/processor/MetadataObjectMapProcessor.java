@@ -41,13 +41,13 @@ public class MetadataObjectMapProcessor extends StdObjectMapProcessor implements
     @Override
     public void processPredicateObjectMap_ObjMap(
             RMLDataset originalDataset, Resource subject, URI predicate,
-            PredicateObjectMap pom, Object node) {
+            PredicateObjectMap pom, Object node, GraphMap graphMap) {
         MetadataRMLDataset dataset = (MetadataRMLDataset) originalDataset ;
         //MetadataGenerator metadataGenerator = new MetadataGenerator();
         
         Set<ObjectMap> objectMaps = pom.getObjectMaps();
         if(objectMaps.size() > 0)
-            log.debug("Processing Simple Object Map...");
+            log.debug("Processing Simple Metadata Object Map...");
         
         for (ObjectMap objectMap : objectMaps) {
             boolean flag = true;
@@ -65,7 +65,7 @@ public class MetadataObjectMapProcessor extends StdObjectMapProcessor implements
                         node, termMapProcessor, conditions);
             }
             
-            if (flag && objects != null) {
+            if (objects != null && objects.size() > 0) { //flag && 
                 
                 for (Value object : objects) {
                     if (object.stringValue() != null) {
@@ -76,9 +76,10 @@ public class MetadataObjectMapProcessor extends StdObjectMapProcessor implements
                             if(triples.isEmpty()){
                                 dataset.add(subject, predicate, object); 
                                 log.debug("Should log triple level metadata...");
-                                metadataGenerator.generateTripleMetaData(
+                                     
+                                    metadataGenerator.generateTripleMetaData(
                                         dataset, pom.getOwnTriplesMap(), 
-                                        subject, predicate, object);
+                                        subject, predicate, object, null);
                             }
                         } else {
                             for (GraphMap graph : graphs) {
@@ -88,7 +89,7 @@ public class MetadataObjectMapProcessor extends StdObjectMapProcessor implements
                                 log.debug("Should log triple level metadata...");
                                 metadataGenerator.generateTripleMetaData(
                                         dataset, pom.getOwnTriplesMap(), 
-                                        subject, predicate, object);
+                                        subject, predicate, object, null);
                             }
                         }
 

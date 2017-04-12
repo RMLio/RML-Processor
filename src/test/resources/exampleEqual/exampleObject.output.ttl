@@ -12,14 +12,10 @@
 @prefix geosp:      <http://www.telegraphis.net/ontology/geography/geography#> .
 
 #Airport.csv output
+<http://airport.example.com/6524> a transit:Stop.
 <http://airport.example.com/6523> a transit:Stop.
 <http://airport.example.com/6523> transit:service <http://trans.example.com/busses/25>.
 
 
 #Transport.xml output
 <http://trans.example.com/busses/25> a transit:Service.
-
-<http://trans.example.com/stops/645> a transit:Stop.
-
-<http://trans.example.com/stops/651> a transit:Stop.
-

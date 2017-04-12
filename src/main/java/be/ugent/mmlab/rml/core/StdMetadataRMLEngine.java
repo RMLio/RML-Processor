@@ -129,7 +129,10 @@ public class StdMetadataRMLEngine extends StdRMLEngine {
         removeRepository(dataset, pathToMetadataStore);
         
         if (dataset.getMetadataLevel().equals("triplesmap") || 
-                dataset.getMetadataLevel().equals("triple")) {
+                dataset.getMetadataLevel().equals("triple") //|| 
+                //dataset.getMetadataVocab().contains("co")
+                ) {
+            log.debug("Writing metadata...");
             Collection<TriplesMap> triplesMaps = rmlMapping.getTriplesMaps();
             writeRepositories(dataset, triplesMaps, dataset.getTarget().toString());
         }
@@ -178,6 +181,7 @@ public class StdMetadataRMLEngine extends StdRMLEngine {
         if (dataset.getMetadataLevel().equals("triplesmap") ||
                 dataset.getMetadataLevel().equals("triple")) {
             
+            //TODO: Change this to get the TriplesMap short name
             String[] name = triplesMap.getName().split("#");            
             generateRepository(name[1]);
             try {
@@ -198,6 +202,7 @@ public class StdMetadataRMLEngine extends StdRMLEngine {
                     triplesMap, parameters, exeTriplesMap, dataset);
                   
         } else {
+            log.debug("Default repository");
             try {
                 repository = manager.getRepository(dataset.getID());
                 dataset.setRepository(repository);
