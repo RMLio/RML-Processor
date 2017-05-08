@@ -42,4 +42,5 @@ public class DBpediaProcessor extends AbstractRMLProcessor {
     public void execute_node(RMLDataset dataset, String expression, TriplesMap parentTriplesMap, RMLPerformer performer, Object node, Resource subject, String[] exeTriplesMap, boolean pomExecution) {
 
     }
+
 }

@@ -248,14 +248,17 @@ public class StdObjectMapProcessor implements ObjectMapProcessor {
 
                 SourceProcessor inputProcessor = new AbstractInputProcessor();
 
-                InputStream input = inputProcessor.getInputStream(
-                        parentTriplesMap.getLogicalSource(), parameters);
+
 
                 //different Logical Source AND no Join Conditions AND no Bind Conditions
                 if (joinConditions.isEmpty()
                         & !parentTriplesMap.getLogicalSource().getSource().getTemplate().equals(
                         map.getLogicalSource().getSource().getTemplate())
                         & conditions == null) {
+
+                    InputStream input = inputProcessor.getInputStream(
+                            parentTriplesMap.getLogicalSource(), parameters);
+
                     process_difLS_noJC_noBC(performer, processor, dataset, subject,
                             predicate, parentTriplesMap, input, exeTriplesMap);
                     //continue;
@@ -266,6 +269,10 @@ public class StdObjectMapProcessor implements ObjectMapProcessor {
                         & !parentTriplesMap.getLogicalSource().getSource().getTemplate().equals(
                         map.getLogicalSource().getSource().getTemplate())
                         & (conditions != null)) {
+
+                    InputStream input = inputProcessor.getInputStream(
+                            parentTriplesMap.getLogicalSource(), parameters);
+
                     boolean result = process_difLS_noJC_withBC(performer, processor, dataset, subject,
                             predicate, parentTriplesMap, input, exeTriplesMap);
                     if (!result) {
@@ -288,6 +295,8 @@ public class StdObjectMapProcessor implements ObjectMapProcessor {
                         & parentTriplesMap.getLogicalSource().getSource().getTemplate().equals(
                         map.getLogicalSource().getSource().getTemplate())) {
 
+                    InputStream input = null;
+
                     process_sameLS_noJC(performer, processor, dataset, node,
                             map, subject, predicate, parentTriplesMap, input,
                             parameters, exeTriplesMap, (Resource) graphMapValue);
@@ -295,6 +304,10 @@ public class StdObjectMapProcessor implements ObjectMapProcessor {
                 } //Conditions
                 else {
                     log.debug("Referencing Object Map with Logical Source with conditions.");
+
+                    InputStream input = inputProcessor.getInputStream(
+                            parentTriplesMap.getLogicalSource(), parameters);
+
                     //Build a join map where
                     //  key: the parent expression
                     //  value: the value extracted from the child
@@ -360,13 +373,11 @@ public class StdObjectMapProcessor implements ObjectMapProcessor {
                     referenceValue = pom.getObjectMaps().iterator().next().getReferenceMap().getReference();
                 } catch(Exception e) {
                     referenceValue = null;
-                    System.err.println("No reference");
                 }
                 try {
                     constantValue = pom.getObjectMaps().iterator().next().getConstantValue().stringValue();
                 } catch(Exception e) {
                     constantValue = null;
-                    System.err.println("No constant value");
                 }
                 if(referenceValue != null) {
                     List<String> value = termMapProcessor.extractValueFromNode(node, referenceValue);
