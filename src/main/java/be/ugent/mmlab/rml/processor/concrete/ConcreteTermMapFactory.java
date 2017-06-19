@@ -31,12 +31,12 @@ public class ConcreteTermMapFactory implements TermMapProcessorFactory {
         //TODO: Make CSVTermMap more generic
         switch (term){
             case XPATH_CLASS:
-                if (processor != null) {
+                /* if (processor != null) {
                     XPathProcessor process = (XPathProcessor) processor;
                     DefaultNamespaceContext dnc = process.getNamespaces();
                     return new XPathTermMapProcessor(dnc);
                 }
-                else
+                else */
                     return new XPathTermMapProcessor();
             case CSV_CLASS:
                 return new CSVTermMapProcessor();
