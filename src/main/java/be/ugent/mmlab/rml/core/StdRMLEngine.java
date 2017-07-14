@@ -292,7 +292,7 @@ public class StdRMLEngine implements RMLEngine {
             }
             
         } catch (Exception ex) {
-            log.error("Exception " + ex);
+            log.error("Exception " + ex, ex);
             log.error("The execution of the mapping failed.");
             log.debug("failed!", ex);
         }
