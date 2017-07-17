@@ -71,7 +71,7 @@ public class MetadataObjectMapProcessor extends StdObjectMapProcessor implements
                 for (Value object : objects) {
                     if (object.stringValue() != null) {
                         Set<GraphMap> graphs = pom.getGraphMaps();
-                        if (graphs.isEmpty() && subject != null) {
+                        if ((graphs == null || graphs.isEmpty()) && subject != null) {
                             List<Statement> triples = 
                                     dataset.tuplePattern(subject, predicate, object);
                             if(triples.isEmpty()){
