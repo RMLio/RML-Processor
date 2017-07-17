@@ -37,9 +37,9 @@ import org.slf4j.LoggerFactory;
  * @author andimou
  */
 public class StdMetadataRMLEngine extends StdRMLEngine {
-    
+
     // Log
-    private static final Logger log = 
+    private static final Logger log =
             LoggerFactory.getLogger(
             StdMetadataRMLEngine.class.getSimpleName());
 
@@ -47,30 +47,30 @@ public class StdMetadataRMLEngine extends StdRMLEngine {
     private String pathToNativeStore;
     private RDFFormat format = RDFFormat.TURTLE;
     SailRepositoryConfig repositoryTypeSpec;
-    
+
     public StdMetadataRMLEngine(String pathToNativeStore) {
         super(pathToNativeStore);
         this.pathToNativeStore = pathToNativeStore;
         this.metadataGenerator =
                 new MetadataGenerator(pathToNativeStore, manager);
         String indexes = "spoc";
-        repositoryTypeSpec = 
+        repositoryTypeSpec =
                     new SailRepositoryConfig(new NativeStoreConfig(indexes));
     }
-    
+
     @Override
     public void run(
             RMLMapping mapping, String outputFile, String outputFormat,
-            String graphName, Map<String, String> parameters, String[] exeTriplesMap, 
+            String graphName, Map<String, String> parameters, String[] exeTriplesMap,
             String metadataLevel, String metadataFormat, String metadataVocab) {
         //StdMetadataRMLEngine engine; 
         MetadataRMLDataset dataset;
-        
+
         //If not user-defined, use same as for the output
         if (metadataFormat == null) {
             metadataFormat = outputFormat;
         }
-        
+
         //RML Engine that generates metadata too
         //engine = new StdMetadataRMLEngine(outputFile);
 
@@ -90,27 +90,27 @@ public class StdMetadataRMLEngine extends StdRMLEngine {
         dataset.setDatasetMetadata(metadataLevel, metadataFormat, metadataVocab);
 
         runRMLMapping(dataset, mapping, graphName, parameters, exeTriplesMap);
-        
+
         File file = new File(dataset.getRepository().getDataDir().getParent());
-        boolean out = file.delete(); 
-        
+        boolean out = file.delete();
+
     }
-    
+
     @Override
     public RMLDataset runRMLMapping(RMLDataset originalDataset, RMLMapping rmlMapping,
             String baseIRI, Map<String, String> parameters, String[] exeTriplesMap) {
         MetadataRMLDataset dataset = (MetadataRMLDataset) originalDataset;
-        
+
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd h:mm:ss");
         String startDateTime = sdf.format(new Date()).replace(' ', 'T') + 'Z';
-        
+
         dataset = (MetadataRMLDataset) super.runRMLMapping(
                 dataset, rmlMapping, baseIRI, parameters, exeTriplesMap);
-        
+
         String endDateTime = sdf.format(new Date()).replace(' ', 'T') + 'Z';
-        
+
         dataset = metadataGenerator.generateMetaData(rmlMapping,
-                dataset, pathToNativeStore, 
+                dataset, pathToNativeStore,
                 startDateTime, endDateTime);
 
         //generate the file that contains the metadata graph
@@ -125,8 +125,8 @@ public class StdMetadataRMLEngine extends StdRMLEngine {
             log.error("Repository Exception " + ex);
         }
         removeRepository(dataset, pathToMetadataStore);
-        
-        if (dataset.getMetadataLevel().equals("triplesmap") || 
+
+        if (dataset.getMetadataLevel().equals("triplesmap") ||
                 dataset.getMetadataLevel().equals("triple") //|| 
                 //dataset.getMetadataVocab().contains("co")
                 ) {
@@ -146,7 +146,7 @@ public class StdMetadataRMLEngine extends StdRMLEngine {
         }
 
         try {
-            this.removeRepository(dataset);
+            dataset.closeRepository();
 
             Set<String> ids = manager.getRepositoryIDs();
             for (String id : ids) {
@@ -158,15 +158,16 @@ public class StdMetadataRMLEngine extends StdRMLEngine {
             manager.getSystemRepository().shutDown();
             manager.shutDown();
 
+            this.removeRepositoryFolder();
 
         } catch (RepositoryException ex) {
             log.error("Repository Exception " + ex);
         } catch (RepositoryConfigException ex) {
             log.error("Repository Config Exception " + ex);
         }
-        return dataset;      
+        return dataset;
     }
-    
+
     @Override
     public RMLDataset generateTriplesMapTriples(
             TriplesMap triplesMap, Map<String, String> parameters,
@@ -176,12 +177,12 @@ public class StdMetadataRMLEngine extends StdRMLEngine {
         log.debug("Generating Triples Map triples with metadata");
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX");
         String startDateTime = sdf.format(new Date());
-        
+
         if (dataset.getMetadataLevel().equals("triplesmap") ||
                 dataset.getMetadataLevel().equals("triple")) {
-            
+
             //TODO: Change this to get the TriplesMap short name
-            String[] name = triplesMap.getName().split("#");            
+            String[] name = triplesMap.getName().split("#");
             generateRepository(name[1]);
             try {
                 repository = manager.getRepository(name[1]);
@@ -199,7 +200,7 @@ public class StdMetadataRMLEngine extends StdRMLEngine {
             dataset.setNumbers();
             dataset = (MetadataRMLDataset) super.generateTriplesMapTriples(
                     triplesMap, parameters, exeTriplesMap, dataset, input);
-                  
+
         } else {
             log.debug("Default repository");
             try {
@@ -218,7 +219,7 @@ public class StdMetadataRMLEngine extends StdRMLEngine {
             dataset = (MetadataFileDataset) super.generateTriplesMapTriples(
                     triplesMap, parameters, exeTriplesMap, dataset, input);
         }
-        
+
         sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX");
         String endDateTime = sdf.format(new Date());//.replace(' ', 'T') + 'Z';
         try {
@@ -237,13 +238,13 @@ public class StdMetadataRMLEngine extends StdRMLEngine {
 
         return dataset;
     }
-    
+
     @Override
     public RMLDataset chooseSesameDataSet(String repositoryID,
             String pathToNativeStore, String outputFormat){
 
             RMLDataset dataset;
-            
+
             if (pathToNativeStore != null) {
                 log.debug("Using direct file " + pathToNativeStore);
                 dataset = new MetadataFileDataset(manager,
@@ -252,21 +253,21 @@ public class StdMetadataRMLEngine extends StdRMLEngine {
                 log.debug("Using default store (memory) ");
                 dataset = new StdRMLDataset();
             }
-                    
+
         return dataset;
     }
-    
+
     @Override
     public RMLProcessor generateRMLProcessor(
             TriplesMap triplesMap, Map<String, String> parameters) {
-        RMLProcessor processor = 
+        RMLProcessor processor =
                 super.generateRMLProcessor(triplesMap, parameters);
         processor.setMetadataGenerator(metadataGenerator);
 
         return processor;
     }
-    
-    
+
+
     public void writeRepositories(MetadataRMLDataset dataset,
             Collection<TriplesMap> triplesMaps, String pathToStore) {
         Iterator<TriplesMap> iterator = triplesMaps.iterator();
@@ -322,7 +323,7 @@ public class StdMetadataRMLEngine extends StdRMLEngine {
         }
     }
 
-    
+
     public void removeRepository(
             RMLDataset originalDataset, String pathToStore) {
         FileOutputStream output = null;
@@ -330,7 +331,7 @@ public class StdMetadataRMLEngine extends StdRMLEngine {
             MetadataRMLDataset dataset = (MetadataRMLDataset) originalDataset;
             Repository repository = dataset.getRepository();
             RepositoryConnection con = repository.getConnection();
-            File target = new File(pathToStore); 
+            File target = new File(pathToStore);
             //Prepare writer
             if (target.exists()) {
                 try {
@@ -342,7 +343,7 @@ public class StdMetadataRMLEngine extends StdRMLEngine {
             }
             output = new FileOutputStream(target);
             RDFWriter writer = Rio.createWriter(this.format, output);
-            
+
             con.export(writer);
             con.commit();
             con.close();
@@ -361,13 +362,10 @@ public class StdMetadataRMLEngine extends StdRMLEngine {
             }
         }
     }
-    
-    public void removeRepository(RMLDataset dataset) {
+
+    private void removeRepositoryFolder() {
         String file = manager.getBaseDir()  + "/repositories";
-        
-        dataset.closeRepository();
-//        manager.shutDown();
-        
+
         try {
             FileUtils.deleteDirectory(new File(file));
         } catch (IOException ex) {
@@ -375,20 +373,20 @@ public class StdMetadataRMLEngine extends StdRMLEngine {
         }
         log.debug("Repository was successfully removed.");
     }
-    
-    
+
+
     public void generateRepositoryManager() {
         String indexes = "spoc";
-        repositoryTypeSpec = 
+        repositoryTypeSpec =
                     new SailRepositoryConfig(new NativeStoreConfig(indexes));
     }
-    
+
     public String generateRepositoryIDFromFile(String file){
-        String repositoryID = 
+        String repositoryID =
                 file.replaceAll("[a-zA-Z\\/]*/([a-zA-Z_.]*)", "$1").replaceAll(".ttl", "");
         return repositoryID;
     }
-    
+
     public void generateRepository(String repositoryID) {
         RepositoryConfig repConfig ;
         repositoryTypeSpec =
@@ -421,5 +419,5 @@ public class StdMetadataRMLEngine extends StdRMLEngine {
         } catch (RepositoryException ex) {
             log.error("Repository Exception " + ex);
         }
-    }                    
+    }
 }
