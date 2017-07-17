@@ -131,10 +131,9 @@ public class Main {
             System.exit(0);
             
         } catch (Exception ex) {
+            log.error("Exception " + ex, ex);
             System.exit(1);
-            log.error("Exception " + ex);
-            RMLConfiguration.displayHelp();
-        } 
+        }
 
     }
        

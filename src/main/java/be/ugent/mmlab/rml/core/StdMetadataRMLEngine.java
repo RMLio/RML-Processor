@@ -146,6 +146,8 @@ public class StdMetadataRMLEngine extends StdRMLEngine {
         }
 
         try {
+            this.removeRepository(dataset);
+
             Set<String> ids = manager.getRepositoryIDs();
             for (String id : ids) {
                 if (!id.equals("SYSTEM")) {
@@ -155,9 +157,8 @@ public class StdMetadataRMLEngine extends StdRMLEngine {
             }
             manager.getSystemRepository().shutDown();
             manager.shutDown();
-            
-            this.removeRepository(dataset);
-            
+
+
         } catch (RepositoryException ex) {
             log.error("Repository Exception " + ex);
         } catch (RepositoryConfigException ex) {
@@ -301,9 +302,9 @@ public class StdMetadataRMLEngine extends StdRMLEngine {
                 con.export(writer);
                 con.commit();
                 con.close();
-                
-                manager.removeRepository(name[1]);
-                repository.shutDown();
+
+//                manager.removeRepository(name[1]);
+//                repository.shutDown();
             } catch (RepositoryConfigException ex) {
                 log.error("Repository Config Exception " + ex);
             } catch (RepositoryException ex) {
@@ -365,7 +366,7 @@ public class StdMetadataRMLEngine extends StdRMLEngine {
         String file = manager.getBaseDir()  + "/repositories";
         
         dataset.closeRepository();
-        manager.shutDown();
+//        manager.shutDown();
         
         try {
             FileUtils.deleteDirectory(new File(file));
@@ -414,7 +415,7 @@ public class StdMetadataRMLEngine extends StdRMLEngine {
             con.clear();
             con.commit();
             con.close();
-            repository.shutDown();
+//            repository.shutDown();
         } catch (RepositoryConfigException ex) {
             log.error("Repository Config Exception " + ex);
         } catch (RepositoryException ex) {
