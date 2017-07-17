@@ -182,7 +182,7 @@ public class StdMetadataRMLEngine extends StdRMLEngine {
                 dataset.getMetadataLevel().equals("triple")) {
 
             //TODO: Change this to get the TriplesMap short name
-            String[] name = triplesMap.getName().split("#");
+            String[] name = triplesMap.getName().split("_");
             generateRepository(name[1]);
             try {
                 repository = manager.getRepository(name[1]);
@@ -276,7 +276,7 @@ public class StdMetadataRMLEngine extends StdRMLEngine {
 
         while (iterator.hasNext()) {
             TriplesMap triplesMap = iterator.next();
-            String[] name = triplesMap.getName().split("#");
+            String[] name = triplesMap.getName().split("_");
             String path = pathToStore.replaceAll("\\.[a-zA-Z0-9]*", "_" + name[1] + ".ttl");
             File target = new File(path);
             //Prepare writer
