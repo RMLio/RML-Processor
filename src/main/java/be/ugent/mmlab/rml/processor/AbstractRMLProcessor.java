@@ -71,6 +71,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
         else{
             if(dataset.getMetadataLevel().equals("triplesmap") ||
                     dataset.getMetadataLevel().equals("triple") ||
+                    dataset.getMetadataLevel().equals("term") ||
                     dataset.getMetadataVocab().contains("co") ){
                 
                 subMapProcessor = new MetadataSubjectMapProcessor(metadataGenerator);
@@ -159,8 +160,9 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                 if (predicates.size() > 0) {
                     IRI predicate = predicates.get(0);
                     ObjectMapProcessor predicateObjectProcessor;
-                    if (dataset.getMetadataLevel().equals("triple")
-                            || dataset.getMetadataVocab().contains("co")) {
+                    if (dataset.getMetadataLevel().equals("triple") ||
+                            dataset.getMetadataLevel().equals("term")
+                            || dataset.getMetadataVocab().contains("co") && metadataGenerator != null) {
                         predicateObjectProcessor =
                                 new MetadataObjectMapProcessor(
                                 map, processor, metadataGenerator);

@@ -1,12 +1,16 @@
 package be.ugent.mmlab.rml;
 
 import be.ugent.mmlab.rml.core.RMLEngine;
+import be.ugent.mmlab.rml.core.StdMetadataRMLEngine;
 import be.ugent.mmlab.rml.core.StdRMLEngine;
+import be.ugent.mmlab.rml.model.dataset.MetadataRMLDataset;
 import be.ugent.mmlab.rml.model.dataset.RMLDataset;
 import be.ugent.mmlab.rml.model.dataset.StdRMLDataset;
 import be.ugent.mmlab.rml.mapdochandler.extraction.std.StdRMLMappingFactory;
 import be.ugent.mmlab.rml.mapdochandler.retrieval.RMLDocRetrieval;
 import be.ugent.mmlab.rml.model.RMLMapping;
+
+import java.io.File;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -355,6 +359,16 @@ public class MapperTest
                 assertMap(fileToRMLFile, null, triplesMap)));
     }
 
+    public void testExampleFnUppercaseMetadata() {
+        URL fileToRMLFile = getClass().getResource(
+                "/exampleFn/mapping_uppercase.rml.ttl");
+        URL fileToOutputFile = getClass().getResource(
+                "/exampleFn/example_uppercase.output.ttl");
+        String[] triplesMap = {"http://example.com/test#Person_TemplateMapping"};
+        assertTrue(desiredOutput(fileToOutputFile).isEqualTo(
+                assertMetadataMap(fileToRMLFile, null, triplesMap)));
+    }
+
 //    public void testExampleFnSubject() {
 //        URL fileToRMLFile = getClass().getResource(
 //                "/exampleFn/mapping_subject.rml.ttl");
@@ -388,7 +402,7 @@ public class MapperTest
     }
 
     private RMLDataset assertMap(URL mappingURL,
-            Map<String, String> parameters, String[] triplesMap) {
+                                 Map<String, String> parameters, String[] triplesMap) {
         RMLDataset dataset;
         try {
             StdRMLMappingFactory mappingFactory = new StdRMLMappingFactory();
@@ -419,7 +433,64 @@ public class MapperTest
             return output;
 
         } catch (Exception ex) {
-            log.error(ex);
+            log.error(ex, ex);
+        }
+
+        return null;
+    }
+
+    private RMLDataset assertMetadataMap(URL mappingURL,
+                                         Map<String, String> parameters, String[] triplesMap) {
+        try {
+            StdRMLMappingFactory mappingFactory = new StdRMLMappingFactory();
+            //Retrieve the Mapping Document
+            log.info("========================================");
+            log.info("Retrieving the RML Mapping Document..");
+            log.info("========================================");
+            RMLDocRetrieval mapDocRetrieval = new RMLDocRetrieval();
+            Repository repository = mapDocRetrieval.getMappingDoc(
+                    mappingURL.getFile(), TURTLE);
+
+            log.info("========================================");
+            log.info("Extracting the RML Mapping Definitions..");
+            log.info("========================================");
+            StdMetadataRMLEngine engine = new StdMetadataRMLEngine(null);
+            RMLMapping mapping = mappingFactory.extractRMLMapping(repository);
+
+            log.info("========================================");
+            log.info("Running the RML Mapping..");
+            log.info("========================================");
+
+            MetadataRMLDataset dataset;
+
+            //RML Engine that generates metadata too
+            //engine = new StdMetadataRMLEngine(outputFile);
+
+            //generate the repository ID for the metadata graph
+            String metadataRepositoryID = "metadata";
+            //Generate the repository for the metadata graph
+            engine.generateRepository(metadataRepositoryID);
+            //generate the repository ID for the metadata graph
+            String datasetRepositoryID = engine.generateRepositoryIDFromFile(null);
+            //Generate the repository for the actual dataset
+            engine.generateRepository(datasetRepositoryID);
+
+            //Generate dataset for the actual dataset graph
+            dataset = (MetadataRMLDataset) engine.chooseSesameDataSet(
+                    datasetRepositoryID, null, null);
+            //Set dataset metadata
+            dataset.setDatasetMetadata("term", null, null);
+
+            dataset = (MetadataRMLDataset) engine.runRMLMapping(dataset, mapping, "http://example.com", parameters, triplesMap);
+
+            if (dataset != null) {
+                dataset.dumpRDF(System.out, TURTLE);
+            }
+
+            return dataset;
+
+        } catch (Exception ex) {
+            log.error(ex, ex);
         }
 
         return null;

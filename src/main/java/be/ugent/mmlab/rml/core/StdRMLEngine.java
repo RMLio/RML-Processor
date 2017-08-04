@@ -42,14 +42,17 @@ public class StdRMLEngine implements RMLEngine {
     //There are probably better ways to do this than a static variable
     LocalRepositoryManager manager;
     protected Map<String,Integer> enumerator = new HashMap<String,Integer>();
-    
-    public StdRMLEngine() {} 
+    protected String pathToNativeStore;
+
+    public StdRMLEngine() {}
     
     public StdRMLEngine(String pathToNativeStore) {
         try {
             if(pathToNativeStore == null){
-                pathToNativeStore = System.getProperty("user.dir");
+                pathToNativeStore = System.getProperty("user.dir") + "/dataset.ttl";
             }
+
+            this.pathToNativeStore = pathToNativeStore;
 
             File file = new File(pathToNativeStore);
             String folder = file.getAbsoluteFile().getParent();
