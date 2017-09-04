@@ -26,4 +26,4 @@
 	<http://example.com/country> <http://dbpedia.org/resource/Italy> .
 
 <http://ex.com/comp/10> a <http://example.com/Company> ;
-	<http://example.com/country> <http://ex.com/country/NewZealand> .
+	<http://example.com/country2> <http://ex.com/country/NewZealand> .

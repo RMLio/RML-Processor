@@ -70,7 +70,7 @@ LIMIT 7000""" .
     rml:logicalSource <#LogicalSourceX> ;
 
     rr:subjectMap [
-        rr:template "http://ex.com/conf/{short}";
+        rr:template "http://example.com/conf/{short}";
         rr:class ex:Conference ];
 
     rr:predicateObjectMap [
@@ -90,7 +90,7 @@ LIMIT 7000""" .
     rml:logicalSource <#LogicalSourceX> ;
 
     rr:subjectMap [ 
-        rr:template "http://ex.com/city/{city}" ] .
+        rr:template "http://example.com/city/{city}" ] .
 
 
 <#Country_DBpedia>

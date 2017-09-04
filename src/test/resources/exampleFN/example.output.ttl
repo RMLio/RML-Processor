@@ -8,7 +8,7 @@
 @prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>.
 
 ex:1 a ex:Test ;
-    dbo:restingPlacePosition <http://example.org/restPlace/1> .
+    dbo:restingPlacePosition <http://www.example.org/restPlace/1> .
 
 <http://www.example.org/restPlace/1> a ex:RestPlace ;
     geo:lon "50 50" .
