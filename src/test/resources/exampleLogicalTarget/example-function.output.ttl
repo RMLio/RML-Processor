@@ -1,5 +1,0 @@
-<http://example.org/1> a <http://www.example.com/Test> ;
-	<http://www.w3.org/2003/01/geo/wgs84_pos#name> "TEST&TEST" .
-
-<http://example.org/2> a <http://www.example.com/Test> ;
-	<http://www.w3.org/2003/01/geo/wgs84_pos#name> "JOEPIE" .
