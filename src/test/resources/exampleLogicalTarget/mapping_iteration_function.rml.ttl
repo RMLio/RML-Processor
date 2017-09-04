@@ -1,0 +1,76 @@
+######################################################################################
+# 1. Prefixes
+######################################################################################
+
+@prefix rr:      <http://www.w3.org/ns/r2rml#>.
+@prefix rml:     <http://semweb.mmlab.be/ns/rml#> .
+@prefix crml:    <http://semweb.mmlab.be/ns/crml#> .
+@prefix fno: 	 <http://w3id.org/function/ontology#> .
+@prefix ql:      <http://semweb.mmlab.be/ns/ql#> .
+@prefix dbo:	 <http://dbpedia.org/ontology/> .
+@prefix dbf:	 <http://dbpedia.org/function/> .
+@prefix geo: 	 <http://www.w3.org/2003/01/geo/wgs84_pos#> .
+@prefix georss:  <http://www.georss.org/georss/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix xsd:	 <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdf: 	 <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix grel: 	 <http://users.ugent.be/~bjdmeest/function/grel.ttl#> .
+@prefix lt:      <http://semweb.mmlab.be/ns/logicaltarget#> .
+
+@base	<http://example.com/test> .
+
+
+######################################################################################
+# 2. Mapping Document Metadata
+######################################################################################
+
+[]  dcterms:title "DBpedia Mappings";
+    dcterms:created "2016-07-09"^^xsd:date ;
+    dcterms:modified "2016-07-09"^^xsd:date .
+
+
+######################################################################################
+# 3. Input Sources
+######################################################################################
+
+
+# 3.1 Data Sources
+######################################################################################
+
+
+# 3.2 Logical Sources
+######################################################################################
+
+<#Person_LogicalSource>
+	rml:source "src/test/resources/exampleLogicalTarget/input.csv" ;
+	rml:referenceFormulation ql:CSV .
+
+######################################################################################
+# 4. Logical Targets
+######################################################################################
+
+<#Person_LogicalTarget>
+	lt:target "src/test/resources/exampleLogicalTarget/output.ttl";
+	lt:function [
+	    fno:executes grel:toUppercase;
+	    lt:output [ lt:predicate grel:valueParameter ]
+	];
+	lt:flush [ lt:flushType "iteration"] .
+
+######################################################################################
+# 5. Mapping Definitions
+######################################################################################
+
+<#Person_SubjectMap>
+	rr:template "http://example.org/{id}" ;
+	rr:class <http://www.example.com/Test> .
+
+<#Person_TemplateMapping>	
+	rml:logicalSource <#Person_LogicalSource> ;
+	lt:logicalTarget <#Person_LogicalTarget> ;
+	rr:subjectMap <#Person_SubjectMap> ;
+	rr:predicateObjectMap <#CoordinatesGeoMapping> .
+
+<#CoordinatesGeoMapping>
+	rr:predicate geo:name ;
+    rr:objectMap [ rml:reference "name" ] .
