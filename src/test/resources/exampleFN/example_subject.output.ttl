@@ -10,16 +10,16 @@
 ex:1 a ex:Test ;
     dbo:title "test&amp;test" ;
     dbo:name "TEST&TEST" ;
-    dbo:restingPlacePosition <http://example.org/restPlace/1> .
+    dbo:restingPlacePosition <http://TEST&TEST> .
 
-<http://www.example.org/restPlace/1> a ex:RestPlace ;
+<http://TEST&TEST> a ex:RestPlace ;
     geo:lon "50 50" .
 
 ex:2 a ex:Test ;
     dbo:title "joepie" ;
     dbo:name "JOEPIE" ;
-    dbo:restingPlacePosition <http://www.example.org/restPlace/2> .
+    dbo:restingPlacePosition <http://JOEPIE> .
 
-<http://www.example.org/restPlace/2> a ex:RestPlace .
+<http://JOEPIE> a ex:RestPlace .
 
 
