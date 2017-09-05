@@ -330,7 +330,7 @@ public class StdObjectMapProcessor implements ObjectMapProcessor {
                 graphMap = functionTermMap.getGraphMap();
             }
 
-            Map<String, String> parameters = retrieveParameters(node, functionTermMap.getFunctionTriplesMap());
+            Map<String, Object> parameters = retrieveParameters(node, functionTermMap.getFunctionTriplesMap());
 
             //parameters = functionTermMap.getParameterRefs();
             String function = functionTermMap.getFunction().toString();
@@ -342,8 +342,8 @@ public class StdObjectMapProcessor implements ObjectMapProcessor {
         }
     }
 
-    private Map<String,String> retrieveParameters(Object node, TriplesMap functionTriplesMap){
-        Map<String,String> parameters = new HashMap<String, String>();
+    private Map<String,Object> retrieveParameters(Object node, TriplesMap functionTriplesMap){
+        Map<String,Object> parameters = new HashMap<>();
         TermMapProcessorFactory factory = new ConcreteTermMapFactory();
         TermMapProcessor termMapProcessor =
                 factory.create(functionTriplesMap.getLogicalSource().getReferenceFormulation());

@@ -2,6 +2,7 @@ package be.ugent.mmlab.rml.processor;
 
 import be.ugent.mmlab.rml.condition.model.Condition;
 import be.ugent.mmlab.rml.logicalsourcehandler.termmap.TermMapProcessor;
+
 import static be.ugent.mmlab.rml.model.RDFTerm.TermType.BLANK_NODE;
 
 import be.ugent.mmlab.rml.model.PredicateObjectMap;
@@ -36,25 +37,25 @@ import org.slf4j.LoggerFactory;
  * @author andimou
  */
 public class StdSubjectMapProcessor implements SubjectMapProcessor {
-    private TermMapProcessor termMapProcessor ;
-    
+    private TermMapProcessor termMapProcessor;
+
     // Log
-    private static final Logger log = 
+    private static final Logger log =
             LoggerFactory.getLogger(StdSubjectMapProcessor.class.getSimpleName());
-    
+
     @Override
-    public Resource processSubjectMap(RMLDataset dataset, SubjectMap subjectMap, 
-        Object node, RMLProcessor processor) {  
+    public Resource processSubjectMap(RMLDataset dataset, SubjectMap subjectMap,
+                                      Object node, RMLProcessor processor) {
         Resource subject = null;
-        boolean result ;
+        boolean result;
         SimpleValueFactory vf = SimpleValueFactory.getInstance();
-        
+
         //Get the uri
         TermMapProcessorFactory factory = new ConcreteTermMapFactory();
         this.termMapProcessor = factory.create(
                 subjectMap.getOwnTriplesMap().getLogicalSource().getReferenceFormulation(),
                 processor);
-        
+
         if (subjectMap.getClass().getSimpleName().equals("StdConditionSubjectMap")) {
             log.debug("Processing Conditional Subject Map");
             StdConditionSubjectMap condSubMap =
@@ -64,16 +65,15 @@ public class StdSubjectMapProcessor implements SubjectMapProcessor {
             log.debug("Found " + conditions.size() + " conditions");
             ConditionProcessor condProcessor = new StdConditionProcessor();
             result = condProcessor.processConditions(node, termMapProcessor, conditions);
-        }
-        else{
+        } else {
             result = true;
         }
-        
+
         if (result == true) {
             FunctionTermMap functionTermMap =
                     subjectMap.getFunctionTermMap();
             if (functionTermMap != null) {
-                Map<String, String> parameters = retrieveParameters(node, functionTermMap.getFunctionTriplesMap());
+                Map<String, Object> parameters = retrieveParameters(node, functionTermMap.getFunctionTriplesMap());
 
                 //parameters = functionTermMap.getParameterRefs();
                 String function = functionTermMap.getFunction().toString();
@@ -169,7 +169,7 @@ public class StdSubjectMapProcessor implements SubjectMapProcessor {
                     //List<Statement> triples =
                     //        dataset.tuplePattern(subject, RDF.TYPE, classIRI);
                     //if (triples.size() == 0) {
-                        dataset.add(subject, RDF.TYPE, classIRI);
+                    dataset.add(subject, RDF.TYPE, classIRI);
                     //}
                 } else {
                     for (GraphMap graphMap : subjectMap.getGraphMaps()) {
@@ -184,8 +184,8 @@ public class StdSubjectMapProcessor implements SubjectMapProcessor {
         }
     }
 
-    private Map<String, String> retrieveParameters(Object node, TriplesMap functionTriplesMap) {
-        Map<String, String> parameters = new HashMap<String, String>();
+    private Map<String, Object> retrieveParameters(Object node, TriplesMap functionTriplesMap) {
+        Map<String, Object> parameters = new HashMap<>();
         TermMapProcessorFactory factory = new ConcreteTermMapFactory();
         TermMapProcessor termMapProcessor =
                 factory.create(functionTriplesMap.getLogicalSource().getReferenceFormulation());
