@@ -10,7 +10,7 @@
 ex:1 a ex:Test ;
     dbo:title "test&amp;test" ;
     dbo:name "TEST&TEST" ;
-    dbo:restingPlacePosition <http://example.org/restPlace/1> .
+    dbo:restingPlacePosition <http://www.example.org/restPlace/1> .
 
 <http://www.example.org/restPlace/1> a ex:RestPlace ;
     geo:lon "50 50" .
