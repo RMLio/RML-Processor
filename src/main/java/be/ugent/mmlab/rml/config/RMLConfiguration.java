@@ -80,13 +80,13 @@ public class RMLConfiguration {
         if (parameters != null) {
             String[] exeTriplesMap = parameters.split(",");
             for (int i = 0; i < exeTriplesMap.length; i++) {
-                if(exeTriplesMap[i].startsWith("http"))
-                    continue;
-                if (baseIRI != null) {
-                   exeTriplesMap[i] = baseIRI + exeTriplesMap[i];
-                } else {
-                    File file = new File(map_doc);
-                    exeTriplesMap[i] = "file:" + file.getAbsolutePath() + "#" + exeTriplesMap[i];
+                if(!exeTriplesMap[i].matches("\\w+:(/?/?)[^\\s]+")) {
+                    if (baseIRI != null) {
+                        exeTriplesMap[i] = baseIRI + exeTriplesMap[i];
+                    } else {
+                        File file = new File(map_doc);
+                        exeTriplesMap[i] = "file:" + file.getAbsolutePath() + "#" + exeTriplesMap[i];
+                    }
                 }
             }
             return exeTriplesMap;
