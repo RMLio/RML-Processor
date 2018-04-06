@@ -3,6 +3,8 @@ RMLProcessor
 
 Processor for RML (R2RML extension) in Java.
 
+**As RML-Processor has become a submodule of RML-Mapper, Please refer to https://github.com/RMLio/RML-Mapper for updated installation instructions**
+
 Class diagram
 -------------
 ![alt text](https://raw.github.com/mmlab/RMLProcessor/master/docs/class-diagram.jpg)
