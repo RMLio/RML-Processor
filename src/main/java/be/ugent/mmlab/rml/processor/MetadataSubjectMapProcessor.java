@@ -64,7 +64,8 @@ public class MetadataSubjectMapProcessor extends StdSubjectMapProcessor implemen
                     if (triples.isEmpty()) {
                         if(vocabs.contains("void") && 
                                 dataset.getMetadataLevel().equals("triplesmap") || 
-                                dataset.getMetadataLevel().equals("triple")){
+                                dataset.getMetadataLevel().equals("triple") ||
+                                dataset.getMetadataLevel().equals("term")){
                             dataset.addToRepository(
                                     map, subject, RDF.TYPE, classIRI);
                         }
@@ -73,8 +74,8 @@ public class MetadataSubjectMapProcessor extends StdSubjectMapProcessor implemen
                             dataset.add(subject, RDF.TYPE, classIRI);
                         }
 
-                        if (dataset.getMetadataLevel().equals("triple")) {
-                            if (flag == true) {
+                        if (dataset.getMetadataLevel().equals("triple") || dataset.getMetadataLevel().equals("term")) {
+                            if (flag == true && metadataGenerator != null) {
                                 metadataGenerator.generateTripleMetaData(dataset,
                                         map, subject, RDF.TYPE, classIRI, null);
                             }

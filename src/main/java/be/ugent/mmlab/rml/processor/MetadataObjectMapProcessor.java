@@ -3,6 +3,7 @@ package be.ugent.mmlab.rml.processor;
 import be.ugent.mmlab.rml.condition.model.Condition;
 import be.ugent.mmlab.rml.metadata.MetadataGenerator;
 import be.ugent.mmlab.rml.model.PredicateObjectMap;
+import be.ugent.mmlab.rml.model.RDFTerm.FunctionTermMap;
 import be.ugent.mmlab.rml.model.RDFTerm.GraphMap;
 import be.ugent.mmlab.rml.model.RDFTerm.ObjectMap;
 import be.ugent.mmlab.rml.model.TriplesMap;
@@ -10,6 +11,7 @@ import be.ugent.mmlab.rml.model.dataset.MetadataRMLDataset;
 import be.ugent.mmlab.rml.model.dataset.RMLDataset;
 import be.ugent.mmlab.rml.model.std.StdConditionObjectMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.eclipse.rdf4j.model.Resource;
 import org.eclipse.rdf4j.model.Statement;
@@ -77,10 +79,12 @@ public class MetadataObjectMapProcessor extends StdObjectMapProcessor implements
                             if(triples.isEmpty()){
                                 dataset.add(subject, predicate, object); 
                                 log.debug("Should log triple level metadata...");
-                                     
+
+                                if (metadataGenerator != null) {
                                     metadataGenerator.generateTripleMetaData(
-                                        dataset, pom.getOwnTriplesMap(), 
-                                        subject, predicate, object, null);
+                                            dataset, pom.getOwnTriplesMap(),
+                                            subject, predicate, object, null);
+                                }
                             }
                         } else {
                             for (GraphMap graph : graphs) {
@@ -100,6 +104,14 @@ public class MetadataObjectMapProcessor extends StdObjectMapProcessor implements
                 log.debug("No object created. No triple will be generated.");
             }
         }
+    }
+
+    protected boolean addFunctionTriples(RMLDataset dataset, Resource subject, IRI predicate, List<Value> objects, GraphMap graphMap, FunctionTermMap functionTermMap, String function, Map<String, String> parameters) {
+        boolean added = super.addFunctionTriples(dataset, subject, predicate, objects, graphMap, functionTermMap, function, parameters);
+        if (added) {
+            this.metadataGenerator.generateFunctionTermMetadata((MetadataRMLDataset) dataset, functionTermMap, function, parameters, objects);
+        }
+        return added;
     }
 
 }
