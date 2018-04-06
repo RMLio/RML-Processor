@@ -1,6 +1,5 @@
 package be.ugent.mmlab.rml.core;
 
-import be.ugent.mmlab.rml.function.DBpediaFunctionProcessor;
 import be.ugent.mmlab.rml.logicalsourcehandler.termmap.AbstractTermMapProcessor;
 import be.ugent.mmlab.rml.model.PredicateObjectMap;
 import be.ugent.mmlab.rml.performer.NodeRMLPerformer;
