@@ -77,10 +77,14 @@ public class MetadataObjectMapProcessor extends StdObjectMapProcessor implements
                             if(triples.isEmpty()){
                                 dataset.add(subject, predicate, object); 
                                 log.debug("Should log triple level metadata...");
-                                     
-                                    metadataGenerator.generateTripleMetaData(
-                                        dataset, pom.getOwnTriplesMap(), 
-                                        subject, predicate, object, null);
+
+			            log.debug("" + (metadataGenerator == null));
+
+				    if (metadataGenerator != null) {
+                                        metadataGenerator.generateTripleMetaData(
+                                           dataset, pom.getOwnTriplesMap(), 
+                                           subject, predicate, object, null);
+                                    }
                             }
                         } else {
                             for (GraphMap graph : graphs) {
