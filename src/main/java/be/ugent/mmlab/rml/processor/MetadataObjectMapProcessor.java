@@ -80,10 +80,13 @@ public class MetadataObjectMapProcessor extends StdObjectMapProcessor implements
                                 dataset.add(subject, predicate, object); 
                                 log.debug("Should log triple level metadata...");
 
-                                if (metadataGenerator != null) {
-                                    metadataGenerator.generateTripleMetaData(
+			            log.debug("" + (metadataGenerator == null));
+
+				    if (metadataGenerator != null) {
+                                        metadataGenerator.generateTripleMetaData(
                                             dataset, pom.getOwnTriplesMap(),
                                             subject, predicate, object, null);
+                                    }
                                 }
                             }
                         } else {

@@ -17,6 +17,8 @@ import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.model.dataset.RMLDataset;
 import be.ugent.mmlab.rml.model.std.StdConditionObjectMap;
 import static be.ugent.mmlab.rml.model.RDFTerm.TermType.BLANK_NODE;
+import static be.ugent.mmlab.rml.model.RDFTerm.TermType.LITERAL;
+
 import be.ugent.mmlab.rml.performer.ConditionalJoinRMLPerformer;
 import be.ugent.mmlab.rml.performer.JoinRMLPerformer;
 import be.ugent.mmlab.rml.performer.RMLPerformer;
@@ -370,6 +372,7 @@ public class StdObjectMapProcessor implements ObjectMapProcessor {
 
         String referenceValue;
         String constantValue;
+        String templateValue;
         Set<PredicateObjectMap> poms = functionTriplesMap.getPredicateObjectMaps();
         for(PredicateObjectMap pom : poms) {
             Value property = pom.getPredicateMaps().iterator().next().getConstantValue();
@@ -388,6 +391,12 @@ public class StdObjectMapProcessor implements ObjectMapProcessor {
                     constantValue = null;
                     log.debug("No constant value");
                 }
+                try {
+                    templateValue = pom.getObjectMaps().iterator().next().getStringTemplate();
+                } catch(Exception e) {
+                    templateValue = null;
+                    log.debug("No template value");
+                }
                 if(referenceValue != null) {
                     List<String> value = termMapProcessor.extractValueFromNode(node, referenceValue);
                     if(value.size() != 0) {
@@ -395,6 +404,9 @@ public class StdObjectMapProcessor implements ObjectMapProcessor {
                     }
                 } else if(constantValue != null) {
                     parameters.put(parameter.stringValue(), constantValue);
+                } else if(templateValue != null) {
+                    List<String> strings = termMapProcessor.templateHandler(templateValue, node, functionTriplesMap.getLogicalSource().getReferenceFormulation(), LITERAL);
+                    parameters.put(parameter.stringValue(), strings.get(0));
                 } else {
                     // no value is present for this parameter, enter null
                     parameters.put(parameter.stringValue(), "null"); //TODO wmaroy: change to proper uri for null
