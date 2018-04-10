@@ -15,10 +15,10 @@
 @prefix dcterms: <http://purl.org/dc/terms/> .
 @prefix xsd:	<http://www.w3.org/2001/XMLSchema#> .
 @prefix rdf: 	<http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix ex: 	<http://www.example.org/> .
+@prefix ex: 	<http://example.com/uppercase#> .
 @prefix grel: 	<http://users.ugent.be/~bjdmeest/function/grel.ttl#> .
 
-@base	<http://example.com/test> .
+@base	<http://example.com/uppercaseMapping/> .
 
 
 ######################################################################################
@@ -50,7 +50,7 @@
 # 4. Mapping Definitions
 ######################################################################################
 
-<#Person_TemplateMapping>	
+<#Person_TemplateMapping>
 	rml:logicalSource <#Person_LogicalSource> ;
 	rr:subjectMap <#Person_SubjectMap> ;
 	rr:predicateObjectMap <#CoordinatesGeoMapping> ;
@@ -73,20 +73,19 @@
 
 <#IntermediateCoordinatesGeoMapping>
 	rml:logicalSource <#Person_LogicalSource> ;
-	rr:subjectMap <#RestingPlace_SubjectMap> ;	
+	rr:subjectMap <#RestingPlace_SubjectMap> ;
 
 	rr:predicateObjectMap [
 		rr:predicate geo:lon ;
 		rr:objectMap  [ rml:reference "coordinates" ;
 		    crml:equalCondition <#FunctionMapIsSetIntermediateCoordinatesGeoMapping> ] ] .
 
-
 <#Person_SubjectMap>
-	rr:template "http://www.example.org/{id}" ;
+	rr:template "http://example.com/uppercase#{id}" ;
 	rr:class ex:Test .
 
 <#RestingPlace_SubjectMap>
-	rr:template "http://www.example.org/restPlace/{id}" ;
+	rr:template "http://example.com/uppercase/restPlace/{id}" ;
 	rr:class ex:RestPlace .
 
 <#FunctionMapIsSetIntermediateCoordinatesGeoMapping>
