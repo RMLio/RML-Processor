@@ -120,7 +120,7 @@ public class StdObjectMapProcessor implements ObjectMapProcessor {
         }
     }
 
-    protected boolean addFunctionTriples(RMLDataset dataset, Resource subject, IRI predicate, List<Value> objects, GraphMap graphMap, FunctionTermMap functionTermMap, String function, Map<String, String> parameters){
+    protected boolean addFunctionTriples(RMLDataset dataset, Resource subject, IRI predicate, List<Value> objects, GraphMap graphMap, FunctionTermMap functionTermMap, String function, Map<String, Object> parameters){
         return addTriples(dataset, subject, predicate, objects, graphMap);
     }
 

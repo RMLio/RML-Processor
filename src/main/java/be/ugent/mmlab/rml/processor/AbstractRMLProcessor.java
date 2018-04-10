@@ -174,10 +174,12 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                     //Process the joins first
                     Set<ReferencingObjectMap> referencingObjectMaps =
                             pom.getReferencingObjectMaps();
-                    if(referencingObjectMaps != null && referencingObjectMaps.size() > 0)
+                    // TODO: the mapdochandler doesn't find the graphmap
+                    if(referencingObjectMaps != null && referencingObjectMaps.size() > 0) {
                         predicateObjectProcessor.processPredicateObjectMap_RefObjMap(
                                 dataset, subject, predicate, referencingObjectMaps, node,
                                 map, parameters, exeTriplesMap, graphMap);
+                    }
 
                     //Process the Function Object Maps
                     Set<FunctionTermMap> functionTermMaps =
