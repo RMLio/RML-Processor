@@ -11,8 +11,8 @@ import java.util.HashMap;
 import java.util.Map;
 import org.apache.commons.cli.CommandLine;
 import org.apache.log4j.BasicConfigurator;
-import org.openrdf.repository.Repository;
-import org.openrdf.rio.RDFFormat;
+import org.eclipse.rdf4j.repository.Repository;
+import org.eclipse.rdf4j.rio.RDFFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,6 +25,7 @@ public class Main {
     // Log
     static Logger log = LoggerFactory.getLogger(
             Main.class.getPackage().toString());
+
 
     /**
      * @param args the command line arguments
@@ -47,7 +48,7 @@ public class Main {
             commandLine = RMLConfiguration.parseArguments(args);
             String outputFile = null, outputFormat = "turtle";
             String graphName = "", metadataVocab = null, metadataLevel = "None", 
-                    metadataFormat = null;
+                    metadataFormat = null, baseIRI= null;
 
             if (commandLine.hasOption("h")) {
                 RMLConfiguration.displayHelp();
@@ -64,7 +65,9 @@ public class Main {
             if (commandLine.hasOption("f")) {
                 outputFormat = commandLine.getOptionValue("f", null);
             }
-            
+            if (commandLine.hasOption("b")) {
+                baseIRI = commandLine.getOptionValue("b", null);
+            }
             if (commandLine.hasOption("m")) {
                 map_doc = commandLine.getOptionValue("m", null);
             }
@@ -98,25 +101,28 @@ public class Main {
             log.info("========================================");
             RMLMapping mapping = mappingFactory.extractRMLMapping(repository);
             
+            log.info("========================================");
+            log.info("Executing the RML Mapping..");
+            log.info("========================================");
+            
             log.debug("Generation Execution plan...");
             if (commandLine.hasOption("tm")) {
                 triplesMap = commandLine.getOptionValue("tm", null);
                 if(triplesMap != null)
                     exeTriplesMap = 
-                            RMLConfiguration.processTriplesMap(triplesMap,map_doc);
+                            RMLConfiguration.processTriplesMap(triplesMap,map_doc, baseIRI);
             }
             
-            log.info("========================================");
-            log.info("Running the RML Mapping..");
-            log.info("========================================");
-            
-            if(metadataLevel.equals("None") && metadataFormat == null){
+            if(metadataLevel.equals("None") && metadataFormat == null
+                    && (metadataVocab == null || !metadataVocab.contains("co"))){
+                log.debug("Mapping without metadata...");
                 RMLEngine engine = new StdRMLEngine(outputFile);
                 engine.run(mapping, outputFile, outputFormat, 
                         graphName, parameters, exeTriplesMap,
                         null, null, null);
             }
             else {
+                log.debug("Mapping with metadata...");
                 StdMetadataRMLEngine engine = new StdMetadataRMLEngine(outputFile);
                 engine.run(mapping, outputFile, outputFormat, 
                         graphName, parameters, exeTriplesMap, 
@@ -126,10 +132,9 @@ public class Main {
             System.exit(0);
             
         } catch (Exception ex) {
+            log.error("Exception " + ex, ex);
             System.exit(1);
-            log.error("Exception " + ex);
-            RMLConfiguration.displayHelp();
-        } 
+        }
 
     }
        

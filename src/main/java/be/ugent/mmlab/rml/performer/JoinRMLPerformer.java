@@ -7,10 +7,10 @@ import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.openrdf.model.Resource;
-import org.openrdf.model.Statement;
-import org.openrdf.model.URI;
-import org.openrdf.model.Value;
+import org.eclipse.rdf4j.model.Resource;
+import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Value;
 
 /**
  * RML Processor
@@ -26,10 +26,10 @@ public class JoinRMLPerformer extends NodeRMLPerformer{
             LoggerFactory.getLogger(JoinRMLPerformer.class);
     
     private Resource subject;
-    private URI predicate;
+    private IRI predicate;
 
     public JoinRMLPerformer(
-            RMLProcessor processor, Resource subject, URI predicate) {
+            RMLProcessor processor, Resource subject, IRI predicate) {
         super(processor);
         this.subject = subject;
         this.predicate = predicate;
@@ -43,13 +43,13 @@ public class JoinRMLPerformer extends NodeRMLPerformer{
      * @param map 
      */
     @Override
-    public void perform(Object node, RMLDataset dataset, TriplesMap map, 
+    public boolean perform(Object node, RMLDataset dataset, TriplesMap map, 
     String[] exeTriplesMap, Map<String, String> parameters, boolean pomExecution) {
         Value object = processor.processSubjectMap(this.processor,
                 dataset, map, map.getSubjectMap(), node, exeTriplesMap);
-
+        boolean result = true;
         if (object == null){
-            return;
+            result = false;
         }       
         
         List<Statement> triples =
@@ -62,9 +62,11 @@ public class JoinRMLPerformer extends NodeRMLPerformer{
         if(pomExecution){
             NestedRMLPerformer nestedPerformer = 
                     new NestedRMLPerformer(processor);
-            nestedPerformer.perform(
-                    node, dataset, map, exeTriplesMap, parameters, pomExecution);
+            boolean subresult = nestedPerformer.perform(
+                            node, dataset, map, exeTriplesMap, parameters, pomExecution);
+            log.debug("The subresult of the nested performer is " + subresult);
         }
+        return result;
     }
 
 }

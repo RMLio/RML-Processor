@@ -8,10 +8,12 @@ import be.ugent.mmlab.rml.model.dataset.MetadataRMLDataset;
 import be.ugent.mmlab.rml.model.dataset.RMLDataset;
 import java.util.List;
 import java.util.Set;
-import org.openrdf.model.Resource;
-import org.openrdf.model.Statement;
-import org.openrdf.model.impl.URIImpl;
-import org.openrdf.model.vocabulary.RDF;
+
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Resource;
+import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
+import org.eclipse.rdf4j.model.vocabulary.RDF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,8 +39,9 @@ public class MetadataSubjectMapProcessor extends StdSubjectMapProcessor implemen
         
         SubjectMap subjectMap = map.getSubjectMap();
         boolean flag = false;
-        Set<org.openrdf.model.URI> classIRIs = subjectMap.getClassIRIs();
+        Set<IRI> classIRIs = subjectMap.getClassIRIs();
         MetadataRMLDataset dataset = (MetadataRMLDataset) originalDataset ;
+        SimpleValueFactory vf = SimpleValueFactory.getInstance();
         
         List vocabs = dataset.getMetadataVocab();
         //TODO: Decide if I keep that here or if I move it to separate class
@@ -54,14 +57,15 @@ public class MetadataSubjectMapProcessor extends StdSubjectMapProcessor implemen
             }
         } 
         if (subject != null) {
-            for (org.openrdf.model.URI classIRI : classIRIs) {
+            for (IRI classIRI : classIRIs) {
                 if (subjectMap.getGraphMaps().isEmpty()) {
                     List<Statement> triples =
                             dataset.tuplePattern(subject, RDF.TYPE, classIRI);
                     if (triples.isEmpty()) {
                         if(vocabs.contains("void") && 
                                 dataset.getMetadataLevel().equals("triplesmap") || 
-                                dataset.getMetadataLevel().equals("triple")){
+                                dataset.getMetadataLevel().equals("triple") ||
+                                dataset.getMetadataLevel().equals("term")){
                             dataset.addToRepository(
                                     map, subject, RDF.TYPE, classIRI);
                         }
@@ -70,10 +74,10 @@ public class MetadataSubjectMapProcessor extends StdSubjectMapProcessor implemen
                             dataset.add(subject, RDF.TYPE, classIRI);
                         }
 
-                        if (dataset.getMetadataLevel().equals("triple")) {
-                            if (flag == true) {
+                        if (dataset.getMetadataLevel().equals("triple") || dataset.getMetadataLevel().equals("term")) {
+                            if (flag == true && metadataGenerator != null) {
                                 metadataGenerator.generateTripleMetaData(dataset,
-                                        map, subject, RDF.TYPE, classIRI);
+                                        map, subject, RDF.TYPE, classIRI, null);
                             }
                         }
                     }
@@ -82,7 +86,7 @@ public class MetadataSubjectMapProcessor extends StdSubjectMapProcessor implemen
                         if (graphMap.getConstantValue() != null) {
                             dataset.add(
                                     subject, RDF.TYPE, classIRI,
-                                    new URIImpl(graphMap.getConstantValue().toString()));
+                                    vf.createIRI(graphMap.getConstantValue().toString()));
                         }
                     }
                 }

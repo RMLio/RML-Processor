@@ -1,19 +1,10 @@
 package be.ugent.mmlab.rml.processor.concrete;
 
 import be.ugent.mmlab.rml.logicalsourcehandler.termmap.TermMapProcessor;
-import be.ugent.mmlab.rml.logicalsourcehandler.termmap.concrete.CSS3TermMapProcessor;
-import be.ugent.mmlab.rml.logicalsourcehandler.termmap.concrete.CSVTermMapProcessor;
-import be.ugent.mmlab.rml.logicalsourcehandler.termmap.concrete.JSONPathTermMapProcessor;
-import be.ugent.mmlab.rml.logicalsourcehandler.termmap.concrete.XPathTermMapProcessor;
+import be.ugent.mmlab.rml.logicalsourcehandler.termmap.concrete.*;
 import be.ugent.mmlab.rml.processor.RMLProcessor;
 import be.ugent.mmlab.rml.vocabularies.QLVocabulary.QLTerm;
-import static be.ugent.mmlab.rml.vocabularies.QLVocabulary.QLTerm.CSS3_CLASS;
-import static be.ugent.mmlab.rml.vocabularies.QLVocabulary.QLTerm.CSV_CLASS;
-import static be.ugent.mmlab.rml.vocabularies.QLVocabulary.QLTerm.JSONPATH_CLASS;
-import static be.ugent.mmlab.rml.vocabularies.QLVocabulary.QLTerm.XLSX_CLASS;
-import static be.ugent.mmlab.rml.vocabularies.QLVocabulary.QLTerm.XLS_CLASS;
-import static be.ugent.mmlab.rml.vocabularies.QLVocabulary.QLTerm.XPATH_CLASS;
-import nu.xom.XPathContext;
+import jlibs.xml.DefaultNamespaceContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +16,9 @@ import org.slf4j.LoggerFactory;
 public class ConcreteTermMapFactory implements TermMapProcessorFactory {
     
     // Log
-    private static final Logger log = LoggerFactory.getLogger(ConcreteTermMapFactory.class);
+    private static final Logger log = 
+            LoggerFactory.getLogger(
+            ConcreteTermMapFactory.class.getSimpleName());
     
     /**
      *
@@ -40,11 +33,15 @@ public class ConcreteTermMapFactory implements TermMapProcessorFactory {
             case XPATH_CLASS:
                 if (processor != null) {
                     XPathProcessor process = (XPathProcessor) processor;
-                    XPathContext nsContext = process.getNamespaces();
-                    return new XPathTermMapProcessor(nsContext);
+                    DefaultNamespaceContext dnc = process.getNamespaces();
+                    return new XPathTermMapProcessor(dnc);
+                } else {
+                    return new XPathTermMapProcessor();
                 }
             case CSV_CLASS:
                 return new CSVTermMapProcessor();
+            case SQL_CLASS:
+                return new SQLTermMapProcessor();
             case JSONPATH_CLASS:
                 return new JSONPathTermMapProcessor();
             case CSS3_CLASS:
@@ -53,8 +50,10 @@ public class ConcreteTermMapFactory implements TermMapProcessorFactory {
                 return new CSVTermMapProcessor();
             case XLSX_CLASS:
                 return new CSVTermMapProcessor();
+            case DBPEDIA_CLASS:
+                return new DBpediaTermMapProcessor();
             default:
-                log.error("The term " + term + "was not defined.");
+                log.error("The term " + term + " was not defined.");
                 return null;
         }
     }
@@ -75,6 +74,8 @@ public class ConcreteTermMapFactory implements TermMapProcessorFactory {
                 return new CSVTermMapProcessor();
             case XLSX_CLASS:
                 return new CSVTermMapProcessor();
+            case DBPEDIA_CLASS:
+                return new DBpediaTermMapProcessor();
             default:
                 log.error("The term " + term + "was not defined.");
                 return null;

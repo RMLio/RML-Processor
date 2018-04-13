@@ -20,15 +20,21 @@
     rr:subjectMap [
 	 rr:template "http://airport.example.com/{id}";
 	 rr:class transit:Stop ;
-         rr:graphMap [ rr:constant ex:Graph ];
     ];
     rr:predicateObjectMap [
-	rr:predicateMap [
-            rr:template "http://vocab.org/transit/terms/{type}"
-        ];
-	rr:objectMap [
-            rml:reference "bus" ;
+	    rr:predicate ex:bus ;
+	    rr:objectMap [
+	        rr:parentTriplesMap <#BusMapping> ;
+            rr:graphMap [ rr:constant ex:Graph4] ;
 	    ] ;
-        rr:graphMap [ rr:constant ex:Graph ];
     ].
 
+<#BusMapping>
+    rml:logicalSource [
+	rml:source "src/test/resources/example3/Airport.csv";
+        rml:referenceFormulation ql:CSV
+    ];
+    rr:subjectMap [
+	 rr:template "http://bus.example.com/{bus}";
+	 rr:class ex:Bus ;
+    ].

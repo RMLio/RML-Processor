@@ -3,7 +3,7 @@ package be.ugent.mmlab.rml.performer;
 import be.ugent.mmlab.rml.model.dataset.RMLDataset;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import java.util.Map;
-import org.openrdf.model.Resource;
+import org.eclipse.rdf4j.model.Resource;
 
 /**
  * RML Processor
@@ -20,7 +20,7 @@ public interface RMLPerformer {
      * @param dataset dataset for endresult
      * @param map current triple map that is being processed
      */
-    public void perform(Object node, RMLDataset dataset, TriplesMap map, 
+    public boolean perform(Object node, RMLDataset dataset, TriplesMap map, 
             String[] exeTriplesMap, Map<String, String> parameters, 
             boolean pomExecution);
     

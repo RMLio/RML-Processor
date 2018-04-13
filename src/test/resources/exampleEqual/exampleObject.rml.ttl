@@ -17,7 +17,7 @@
 
 <#AirportMapping>
     rml:logicalSource [
-	rml:source "src/test/resources/exampleNegationOf/Airport.csv";
+	rml:source "src/test/resources/exampleEqual/Airport.csv";
         rml:referenceFormulation ql:CSV
     ];
     rr:subjectMap [
@@ -38,7 +38,7 @@
 
 <#BusMapping>
     rml:logicalSource[
-      rml:source "src/test/resources/exampleNegationOf/Transport.xml";
+      rml:source "src/test/resources/exampleEqual/Transport.xml";
       rml:iterator "/transport/bus";
       rml:referenceFormulation ql:XPath;
     ];
@@ -52,11 +52,11 @@
         rr:predicate transit:stop;
         rr:objectMap [
             rml:reference "@id";
-            crml:negationOf <#BooleanCondition> ] 
+            crml:equalCondition <#BooleanCondition> ] 
     ] .
 
 <#BooleanCondition>
-    crml:condition """match(%%id%%,\"25\")""" ;
+    crml:condition """!match(%%id%%,\"25\")""" ;
     crml:binding [
         crml:variable "id" ;
         rml:reference "@id" ] .

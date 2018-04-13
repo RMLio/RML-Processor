@@ -38,6 +38,16 @@ public class RMLExecutionEngine {
         return flag;
     }
     
+    public boolean checkExecutionList(
+            TriplesMap triplesMap, String exeTriplesMap) {
+        boolean flag = false;
+
+        if (triplesMap.getName().toString().equals(exeTriplesMap.toString())) {
+            flag = true;
+        }
+        return flag;
+    }
+    
     public Collection<TriplesMap> processExecutionList(
             RMLMapping rmlMapping, String[] exeTriplesMap) {
         Collection<TriplesMap> tms = rmlMapping.getTriplesMaps();

@@ -10,12 +10,13 @@ import be.ugent.mmlab.rml.processor.concrete.ConcreteTermMapFactory;
 import be.ugent.mmlab.rml.processor.concrete.TermMapProcessorFactory;
 import java.util.List;
 import java.util.Map;
+
+import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.openrdf.model.Resource;
-import org.openrdf.model.Statement;
-import org.openrdf.model.URI;
-import org.openrdf.model.impl.URIImpl;
+import org.eclipse.rdf4j.model.Resource;
+import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.model.IRI;
 
 /**
  * RML Processor
@@ -29,18 +30,22 @@ public class SimpleReferencePerformer extends NodeRMLPerformer {
             SimpleReferencePerformer.class.getSimpleName());
     
     private Resource subject;
-    private URI predicate;
+    private IRI predicate;
+    private Resource graph;
     
     public SimpleReferencePerformer(
-            RMLProcessor processor, Resource subject, URI predicate) {
+            RMLProcessor processor, Resource subject, IRI predicate, Resource graphMapValue) {
         super(processor);
         this.subject = subject;
         this.predicate = predicate;
+        this.graph = graphMapValue;
     }
     
     @Override
-    public void perform(Object node, RMLDataset dataset, TriplesMap map, 
+    public boolean perform(Object node, RMLDataset dataset, TriplesMap map, 
         String[] exeTriplesMap, Map<String, String> parameters, boolean pomExecution) {
+        boolean result = true;
+        SimpleValueFactory vf = SimpleValueFactory.getInstance();
 
         if(map.getSubjectMap().getTermType() == 
                 be.ugent.mmlab.rml.model.RDFTerm.TermType.BLANK_NODE 
@@ -48,7 +53,7 @@ public class SimpleReferencePerformer extends NodeRMLPerformer {
                 be.ugent.mmlab.rml.model.RDFTerm.TermType.IRI){
             RMLProcessorFactory factory = new ConcreteRMLProcessorFactory();
             RMLProcessor subprocessor = factory.create(
-                    map.getLogicalSource().getReferenceFormulation(), parameters);
+                    map.getLogicalSource().getReferenceFormulation(), parameters, map);
             RMLPerformer performer = new NodeRMLPerformer(subprocessor); 
             Resource object = processor.processSubjectMap(this.processor,
                     dataset, map, map.getSubjectMap(), node, exeTriplesMap); 
@@ -56,7 +61,7 @@ public class SimpleReferencePerformer extends NodeRMLPerformer {
                 List<Statement> triples =
                         dataset.tuplePattern(subject, predicate, object);
                 if(triples.size() == 0) {
-                    dataset.add(subject, predicate, object);
+                    dataset.add(subject, predicate, object, graph);
                     log.debug("Subject " + subject
                             + " Predicate " + predicate
                             + " Object " + object.toString());
@@ -87,8 +92,10 @@ public class SimpleReferencePerformer extends NodeRMLPerformer {
                             node, object, exeTriplesMap, pomExecution);
                 }
             }
-            else
+            else{
+                log.debug("Check for fallback POMs - 3");
                 log.debug("Object of " + map.getName() + " was null. ");
+            }
         }
         else{
             TermMapProcessorFactory factory = new ConcreteTermMapFactory();
@@ -98,7 +105,7 @@ public class SimpleReferencePerformer extends NodeRMLPerformer {
             List<String> values = 
                     termMapProcessor.processTermMap(map.getSubjectMap(), node);        
             for(String value : values){
-                Resource object = new URIImpl(value);
+                Resource object = vf.createIRI(value);
                 List<Statement> triples =
                         dataset.tuplePattern(subject, predicate, object);
                 if (triples.size() == 0) {
@@ -109,5 +116,6 @@ public class SimpleReferencePerformer extends NodeRMLPerformer {
                 }
             }   
         }    
+        return result;
     }
 }

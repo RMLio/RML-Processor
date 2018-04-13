@@ -4,6 +4,8 @@ import be.ugent.mmlab.rml.model.RMLMapping;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.model.dataset.RMLDataset;
 import be.ugent.mmlab.rml.processor.RMLProcessor;
+
+import java.io.InputStream;
 import java.util.Map;
 
 /**
@@ -21,7 +23,7 @@ public interface RMLEngine {
     
     public RMLDataset generateTriplesMapTriples(
             TriplesMap triplesMap, Map<String, String> parameters,
-            String[] exeTriplesMap, RMLDataset dataset);
+            String[] exeTriplesMap, RMLDataset dataset, InputStream input);
     
     public RMLProcessor generateRMLProcessor(
             TriplesMap triplesMap, Map<String, String> parameters);

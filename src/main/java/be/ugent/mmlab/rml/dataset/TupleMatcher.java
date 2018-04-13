@@ -2,28 +2,26 @@ package be.ugent.mmlab.rml.dataset;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.openrdf.model.Resource;
-import org.openrdf.model.Statement;
-import org.openrdf.model.URI;
-import org.openrdf.model.Value;
-import org.openrdf.rio.helpers.RDFHandlerBase;
+import org.eclipse.rdf4j.model.Resource;
+import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Value;
+import org.eclipse.rdf4j.rio.helpers.AbstractRDFHandler;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * RML Processor
  *
  * @author mielvandersande
  */
-class TupleMatcher extends RDFHandlerBase {
+class TupleMatcher extends AbstractRDFHandler {
 
     private List<Statement> statements = new ArrayList<>();
     private Resource s;
-    private URI p;
+    private IRI p;
     private Value o;
 
-    public TupleMatcher(Resource s, URI p, Value o, Resource... contexts) {
+    public TupleMatcher(Resource s, IRI p, Value o, Resource... contexts) {
         this.s = s;
         this.p = p;
         this.o = o;
