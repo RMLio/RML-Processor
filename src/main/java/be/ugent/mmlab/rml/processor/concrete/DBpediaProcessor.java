@@ -10,6 +10,7 @@ import org.eclipse.rdf4j.model.Resource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,10 +28,12 @@ public class DBpediaProcessor extends AbstractRMLProcessor {
     public void execute(RMLDataset dataset, TriplesMap map, RMLPerformer performer, InputStream input, String[] exeTriplesMap, boolean pomExecution) {
         try {
             ObjectInputStream ois = new ObjectInputStream(input);
-            HashMap<String, String> templateNode = (HashMap<String, String>) ois.readObject();
+            ArrayList<HashMap<String, String>> templateNodes = (ArrayList<HashMap<String, String>>) ois.readObject();
 
-            performer.perform(
-                    templateNode, dataset, map, exeTriplesMap, parameters, pomExecution);
+            for (HashMap<String,String> templateNode : templateNodes) {
+                performer.perform(
+                        templateNode, dataset, map, exeTriplesMap, parameters, pomExecution);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
@@ -43,4 +46,5 @@ public class DBpediaProcessor extends AbstractRMLProcessor {
     public void execute_node(RMLDataset dataset, String expression, TriplesMap parentTriplesMap, RMLPerformer performer, Object node, Resource subject, String[] exeTriplesMap, boolean pomExecution) {
 
     }
+
 }

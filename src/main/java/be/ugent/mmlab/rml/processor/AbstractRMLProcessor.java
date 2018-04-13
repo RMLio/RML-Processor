@@ -71,6 +71,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
         else{
             if(dataset.getMetadataLevel().equals("triplesmap") ||
                     dataset.getMetadataLevel().equals("triple") ||
+                    dataset.getMetadataLevel().equals("term") ||
                     dataset.getMetadataVocab().contains("co") ){
                 
                 subMapProcessor = new MetadataSubjectMapProcessor(metadataGenerator);
@@ -159,8 +160,9 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                 if (predicates.size() > 0) {
                     IRI predicate = predicates.get(0);
                     ObjectMapProcessor predicateObjectProcessor;
-                    if (dataset.getMetadataLevel().equals("triple")
-                            || dataset.getMetadataVocab().contains("co")) {
+                    if (dataset.getMetadataLevel().equals("triple") ||
+                            dataset.getMetadataLevel().equals("term")
+                            || dataset.getMetadataVocab().contains("co") && metadataGenerator != null) {
                         predicateObjectProcessor =
                                 new MetadataObjectMapProcessor(
                                 map, processor, metadataGenerator);
@@ -172,10 +174,12 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                     //Process the joins first
                     Set<ReferencingObjectMap> referencingObjectMaps =
                             pom.getReferencingObjectMaps();
-                    if(referencingObjectMaps != null && referencingObjectMaps.size() > 0)
+                    // TODO: the mapdochandler doesn't find the graphmap
+                    if(referencingObjectMaps != null && referencingObjectMaps.size() > 0) {
                         predicateObjectProcessor.processPredicateObjectMap_RefObjMap(
                                 dataset, subject, predicate, referencingObjectMaps, node,
                                 map, parameters, exeTriplesMap, graphMap);
+                    }
 
                     //Process the Function Object Maps
                     Set<FunctionTermMap> functionTermMaps =

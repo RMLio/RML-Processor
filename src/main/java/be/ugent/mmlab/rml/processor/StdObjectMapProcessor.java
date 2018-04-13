@@ -120,7 +120,11 @@ public class StdObjectMapProcessor implements ObjectMapProcessor {
         }
     }
 
-    private void addTriples(RMLDataset dataset, Resource subject, IRI predicate, List<Value> objects, GraphMap graphMap){
+    protected boolean addFunctionTriples(RMLDataset dataset, Resource subject, IRI predicate, List<Value> objects, GraphMap graphMap, FunctionTermMap functionTermMap, String function, Map<String, Object> parameters){
+        return addTriples(dataset, subject, predicate, objects, graphMap);
+    }
+
+    protected boolean addTriples(RMLDataset dataset, Resource subject, IRI predicate, List<Value> objects, GraphMap graphMap) {
         Resource graphResource = null;
         if(graphMap != null)
             graphResource = (Resource) graphMap.getConstantValue();
@@ -133,13 +137,16 @@ public class StdObjectMapProcessor implements ObjectMapProcessor {
                             dataset.tuplePattern(subject, predicate, object);
                     if(triples.size() == 0){
                         dataset.add(subject, predicate, object, graphResource);
+                        return true;
                     }
                 } else {
                     dataset.add(subject, predicate, object, graphResource);
+                    return true;
                 }
 
             }
         }
+        return false;
     }
     
     public List<Value> processObjectMap(ObjectMap objectMap, Object node) {
@@ -250,14 +257,17 @@ public class StdObjectMapProcessor implements ObjectMapProcessor {
 
                 SourceProcessor inputProcessor = new AbstractInputProcessor();
 
-                InputStream input = inputProcessor.getInputStream(
-                        parentTriplesMap.getLogicalSource(), parameters);
+
 
                 //different Logical Source AND no Join Conditions AND no Bind Conditions
                 if (joinConditions.isEmpty()
                         & !parentTriplesMap.getLogicalSource().getSource().getTemplate().equals(
                         map.getLogicalSource().getSource().getTemplate())
                         & conditions == null) {
+
+                    InputStream input = inputProcessor.getInputStream(
+                            parentTriplesMap.getLogicalSource(), parameters);
+
                     process_difLS_noJC_noBC(performer, processor, dataset, subject,
                             predicate, parentTriplesMap, input, exeTriplesMap);
                     //continue;
@@ -268,6 +278,10 @@ public class StdObjectMapProcessor implements ObjectMapProcessor {
                         & !parentTriplesMap.getLogicalSource().getSource().getTemplate().equals(
                         map.getLogicalSource().getSource().getTemplate())
                         & (conditions != null)) {
+
+                    InputStream input = inputProcessor.getInputStream(
+                            parentTriplesMap.getLogicalSource(), parameters);
+
                     boolean result = process_difLS_noJC_withBC(performer, processor, dataset, subject,
                             predicate, parentTriplesMap, input, exeTriplesMap);
                     if (!result) {
@@ -290,6 +304,8 @@ public class StdObjectMapProcessor implements ObjectMapProcessor {
                         & parentTriplesMap.getLogicalSource().getSource().getTemplate().equals(
                         map.getLogicalSource().getSource().getTemplate())) {
 
+                    InputStream input = null;
+
                     process_sameLS_noJC(performer, processor, dataset, node,
                             map, subject, predicate, parentTriplesMap, input,
                             parameters, exeTriplesMap, (Resource) graphMapValue);
@@ -297,6 +313,10 @@ public class StdObjectMapProcessor implements ObjectMapProcessor {
                 } //Conditions
                 else {
                     log.debug("Referencing Object Map with Logical Source with conditions.");
+
+                    InputStream input = inputProcessor.getInputStream(
+                            parentTriplesMap.getLogicalSource(), parameters);
+
                     //Build a join map where
                     //  key: the parent expression
                     //  value: the value extracted from the child
@@ -340,7 +360,7 @@ public class StdObjectMapProcessor implements ObjectMapProcessor {
             List<Value> values = this.termMapProcessor.processFunctionTermMap(
                     functionTermMap, node, function, parameters);
             log.debug("values are " + values);
-            addTriples(dataset,subject,predicate,values,graphMap);
+            addFunctionTriples(dataset, subject, predicate, values, graphMap, functionTermMap, function, parameters);
         }
     }
 

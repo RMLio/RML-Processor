@@ -1,5 +1,6 @@
 package be.ugent.mmlab.rml.core;
 
+import be.ugent.mmlab.rml.logicalsourcehandler.termmap.AbstractTermMapProcessor;
 import be.ugent.mmlab.rml.model.PredicateObjectMap;
 import be.ugent.mmlab.rml.performer.NodeRMLPerformer;
 import be.ugent.mmlab.rml.model.dataset.FileDataset;
@@ -9,6 +10,7 @@ import be.ugent.mmlab.rml.input.ConcreteLogicalSourceProcessorFactory;
 import be.ugent.mmlab.rml.input.processor.SourceProcessor;
 import be.ugent.mmlab.rml.model.RMLMapping;
 import be.ugent.mmlab.rml.model.TriplesMap;
+import be.ugent.mmlab.rml.processor.AbstractRMLProcessor;
 import be.ugent.mmlab.rml.processor.RMLProcessor;
 import be.ugent.mmlab.rml.processor.RMLProcessorFactory;
 import be.ugent.mmlab.rml.processor.concrete.ConcreteRMLProcessorFactory;
@@ -18,6 +20,8 @@ import java.io.InputStream;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+
+import jodd.log.impl.SimpleLogger;
 import org.eclipse.rdf4j.repository.RepositoryException;
 import org.eclipse.rdf4j.repository.manager.LocalRepositoryManager;
 import org.slf4j.Logger;
@@ -35,6 +39,9 @@ public class StdRMLEngine implements RMLEngine {
     // Log
     private static final Logger log = 
             LoggerFactory.getLogger(StdRMLEngine.class.getSimpleName());
+
+
+
     // A base IRI used in resolving relative IRIs produced by the R2RML mapping.
     protected String baseIRI;
     //private static boolean source_properties;
@@ -42,14 +49,17 @@ public class StdRMLEngine implements RMLEngine {
     //There are probably better ways to do this than a static variable
     LocalRepositoryManager manager;
     protected Map<String,Integer> enumerator = new HashMap<String,Integer>();
-    
-    public StdRMLEngine() {} 
+    protected String pathToNativeStore;
+
+    public StdRMLEngine() {}
     
     public StdRMLEngine(String pathToNativeStore) {
         try {
             if(pathToNativeStore == null){
-                pathToNativeStore = System.getProperty("user.dir");
+                pathToNativeStore = System.getProperty("user.dir") + "/dataset.ttl";
             }
+
+            this.pathToNativeStore = pathToNativeStore;
 
             File file = new File(pathToNativeStore);
             String folder = file.getAbsoluteFile().getParent();
@@ -90,7 +100,7 @@ public class StdRMLEngine implements RMLEngine {
     public RMLDataset runRMLMapping(RMLDataset dataset, RMLMapping rmlMapping, 
         String baseIRI, Map<String, String> parameters, String[] exeTriplesMap) {
         long startTime = System.nanoTime();
-        
+
         log.debug("Running RML mapping... ");
         if (rmlMapping == null) 
             log.info("No RML Mapping object found.");
@@ -141,16 +151,18 @@ public class StdRMLEngine implements RMLEngine {
             RMLDataset dataset, RMLMapping rmlMapping, 
             Map<String, String> parameters, String[] exeTriplesMap, InputStream input) {
 
-        log.debug("Generate RDF triples... ");
+
+
+        //log.debug("Generate RDF triples... ");
         Collection<TriplesMap> triplesMaps;
         RMLExecutionEngine executionEngine = 
                 new RMLExecutionEngine(exeTriplesMap);
         
-        log.debug("Generating execution list... ");
+        //log.debug("Generating execution list... ");
         if(exeTriplesMap != null && exeTriplesMap.length != 0){
             triplesMaps = executionEngine.
                     processExecutionList(rmlMapping, exeTriplesMap);
-            log.debug("The execution list has " + triplesMaps.size() + " triples Maps.");
+            //log.debug("The execution list has " + triplesMaps.size() + " triples Maps.");
         }
         else
             triplesMaps = rmlMapping.getTriplesMaps();
@@ -185,7 +197,7 @@ public class StdRMLEngine implements RMLEngine {
         else {
             startTriplesMapExecution(dataset, triplesMap, parameters, exeTriplesMap, input);
         }
-        
+
         return dataset;
     }
     
@@ -221,15 +233,15 @@ public class StdRMLEngine implements RMLEngine {
 
         SourceProcessor inputProcessor;
         
-        log.info("Generating RDF triples for "
-                + triplesMap.getName());
+        //log.info("Generating RDF triples for "
+        //        + triplesMap.getName());
         //TODO: Add metadata that this Map Doc has that many Triples Maps
 
-        log.info("Generating RML Processor..");
+        //log.info("Generating RML Processor..");
         RMLProcessor processor = generateRMLProcessor(triplesMap, parameters);
 
         if (processor != null) {
-            log.info("Generating Data Retrieval Processor..");
+            //log.info("Generating Data Retrieval Processor..");
             inputProcessor =
                     generateInputProcessor(triplesMap);
             if(inputProcessor == null){
@@ -263,7 +275,7 @@ public class StdRMLEngine implements RMLEngine {
             String[] exeTriplesMap, RMLDataset dataset, InputStream input) {
         //InputStream input = null;
         
-        log.debug("Generating Input Stream..");
+        //log.debug("Generating Input Stream..");
         try {
             if(input == null)
                 input = inputProcessor.getInputStream(
@@ -275,19 +287,19 @@ public class StdRMLEngine implements RMLEngine {
 
         try {
             if (input != null) {
-                log.debug("Generating Performer..");
+            //    log.debug("Generating Performer..");
                 NodeRMLPerformer performer =
                         new NodeRMLPerformer(processor);
 
-                log.debug("Executing Mapping Processor..");
+             //   log.debug("Executing Mapping Processor..");
                 processor.execute(dataset, triplesMap, performer,
                         input, exeTriplesMap, false);
                 Integer iteration = processor.getEnumerator();
 //                enumerator.put(triplesMap.getShortName(), iteration);
             }
             else{
-                log.debug("Null input data derived from " + 
-                        triplesMap.getLogicalSource().getSource().getTemplate());
+            //    log.debug("Null input data derived from " +
+            //            triplesMap.getLogicalSource().getSource().getTemplate());
                 return dataset;
             }
             
