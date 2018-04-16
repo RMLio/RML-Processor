@@ -5,19 +5,16 @@
     <parent>
         <groupId>be.ugent.mmlab.rml</groupId>
         <artifactId>RML-Mapper</artifactId>
-        <version>3.0.0</version>
+        <version>3.0.1</version>
     </parent>
 
-    <groupId>be.ugent.mmlab.rml</groupId>
     <artifactId>RML-Processor</artifactId>
-    <version>3.0.0</version>
     <packaging>jar</packaging>
 
     <name>RML - Processor</name>
     <url>http://github.org/rmlio/rml-processor</url>
 
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jsonpath.version>2.2.0</jsonpath.version>
     </properties>
     <build>
@@ -26,8 +23,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>2.0.2</version>
                 <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -83,32 +80,32 @@
         <dependency>
             <groupId>be.ugent.mmlab.rml</groupId>
             <artifactId>RML-ConditionsHandler</artifactId>
-            <version>2.0.0</version>
+            <version>${revision}</version>
+        </dependency>
+        <dependency>
+            <groupId>be.ugent.mmlab.rml</groupId>
+            <artifactId>RML-Model</artifactId>
+            <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>be.ugent.mmlab.rml</groupId>
             <artifactId>RML-MapDocHandler</artifactId>
-            <version>3.0.0</version>
+            <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>be.ugent.mmlab.rml</groupId>
             <artifactId>RML-LogicalSourceHandler</artifactId>
-            <version>3.0.0</version>
+            <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>be.ugent.mmlab.rml</groupId>
             <artifactId>RML-DataRetrievalHandler</artifactId>
-            <version>3.0.0</version>
+            <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>be.ugent.mmlab.rml</groupId>
             <artifactId>RML-MetadataHandler</artifactId>
-            <version>3.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>be.ugent.mmlab.fno</groupId>
-            <artifactId>Function-Processor</artifactId>
-            <version>1.0.0</version>
+            <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -142,69 +139,69 @@
         <dependency>
             <groupId>org.eclipse.rdf4j</groupId>
             <artifactId>rdf4j-runtime</artifactId>
-            <version>1.0.3</version>
+            <version>${rdf4j.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.rdf4j</groupId>
             <artifactId>rdf4j-rio-api</artifactId>
-            <version>1.0.3</version>
+            <version>${rdf4j.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.rdf4j</groupId>
             <artifactId>rdf4j-model</artifactId>
-            <version>1.0.3</version>
+            <version>${rdf4j.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.rdf4j</groupId>
             <artifactId>rdf4j-rio-rdfxml</artifactId>
-            <version>1.0.3</version>
+            <version>${rdf4j.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.rdf4j</groupId>
             <artifactId>rdf4j-repository-api</artifactId>
-            <version>1.0.3</version>
+            <version>${rdf4j.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.rdf4j</groupId>
             <artifactId>rdf4j-repository-http</artifactId>
-            <version>1.0.3</version>
+            <version>${rdf4j.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.rdf4j</groupId>
             <artifactId>rdf4j-repository-sail</artifactId>
-            <version>1.0.3</version>
+            <version>${rdf4j.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.rdf4j</groupId>
             <artifactId>rdf4j-sail-memory</artifactId>
-            <version>1.0.3</version>
+            <version>${rdf4j.version}</version>
             <scope>compile</scope>        
         </dependency>
         <dependency>
             <groupId>org.eclipse.rdf4j</groupId>
             <artifactId>rdf4j-sail-nativerdf</artifactId>
-            <version>1.0.3</version>
+            <version>${rdf4j.version}</version>
             <scope>compile</scope>        
         </dependency>
         <dependency>
             <groupId>org.eclipse.rdf4j</groupId>
             <artifactId>rdf4j-rio-turtle</artifactId>
-            <version>1.0.3</version>
+            <version>${rdf4j.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.rdf4j</groupId>
             <artifactId>rdf4j-rio-nquads</artifactId>
-            <version>1.0.3</version>
+            <version>${rdf4j.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.rdf4j</groupId>
             <artifactId>rdf4j-rio-rdfjson</artifactId>
-            <version>1.0.3</version>
+            <version>${rdf4j.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.rdf4j</groupId>
             <artifactId>rdf4j-rio-jsonld</artifactId>
-            <version>1.0.3</version>
+            <version>${rdf4j.version}</version>
         </dependency>
         <dependency>
             <groupId>com.sun.org.apache</groupId>
@@ -235,12 +232,12 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.12</version>
+            <version>${slf4j.version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
-            <version>1.7.12</version>
+            <version>${slf4j.version}</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
