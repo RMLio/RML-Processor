@@ -1,0 +1,23 @@
+@prefix rr: <http://www.w3.org/ns/r2rml#>.
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix rml: <http://semweb.mmlab.be/ns/rml#>.
+
+<http://mapping.example.com/map_failure_mode_restriction_0> rml:logicalSource <http://mapping.example.com/source_0>.
+<http://mapping.example.com/source_0> a rml:LogicalSource;
+    rml:source "src/test/resources/example.blanknodes/electronics.csv";
+    rml:referenceFormulation <http://semweb.mmlab.be/ns/ql#CSV>.
+<http://mapping.example.com/map_failure_mode_restriction_0> a rml:TriplesMap;
+    rdfs:label "failure_mode_restriction".
+<http://mapping.example.com/s_0> a rr:SubjectMap.
+<http://mapping.example.com/map_failure_mode_restriction_0> rr:subjectMap <http://mapping.example.com/s_0>.
+<http://mapping.example.com/s_0> rr:termType rr:BlankNode.
+<http://mapping.example.com/pom_0> a rr:PredicateObjectMap.
+<http://mapping.example.com/map_failure_mode_restriction_0> rr:predicateObjectMap <http://mapping.example.com/pom_0>.
+<http://mapping.example.com/pm_0> a rr:PredicateMap.
+<http://mapping.example.com/pom_0> rr:predicateMap <http://mapping.example.com/pm_0>.
+<http://mapping.example.com/pm_0> rr:constant rdf:type.
+<http://mapping.example.com/pom_0> rr:objectMap <http://mapping.example.com/om_0>.
+<http://mapping.example.com/om_0> a rr:ObjectMap;
+    rr:constant "http://www.w3.org/2002/07/owl#Restriction";
+    rr:termType rr:IRI.

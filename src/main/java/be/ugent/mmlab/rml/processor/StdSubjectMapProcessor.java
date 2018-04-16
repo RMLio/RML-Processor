@@ -21,11 +21,9 @@ import java.util.Map;
 import java.util.Set;
 
 import be.ugent.mmlab.rml.vocabularies.FnVocabulary;
-import org.apache.commons.lang.RandomStringUtils;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Resource;
 import org.eclipse.rdf4j.model.Value;
-import org.eclipse.rdf4j.model.impl.SimpleIRI;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.eclipse.rdf4j.model.vocabulary.RDF;
 import org.slf4j.Logger;
@@ -37,7 +35,6 @@ import org.slf4j.LoggerFactory;
  * @author andimou
  */
 public class StdSubjectMapProcessor implements SubjectMapProcessor {
-    private TermMapProcessor termMapProcessor;
 
     // Log
     private static final Logger log =
@@ -52,7 +49,7 @@ public class StdSubjectMapProcessor implements SubjectMapProcessor {
 
         //Get the uri
         TermMapProcessorFactory factory = new ConcreteTermMapFactory();
-        this.termMapProcessor = factory.create(
+        TermMapProcessor termMapProcessor = factory.create(
                 subjectMap.getOwnTriplesMap().getLogicalSource().getReferenceFormulation(),
                 processor);
 
@@ -69,7 +66,7 @@ public class StdSubjectMapProcessor implements SubjectMapProcessor {
             result = true;
         }
 
-        if (result == true) {
+        if (result) {
             FunctionTermMap functionTermMap =
                     subjectMap.getFunctionTermMap();
             if (functionTermMap != null) {
@@ -78,7 +75,7 @@ public class StdSubjectMapProcessor implements SubjectMapProcessor {
                 //parameters = functionTermMap.getParameterRefs();
                 String function = functionTermMap.getFunction().toString();
 
-                List<Value> values = this.termMapProcessor.processFunctionTermMap(
+                List<Value> values = termMapProcessor.processFunctionTermMap(
                         functionTermMap, node, function, parameters);
 
                 log.debug("values are " + values);
@@ -94,7 +91,7 @@ public class StdSubjectMapProcessor implements SubjectMapProcessor {
                 }
             }
 
-            List<String> values = this.termMapProcessor.processTermMap(subjectMap, node);
+            List<String> values = termMapProcessor.processTermMap(subjectMap, node);
             //log.info("Abstract RML Processor Graph Map" + subjectMap.getGraphMaps().toString());
             if (values == null || values.isEmpty()) {
                 if (subjectMap.getTermType() != BLANK_NODE) {
@@ -133,8 +130,7 @@ public class StdSubjectMapProcessor implements SubjectMapProcessor {
                     }
                     break;
                 case BLANK_NODE:
-                    subject = vf.createIRI(
-                            RandomStringUtils.randomAlphanumeric(10));
+                    subject = vf.createBNode();
                     break;
                 default:
                     subject = vf.createIRI(value);
