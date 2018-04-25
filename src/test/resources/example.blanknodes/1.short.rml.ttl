@@ -1,0 +1,14 @@
+@prefix rr: <http://www.w3.org/ns/r2rml#>.
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix rml: <http://semweb.mmlab.be/ns/rml#>.
+
+<http://mapping.example.com/map_failure_mode_restriction_0>
+  rml:logicalSource [
+    rml:referenceFormulation <http://semweb.mmlab.be/ns/ql#CSV>;
+    rml:source "src/test/resources/example.blanknodes/electronics.csv"
+  ];
+  rr:subjectMap [
+    rr:termType rr:BlankNode;
+    rr:class <http://www.w3.org/2002/07/owl#Restriction>
+  ].

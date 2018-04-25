@@ -361,6 +361,22 @@ public class MapperTest
                 assertMap(fileToRMLFile, null, triplesMap)));
     }
 
+    public void testBN1() {
+        executeTest("/example.blanknodes/1.rml.ttl", "/example.blanknodes/1.out.ttl");
+        executeTest("/example.blanknodes/1.short.rml.ttl", "/example.blanknodes/1.out.ttl");
+    }
+
+    private void executeTest(String rmlFile, String outputFile) {
+        executeTest(rmlFile, outputFile, null);
+    }
+
+    private void executeTest(String rmlFile, String outputFile, String[] triplesMap) {
+        URL fileToRMLFile = getClass().getResource(rmlFile);
+        URL fileToOutputFile = getClass().getResource(outputFile);
+        assertTrue(desiredOutput(fileToOutputFile).isEqualTo(
+                assertMap(fileToRMLFile, null, triplesMap)));
+    }
+
 //    public void testExampleFnUppercaseMetadata() {
 //        log.warn("Something wrong with the repositories folder: it keeps old stuff?");
 //        log.warn("Doesn't work for metadata levels other than dataset");

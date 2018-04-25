@@ -364,54 +364,37 @@ public class StdObjectMapProcessor implements ObjectMapProcessor {
         }
     }
 
-    private Map<String,Object> retrieveParameters(Object node, TriplesMap functionTriplesMap){
-        Map<String,Object> parameters = new HashMap<>();
+    private Map<String, Object> retrieveParameters(Object node, TriplesMap functionTriplesMap) {
+        Map<String, Object> parameters = new HashMap<>();
         TermMapProcessorFactory factory = new ConcreteTermMapFactory();
         TermMapProcessor termMapProcessor =
                 factory.create(functionTriplesMap.getLogicalSource().getReferenceFormulation());
 
-        String referenceValue;
-        String constantValue;
-        String templateValue;
         Set<PredicateObjectMap> poms = functionTriplesMap.getPredicateObjectMaps();
-        for(PredicateObjectMap pom : poms) {
+        for (PredicateObjectMap pom : poms) {
             Value property = pom.getPredicateMaps().iterator().next().getConstantValue();
             String executes = FnVocabulary.FNO_NAMESPACE + FnVocabulary.FnTerm.EXECUTES;
-            if(!property.stringValue().equals(executes)){
+            if (!property.stringValue().equals(executes)) {
                 Value parameter = pom.getPredicateMaps().iterator().next().getConstantValue();
-                try {
-                    referenceValue = pom.getObjectMaps().iterator().next().getReferenceMap().getReference();
-                } catch(Exception e) {
-                    referenceValue = null;
-                    log.debug("No reference");
-                }
-                try {
-                    constantValue = pom.getObjectMaps().iterator().next().getConstantValue().stringValue();
-                } catch(Exception e) {
-                    constantValue = null;
-                    log.debug("No constant value");
-                }
-                try {
-                    templateValue = pom.getObjectMaps().iterator().next().getStringTemplate();
-                } catch(Exception e) {
-                    templateValue = null;
-                    log.debug("No template value");
-                }
-                if(referenceValue != null) {
-                    List<String> value = termMapProcessor.extractValueFromNode(node, referenceValue);
-                    if(value.size() != 0) {
-                        parameters.put(parameter.stringValue(), value.get(0));
-                    }
-                } else if(constantValue != null) {
-                    parameters.put(parameter.stringValue(), constantValue);
-                } else if(templateValue != null) {
-                    List<String> strings = termMapProcessor.templateHandler(templateValue, node, functionTriplesMap.getLogicalSource().getReferenceFormulation(), LITERAL);
-                    parameters.put(parameter.stringValue(), strings.get(0));
+                List<String> valueList = new ArrayList<>();
+                Object returnValue;
+                SimpleValueFactory vf = SimpleValueFactory.getInstance();
+                ObjectMap objectMap = pom.getObjectMaps().iterator().next();
+                //A Term map returns one or more values (in case expression matches more)
+                if (objectMap != null && !objectMap.getTermType().equals(BLANK_NODE)) {
+                    valueList = termMapProcessor.processTermMap(objectMap, node);
                 } else {
-                    // no value is present for this parameter, enter null
-                    parameters.put(parameter.stringValue(), "null"); //TODO wmaroy: change to proper uri for null
+                    valueList.add(vf.createBNode(null).toString());
                 }
-                //TODO from wmaroy: how to avoid this check?
+                if (valueList == null || valueList.isEmpty()) {
+                    // no value is present for this parameter, enter null
+                    returnValue = "null"; //TODO wmaroy: change to proper uri for null
+                } else if (valueList.size() == 1) {
+                    returnValue = valueList.get(0);
+                } else {
+                    returnValue = valueList;
+                }
+                parameters.put(parameter.stringValue(), returnValue);
             }
         }
 

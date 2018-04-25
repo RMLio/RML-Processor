@@ -14,5 +14,4 @@ nb-configuration.xml
 nbactions.xml
 gc.log
 src/main/java/be/ugent/mmlab/rml/main/Main_*.java
-resources
 dependency-reduced-pom.xml
