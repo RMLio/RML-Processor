@@ -8,6 +8,7 @@ import static be.ugent.mmlab.rml.model.RDFTerm.TermType.BLANK_NODE;
 import be.ugent.mmlab.rml.model.PredicateObjectMap;
 import be.ugent.mmlab.rml.model.RDFTerm.FunctionTermMap;
 import be.ugent.mmlab.rml.model.RDFTerm.GraphMap;
+import be.ugent.mmlab.rml.model.RDFTerm.ObjectMap;
 import be.ugent.mmlab.rml.model.RDFTerm.SubjectMap;
 import be.ugent.mmlab.rml.model.TriplesMap;
 import be.ugent.mmlab.rml.model.dataset.RMLDataset;
@@ -15,10 +16,7 @@ import be.ugent.mmlab.rml.model.std.StdConditionSubjectMap;
 import be.ugent.mmlab.rml.processor.concrete.ConcreteTermMapFactory;
 import be.ugent.mmlab.rml.processor.concrete.TermMapProcessorFactory;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import be.ugent.mmlab.rml.vocabularies.FnVocabulary;
 import org.eclipse.rdf4j.model.IRI;
@@ -186,38 +184,31 @@ public class StdSubjectMapProcessor implements SubjectMapProcessor {
         TermMapProcessor termMapProcessor =
                 factory.create(functionTriplesMap.getLogicalSource().getReferenceFormulation());
 
-        String referenceValue;
-        String constantValue;
         Set<PredicateObjectMap> poms = functionTriplesMap.getPredicateObjectMaps();
         for (PredicateObjectMap pom : poms) {
             Value property = pom.getPredicateMaps().iterator().next().getConstantValue();
             String executes = FnVocabulary.FNO_NAMESPACE + FnVocabulary.FnTerm.EXECUTES;
             if (!property.stringValue().equals(executes)) {
                 Value parameter = pom.getPredicateMaps().iterator().next().getConstantValue();
-                try {
-                    referenceValue = pom.getObjectMaps().iterator().next().getReferenceMap().getReference();
-                } catch (Exception e) {
-                    referenceValue = null;
-                    log.debug("No reference");
-                }
-                try {
-                    constantValue = pom.getObjectMaps().iterator().next().getConstantValue().stringValue();
-                } catch (Exception e) {
-                    constantValue = null;
-                    log.debug("No constant value");
-                }
-                if (referenceValue != null) {
-                    List<String> value = termMapProcessor.extractValueFromNode(node, referenceValue);
-                    if (value.size() != 0) {
-                        parameters.put(parameter.stringValue(), value.get(0));
-                    }
-                } else if (constantValue != null) {
-                    parameters.put(parameter.stringValue(), constantValue);
+                List<String> valueList = new ArrayList<>();
+                Object returnValue;
+                SimpleValueFactory vf = SimpleValueFactory.getInstance();
+                ObjectMap objectMap = pom.getObjectMaps().iterator().next();
+                //A Term map returns one or more values (in case expression matches more)
+                if (objectMap != null && !objectMap.getTermType().equals(BLANK_NODE)) {
+                    valueList = termMapProcessor.processTermMap(objectMap, node);
                 } else {
-                    // no value is present for this parameter, enter null
-                    parameters.put(parameter.stringValue(), "null"); //TODO wmaroy: change to proper uri for null
+                    valueList.add(vf.createBNode(null).toString());
                 }
-                //TODO from wmaroy: how to avoid this check?
+                if (valueList == null || valueList.isEmpty()) {
+                    // no value is present for this parameter, enter null
+                    returnValue = "null"; //TODO wmaroy: change to proper uri for null
+                } else if (valueList.size() == 1) {
+                    returnValue = valueList.get(0);
+                } else {
+                    returnValue = valueList;
+                }
+                parameters.put(parameter.stringValue(), returnValue);
             }
         }
 
